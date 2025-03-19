@@ -1,136 +1,378 @@
+/* VerificationList.css */
+/* Modern Enterprise UI Design */
+
+/* Variables */
+:root {
+  --primary-color: #2563eb;
+  --primary-hover: #1d4ed8;
+  --secondary-color: #64748b;
+  --success-color: #10b981;
+  --danger-color: #ef4444;
+  --warning-color: #f59e0b;
+  --light-bg: #f8fafc;
+  --border-color: #e2e8f0;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --radius: 8px;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --transition: all 0.2s ease-in-out;
+}
+
+/* Main container */
 .verification-list-container {
-  padding: 20px;
-  font-family: Arial, sans-serif;
+  font-family: var(--font-sans);
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  color: var(--text-primary);
+  background-color: white;
+}
+
+.verification-list-container h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  color: var(--text-primary);
+}
+
+.title-icon {
+  margin-right: 0.75rem;
+  color: var(--primary-color);
+}
+
+/* Loading state */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  background-color: var(--light-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top-color: var(--primary-color);
+  animation: spin 1s ease-in-out infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-state p {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  background-color: var(--light-bg);
+  border-radius: var(--radius);
+  border: 1px dashed var(--border-color);
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  color: var(--secondary-color);
+  margin-bottom: 1.5rem;
+  opacity: 0.5;
+}
+
+.empty-state p {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.text-secondary {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+/* Table styles */
+.table-container {
+  overflow-x: auto;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  background-color: white;
+  margin-top: 1rem;
 }
 
 .verification-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
-}
-
-.verification-table th,
-.verification-table td {
-  border: 1px solid #ddd;
-  padding: 10px;
-  text-align: center;
+  font-size: 0.875rem;
 }
 
 .verification-table th {
-  background-color: #f4f4f4;
+  text-align: left;
+  padding: 1rem;
+  font-weight: 600;
+  background-color: var(--light-bg);
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
+}
+
+.verification-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: middle;
+}
+
+.verification-row:hover {
+  background-color: var(--light-bg);
+}
+
+.verification-row:last-child td {
+  border-bottom: none;
+}
+
+/* Table cell specific styles */
+.id-cell {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.creator-info, .date-info {
+  display: flex;
+  align-items: center;
+}
+
+.cell-icon {
+  margin-right: 0.5rem;
+  color: var(--secondary-color);
+  width: 16px;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+}
+
+.status-badge.waiting {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: var(--warning-color);
+}
+
+.action-cell {
+  text-align: right;
+}
+
+/* Buttons */
+.verify-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.verify-button:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.button-icon {
+  margin-right: 0.5rem;
 }
 
 .search-icon-button {
-  background: none;
+  background-color: var(--light-bg);
+  color: var(--secondary-color);
   border: none;
-  font-size: 18px;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  transition: var(--transition);
 }
 
-/* Modal Overlay */
+.search-icon-button:hover {
+  background-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* Modal styles */
 .modal-overlay-review {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  right: 0;
+  bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
 }
 
-/* Modal Content */
 .modal-content-review {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  width: 35%;
-  max-width: 800px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  font-family: Arial, sans-serif;
-  position: relative; /* Needed for absolute positioning of the close button */
+  background-color: white;
+  border-radius: var(--radius);
+  width: 90%;
+  max-width: 600px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-lg);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  position: relative;
+  max-height: 80vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease-out;
 }
 
-/* Title Styling */
-.modal-content-review h3 {
-  font-size: 1.2em;
-  font-weight: bold;
-  margin-bottom: 30px;
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-/* Text and List Styling */
-.modal-content-review p,
-.modal-content-review pre {
-  font-size: 1em;
-  text-align: center;
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
-/* Requirements List */
-.modal-content-review ul {
-  padding-left: 20px;
-}
-
-.modal-content-review li {
-  font-size: 1em;
-  text-align: center;
-}
-
-.req-review {
-  font-size: 1em;
-  text-align: center;
-}
-
-/* Close Button */
 .close-modal-review-button {
-  position: absolute; /* Position it absolutely within the modal content */
-  top: 10px;
-  right: 10px;
-  background: none;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background-color: transparent;
   border: none;
+  font-size: 1.25rem;
+  color: var(--text-secondary);
   cursor: pointer;
-  padding: 0; /* Remove any padding */
-  z-index: 1010; /* Ensure it stays on top of other content */
-}
-
-.close-modal-review-button img {
-  width: 20px; /* Adjust the size of the close icon */
-  height: 20px; /* Adjust the size of the close icon */
-}
-
-/* Hover effect for the close button */
-.close-modal-review-button:hover {
-  opacity: 0.7; /* Add opacity on hover for visual feedback */
-}
-
-/* ให้ div ของ reviewer แสดงเป็น flex เพื่อจัดเรียงชื่อและไอคอน */
-.list-reviewer {
+  transition: var(--transition);
+  width: 32px;
+  height: 32px;
   display: flex;
-  align-items: center; /* จัดตำแหน่งไอคอนและชื่อให้ตรงกลาง */
-  justify-content: center; /* จัดกลางทั้งแนวตั้งและแนวนอน */
-  margin-bottom: 20px; /* ระยะห่างระหว่าง reviewer แต่ละคน */
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
 }
 
-.list-reviewer span {
-  font-size: 16px; /* ขนาดตัวอักษรของชื่อ reviewer */
-  font-weight: bold; /* ทำให้ตัวอักษรหนา */
-  margin-right: 8px; /* ระยะห่างระหว่างชื่อกับไอคอน */
+.close-modal-review-button:hover {
+  background-color: var(--light-bg);
+  color: var(--danger-color);
 }
 
-.list-reviewer img {
-  width: 30px; /* กำหนดขนาดของไอคอน */
-  height: 30px; /* กำหนดขนาดของไอคอน */
-  object-fit: cover; /* ทำให้ไอคอนไม่เสียสัดส่วน */
+.reviewer-section, .requirement-section {
+  background-color: var(--light-bg);
+  border-radius: var(--radius);
+  padding: 1rem;
+  height: 100%;
 }
 
-/* เพิ่มเส้นคั่นระหว่าง Reviewer และ Requirements */
-.modal-content-review > div:first-child {
-  padding-bottom: 20px; /* เพิ่มระยะห่างด้านล่างในส่วน Reviewer */
-  border-bottom: 1px solid #ddd; /* เส้นคั่นสีเทาอ่อน */
-  margin-bottom: 20px; /* เพิ่มระยะห่างระหว่าง Reviewer และ Requirements */
+.reviewer-section h3, .requirement-section h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
 }
 
-.modal-content-review > div:last-child {
-  margin-top: 20px; /* เพิ่มระยะห่างด้านบนในส่วน Requirements */
+.section-icon {
+  margin-right: 0.5rem;
+  color: var(--primary-color);
 }
+
+.list-reviewer, .req-review {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.list-reviewer:last-child, .req-review:last-child {
+  border-bottom: none;
+}
+
+.status-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.status-icon.verified {
+  color: var(--success-color);
+}
+
+.status-icon.not-verified {
+  color: var(--danger-color);
+}
+
+.req-icon {
+  margin-right: 0.5rem;
+  color: var(--secondary-color);
+}
+
+.empty-message {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  padding: 1rem 0;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .verification-list-container {
+    padding: 1rem;
+  }
+  
+  .modal-content-review {
+    grid-template-columns: 1fr;
+    width: 95%;
+  }
+  
+  .verification-table th, .verification-table td {
+    padding: 0.75rem 0.5rem;
+  }
+  
+  .verify-button {
+    padding: 0.4rem 0.75rem;
+  }
+}
+
+/* Font import for better typography */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');

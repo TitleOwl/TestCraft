@@ -3,9 +3,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import "./CSS/VerificationList.css";
-import closemodalreview from "../image/close.png";
-import notverify from "../image/notverify.png";
-import verifydone from "../image/verifydone.png";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch, faCheck, faTimes, faCalendarAlt, faUser, faClipboardCheck, faClipboardList } from "@fortawesome/free-solid-svg-icons";
 
 const Modal = ({ show, onClose, requirements = [], verificationBy = [] }) => {
     if (!show) return null;
@@ -19,35 +18,43 @@ const Modal = ({ show, onClose, requirements = [], verificationBy = [] }) => {
     return (
         <div className="modal-overlay-review">
             <div className="modal-content-review">
-                <div>
-                    <h3>Reviewer</h3>
+                <div className="reviewer-section">
+                    <h3>
+                        <FontAwesomeIcon icon={faUser} className="section-icon" /> 
+                        Reviewers
+                    </h3>
                     {parsedVerificationBy.length > 0 ? (
                         parsedVerificationBy.map((reviewer, index) => (
                             <div className="list-reviewer" key={index}>
                                 <span>{reviewer.name}</span>
-                                <img
-                                    src={reviewer.value ? verifydone : notverify} // ตรวจสอบค่า reviewer.value
-                                    alt={reviewer.value ? "Verified" : "Not Verified"}
-                                    className="verification-status-icon"
+                                <FontAwesomeIcon 
+                                    icon={reviewer.value ? faCheck : faTimes} 
+                                    className={`status-icon ${reviewer.value ? 'verified' : 'not-verified'}`}
                                 />
                             </div>
                         ))
                     ) : (
-                        <div>No verification by users found.</div>
+                        <div className="empty-message">No verification by users found.</div>
                     )}
                 </div>
-                <div>
-                    <h3>Requirement</h3>
+                <div className="requirement-section">
+                    <h3>
+                        <FontAwesomeIcon icon={faClipboardList} className="section-icon" /> 
+                        Requirements
+                    </h3>
                     {requirements.length > 0 ? (
                         requirements.map((req, index) => (
-                            <div key={index} className="req-review">Requirement ID: {req}</div>
+                            <div key={index} className="req-review">
+                                <FontAwesomeIcon icon={faClipboardCheck} className="req-icon" />
+                                <span>REQ-{req.toString().padStart(3, '0')}</span>
+                            </div>
                         ))
                     ) : (
-                        <div>No requirements found.</div>
+                        <div className="empty-message">No requirements found.</div>
                     )}
                 </div>
                 <button className="close-modal-review-button" onClick={onClose}>
-                    <img src={closemodalreview} alt="Close" className="closemodalreview" />
+                    <FontAwesomeIcon icon={faTimes} />
                 </button>
             </div>
         </div>
@@ -59,12 +66,15 @@ const VerificationList = () => {
     const [selectedRequirements, setSelectedRequirements] = useState([]);
     const [selectedVerificationBy, setSelectedVerificationBy] = useState([]);
     const [showModal, setShowModal] = useState(false);
+    const [loading, setLoading] = useState(true);
+    
     const navigate = useNavigate();
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const projectId = queryParams.get("project_id");
 
     const fetchVerifications = useCallback(() => {
+        setLoading(true);
         axios
             .get(`http://localhost:3001/verifications?project_id=${projectId}`)
             .then((response) => {
@@ -75,10 +85,12 @@ const VerificationList = () => {
                         verification_by: verification.verification_by || [],
                     }));
                 setVerifications(filteredVerifications);
+                setLoading(false);
             })
             .catch((err) => {
                 console.error("Error fetching verifications:", err);
                 toast.error("Error fetching verifications.");
+                setLoading(false);
             });
     }, [projectId]);
 
@@ -88,7 +100,7 @@ const VerificationList = () => {
 
     const handleSearchClick = (requirements, verificationBy) => {
         setSelectedRequirements(requirements || []);
-        setSelectedVerificationBy(verificationBy || []); // ส่งค่าข้อมูล verificationBy
+        setSelectedVerificationBy(verificationBy || []);
         setShowModal(true);
     };
 
@@ -110,59 +122,102 @@ const VerificationList = () => {
     };
 
     const closeModal = () => setShowModal(false);
+    
+    const formatDate = (dateString) => {
+        const options = { year: 'numeric', month: 'short', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString(undefined, options);
+    };
+
+    // Loading state
+    if (loading) {
+        return (
+            <div className="verification-list-container">
+                <h1>Verification List</h1>
+                <div className="loading-state">
+                    <div className="loading-spinner"></div>
+                    <p>Loading verifications...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="verification-list-container">
-            <h1>Verification List</h1>
+            <h1>
+                <FontAwesomeIcon icon={faClipboardCheck} className="title-icon" />
+                Verification List
+            </h1>
+            
             {verifications.length === 0 ? (
-                <p>No verifications available.</p>
+                <div className="empty-state">
+                    <FontAwesomeIcon icon={faClipboardList} className="empty-icon" />
+                    <p>No verifications are currently waiting for review.</p>
+                    <p className="text-secondary">All verifications have been processed or none have been created yet.</p>
+                </div>
             ) : (
-                <table className="verification-table">
-                    <thead>
-                        <tr>
-                            <th>Verification</th>
-                            <th>Create By</th>
-                            <th>Date Assigned</th>
-                            <th>Status</th>
-                            <th>Reviewer</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {verifications.map((verification) => (
-                            <tr key={verification.id}>
-                                <td>{verification.id}</td>
-                                <td>{verification.create_by}</td>
-                                <td>{new Date(verification.created_at).toLocaleDateString()}</td>
-                                <td>{verification.requirement_status || " "}</td>
-                                <td>
-                                    <button
-                                        className="search-icon-button"
-                                        title="Search Reviewers and Requirements"
-                                        onClick={() =>
-                                            handleSearchClick(
-                                                verification.requirements || [],
-                                                verification.verification_by || []
-                                            )
-                                        }
-                                    >
-                                        🔍
-                                    </button>
-                                </td>
-                                <td>
-                                    <button
-                                        className="verify-button"
-                                        onClick={() =>
-                                            handleVerifyClick(verification.id, verification.requirements)
-                                        }
-                                    >
-                                        Verify
-                                    </button>
-                                </td>
+                <div className="table-container">
+                    <table className="verification-table">
+                        <thead>
+                            <tr>
+                                <th>Verification ID</th>
+                                <th>Created By</th>
+                                <th>Date Assigned</th>
+                                <th>Status</th>
+                                <th>Reviewers</th>
+                                <th>Actions</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {verifications.map((verification) => (
+                                <tr key={verification.id} className="verification-row">
+                                    <td className="id-cell">VERIF-{verification.id}</td>
+                                    <td className="creator-cell">
+                                        <div className="creator-info">
+                                            <FontAwesomeIcon icon={faUser} className="cell-icon" />
+                                            <span>{verification.create_by}</span>
+                                        </div>
+                                    </td>
+                                    <td className="date-cell">
+                                        <div className="date-info">
+                                            <FontAwesomeIcon icon={faCalendarAlt} className="cell-icon" />
+                                            <span>{formatDate(verification.created_at)}</span>
+                                        </div>
+                                    </td>
+                                    <td className="status-cell">
+                                        <span className="status-badge waiting">
+                                            {verification.requirement_status || "WAITING FOR VERIFICATION"}
+                                        </span>
+                                    </td>
+                                    <td className="reviewer-cell">
+                                        <button
+                                            className="search-icon-button"
+                                            title="View Reviewers and Requirements"
+                                            onClick={() =>
+                                                handleSearchClick(
+                                                    verification.requirements || [],
+                                                    verification.verification_by || []
+                                                )
+                                            }
+                                        >
+                                            <FontAwesomeIcon icon={faSearch} />
+                                        </button>
+                                    </td>
+                                    <td className="action-cell">
+                                        <button
+                                            className="verify-button"
+                                            onClick={() =>
+                                                handleVerifyClick(verification.id, verification.requirements)
+                                            }
+                                        >
+                                            <FontAwesomeIcon icon={faCheck} className="button-icon" />
+                                            Verify
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             )}
 
             <Modal

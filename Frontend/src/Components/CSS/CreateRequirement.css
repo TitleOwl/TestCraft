@@ -1,114 +1,361 @@
-/* General container styling */
+/* Enterprise Requirements Management System - Form Styling
+   Modern, clean UI with enterprise-grade polish */
+
+/* Variables for consistent design system */
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --primary-light: #dbeafe;
+  --success: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+  --radius-sm: 0.125rem;
+  --radius: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --animation-standard: all 0.2s ease-in-out;
+}
+
+/* Page layout */
 .create-requirement-container {
-  max-width: 800px;
-  margin: 20px auto;
-  padding: 20px;
-  font-family: Arial, sans-serif;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 960px;
+  margin: 2rem auto;
+  padding: 2.5rem;
+  background-color: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
-/* Heading styles */
+/* Header styling with modern typography */
 .create-requirement-header {
-  font-size: 2rem;
-  margin-bottom: 20px;
-  text-align: center;
-  color: #333;
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--gray-800);
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--gray-200);
+  position: relative;
 }
 
-/* Error message */
+.create-requirement-header::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background-color: var(--primary);
+  border-radius: var(--radius);
+}
+
+/* Error message with better visibility */
 .create-requirement-error {
-  color: #ff4d4d;
-  font-size: 1rem;
-  margin-bottom: 15px;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--danger);
+  background-color: rgba(239, 68, 68, 0.1);
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
-/* Form styling */
+.create-requirement-error::before {
+  content: "⚠️";
+}
+
+/* Form layout and structure */
 .create-requirement-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 1.5rem;
 }
 
-/* Form group for label and input/textarea/select */
 .create-requirement-form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
-/* Input, textarea, and select styling */
+/* Form labels with improved readability */
+.create-requirement-form-group label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--gray-700);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.create-requirement-form-group label::after {
+  content: "*";
+  color: var(--danger);
+  font-size: 0.75rem;
+}
+
+/* Input elements with consistent styling and high-quality interactions */
 .create-requirement-input,
 .create-requirement-textarea,
 .create-requirement-select {
-  padding: 10px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  outline: none;
-  transition: border 0.3s;
+  padding: 0.75rem 1rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--gray-800);
+  background-color: white;
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius);
+  transition: var(--animation-standard);
+  width: 100%;
+  box-shadow: var(--shadow-sm);
+}
+
+.create-requirement-input:hover,
+.create-requirement-textarea:hover,
+.create-requirement-select:hover {
+  border-color: var(--gray-400);
 }
 
 .create-requirement-input:focus,
 .create-requirement-textarea:focus,
 .create-requirement-select:focus {
-  border-color: #007bff;
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-/* Buttons styling */
+.create-requirement-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* Enhanced select field with hover effects */
+.create-requirement-select {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+  padding-right: 2.5rem;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* React-Select custom styling */
+.select-files {
+  font-size: 0.9375rem;
+}
+
+.select-files .css-control {
+  border-color: var(--gray-300);
+  border-radius: var(--radius);
+  min-height: 42px;
+  box-shadow: var(--shadow-sm);
+}
+
+.select-files .css-control:hover {
+  border-color: var(--gray-400);
+}
+
+.select-files .css-menu {
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  z-index: 100;
+}
+
+.select-files .css-option {
+  padding: 0.5rem 0.75rem;
+}
+
+.select-files .css-multi-value {
+  background-color: var(--primary-light);
+  border-radius: var(--radius-sm);
+}
+
+.select-files .css-multi-value-label {
+  color: var(--primary-dark);
+  font-size: 0.8125rem;
+  padding: 0.25rem 0.375rem;
+}
+
+.select-files .css-multi-value-remove {
+  color: var(--primary-dark);
+}
+
+.select-files .css-multi-value-remove:hover {
+  background-color: var(--primary);
+  color: white;
+}
+
+/* Action buttons with professional appearance */
 .create-requirement-form-buttons {
   display: flex;
-  justify-content: space-between;
-  gap: 10px;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--gray-200);
 }
 
 .create-requirement-btn-back,
 .create-requirement-btn-primary {
-  padding: 10px 20px;
-  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.6875rem 1.25rem;
+  border-radius: var(--radius);
   border: none;
-  border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
+  transition: var(--animation-standard);
+  box-shadow: var(--shadow-sm);
+  min-width: 6rem;
 }
 
 .create-requirement-btn-back {
-  background-color: #f0f0f0;
-  color: #333;
+  background-color: white;
+  color: var(--gray-700);
+  border: 1px solid var(--gray-300);
 }
 
-.create-requirement-btn-back:hover {
-  background-color: #e0e0e0;
+.create-requirement-btn-back:hover, 
+.create-requirement-btn-back:focus {
+  background-color: var(--gray-50);
+  border-color: var(--gray-400);
+}
+
+.create-requirement-btn-back:active {
+  background-color: var(--gray-100);
 }
 
 .create-requirement-btn-primary {
-  background-color: #007bff;
+  background-color: var(--primary);
   color: white;
+  font-weight: 500;
 }
 
-.create-requirement-btn-primary:hover {
-  background-color: #0056b3;
-  transform: scale(1.05);
+.create-requirement-btn-primary:hover, 
+.create-requirement-btn-primary:focus {
+  background-color: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
-/* Mobile responsiveness */
+.create-requirement-btn-primary:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Add loading state indicators for better UX */
+.create-requirement-btn-primary.loading {
+  position: relative;
+  color: transparent;
+  pointer-events: none;
+}
+
+.create-requirement-btn-primary.loading::after {
+  content: "";
+  position: absolute;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive adjustments for various devices */
+@media (max-width: 992px) {
+  .create-requirement-container {
+    max-width: 95%;
+    padding: 2rem;
+  }
+}
+
 @media (max-width: 768px) {
   .create-requirement-container {
-    padding: 15px;
+    margin: 1rem auto;
+    padding: 1.5rem;
   }
-
+  
   .create-requirement-header {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
   }
+}
 
-  .create-requirement-form {
-    gap: 15px;
+@media (max-width: 576px) {
+  .create-requirement-container {
+    padding: 1.25rem;
+    margin: 0.5rem;
+    border-radius: var(--radius);
   }
-
+  
   .create-requirement-form-buttons {
-    flex-direction: column;
-    gap: 15px;
+    flex-direction: column-reverse;
+    gap: 0.75rem;
   }
+  
+  .create-requirement-btn-back,
+  .create-requirement-btn-primary {
+    width: 100%;
+    padding: 0.75rem;
+  }
+  
+  .create-requirement-header {
+    font-size: 1.35rem;
+    text-align: left;
+  }
+}
+
+/* Additional utility classes for refinement */
+.field-hint {
+  font-size: 0.75rem;
+  color: var(--gray-500);
+  margin-top: 0.25rem;
+}
+
+.field-required::after {
+  content: "*";
+  color: var(--danger);
+  margin-left: 0.25rem;
+}
+
+.field-counter {
+  font-size: 0.75rem;
+  color: var(--gray-500);
+  text-align: right;
+  margin-top: 0.25rem;
+}
+
+/* Animated form transition effect for better UX */
+.create-requirement-form {
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }

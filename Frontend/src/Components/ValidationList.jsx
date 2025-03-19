@@ -10,15 +10,15 @@ const Modal = ({ show, onClose, requirements = [] }) => {
     <div className="modal-overlay-review">
       <div className="modal-content-review">
         <div>
-          <h3>Requirements</h3>
+          <h3>Requirements for Validation</h3>
           {Array.isArray(requirements) && requirements.length > 0 ? (
             requirements.map((req, index) => (
               <div key={index} className="req-review">
-                Requirement ID: {req}
+                REQ-{String(req).padStart(3, '0')}
               </div>
             ))
           ) : (
-            <div>No requirements found.</div>
+            <div className="empty-requirements">No requirements found.</div>
           )}
         </div>
         <button className="close-modal-review-button" onClick={onClose}>
@@ -29,20 +29,40 @@ const Modal = ({ show, onClose, requirements = [] }) => {
   );
 };
 
+// Custom status badge component
+const StatusBadge = ({ status }) => {
+  let statusClass = "";
+  
+  switch (status) {
+    case "WAITING FOR VALIDATION":
+      statusClass = "waiting";
+      break;
+    default:
+      statusClass = "";
+  }
+  
+  return <span className={`status-badge ${statusClass}`}>{status}</span>;
+};
+
 const ValidationList = () => {
   const [validations, setValidations] = useState([]);
   const [selectedRequirements, setSelectedRequirements] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const projectId = queryParams.get("project_id");
 
   const fetchValidations = useCallback(() => {
+    setLoading(true);
+    setError("");
+    
     axios
       .get(`http://localhost:3001/validations?project_id=${projectId}`)
       .then((response) => {
-        console.log("API Response:", response.data); // ตรวจสอบข้อมูลจาก API
+        console.log("API Response:", response.data);
         const filteredValidations = response.data
           .filter((validation) => validation.requirement_status === "WAITING FOR VALIDATION")
           .map((validation) => ({
@@ -50,9 +70,12 @@ const ValidationList = () => {
             validation_by: validation.validation_by || [],
           }));
         setValidations(filteredValidations);
+        setLoading(false);
       })
       .catch((err) => {
         console.error("Error fetching validations:", err);
+        setError("Failed to load validations. Please try again.");
+        setLoading(false);
       });
   }, [projectId]);
 
@@ -61,7 +84,7 @@ const ValidationList = () => {
   }, [fetchValidations]);
 
   const handleSearchClick = (requirements) => {
-    console.log("Requirements to display in modal:", requirements); // Debug data
+    console.log("Requirements to display in modal:", requirements);
     setSelectedRequirements(requirements || []);
     setShowModal(true);
   };
@@ -86,37 +109,52 @@ const ValidationList = () => {
 
   const closeModal = () => setShowModal(false);
 
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
   return (
     <div className="validation-list-container">
       <h1>Validation List</h1>
-      {validations.length === 0 ? (
-        <p>No validations available.</p>
+      
+      {loading ? (
+        <div className="loading-message"></div>
+      ) : error ? (
+        <div className="error-message">{error}</div>
+      ) : validations.length === 0 ? (
+        <div className="empty-state">
+          <div className="empty-icon">📋</div>
+          <p>No validations are currently available for review.</p>
+        </div>
       ) : (
         <table className="validation-table">
           <thead>
             <tr>
-              <th>Validation</th>
-              <th>Create By</th>
+              <th>Validation ID</th>
+              <th>Created By</th>
               <th>Date Assigned</th>
               <th>Status</th>
-              <th>Requirement</th>
+              <th>Requirements</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {validations.map((validation) => (
               <tr key={validation.id}>
-                <td>{validation.id}</td>
+                <td>VAL-{String(validation.id).padStart(3, '0')}</td>
                 <td>{validation.create_by}</td>
-                <td>{new Date(validation.created_at).toLocaleDateString()}</td>
-                <td>{validation.requirement_status || " "}</td>
+                <td>{formatDate(validation.created_at)}</td>
+                <td>
+                  <StatusBadge status={validation.requirement_status || "UNKNOWN"} />
+                </td>
                 <td>
                   <button
                     className="search-icon-button"
-                    title="Search Validators and Requirements"
+                    title="View Requirements"
                     onClick={() => handleSearchClick(validation.requirements || [])}
                   >
-                    🔍
+                    <span role="img" aria-label="search">🔍</span>
                   </button>
                 </td>
                 <td>

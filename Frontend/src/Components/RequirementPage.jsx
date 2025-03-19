@@ -2,20 +2,26 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPen, faTrash, faFileUpload, faMagnifyingGlass, faDownload, faEye } from "@fortawesome/free-solid-svg-icons";
+import { 
+  faPen, 
+  faTrash, 
+  faFileUpload, 
+  faMagnifyingGlass, 
+  faDownload, 
+  faEye, 
+  faPlus,
+  faFilter,
+  faClipboardList,
+  faCheck,
+  faHistory,
+  faCodeBranch
+} from "@fortawesome/free-solid-svg-icons";
 import { FileAddOutlined } from "@ant-design/icons";
 import Modal from "react-modal";
 import UploadFile from "./Uploadfile";
 import "./CSS/RequirementPage.css";
-import checkmark from "../image/check_mark.png";
-import history from "../image/history.png";
-import createvervar from "../image/createvervar.png";
-import verificationlist from "../image/white_list.png";
-import validationlist from "../image/accepted_document.png";
-import version_control from "../image/version_control.png";
 import "jspdf-autotable";
-import clearsearch from '../image/clearsearch.png'
-
+import clearsearch from '../image/clearsearch.png';
 
 Modal.setAppElement("#root"); // For accessibility
 
@@ -25,18 +31,19 @@ const RequirementPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [projectName, setProjectName] = useState("");
-  const [files, setFiles] = useState([]); // State for files
-  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal
+  const [files, setFiles] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [filteredRequirements, setFilteredRequirements] = useState([]);
+  const [alertMessage] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [typeFilter, setTypeFilter] = useState("");
+  
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const projectId = queryParams.get("project_id");
-  const [filteredRequirements, setFilteredRequirements] = useState([]);
-  const [alertMessage] = useState(""); // เก็บข้อความแจ้งเตือน
-  const [statusFilter, setStatusFilter] = useState(""); // State สำหรับการกรองสถานะ
-  const [typeFilter, setTypeFilter] = useState(""); // State สำหรับการกรองสถานะ
 
-
+  // Fetch data
   useEffect(() => {
     if (projectId) {
       setLoading(true);
@@ -52,38 +59,32 @@ const RequirementPage = () => {
           setError("Failed to load project name. Please try again.");
         });
 
-      // Fetch requirements from the project
-      axios
-        .get(`http://localhost:3001/project/${projectId}/requirement`)
-        .then((res) => {
-          const updatedRequirements = res.data.map((requirement) => ({
-            ...requirement,
-            status: "WORKING",
-          }));
-          setRequirementList(updatedRequirements);
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.error("Error fetching requirements:", err);
-          setError("Failed to load requirements. Please try again.");
-          setLoading(false);
-        });
+    // Fetch requirements
+    axios
+      .get(`http://localhost:3001/project/${projectId}/requirement`)
+      .then((requirementsRes) => {
+        setRequirementList(requirementsRes.data);
+      })
+      .catch((err) => {
+        console.error("Error fetching requirements:", err);
+      });
 
-      // Fetch files for the project
-      axios
-        .get(`http://localhost:3001/files?project_id=${projectId}`)
-        .then((res) => {
-          setFiles(res.data); // Store fetched files data
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.error("Error fetching files:", err);
-          setError("Failed to load files. Please try again.");
-          setLoading(false);
-        });
-    }
-  }, [projectId]);
-
+    // Fetch files (ไม่ต้องผูกกับ requirement)
+    axios
+      .get(`http://localhost:3001/files?project_id=${projectId}`)
+      .then((filesRes) => {
+        console.log('Files Data:', filesRes.data);
+        setFiles(filesRes.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching files:", err);
+        setError("Failed to load files. Please try again.");
+        setLoading(false);
+      });
+  }
+}, [projectId]);
+  // Filter requirements based on search and filters
   useEffect(() => {
     let filtered = requirementList.filter((requirement) =>
       requirement.requirement_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -91,14 +92,14 @@ const RequirementPage = () => {
       `REQ-${requirement.requirement_id.toString()}`.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    // กรองตาม status ที่เลือก
+    // Filter by status
     if (statusFilter) {
       filtered = filtered.filter((requirement) =>
         requirement.requirement_status === statusFilter
       );
     }
 
-    // กรองตาม type ที่เลือก
+    // Filter by type
     if (typeFilter) {
       filtered = filtered.filter((requirement) =>
         requirement.requirement_type === typeFilter
@@ -106,7 +107,7 @@ const RequirementPage = () => {
     }
 
     setFilteredRequirements(filtered);
-  }, [searchQuery, requirementList, statusFilter, typeFilter]); // เพิ่ม statusFilter และ typeFilter ใน dependencies
+  }, [searchQuery, requirementList, statusFilter, typeFilter]);
 
   const handleDelete = (requirementId) => {
     if (window.confirm("Are you sure you want to delete this requirement?")) {
@@ -125,11 +126,11 @@ const RequirementPage = () => {
   };
 
   const handleOpenModal = () => {
-    setIsModalOpen(true); // Open the modal
+    setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
-    setIsModalOpen(false); // Close the modal
+    setIsModalOpen(false);
   };
 
   const handleDeleteFile = (fileId) => {
@@ -149,370 +150,415 @@ const RequirementPage = () => {
     }
   };
 
-  const handleVerivaliView = () => {
-    navigate(`/VeriVaView?project_id=${projectId}`);
-  }
-
-  const handleCreateVeri = () => {
-    navigate(`/CreateVeri?project_id=${projectId}`);
-  }
-
-  const handleVerilist = () => {
-    navigate(`/VerificationList?project_id=${projectId}`);
-  }
-
-  const handleCreateVar = () => {
-    navigate(`/CreateVar?project_id=${projectId}`);
-  }
-
-  const handleVarilist = () => {
-    navigate(`/ValidationList?project_id=${projectId}`);
-  }
-
-  // ตัวอย่างฟังก์ชัน handleVerControl ที่จะนำข้อมูลไปยังหน้า VersionControl
+  // Navigation functions
+  const handleCreateVeri = () => navigate(`/CreateVeri?project_id=${projectId}`);
+  const handleVerilist = () => navigate(`/VerificationList?project_id=${projectId}`);
+  const handleCreateVar = () => navigate(`/CreateVar?project_id=${projectId}`);
+  const handleVarilist = () => navigate(`/ValidationList?project_id=${projectId}`);
   const handleVerControl = () => {
-    navigate(`/VersionControl?project_id=${projectId}`, { state: { requirementList, projectName } });
-  }
-
-  const handleBaseline = () => {
-    navigate(`/Baseline?project_id=${projectId}`);
-  }
-
+    navigate(`/VersionControl?project_id=${projectId}`, { 
+      state: { requirementList, projectName } 
+    });
+  };
+  const handleBaseline = () => navigate(`/Baseline?project_id=${projectId}`);
+  
   const handleUploadSuccess = (newFile) => {
-    setFiles((prevFiles) => [newFile, ...prevFiles]); // Add new file locally
-
-    // Fetch updated files from server after upload
+    // เพิ่มการ log เพื่อตรวจสอบข้อมูล
+    console.log('New File:', newFile);
+  
+    // อัปเดตรายการไฟล์ทันที
+    setFiles((prevFiles) => {
+      // ตรวจสอบว่าไฟล์มีอยู่แล้วหรือไม่
+      const exists = prevFiles.some(f => f.filereq_id === newFile.filereq_id);
+      return exists ? prevFiles : [newFile, ...prevFiles];
+    });
+  
+    // ดึงรายการไฟล์ล่าสุดจากเซิร์ฟเวอร์
     axios
       .get(`http://localhost:3001/files?project_id=${projectId}`)
       .then((res) => {
-        setFiles(res.data); // Update files from server
+        console.log('Fetched Files:', res.data);
+        setFiles(res.data);
       })
       .catch((err) => {
         console.error("Error fetching updated files:", err);
       });
   };
+  const formatRequirementId = (id) => {
+    return `REQ-${id.toString().padStart(3, '0')}`;
+  };
+
+  // Render loading state
+  const renderLoading = () => (
+    <div className="loading-state">
+      <div className="loading-spinner"></div>
+      <p>Loading data...</p>
+    </div>
+  );
+
+  // Empty state message
+  const renderEmptyState = (message) => (
+    <div className="empty-state">
+      <FontAwesomeIcon icon={faClipboardList} className="empty-icon" />
+      <p>{message}</p>
+    </div>
+  );
 
   return (
-    <div className=" ">
+    <div className="page-wrapper">
       <div className="requirement-container">
+        {/* Header Section */}
         <div className="requirement-header">
-          <h1 className="requirement-title">{projectName || projectId} Requirements</h1>
+          <div className="header-title-wrapper">
+            <h1 className="requirement-title">
+              <span className="project-name">{projectName || projectId}</span>
+              <span className="page-type">Requirements</span>
+            </h1>
+          </div>
+
+          {/* Action Buttons */}
           <div className="req-action-buttons">
-            <button className="create-verification-button" onClick={handleCreateVeri}>
-              <img src={createvervar} alt="createver" className="createver" /> Create Verification
+            <button className="create-verification-button action-btn" onClick={handleCreateVeri}>
+              <FontAwesomeIcon icon={faPlus} className="action-icon" />
+              Create Verification
             </button>
 
-            <button className="verifylist-button" onClick={handleVerilist}>
-              <img src={verificationlist} alt="verificationlist" className="verificationlist" /> Verification List
+            <button className="verifylist-button action-btn" onClick={handleVerilist}>
+              <FontAwesomeIcon icon={faClipboardList} className="action-icon" />
+              Verification List
             </button>
 
-            <button className="CreateVar-button" onClick={handleCreateVar}>
-              <img src={createvervar} alt="createvervar" className="createvervar" /> Create Validation
+            <button className="CreateVar-button action-btn" onClick={handleCreateVar}>
+              <FontAwesomeIcon icon={faPlus} className="action-icon" />
+              Create Validation
             </button>
 
-            <button className="validation-button" onClick={handleVarilist}>
-              <img src={validationlist} alt="validationlist" className="validationlist" /> Validation List
+            <button className="validation-button action-btn" onClick={handleVarilist}>
+              <FontAwesomeIcon icon={faClipboardList} className="action-icon" />
+              Validation List
             </button>
 
-            <button className="viewvervar-button" onClick={handleVerivaliView}>
-              <img src={checkmark} alt="checkmark" className="checkmark" /> View Verification and Validation
+            <button className="versioncontrol-button action-btn" onClick={handleVerControl}>
+              <FontAwesomeIcon icon={faCodeBranch} className="action-icon" />
+              Version Control
             </button>
 
-            <button className="versioncontrol-button" onClick={handleVerControl}>
-              <img src={version_control} alt="version_control" className="version_control" /> Version Control
-            </button>
-
-            <button className="baseline-button" onClick={handleBaseline}>
-              <img src={history} alt="history" className="history" /> Baseline
+            <button className="baseline-button action-btn" onClick={handleBaseline}>
+              <FontAwesomeIcon icon={faHistory} className="action-icon" />
+              Baseline
             </button>
           </div>
         </div>
       </div>
 
+      {/* Alert Message */}
+      {alertMessage && <div className="alert-message">{alertMessage}</div>}
 
-
-      {alertMessage && <p className="alert-message">{alertMessage}</p>}
+      {/* Search and Filter Section */}
       <div className="req-search">
         <div className="search-container">
           <input
             type="text"
             className="req-search-input"
-            placeholder="Search Requirement"
+            placeholder="Search requirement by ID, name or type..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
           {searchQuery && (
-            <img
-              src={clearsearch}
-              alt="clearsearch-req"
-              className="clearsearch-req"
+            <button 
+              className="clear-search-btn"
               onClick={() => setSearchQuery('')}
-            />
+              title="Clear search"
+            >
+              <img
+                src={clearsearch}
+                alt="Clear search"
+                className="clearsearch-req"
+              />
+            </button>
           )}
-          {/* <FontAwesomeIcon icon={faMagnifyingGlass} className="search-icon-req" /> */}
-        </div>
-        <div className="requirement_filterstatus">
-          <label className="requirement_filterstatus-label">
-            Filter by Status:
-          </label>
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="requirement_filterstatus-select"
-          >
-            <option value="">All</option>
-            <option value="WORKING">Working</option>
-            <option value="VERIFIED">Verified</option>
-            <option value="VALIDATED">Validated</option>
-            <option value="WAITING FOR VERIFICATION">Waiting for Verification</option>
-            <option value="WAITING FOR VALIDATION">Waiting for Validation</option>
-            <option value="BASELINE">Baseline</option>
-          </select>
         </div>
 
-        <div className="requirement_filtertype">
-          <label className="requirement_filtertype-label">
-            Filter by Type:
-          </label>
-          <select
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)} // setTypeFilter สำหรับ type
-            className="requirement_filtertype-select"
-          >
-            <option value="">All</option>
-            <option value="Functional">Functionality</option>
-            <option value="User interface">User interface</option>
-            <option value="External interfaces">External interfaces</option>
-            <option value="Reliability">Reliability</option>
-            <option value="Maintenance">Maintenance</option>
-            <option value="Portability">Portability</option>
-            <option value="Limitations Design and construction">Limitations Design and construction</option>
-            <option value="Interoperability">Interoperability</option>
-            <option value="Reusability">Reusability</option>
-            <option value="Legal and regulative">Legal and regulative</option>
-          </select>
+        <div className="filters-container">
+          <div className="requirement_filterstatus">
+            <label className="requirement_filterstatus-label">
+              <FontAwesomeIcon icon={faFilter} className="filter-icon" />
+              Status:
+            </label>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="requirement_filterstatus-select"
+            >
+              <option value="">All Statuses</option>
+              <option value="WORKING">Working</option>
+              <option value="VERIFIED">Verified</option>
+              <option value="VALIDATED">Validated</option>
+              <option value="WAITING FOR VERIFICATION">Waiting for Verification</option>
+              <option value="WAITING FOR VALIDATION">Waiting for Validation</option>
+              <option value="BASELINE">Baseline</option>
+            </select>
+          </div>
+
+          <div className="requirement_filtertype">
+            <label className="requirement_filtertype-label">
+              <FontAwesomeIcon icon={faFilter} className="filter-icon" />
+              Type:
+            </label>
+            <select
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value)}
+              className="requirement_filtertype-select"
+            >
+              <option value="">All Types</option>
+              <option value="Functional">Functionality</option>
+              <option value="User interface">User Interface</option>
+              <option value="External interfaces">External Interfaces</option>
+              <option value="Reliability">Reliability</option>
+              <option value="Maintenance">Maintenance</option>
+              <option value="Portability">Portability</option>
+              <option value="Limitations Design and construction">Limitations Design</option>
+              <option value="Interoperability">Interoperability</option>
+              <option value="Reusability">Reusability</option>
+              <option value="Legal and regulative">Legal & Regulative</option>
+            </select>
+          </div>
         </div>
 
         <button
           onClick={() => navigate(`/CreateRequirement?project_id=${projectId}`)}
           className="add-requirement-button"
         >
-          <FileAddOutlined className="add-req" /> Add Requirements
+          <FontAwesomeIcon icon={faPlus} className="add-icon" />
+          Add Requirement
         </button>
       </div>
 
+      {/* Requirements Table */}
       <div className="content-container">
         {loading ? (
-          <p>Loading requirements...</p>
+          renderLoading()
         ) : error ? (
-          <p className="error-message">{error}</p>
+          <div className="error-message">{error}</div>
+        ) : filteredRequirements.length === 0 ? (
+          renderEmptyState("No requirements found. Add some requirements or adjust your filters.")
         ) : (
-
-          <table className="requirement-table">
-
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Actions</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredRequirements.map((data, index) => (
-                <tr key={data.requirement_id}>
-                  {/* แสดง REQ-ID ที่มีเลข 3 หลัก */}
-                  <td
-                    onClick={() =>
-                      navigate(`/ViewEditReq?requirement_id=${data.requirement_id}`, {
-                        state: { requirement: data },
-                      })
-                    }
-                    style={{ cursor: "pointer", userSelect: "none" }}
-                  >
-                    REQ-00{data.requirement_id} {/* เพิ่มเลขให้เป็น 3 หลัก */}
-                  </td>
-                  <td
-                    onClick={() =>
-                      navigate(`/ViewEditReq?requirement_id=${data.requirement_id}`, {
-                        state: { requirement: data },
-                      })
-                    }
-                    style={{ cursor: "pointer", userSelect: "none" }}
-                  >
-                    {data.requirement_name}
-                  </td>
-                  <td
-                    onClick={() =>
-                      navigate(`/ViewEditReq?requirement_id=${data.requirement_id}`, {
-                        state: { requirement: data },
-                      })
-                    }
-                    style={{ cursor: "pointer", userSelect: "none" }}
-                  >
-                    {data.requirement_type}
-                  </td>
-
-                  {/* Actions */}
-                  <td>
-                    <button
+          <div className="table-responsive">
+            <table className="requirement-table">
+              <thead>
+                <tr>
+                  <th className="id-column">ID</th>
+                  <th className="name-column">Name</th>
+                  <th className="type-column">Type</th>
+                  <th className="actions-column">Actions</th>
+                  <th className="status-column">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredRequirements.map((data) => (
+                  <tr key={data.requirement_id} className="requirement-row">
+                    <td
+                      className="req-id-cell"
                       onClick={() =>
                         navigate(`/ViewEditReq?requirement_id=${data.requirement_id}`, {
                           state: { requirement: data },
                         })
                       }
-                      className="action-button view-req colored-view-button"
                     >
-                      <FontAwesomeIcon icon={faEye} className="action-icon" />
-                    </button>
-
-                    <button
+                      {formatRequirementId(data.requirement_id)}
+                    </td>
+                    <td
+                      className="req-name-cell"
                       onClick={() =>
-                        navigate(
-                          `/UpdateRequirement?project_id=${projectId}&requirement_id=${data.requirement_id}`
-                        )
+                        navigate(`/ViewEditReq?requirement_id=${data.requirement_id}`, {
+                          state: { requirement: data },
+                        })
                       }
-                      className="action-button edit-req colored-edit-button"
                     >
-                      <FontAwesomeIcon icon={faPen} className="action-icon" />
-                    </button>
-
-                    <button
-                      onClick={() => handleDelete(data.requirement_id)}
-                      className="action-button delete-req colored-delete-button"
+                      {data.requirement_name}
+                    </td>
+                    <td
+                      className="req-type-cell"
+                      onClick={() =>
+                        navigate(`/ViewEditReq?requirement_id=${data.requirement_id}`, {
+                          state: { requirement: data },
+                        })
+                      }
                     >
-                      <FontAwesomeIcon icon={faTrash} className="action-icon" />
-                    </button>
-                  </td>
+                      <span className="type-badge">{data.requirement_type}</span>
+                    </td>
 
-                  <td>
-                    <button
-                      className={`status-button 
-            ${data.requirement_status === 'VERIFIED' ? 'status-verified' : ''}
-            ${data.requirement_status === 'VALIDATED' ? 'status-validated' : ''} 
-            ${data.requirement_status === 'WORKING' ? 'status-working' : ''} 
-            ${data.requirement_status === 'WAITING FOR VERIFICATION' ? 'status-waiting-ver' : ''}
-            ${data.requirement_status === 'WAITING FOR VALIDATION' ? 'status-val-inprogress' : ''}
-            ${data.requirement_status === 'BASELINE' ? 'status-baseline' : ''}
-            `}
-                    >
-                      {data.requirement_status}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+                    {/* Actions Buttons */}
+                    <td className="req-actions-cell">
+                      <div className="action-buttons-group">
+                        <button
+                          onClick={() =>
+                            navigate(`/ViewEditReq?requirement_id=${data.requirement_id}`, {
+                              state: { requirement: data },
+                            })
+                          }
+                          className="action-button colored-view-button"
+                          title="View Requirement"
+                        >
+                          <FontAwesomeIcon icon={faEye} className="action-icon" />
+                        </button>
 
-          </table>
+                        <button
+                          onClick={() =>
+                            navigate(
+                              `/UpdateRequirement?project_id=${projectId}&requirement_id=${data.requirement_id}`
+                            )
+                          }
+                          className="action-button colored-edit-button"
+                          title="Edit Requirement"
+                        >
+                          <FontAwesomeIcon icon={faPen} className="action-icon" />
+                        </button>
+
+                        <button
+                          onClick={() => handleDelete(data.requirement_id)}
+                          className="action-button colored-delete-button"
+                          title="Delete Requirement"
+                        >
+                          <FontAwesomeIcon icon={faTrash} className="action-icon" />
+                        </button>
+                      </div>
+                    </td>
+
+                    {/* Status Badge */}
+                    <td className="req-status-cell">
+                      <div
+                        className={`status-button 
+                          ${data.requirement_status === 'VERIFIED' ? 'status-verified' : ''}
+                          ${data.requirement_status === 'VALIDATED' ? 'status-validated' : ''} 
+                          ${data.requirement_status === 'WORKING' ? 'status-working' : ''} 
+                          ${data.requirement_status === 'WAITING FOR VERIFICATION' ? 'status-waiting-ver' : ''}
+                          ${data.requirement_status === 'WAITING FOR VALIDATION' ? 'status-val-inprogress' : ''}
+                          ${data.requirement_status === 'BASELINE' ? 'status-baseline' : ''}
+                        `}
+                      >
+                        {data.requirement_status}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
 
       {/* File Upload Section */}
       <div className="file-upload-section">
         <div className="upload-section">
-          <h3>Uploaded Files</h3>
+          <h3 className="section-title">
+            <FontAwesomeIcon icon={faFileUpload} className="section-icon" />
+            Uploaded Files
+          </h3>
           <button onClick={handleOpenModal} className="upload-req">
-            <FontAwesomeIcon icon={faFileUpload} /> Add File
+            <FontAwesomeIcon icon={faPlus} className="upload-icon" /> 
+            Add File
           </button>
         </div>
 
         <div className="file-upload-container">
           {loading ? (
-            <p>Loading files...</p>
+            renderLoading()
           ) : error ? (
-            <p className="error-message">{error}</p>
+            <div className="error-message">{error}</div>
+          ) : files.length === 0 ? (
+            renderEmptyState("No files uploaded yet. Upload files using the 'Add File' button.")
           ) : (
-            <table className="table-file">
-              <thead>
-                <tr>
-                  <th>File ID</th>
-                  <th>File Name</th>
-                  <th>Requirement ID</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {files.map((file) => (
-                  <tr key={file.filereq_id}>
-                    <td>{file.filereq_id}</td>
-                    <td>{file.filereq_name}</td>
-                    <td>
-                      {file.requirement_ids && file.requirement_ids.length > 0
-                        ? file.requirement_ids.map(id => `REQ-${id}`).join(", ")
-                        : "-"}
-                    </td>
-                    <td className="file-actions">
-                      <button
-                        className="view-requirement-button"
-                        onClick={() => {
-                          if (file?.filereq_id) {
-                            navigate(`/ViewFile?filereq_id=${file.filereq_id}`, { state: { file } });
-                          } else {
-                            console.error("Invalid filereq_id:", file);
-                          }
-                        }}
-                      >
-                        <FontAwesomeIcon icon={faEye} />
-                      </button>
-
-
-
-                      <button
-                        className="download-file-button"
-                        onClick={async () => {
-                          try {
-                            const fileId = file?.filereq_id;
-                            if (!fileId) {
-                              alert("Invalid file ID");
-                              return;
-                            }
-
-                            const response = await fetch(`http://localhost:3001/files/${fileId}`);
-
-                            if (!response.ok) {
-                              throw new Error(`Failed to fetch file: ${response.statusText}`);
-                            }
-
-                            const blob = await response.blob();
-                            const fileURL = window.URL.createObjectURL(blob);
-                            const link = document.createElement("a");
-
-                            link.href = fileURL;
-                            link.download = file.filereq_name.endsWith(".pdf") ? file.filereq_name : `${file.filereq_name}.pdf`;
-
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-
-                            window.URL.revokeObjectURL(fileURL);
-                          } catch (error) {
-                            console.error("Download error:", error);
-                            alert("Failed to download file. Please try again.");
-                          }
-                        }}
-                      >
-                        <FontAwesomeIcon icon={faDownload} />
-                      </button>
-
-
-
-                      <button className="delete-file-button" onClick={() => handleDeleteFile(file.filereq_id)}>
-                        <FontAwesomeIcon icon={faTrash} className="delete-file" />
-                      </button>
-                    </td>
+            <div className="table-responsive">
+              <table className="table-file">
+                <thead>
+                  <tr>
+                    <th className="file-id-column">File ID</th>
+                    <th className="file-name-column">File Name</th>
+                  
+                    <th className="file-actions-column">Actions</th>
                   </tr>
-                ))}
-              </tbody>
+                </thead>
+                <tbody>
+                  {files.map((file) => (
+                    <tr key={file.filereq_id} className="file-row">
+                      <td className="file-id-cell">{file.filereq_id}</td>
+                      <td className="file-name-cell">
+                        <span className="file-name-text">{file.filereq_name}</span>
+                      </td>
+                      <td className="file-actions-cell">
+                        <div className="file-action-buttons">
+                          <button
+                            className="view-requirement-button"
+                            title="View File"
+                            onClick={() => {
+                              if (file?.filereq_id) {
+                                navigate(`/ViewFile?filereq_id=${file.filereq_id}`, { state: { file } });
+                              } else {
+                                console.error("Invalid filereq_id:", file);
+                              }
+                            }}
+                          >
+                            <FontAwesomeIcon icon={faEye} />
+                          </button>
 
+                          <button
+                            className="download-file-button"
+                            title="Download File"
+                            onClick={async () => {
+                              try {
+                                const fileId = file?.filereq_id;
+                                if (!fileId) {
+                                  alert("Invalid file ID");
+                                  return;
+                                }
 
+                                const response = await fetch(`http://localhost:3001/files/${fileId}`);
 
-            </table>
+                                if (!response.ok) {
+                                  throw new Error(`Failed to fetch file: ${response.statusText}`);
+                                }
+
+                                const blob = await response.blob();
+                                const fileURL = window.URL.createObjectURL(blob);
+                                const link = document.createElement("a");
+
+                                link.href = fileURL;
+                                link.download = file.filereq_name.endsWith(".pdf") 
+                                  ? file.filereq_name 
+                                  : `${file.filereq_name}.pdf`;
+
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+
+                                window.URL.revokeObjectURL(fileURL);
+                              } catch (error) {
+                                console.error("Download error:", error);
+                                alert("Failed to download file. Please try again.");
+                              }
+                            }}
+                          >
+                            <FontAwesomeIcon icon={faDownload} />
+                          </button>
+
+                          <button 
+                            className="delete-file-button" 
+                            title="Delete File"
+                            onClick={() => handleDeleteFile(file.filereq_id)}
+                          >
+                            <FontAwesomeIcon icon={faTrash} className="delete-file" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
-
       </div>
-
 
       {/* Modal for UploadFile */}
       <Modal
@@ -524,11 +570,10 @@ const RequirementPage = () => {
       >
         <UploadFile
           onClose={handleCloseModal}
-          onUploadSuccess={handleUploadSuccess} // Pass the success handler to the modal
+          onUploadSuccess={handleUploadSuccess}
           projectId={projectId}
         />
       </Modal>
-
     </div>
   );
 };

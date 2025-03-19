@@ -1,213 +1,637 @@
-.requirement-container {
-  width: 100%;
-  padding: 20px;
-  background-color: #f4f4f9;
-  border-radius: 10px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
+/* RequirementPage.css */
+/* Global Variables */
+:root {
+  --primary-color: #2c3e50;
+  --secondary-color: #3498db;
+  --accent-color: #1abc9c;
+  --danger-color: #e74c3c;
+  --warning-color: #f39c12;
+  --success-color: #27ae60;
+  --info-color: #3498db;
+  --light-color: #ecf0f1;
+  --dark-color: #2c3e50;
+  --gray-color: #95a5a6;
+  --border-radius: 6px;
+  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --transition: all 0.3s ease;
+  --font-primary: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
-/* ปรับโครงสร้างให้ชื่อกับปุ่มอยู่ในแนวเดียวกัน */
+/* Page Layout */
+.page-wrapper {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  font-family: var(--font-primary);
+  color: var(--dark-color);
+  background-color: #f9fafb;
+}
+
+.requirement-container {
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  margin-bottom: 2rem;
+  overflow: hidden;
+}
+
+.content-container {
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  margin-bottom: 2rem;
+  overflow: hidden;
+  padding: 0;
+}
+
+/* Header Section */
 .requirement-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  /* ชื่ออยู่ซ้าย ปุ่มอยู่ขวา */
-  width: 100%;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  background: linear-gradient(135deg, var(--primary-color) 0%, #34495e 100%);
+  color: white;
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
+  flex-wrap: wrap;
+}
+
+.header-title-wrapper {
+  flex: 1;
+  min-width: 250px;
 }
 
 .requirement-title {
-  font-size: 28px;
-  font-weight: bold;
-  color: #333;
   margin: 0;
-  /* เอา margin-bottom ออกเพื่อให้ align กับปุ่ม */
+  font-size: 1.6rem;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
 }
 
-/* จัดปุ่มไปทางขวา */
+.project-name {
+  font-size: 2rem;
+  margin-bottom: 0.25rem;
+  letter-spacing: 0.5px;
+}
+
+.page-type {
+  font-size: 1rem;
+  font-weight: 400;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Action Buttons */
 .req-action-buttons {
   display: flex;
-  gap: 10px;
-  /* เว้นระยะห่างระหว่างปุ่ม */
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  max-width: 70%;
+  justify-content: flex-end;
 }
 
-/* ปุ่มสำหรับการทำงานต่างๆ */
-.create-verification-button,
-.verifylist-button,
-.CreateVar-button,
-.validation-button,
-.viewvervar-button,
-.versioncontrol-button,
-.baseline-button {
-  color: #fff;
-  background-color: #1e3a8a;
-  border-radius: 25px;
-  padding: 10px 20px;
-  font-size: 15px;
+.action-btn {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--border-radius);
+  padding: 0.6rem 1rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: var(--transition);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.action-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.action-icon {
+  font-size: 0.9rem;
+}
+
+/* Search and Filter Section */
+.req-search {
+  background-color: white;
+  padding: 1.25rem;
+  border-radius: var(--border-radius);
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  box-shadow: var(--box-shadow);
+}
+
+.search-container {
+  flex: 1;
+  min-width: 300px;
+  position: relative;
+}
+
+.req-search-input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border: 1px solid #dce1e5;
+  border-radius: var(--border-radius);
+  font-size: 0.95rem;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23718096" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>');
+  background-repeat: no-repeat;
+  background-position: 0.75rem center;
+  transition: var(--transition);
+}
+
+.req-search-input:focus {
+  outline: none;
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.clear-search-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: var(--transition);
+}
+
+.clear-search-btn:hover {
+  opacity: 1;
+}
+
+.clearsearch-req {
+  width: 16px;
+  height: 16px;
+}
+
+.filters-container {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.requirement_filterstatus,
+.requirement_filtertype {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.requirement_filterstatus-label,
+.requirement_filtertype-label {
+  font-size: 0.9rem;
+  color: var(--dark-color);
   font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 8px;
-  /* เว้นระยะระหว่างไอคอนกับข้อความ */
-  transition: all 0.3s ease;
+  gap: 0.35rem;
 }
 
-.create-verification-button:hover,
-.verifylist-button:hover,
-.CreateVar-button:hover,
-.validation-button:hover,
-.viewvervar-button:hover,
-.versioncontrol-button:hover,
-.baseline-button:hover {
-  opacity: 0.85;
-  transform: scale(1.05);
+.filter-icon {
+  color: var(--gray-color);
+  font-size: 0.9rem;
 }
 
-/* ปรับขนาดไอคอนให้เหมาะสม */
-.createver,
-.verificationlist,
-.createvervar,
-.validationlist,
-.checkmark,
-.version_control,
-.history {
-  width: 18px;
-  height: 18px;
+.requirement_filterstatus-select,
+.requirement_filtertype-select {
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #dce1e5;
+  border-radius: var(--border-radius);
+  background-color: white;
+  font-size: 0.9rem;
+  color: var(--dark-color);
+  cursor: pointer;
+  transition: var(--transition);
+  min-width: 160px;
 }
 
-
-.req-search {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
+.requirement_filterstatus-select:focus,
+.requirement_filtertype-select:focus {
+  outline: none;
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
 }
-
 
 .add-requirement-button {
-  margin-top: 120px;
-  margin-left: 12%;
-  background-color: #ffffff;
-  border: 2px dashed #aaa;
-  padding: 10px 15px;
-  border-radius: 8px;
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 0.75rem 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
 }
 
 .add-requirement-button:hover {
-  background-color: #f9f9f9;
+  background-color: #16a085;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* ตาราง */
-.content-container {
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+.add-icon {
+  font-size: 0.9rem;
+}
+
+/* Requirements Table */
+.table-responsive {
+  overflow-x: auto;
+  width: 100%;
 }
 
 .requirement-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 15px;
+  font-size: 0.95rem;
 }
 
-.requirement-table th,
+.requirement-table thead th {
+  background-color: #f8fafc;
+  text-align: left;
+  padding: 1rem;
+  font-weight: 600;
+  color: var(--dark-color);
+  border-bottom: 2px solid #edf2f7;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.requirement-table tbody tr {
+  border-bottom: 1px solid #edf2f7;
+  transition: var(--transition);
+}
+
+.requirement-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
 .requirement-table td {
-  padding: 15px;
-  border: 1px solid #ddd;
-  text-align: center;
+  padding: 1rem;
+  vertical-align: middle;
 }
 
-.requirement-table th {
-  background-color: #f7f7f7;
-  font-weight: bold;
-}
-
-
-/* ปุ่ม Action */
-.action-button {
-  background: none;
-  border: none;
-  padding: 8px;
-  margin: 0 8px;
+.req-id-cell,
+.req-name-cell,
+.req-type-cell {
   cursor: pointer;
-  display: inline-flex;
+}
+
+.req-id-cell {
+  font-weight: 600;
+  color: var(--secondary-color);
+}
+
+.req-name-cell {
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.type-badge {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  background-color: rgba(52, 152, 219, 0.1);
+  color: var(--secondary-color);
+  border-radius: 30px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* Action Buttons */
+.action-buttons-group {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.action-button {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
-  transition: all 0.3s ease;
+  cursor: pointer;
+  transition: var(--transition);
+  color: white;
 }
 
-.action-icon {
-  font-size: 18px;
-  color: #555;
+.colored-view-button {
+  background-color: var(--info-color);
+}
+
+.colored-edit-button {
+  background-color: var(--warning-color);
+}
+
+.colored-delete-button {
+  background-color: var(--danger-color);
 }
 
 .action-button:hover {
-  background-color: #f0f0f0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.edit-req .action-icon {
-  color: #4caf50;
-  /* สีเขียวสำหรับการแก้ไข */
+/* Status Badges */
+.req-status-cell {
+  text-align: center;
 }
 
-.delete-req .action-icon {
-  color: #f44336;
-  /* สีแดงสำหรับการลบ */
+.status-button {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  border-radius: 30px;
+  font-weight: 500;
+  font-size: 0.85rem;
+  text-align: center;
+  white-space: nowrap;
 }
 
-.action-button:active {
-  transform: scale(0.98);
-  /* เอฟเฟกต์ขณะกดปุ่ม */
+.status-working {
+  background-color: rgba(52, 152, 219, 0.1);
+  color: #3498db;
 }
 
-.requirement-table td,
-.requirement-table th {
-  padding: 10px 15px;
+.status-verified {
+  background-color: rgba(46, 204, 113, 0.1);
+  color: #27ae60;
 }
 
-.history {
-  width: 20px;
-  height: 20px;
+.status-validated {
+  background-color: rgba(155, 89, 182, 0.1);
+  color: #8e44ad;
 }
 
-.checkmark {
-  width: 18px;
-  height: 18px;
+.status-waiting-ver {
+  background-color: rgba(243, 156, 18, 0.1);
+  color: #f39c12;
 }
 
-.verify-button {
+.status-val-inprogress {
+  background-color: rgba(230, 126, 34, 0.1);
+  color: #d35400;
+}
+
+.status-baseline {
+  background-color: rgba(22, 160, 133, 0.1);
+  color: #16a085;
+}
+
+/* File Upload Section */
+.file-upload-section {
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.upload-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem;
+  background-color: #f8fafc;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.section-title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--dark-color);
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-  background-color: #4caf50;
+  gap: 0.75rem;
+}
+
+.section-icon {
+  color: var(--primary-color);
+}
+
+.upload-req {
+  background-color: var(--secondary-color);
   color: white;
-  transition: background-color 0.3s ease, transform 0.3s ease;
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 0.65rem 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.verify-button:hover {
-  background-color: #45a049;
-  transform: scale(1.05);
+.upload-req:hover {
+  background-color: #2980b9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.checklist {
-  width: 18px;
-  height: 20px;
+.file-upload-container {
+  padding: 0;
 }
 
+/* Files Table */
+.table-file {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
 
+.table-file thead th {
+  background-color: #f8fafc;
+  text-align: left;
+  padding: 1rem;
+  font-weight: 600;
+  color: var(--dark-color);
+  border-bottom: 2px solid #edf2f7;
+}
 
-.add-req {
-  font-size: 18px;
-  color: #333;
+.table-file tbody tr {
+  border-bottom: 1px solid #edf2f7;
+  transition: var(--transition);
+}
+
+.table-file tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.table-file td {
+  padding: 1rem;
+  vertical-align: middle;
+}
+
+.file-id-cell {
+  font-weight: 600;
+  color: var(--primary-color);
+  width: 80px;
+}
+
+.file-name-cell {
+  max-width: 300px;
+}
+
+.file-name-text {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-req-cell {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  max-width: 300px;
+}
+
+.req-id-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background-color: rgba(52, 152, 219, 0.1);
+  color: var(--secondary-color);
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.file-actions-cell {
+  width: 120px;
+}
+
+.file-action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.view-requirement-button,
+.download-file-button,
+.delete-file-button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+  color: white;
+}
+
+.view-requirement-button {
+  background-color: var(--info-color);
+}
+
+.download-file-button {
+  background-color: var(--success-color);
+}
+
+.delete-file-button {
+  background-color: var(--danger-color);
+}
+
+.view-requirement-button:hover,
+.download-file-button:hover,
+.delete-file-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Loading and Empty States */
+.loading-state,
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  color: var(--gray-color);
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(52, 152, 219, 0.1);
+  border-radius: 50%;
+  border-top-color: var(--secondary-color);
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.empty-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.error-message {
+  background-color: rgba(231, 76, 60, 0.1);
+  color: var(--danger-color);
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.alert-message {
+  background-color: rgba(52, 152, 219, 0.1);
+  color: var(--secondary-color);
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  margin: 1rem 0;
+  text-align: center;
+}
+
+/* Upload File Modal */
+.upload-file-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  outline: none;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
 .modal-overlay {
@@ -216,581 +640,94 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999;
-}
-
-.modal-content {
-  background-color: white;
-  padding: 20px;
-  text-align: center;
-  border-radius: 8px;
-  max-width: 500px;
-  width: 80%;
-}
-
-.close-modal-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-.close-modal-button:hover {
-  background-color: #0056b3;
-}
-
-.uploaded-files {
-  margin-top: 20px;
-}
-
-.file-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.file-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 15px;
-  margin-bottom: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.file-item a {
-  text-decoration: none;
-  color: #007acc;
-  font-weight: bold;
-}
-
-.delete-file-button {
-  background: none;
-  border: none;
-  color: #d9534f;
-  font-size: 16px;
-  cursor: pointer;
-  transition: color 0.2s ease-in-out;
-}
-
-.delete-file-button:hover {
-  color: #c9302c;
-}
-
-.file-upload-section {
-  margin-top: 20px;
-}
-
-h3 {
-  font-size: 1.5rem;
-  color: #333;
-  margin-bottom: 10px;
-}
-
-.file-upload-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.table-file {
-  margin-right: 30%;
-  width: 70%;
-  border-collapse: collapse;
-  margin-bottom: 20px;
-}
-
-.table-file th,
-.table-file td {
-  padding: 10px;
-  text-align: left;
-  border: 1px solid #ddd;
-}
-
-.table-file th {
-  background-color: #f4f4f4;
-  color: #333;
-}
-
-.table-file tr:hover {
-  background-color: #f9f9f9;
-}
-
-.download-link {
-  color: #007bff;
-  text-decoration: none;
-}
-
-.download-link:hover {
-  text-decoration: underline;
-}
-
-.file-upload-actions {
-  display: flex;
-  justify-content: center;
-  margin-top: 10px;
-}
-
-
-.view-button {
-  background-color: #45a049;
-}
-
-.download-button {
-  background-color: #16ae62;
-  color: white;
-  font-size: 14px;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
-  /* Rounded corners */
-  cursor: pointer;
-  /* Pointer cursor on hover */
-  transition: background-color 0.3s ease;
-  /* Smooth background transition */
-  text-align: center;
-  /* Center the text */
-}
-
-.download-button:hover {
-  background-color: #44d68d;
-  /* Darker red on hover */
-}
-
-.download-button:active {
-  background-color: #16ae62;
-  /* Even darker red when button is clicked */
-}
-
-.download-button:focus {
-  outline: none;
-  /* Remove outline on focus */
-}
-
-.download-button:disabled {
-  background-color: #e0e0e0;
-  /* Light gray background when disabled */
-  cursor: not-allowed;
-  /* Disable cursor */
-}
-
-/* Container for the header and button */
-.upload-section {
-  display: flex;
-  align-items: center;
-  /* Vertically align items */
-
-  /* Space between the heading and button */
-  margin-bottom: 20px;
-  /* Space between this section and the next */
-}
-
-/* Heading Style */
-.upload-section h3 {
-  font-size: 25px;
-  font-weight: bold;
-  color: #333;
-  /* Dark color for heading */
-  margin: 0;
-  /* Remove default margin */
-}
-
-/* Button Style */
-.upload-req {
-  align-items: center;
-  background-color: #1e3a8a;
-  /* Dark Blue */
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 600;
-  transition: background-color 0.3s, transform 0.2s;
-  margin-left: 10px;
-}
-
-.upload-req:hover {
-  background-color: #1e40af;
-  transform: scale(1.05);
-}
-
-.upload-req:focus {
-  outline: none;
-}
-
-.upload-req:disabled {
-  background-color: #a1b3d1;
-  cursor: not-allowed;
-}
-
-.upload-req .fa-upload {
-  margin-right: 8px;
-}
-
-.delete-file-button {
-  background-color: #ff4d4f;
-  /* Red background for delete action */
-  border: none;
-  color: white;
-  font-size: 16px;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-}
-
-/* Style for delete button on hover */
-.delete-file-button:hover {
-  background-color: #d9363e;
-  /* Darker red on hover */
-  transform: scale(1.05);
-  /* Slightly increase size on hover */
-}
-
-/* Style for the delete icon */
-.delete-file {
-  font-size: 18px;
-}
-
-/* Modal Content */
-.modal-content-reviewreq {
-  background-color: #fff;
-  border-radius: 10px;
-  padding: 20px;
-  width: auto;
-  max-width: 800px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  position: relative;
-  overflow: hidden;
-}
-
-/* Close Button */
-.close-reviewreq {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 25px;
-  height: 25px;
-  cursor: pointer;
-}
-
-.close-reviewreq:hover {
-  transform: rotate(90deg);
-}
-
-/* Title */
-h3 {
-  font-size: 24px;
-  color: #333;
-  margin-bottom: 20px;
-  text-align: center;
-  font-weight: 600;
-}
-
-/* Table */
-.verified-requirements-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-.verified-requirements-table th,
-.verified-requirements-table td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #f1f1f1;
-}
-
-.verified-requirements-table th {
-  background-color: #f5f5f5;
-  color: #666;
-  font-weight: 500;
-}
-
-.verified-requirements-table td {
-  color: #333;
-}
-
-/* Export Button - Positioned Bottom Right */
-.ExportPDF {
-  margin: 25px 0 0 75%;
-  padding: 10px 20px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.ExportPDF:hover {
-  background-color: #45a049;
-}
-
-
-
-.table-file td .download-file-button {
-  background-color: #28a745;
-  color: white;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 4px;
-  margin-right: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-}
-
-.table-file td .download-file-button:hover {
-  background-color: #218838;
-  transform: scale(1.05);
-}
-
-.table-file td .delete-file-button {
-  background-color: #dc3545;
-  color: white;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 4px;
-  margin-right: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-}
-
-.table-file td .delete-file-button:hover {
-  background-color: #c82333;
-  transform: scale(1.05);
-}
-
-.table-file td .view-requirement-button {
-  background-color: #6c757d;
-  color: white;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-  margin-right: 5px;
-}
-
-.table-file td .view-requirement-button:hover {
-  background-color: #5a6268;
-  transform: scale(1.05);
-}
-
-/* สีพื้นฐานสำหรับปุ่ม */
-.status-button {
-  text-align: center;
-  padding: 10px 20px;
-  font-size: 16px;
-  border: 2px solid transparent;
-  cursor: pointer;
-  border-radius: 20px;
-  font-weight: 600;
-  background-color: transparent;
-  transition: all 0.3s ease;
-  text-transform: capitalize;
-  /* ตัวหนังสือแบบปกติ */
-  box-shadow: none;
-  /* ไม่มีเงา */
-}
-
-.status-button:hover {
-  opacity: 0.85;
-  /* ลดความทึบเมื่อ hover */
-  transform: scale(1.05);
-  /* เพิ่มขนาดเล็กน้อยเมื่อ hover */
-}
-
-/* สีของสถานะต่างๆ */
-.status-verified {
-  color: #28a745;
-  /* สีเขียว */
-  border-color: #28a745;
-  /* ขอบสีเขียว */
-}
-
-.status-validated {
-  color: #17a2b8;
-  /* สีฟ้า */
-  border-color: #17a2b8;
-  /* ขอบสีฟ้า */
-}
-
-.status-working {
-  color: #fd7e14;
-  /* สีส้ม */
-  border-color: #fd7e14;
-  /* ขอบสีส้ม */
-}
-
-.status-waiting-ver {
-  color: #ffc107;
-  /* สีเหลือง */
-  border-color: #ffc107;
-  /* ขอบสีเหลือง */
-}
-
-.status-val-inprogress {
-  color: #6f42c1;
-  /* สีม่วง */
-  border-color: #6f42c1;
-  /* ขอบสีม่วง */
-}
-
-.status-baseline {
-  color: #424242;
-  /* สีเทาเข้ม */
-  border-color: #424242;
-}
-
-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-
-input[type="checkbox"]:disabled {
-  cursor: not-allowed;
-}
-
-.alert-message {
-  margin-right: 70%;
-  color: red;
-  margin-top: 10px;
-  font-size: 16px;
-}
-
-/* สไตล์ของ requirement-header */
-.requirement-header {
-  background-color: #f4f4f4;
-  /* พื้นหลังสีอ่อน */
-  color: #333;
-  /* สีข้อความ */
-  text-align: center;
-  /* จัดตำแหน่งข้อความใน <th> ให้อยู่กลาง */
-  font-weight: bold;
-  /* ทำให้ข้อความใน <th> ตัวหนา */
-}
-
-/* สไตล์ของ <th> */
-.requirement-header th {
-  padding: 12px 15px;
-  /* เพิ่มพื้นที่ให้แต่ละ cell ใน th */
-  border-bottom: 1px solid #ddd;
-  /* ขอบล่างของ <th> */
-  font-size: 14px;
-  /* ขนาดฟอนต์ */
-}
-
-/* ทำให้แถวของหัวข้อมีความหรูหรานิดๆ */
-.requirement-header th:first-child {
-  border-left: 2px solid #ddd;
-  /* ขอบซ้ายที่หนากว่า */
-}
-
-.requirement-header th:last-child {
-  border-right: 2px solid #ddd;
-  /* ขอบขวาที่หนากว่า */
-}
-
-/* Wrapper container สำหรับ input และ icon */
-.search-container {
-  margin-top: 32px;
-  width: 40%;
-  padding: 0.75rem;
-}
-
-/* ปรับแต่ง input */
-.req-search-input {
-  width: 100%;
-  padding: 10px 30px 10px 10px;
-  /* เพิ่มพื้นที่ด้านขวาให้พอมีที่สำหรับไอคอน */
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
-}
-
-.req-search-input:hover {
-  border-color: #007bff;
-}
-
-/* ไอคอนค้นหาจะไปอยู่ใน input */
-.search-icon-req {
-  position: absolute;
-  top: 50%;
-  left: 22%;
-  transform: translateY(-50%);
-  color: #666;
-  font-size: 18px;
-}
-
-/* ไอคอนลบการค้นหาจะอยู่ที่ขวา */
-.clearsearch-req {
-  position: absolute;
-  top: 50%;
-  right: 10px;
-  transform: translateY(-50%);
-  cursor: pointer;
-}
-
-.requirement_filterstatus,
-.requirement_filtertype {
-  /* เพิ่มระยะห่างระหว่างฟอร์ม */
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.requirement_filterstatus-label,
-.requirement_filtertype-label {
-  font-size: 1rem;
-  font-weight: 500;
-  color: #333;
-  /* สีที่อ่านง่าย */
-  margin-bottom: 0.5rem;
-}
-
-.requirement_filterstatus-select,
-.requirement_filtertype-select {
-  padding: 0.75rem;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  width: 100%;
-  max-width: 300px;
-  transition: border-color 0.3s ease-in-out;
-}
-
-.requirement_filterstatus-select:focus,
-.requirement_filtertype-select:focus {
-  border-color: #007bff;
-  outline: none;
-}
-
-.requirement_filterstatus-select option,
-.requirement_filtertype-select option {
-  background-color: #fff;
-  color: #333;
-}
-
-.requirement_filterstatus-select:hover,
-.requirement_filtertype-select:hover {
-  border-color: #007bff;
-}
-
-.requirement_filterstatus,
-.requirement_filtertype {
-  padding: 10px;
-  box-sizing: border-box;
+  z-index: 1000;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1200px) {
+  .requirement-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .req-action-buttons {
+    max-width: 100%;
+    justify-content: flex-start;
+  }
+  
+  .page-wrapper {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .req-search {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .filters-container {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .add-requirement-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .filters-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .requirement_filterstatus,
+  .requirement_filtertype {
+    width: 100%;
+  }
+  
+  .requirement_filterstatus-select,
+  .requirement_filtertype-select {
+    flex: 1;
+  }
+  
+  .action-buttons-group {
+    flex-wrap: wrap;
+  }
+  
+  .table-file .file-req-cell {
+    max-width: 200px;
+  }
+}
+
+@media (max-width: 576px) {
+  .requirement-table thead th,
+  .requirement-table td,
+  .table-file thead th,
+  .table-file td {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.85rem;
+  }
+  
+  .req-name-cell {
+    max-width: 150px;
+  }
+  
+  .type-badge {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+  }
+  
+  .status-button {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+  }
 }

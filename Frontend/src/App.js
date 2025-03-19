@@ -36,7 +36,6 @@ import ValidationList from './Components/ValidationList';
 import ReqValidation from './Components/ReqValidation';
 import Baseline from './Components/Baseline';
 import CreateBaseline from './Components/CreateBaseline';
-import VeriVaView from './Components/VeriVaView';
 import TryToReq from './Components/TryToReq';
 import Uploadfile from './Components/Uploadfile';
 import ViewFile from './Components/ViewFile';
@@ -57,6 +56,7 @@ import UpdateDesign from './Components/UpdateDesign';
 //Implement
 import ImplementPage from './Components/Implement/implementPage';
 
+
 // Testcase
 import CreateTestcase from './Components/Testcase/CreateTestcase';
 import TestcasePage from './Components/Testcase/TestcasePage';
@@ -73,6 +73,10 @@ import CreateTestcasebaseline from './Components/Testcase/CreateTestcasebaseline
 
 //Traceability
 import TraceabilityPage from './Components/Traceability/traceabilityPage';
+import ViewReqTrace from './Components/Traceability/viewReqTrace';
+import EditReqTrace from './Components/Traceability/editReqTrace';
+import ViewDesignTrace from './Components/Traceability/viewDesignTrace'
+import VerifyTrace from './Components/Traceability/createVerifyTrace';
 
 // Notify
 import { ToastContainer } from 'react-toastify';
@@ -124,7 +128,6 @@ const App = () => {
         <Route path="/ReqVerification" element={<ReqVerification />} />
         <Route path="/ReqValidation" element={<ReqValidation />} />
         <Route path="/ViewFile" element={<ViewFile />} />
-        <Route path="/VeriVaView" element={<VeriVaView />} />
 
         {/* Routes สำหรับ Login */}
         <Route path="/" element={<Login setUsername={setUsername} />} />
@@ -175,6 +178,10 @@ const App = () => {
 
         {/* ทำ Trace */}
         <Route path="/traceabilityPage" element={<TraceabilityPage />} />
+        <Route path="/viewReqTrace" element={<ViewReqTrace />} />
+        <Route path="/editReqTrace" element={<EditReqTrace />} />
+        <Route path="/createVerifyTrace" element={<VerifyTrace />} />
+        <Route path="/viewDesignTrace" element={<ViewDesignTrace />} />
       </Routes>
     </>
   );

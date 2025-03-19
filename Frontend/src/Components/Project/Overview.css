@@ -112,4 +112,71 @@
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
+  /* แก้ไข Modal ให้แสดงตรงกลางจอในหน้า Enterprise Project */
+
+/* กำหนดให้ Modal อยู่ตรงกลาง */
+.modal {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+/* แก้ไข Modal Dialog ให้อยู่ตรงกลาง */
+.modal-dialog-centered {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: calc(100% - 3.5rem) !important;
+  margin: 1.75rem auto !important;
+}
+
+/* แก้ไข Enterprise Modal */
+.enterprise-modal .modal-dialog {
+  margin: 1.75rem auto !important;
+  max-width: 600px !important;
+  display: flex;
+  align-items: center;
+  width: calc(100% - 3rem);
+}
+
+.enterprise-modal-lg .modal-dialog {
+  max-width: 800px !important;
+}
+
+/* ทำให้ Modal Content มีขนาดเต็ม container */
+.enterprise-modal-content {
+  width: 100% !important;
+}
+
+/* แก้ไขสำหรับ Bootstrap 4+ */
+.modal-dialog-centered.enterprise-modal-dialog {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* แก้ไขสำหรับ Modal ที่มี scrollable content */
+.modal-dialog-scrollable {
+  max-height: calc(100% - 3.5rem) !important;
+}
+
+/* แก้ไขสำหรับหน้าจอขนาดเล็ก */
+@media (max-width: 576px) {
+  .enterprise-modal .modal-dialog {
+    margin: 1rem auto !important;
+    width: calc(100% - 2rem);
+  }
   
+  .modal-dialog-centered {
+    min-height: calc(100% - 2rem) !important;
+  }
+}
+
+/* แก้ไขการซ้อนทับของ Modal กับ Backdrop */
+.modal-backdrop {
+  z-index: 1040 !important;
+}
+
+.modal {
+  z-index: 1050 !important;
+}

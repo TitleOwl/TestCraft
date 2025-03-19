@@ -1,0 +1,113 @@
+/* ตั้งค่าพื้นหลังและฟอนต์โดยรวม */
+.traceability-container {
+    max-width: 80%;
+    margin: auto;
+    text-align: center;
+    font-family: "Inter", sans-serif;
+    background: #F9F9F9;
+    padding: 30px;
+    border-radius: 10px;
+}
+
+/* ชื่อหัวข้อ */
+.traceability-title {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: #2C3E50;
+    text-transform: uppercase;
+}
+
+/* ตารางหลัก */
+.traceability-table {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    background: white;
+}
+
+/* หัวตาราง */
+.traceability-table th {
+    background-color: #34495E;
+    text-align: center;
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 15px;
+    text-transform: uppercase;
+    border-bottom: 3px solid #ddd;
+}
+
+/* ข้อมูลในตาราง */
+.traceability-table td {
+    /* padding: 15px; */
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* เพิ่มสไตล์พิเศษให้ Requirement ID */
+.requirement-cell {
+    background-color: #2C3E50;
+    color: white;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+
+/* แสดง Requirement ID */
+.reqid-trace {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+/* แสดง Requirement Name */
+.reqname-trace {
+    font-size: 14px;
+    font-weight: 500;
+    color: #E0E0E0;
+    margin-bottom: 10px;
+}
+
+/* จัดกลุ่มปุ่มให้เรียบร้อย */
+.req-allbutton-trace {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* ปรับแต่งปุ่ม */
+.button-req-trace {
+    background-color: #ECF0F1; /* สีพื้นหลังอ่อน */
+    border: none;
+    padding: 6px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+}
+
+/* ไอคอนในปุ่ม */
+.button-req-trace .view-req-trace {
+    color: #3498DB; /* สีฟ้าสำหรับดูรายละเอียด */
+    font-size: 16px;
+}
+
+.button-req-trace .edit-req-trace {
+    color: #F39C12; /* สีเหลืองสำหรับแก้ไข */
+    font-size: 16px;
+}
+
+/* เอฟเฟกต์ Hover */
+.button-req-trace:hover {
+    background-color: #D5DBDB;
+    transform: scale(1.05);
+}
+
+/* เอฟเฟกต์เมื่อกด */
+.button-req-trace:active {
+    transform: scale(0.95);
+}

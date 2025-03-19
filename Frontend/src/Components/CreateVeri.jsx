@@ -4,6 +4,19 @@ import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./CSS/CreateVeri.css";
 
+// Import icons
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { 
+  faClipboardCheck, 
+  faUsers, 
+  faCheckCircle, 
+  faTimes, 
+  faArrowLeft,
+  faSearch,
+  faFilter,
+  faSpinner
+} from '@fortawesome/free-solid-svg-icons';
+
 const CreateVeri = () => {
   const [workingRequirements, setWorkingRequirements] = useState([]);
   const [members, setMembers] = useState([]);
@@ -14,7 +27,9 @@ const CreateVeri = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [requirementsError, setRequirementsError] = useState(null);
   const [membersError, setMembersError] = useState(null);
-  const [toastId, setToastId] = useState(null); // เพิ่มการจัดการ toastId
+  const [toastId, setToastId] = useState(null);
+  const [searchQuery, setSearchQuery] = useState(""); // สำหรับการค้นหา requirements
+  const [filterType, setFilterType] = useState(""); // สำหรับกรองประเภท requirement
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const projectId = queryParams.get("project_id");
@@ -72,6 +87,31 @@ const CreateVeri = () => {
     );
   };
 
+  // ฟังก์ชั่นเลือกทั้งหมด
+  const handleSelectAll = () => {
+    if (selectedRequirements.length === filteredRequirements.length) {
+      // ถ้าเลือกทั้งหมดแล้ว ให้ยกเลิกการเลือกทั้งหมด
+      setSelectedRequirements([]);
+    } else {
+      // ถ้ายังไม่ได้เลือกทั้งหมด ให้เลือกทั้งหมด
+      setSelectedRequirements(filteredRequirements.map(req => req.requirement_id));
+    }
+  };
+
+  // ฟังก์ชันสำหรับกรอง requirements ตามการค้นหาและประเภท
+  const filteredRequirements = workingRequirements.filter(req => {
+    const matchesSearch = 
+      req.requirement_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      `REQ-0${req.requirement_id}`.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesType = filterType ? req.requirement_type === filterType : true;
+    
+    return matchesSearch && matchesType;
+  });
+
+  // ดึงประเภท requirement ที่มีทั้งหมด
+  const requirementTypes = [...new Set(workingRequirements.map(req => req.requirement_type))];
+
   const handleCreateVerification = async () => {
     const selectedReviewerNames = Object.keys(selectedReviewers).filter(
       (name) => selectedReviewers[name]
@@ -125,7 +165,7 @@ const CreateVeri = () => {
         for (const requirementId of selectedRequirements) {
           const historyReqData = {
             requirement_id: requirementId,
-            requirement_status: "WAITING FOR VERIFICATION",  // ตั้งค่า status เป็น "WAITING FOR VERIFICATION"
+            requirement_status: "WAITING FOR VERIFICATION",
           };
   
           // ส่งข้อมูลไปที่ historyReqWorking
@@ -143,7 +183,7 @@ const CreateVeri = () => {
         const updateResults = await Promise.allSettled(
           selectedRequirements.map((requirementId) =>
             axios.put(`http://localhost:3001/update-requirements-status-waitingfor-ver/${requirementId}`, {
-              requirement_status: "WAITING FOR VERIFICATION",  // ปรับ status เป็น "WAITING FOR VERIFICATION"
+              requirement_status: "WAITING FOR VERIFICATION",
             })
           )
         );
@@ -159,16 +199,12 @@ const CreateVeri = () => {
     }
   };
   
-
   // Handle cancel
   const handleCancel = () => {
     // Dismiss any active toast message with the specific toastId
     toast.dismiss("create-verification-toast");
     navigate(`/Dashboard?project_id=${projectId}`);
   };
-
-
-
 
   // Handle checkbox for reviewers
   const handleCheckboxReviewer = (memberName) => {
@@ -178,95 +214,268 @@ const CreateVeri = () => {
     }));
   };
 
+  // เลือกผู้ตรวจสอบทั้งหมด
+  const handleSelectAllReviewers = () => {
+    // รวบรวมรายชื่อทั้งหมด
+    const allReviewers = {};
+    members.forEach(member => {
+      try {
+        const memberInfo = member.project_member ? JSON.parse(member.project_member) : [];
+        memberInfo.forEach(info => {
+          allReviewers[info.name] = true;
+        });
+      } catch (e) {
+        console.error("Invalid JSON in member data:", e);
+      }
+    });
 
+    // ตรวจสอบว่าได้เลือกทุกคนแล้วหรือไม่
+    const allSelected = Object.keys(allReviewers).every(name => selectedReviewers[name]);
+    
+    if (allSelected) {
+      // ถ้าเลือกทั้งหมดแล้ว ให้ยกเลิกการเลือกทั้งหมด
+      setSelectedReviewers({});
+    } else {
+      // ถ้ายังไม่ได้เลือกทั้งหมด ให้เลือกทั้งหมด
+      setSelectedReviewers(allReviewers);
+    }
+  };
 
   return (
     <div className="createveri-container">
-      <h1>Create Verification</h1>
+      <div className="createveri-header">
+        <button className="createveri-back-btn" onClick={handleCancel}>
+          <FontAwesomeIcon icon={faArrowLeft} /> Back
+        </button>
+        <h1>
+          <FontAwesomeIcon icon={faClipboardCheck} className="createveri-title-icon" />
+          Create Verification
+        </h1>
+      </div>
+
       <div className="createveri-content">
         {/* Left Panel (Requirements Section) */}
         <div className="createveri-left-panel">
-          <h2>Requirements</h2>
+          <div className="createveri-panel-header">
+            <h2>
+              <FontAwesomeIcon icon={faClipboardCheck} /> Requirements
+              {!loading && !requirementsError && (
+                <span className="createveri-count-badge">
+                  {workingRequirements.length}
+                </span>
+              )}
+            </h2>
+
+            <div className="createveri-tools">
+              <div className="createveri-search">
+                <FontAwesomeIcon icon={faSearch} className="createveri-search-icon" />
+                <input
+                  type="text"
+                  placeholder="Search requirements..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="createveri-search-input"
+                />
+                {searchQuery && (
+                  <button 
+                    className="createveri-clear-search" 
+                    onClick={() => setSearchQuery("")}
+                  >
+                    <FontAwesomeIcon icon={faTimes} />
+                  </button>
+                )}
+              </div>
+
+              <div className="createveri-filter">
+                <FontAwesomeIcon icon={faFilter} className="createveri-filter-icon" />
+                <select 
+                  value={filterType} 
+                  onChange={(e) => setFilterType(e.target.value)}
+                  className="createveri-filter-select"
+                >
+                  <option value="">All Types</option>
+                  {requirementTypes.map(type => (
+                    <option key={type} value={type}>{type}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+
           {loading ? (
-            <p>Loading requirements...</p>
+            <div className="createveri-loading">
+              <FontAwesomeIcon icon={faSpinner} spin />
+              <p>Loading requirements...</p>
+            </div>
           ) : requirementsError ? (
-            <p className="createveri-error-message">{requirementsError}</p>
+            <div className="createveri-error-message">
+              <FontAwesomeIcon icon={faTimes} />
+              <p>{requirementsError}</p>
+            </div>
           ) : workingRequirements.length === 0 ? (
-            <p>No requirements found in 'WORKING' status.</p>
+            <div className="createveri-empty-state">
+              <p>No requirements found in 'WORKING' status.</p>
+            </div>
           ) : (
-            <table className="createveri-requirements-table">
-              <thead>
-                <tr>
-                  <th>Select</th>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Type</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {workingRequirements.map((req) => (
-                  <tr key={req.requirement_id}>
-                    <td>
-                      <input
-                        type="checkbox"
-                        checked={selectedRequirements.includes(req.requirement_id)}
-                        onChange={() =>
-                          handleSelect(req.requirement_id, setSelectedRequirements)
-                        }
-                      />
-                    </td>
-                    <td>REQ-0{req.requirement_id}</td>
-                    <td>{req.requirement_name}</td>
-                    <td>{req.requirement_type}</td>
-                    <td>{req.requirement_status}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <>
+              <div className="createveri-select-all">
+                <input
+                  type="checkbox"
+                  id="select-all-requirements"
+                  checked={selectedRequirements.length === filteredRequirements.length && filteredRequirements.length > 0}
+                  onChange={handleSelectAll}
+                />
+                <label htmlFor="select-all-requirements">Select All</label>
+                <span className="createveri-selected-count">
+                  {selectedRequirements.length} of {filteredRequirements.length} selected
+                </span>
+              </div>
+
+              <div className="createveri-table-container">
+                <table className="createveri-requirements-table">
+                  <thead>
+                    <tr>
+                      <th className="createveri-checkbox-column">Select</th>
+                      <th>ID</th>
+                      <th>Name</th>
+                      <th>Type</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredRequirements.length === 0 ? (
+                      <tr>
+                        <td colSpan="5" className="createveri-no-results">
+                          No requirements match your search
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredRequirements.map((req) => (
+                        <tr key={req.requirement_id} className={selectedRequirements.includes(req.requirement_id) ? "selected-row" : ""}>
+                          <td>
+                            <input
+                              type="checkbox"
+                              checked={selectedRequirements.includes(req.requirement_id)}
+                              onChange={() =>
+                                handleSelect(req.requirement_id, setSelectedRequirements)
+                              }
+                            />
+                          </td>
+                          <td className="req-id">REQ-{String(req.requirement_id).padStart(3, '0')}</td>
+                          <td>{req.requirement_name}</td>
+                          <td>
+                            <span className={`req-type type-${req.requirement_type.toLowerCase().replace(/\s+/g, '-')}`}>
+                              {req.requirement_type}
+                            </span>
+                          </td>
+                          <td>
+                            <span className="req-status status-working">
+                              {req.requirement_status}
+                            </span>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </>
           )}
         </div>
 
         {/* Right Panel (Reviewers Section) */}
         <div className="createveri-right-panel">
-          <h2>Reviewers</h2>
-          {isLoadingMembers ? (
-            <p>Loading reviewers...</p>
-          ) : membersError ? (
-            <p className="createveri-error-message">{membersError}</p>
-          ) : members.length === 0 ? (
-            <p>No reviewers found.</p>
-          ) : (
-            members.map((member, index) => {
-              let memberInfo = [];
-              try {
-                memberInfo = member.project_member
-                  ? JSON.parse(member.project_member)
-                  : [];
-              } catch (e) {
-                console.error("Invalid JSON in member data:", e);
-                setMembersError("Invalid project member data.");
-              }
+          <div className="createveri-panel-header">
+            <h2>
+              <FontAwesomeIcon icon={faUsers} /> Reviewers
+            </h2>
+          </div>
 
-              return (
-                <div key={index}>
-                  {memberInfo.map((info, roleIndex) => (
-                    <div key={roleIndex}>
-                      <input
-                        type="checkbox"
-                        id={info.name}
-                        checked={selectedReviewers[info.name] || false}
-                        onChange={() => handleCheckboxReviewer(info.name)}
-                      />
-                      <label htmlFor={info.name}>
-                        <strong>{info.name}</strong>: <span>{info.roles}</span>
-                      </label>
+          {isLoadingMembers ? (
+            <div className="createveri-loading">
+              <FontAwesomeIcon icon={faSpinner} spin />
+              <p>Loading reviewers...</p>
+            </div>
+          ) : membersError ? (
+            <div className="createveri-error-message">
+              <FontAwesomeIcon icon={faTimes} />
+              <p>{membersError}</p>
+            </div>
+          ) : members.length === 0 ? (
+            <div className="createveri-empty-state">
+              <p>No reviewers found.</p>
+            </div>
+          ) : (
+            <div className="createveri-reviewers-container">
+              <div className="createveri-select-all">
+                <input
+                  type="checkbox"
+                  id="select-all-reviewers"
+                  checked={
+                    Object.keys(selectedReviewers).length > 0 &&
+                    members.every(member => {
+                      try {
+                        const memberInfo = member.project_member ? JSON.parse(member.project_member) : [];
+                        return memberInfo.every(info => selectedReviewers[info.name]);
+                      } catch (e) {
+                        return false;
+                      }
+                    })
+                  }
+                  onChange={handleSelectAllReviewers}
+                />
+                <label htmlFor="select-all-reviewers">Select All Reviewers</label>
+              </div>
+
+              <div className="createveri-reviewers-list">
+                {members.map((member, index) => {
+                  let memberInfo = [];
+                  try {
+                    memberInfo = member.project_member
+                      ? JSON.parse(member.project_member)
+                      : [];
+                  } catch (e) {
+                    console.error("Invalid JSON in member data:", e);
+                    return null;
+                  }
+
+                  return (
+                    <div key={index} className="createveri-members-group">
+                      {memberInfo.map((info, roleIndex) => (
+                        <div key={roleIndex} className="createveri-reviewer-item">
+                          <input
+                            type="checkbox"
+                            id={`reviewer-${info.name}-${roleIndex}`}
+                            checked={selectedReviewers[info.name] || false}
+                            onChange={() => handleCheckboxReviewer(info.name)}
+                          />
+                          <label htmlFor={`reviewer-${info.name}-${roleIndex}`} className="createveri-reviewer-label">
+                            <div className="createveri-reviewer-name">{info.name}</div>
+                            <div className="createveri-reviewer-role">{info.roles}</div>
+                          </label>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              );
-            })
+                  );
+                })}
+              </div>
+            </div>
           )}
+
+          {/* Selection Summary */}
+          <div className="createveri-summary">
+            <h3>Selection Summary</h3>
+            <div className="createveri-summary-item">
+              <span>Requirements:</span>
+              <span className="createveri-summary-count">{selectedRequirements.length}</span>
+            </div>
+            <div className="createveri-summary-item">
+              <span>Reviewers:</span>
+              <span className="createveri-summary-count">
+                {Object.values(selectedReviewers).filter(Boolean).length}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -275,12 +484,20 @@ const CreateVeri = () => {
         <button
           className="createveri-btn-create"
           onClick={handleCreateVerification}
-          disabled={isSubmitting}
+          disabled={isSubmitting || selectedRequirements.length === 0 || Object.values(selectedReviewers).filter(Boolean).length === 0}
         >
-          {isSubmitting ? "Creating..." : "Create"}
+          {isSubmitting ? (
+            <>
+              <FontAwesomeIcon icon={faSpinner} spin /> Creating...
+            </>
+          ) : (
+            <>
+              <FontAwesomeIcon icon={faCheckCircle} /> Create Verification
+            </>
+          )}
         </button>
         <button className="createveri-btn-cancel" onClick={handleCancel}>
-          Cancel
+          <FontAwesomeIcon icon={faTimes} /> Cancel
         </button>
       </div>
     </div>

@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './CSS/Dashboard.css';
 
+// Import components
 import RequirementPage from './RequirementPage';
 import ProjectConfig from './ProjectConfig';
 import DesignPage from './DesignPage';
@@ -11,23 +12,41 @@ import OverviewProject from './Project/OverviewProject';
 import ImplementPage from './Implement/implementPage';
 import TraceabilityPage from './Traceability/traceabilityPage';
 
+// Import icons (ติดตั้งด้วย: npm install @fortawesome/react-fontawesome @fortawesome/free-solid-svg-icons @fortawesome/fontawesome-svg-core)
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { 
+  faHome, 
+  faCog, 
+  faClipboardList, 
+  faPencilRuler, 
+  faCode, 
+  faFlask, 
+  faClipboardCheck, 
+  faCubes, 
+  faProjectDiagram, 
+  faBookOpen, 
+  faDoorClosed,
+  faChevronLeft,
+  faChevronRight
+} from '@fortawesome/free-solid-svg-icons';
 
 const Dashboard = () => {
   const location = useLocation();
-  const navigate = useNavigate();  // ใช้ navigate สำหรับลิ้งค์กลับไปหน้า Project
+  const navigate = useNavigate();
   const [selectedSection, setSelectedSection] = useState(localStorage.getItem('selectedSection') || 'Overview');
   const [projectName, setProjectName] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [projectStatus, setProjectStatus] = useState('');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(localStorage.getItem('sidebarCollapsed') === 'true');
 
   // ดึง project_id จาก query params ใน URL
   const queryParams = new URLSearchParams(location.search);
-  const projectId = queryParams.get('project_id');  // ตรวจสอบว่าใช้ 'project_id'
+  const projectId = queryParams.get('project_id');
 
   useEffect(() => {
     if (location.state && location.state.selectedSection) {
-      setSelectedSection(location.state.selectedSection);  // อัปเดต selectedSection จาก state ที่ส่งมา
+      setSelectedSection(location.state.selectedSection);
     }
   }, [location.state]);
 
@@ -41,7 +60,7 @@ const Dashboard = () => {
         .get(`http://localhost:3001/project/${projectId}`)
         .then((res) => {
           setProjectName(res.data.project_name);
-          setProjectStatus(res.data.project_status); // เพิ่มการดึงสถานะโปรเจกต์
+          setProjectStatus(res.data.project_status);
           setLoading(false);
         })
         .catch((err) => {
@@ -56,6 +75,11 @@ const Dashboard = () => {
   useEffect(() => {
     localStorage.setItem('selectedSection', selectedSection);
   }, [selectedSection]);
+  
+  // เก็บสถานะ sidebar ใน localStorage
+  useEffect(() => {
+    localStorage.setItem('sidebarCollapsed', sidebarCollapsed);
+  }, [sidebarCollapsed]);
 
   const handleCloseProject = async () => {
     const confirmation = window.confirm("คุณแน่ใจที่จะปิดโปรเจค?");
@@ -85,87 +109,128 @@ const Dashboard = () => {
     }
   };
 
+  // ปุ่มสลับการแสดงผล sidebar
+  const toggleSidebar = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
 
   return (
     <div className="dashboard-container">
       {/* Sidebar */}
-      <nav className="dashboard-sidebar">
+      <nav className={`dashboard-sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
+        {/* ปุ่มย่อ/ขยาย Sidebar */}
+        <button className="sidebar-toggle" onClick={toggleSidebar}>
+          <FontAwesomeIcon icon={sidebarCollapsed ? faChevronRight : faChevronLeft} />
+        </button>
+
         {/* Project Name */}
-        {projectName && <div className="dashboard-sidebar-project-name">{projectName || projectId}</div>}
+        {projectName && (
+          <div className="dashboard-sidebar-project-name">
+            {!sidebarCollapsed && projectName}
+            {sidebarCollapsed && <span className="project-initial">{projectName.charAt(0)}</span>}
+          </div>
+        )}
 
         {/* Project Section */}
-        <div className="dashboard-sidebar-section-title">PROJECT</div>
+        <div className="dashboard-sidebar-section-title">
+          {!sidebarCollapsed && "PROJECT"}
+        </div>
+        
         <div
           className={`dashboard-nav-link ${selectedSection === 'Overview' ? 'active' : ''}`}
           onClick={() => setSelectedSection('Overview')}
         >
-          Overview
+          <FontAwesomeIcon icon={faHome} />
+          {!sidebarCollapsed && <span>Overview</span>}
         </div>
+        
         <div
           className={`dashboard-nav-link ${selectedSection === 'Configuration' ? 'active' : ''}`}
           onClick={() => setSelectedSection('Configuration')}
         >
-          Configuration
+          <FontAwesomeIcon icon={faCog} />
+          {!sidebarCollapsed && <span>Configuration</span>}
         </div>
 
         {/* Management Section */}
-        <div className="dashboard-sidebar-section-title">WORK PRODUCT</div>
+        <div className="dashboard-sidebar-section-title">
+          {!sidebarCollapsed && "WORK PRODUCT"}
+        </div>
+        
         <div
           className={`dashboard-nav-link ${selectedSection === 'Requirement' ? 'active' : ''}`}
           onClick={() => setSelectedSection('Requirement')}
         >
-          Requirement
+          <FontAwesomeIcon icon={faClipboardList} />
+          {!sidebarCollapsed && <span>Requirement</span>}
         </div>
+        
         <div
           className={`dashboard-nav-link ${selectedSection === 'Design' ? 'active' : ''}`}
           onClick={() => setSelectedSection('Design')}
         >
-          Design
+          <FontAwesomeIcon icon={faPencilRuler} />
+          {!sidebarCollapsed && <span>Design</span>}
         </div>
+        
         <div
           className={`dashboard-nav-link ${selectedSection === 'Implementation' ? 'active' : ''}`}
           onClick={() => setSelectedSection('Implementation')}
         >
-          Implementation
+          <FontAwesomeIcon icon={faCode} />
+          {!sidebarCollapsed && <span>Implementation</span>}
         </div>
+        
         <div
           className={`dashboard-nav-link ${selectedSection === 'Testcase' ? 'active' : ''}`}
           onClick={() => setSelectedSection('Testcase')}
         >
-          Test case
+          <FontAwesomeIcon icon={faFlask} />
+          {!sidebarCollapsed && <span>Test case</span>}
         </div>
+        
         <div
           className={`dashboard-nav-link ${selectedSection === 'Review' ? 'active' : ''}`}
           onClick={() => setSelectedSection('Review')}
         >
-          Review
+          <FontAwesomeIcon icon={faClipboardCheck} />
+          {!sidebarCollapsed && <span>Review</span>}
         </div>
+        
         <div
           className={`dashboard-nav-link ${selectedSection === 'Baseline' ? 'active' : ''}`}
           onClick={() => setSelectedSection('Baseline')}
         >
-          Baseline
+          <FontAwesomeIcon icon={faCubes} />
+          {!sidebarCollapsed && <span>Baseline</span>}
         </div>
+        
         <div
           className={`dashboard-nav-link ${selectedSection === 'Traceability' ? 'active' : ''}`}
           onClick={() => setSelectedSection('Traceability')}
         >
-          Traceability
+          <FontAwesomeIcon icon={faProjectDiagram} />
+          {!sidebarCollapsed && <span>Traceability</span>}
         </div>
 
         {/* Automation Section */}
-        <div className="dashboard-sidebar-section-title">GUIDES</div>
+        <div className="dashboard-sidebar-section-title">
+          {!sidebarCollapsed && "GUIDES"}
+        </div>
+        
         <div
           className={`dashboard-nav-link ${selectedSection === 'Guide Tutorial' ? 'active' : ''}`}
           onClick={() => setSelectedSection('Guide Tutorial')}
         >
-          Guide Tutorial
+          <FontAwesomeIcon icon={faBookOpen} />
+          {!sidebarCollapsed && <span>Guide Tutorial</span>}
         </div>
 
         {/* Close Project Button in Sidebar */}
         {projectStatus !== 'CLOSE' && (
           <button onClick={handleCloseProject} className="dashboard-close-project-btn">
-            Close Project
+            <FontAwesomeIcon icon={faDoorClosed} />
+            {!sidebarCollapsed && <span>Close Project</span>}
           </button>
         )}
       </nav>
@@ -192,7 +257,6 @@ const Dashboard = () => {
         )}
       </div>
     </div>
-
   );
 };
 
