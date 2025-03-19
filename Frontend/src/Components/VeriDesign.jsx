@@ -114,7 +114,7 @@ const VeriDesign = () => {
       })
       .catch((err) => {
         console.error("Error fetching designs:", err);
-        toast.error("Error fetching designs.");
+        toast.error("Error fetching designs.", { autoClose: 3000 });
       });
   }, [projectId]);
 
@@ -131,7 +131,11 @@ const VeriDesign = () => {
 
   const handleVerifyClick = (design) => {
     if (!projectId || !design?.design_ids || !design?.veridesign_id) {
-      toast.error("Invalid project ID or no design selected.");
+      toast.error("Invalid project ID or no design selected.", {
+        autoClose: 3000, // ปิดอัตโนมัติใน 3 วินาที
+        closeButton: true // แสดงปุ่มปิด
+      });
+      
       return;
     }
 

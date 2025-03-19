@@ -21,10 +21,16 @@ const TestProcedures = () => {
 
   const fetchTestProcedures = () => {
     if (!testcaseId) return;
+
     axios.get(`http://localhost:3001/api/test-procedures?testcase_id=${testcaseId}`)
-      .then((response) => setProcedures(response.data))
-      .catch((error) => console.error("Error fetching data:", error));
-  };
+        .then((response) => {
+            console.log("Fetched Data:", response.data);  // ✅ Debug Response Data
+            setProcedures(response.data);
+        })
+        .catch((error) => {
+            console.error("Error fetching data:", error.response?.status, error.response?.data);
+        });
+};
 
   const handleOpenModal = (step = null) => {
     setEditingStep(step);

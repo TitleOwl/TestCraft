@@ -184,10 +184,13 @@ const DesignVerifed = () => {
         if (updateStatusResponse.data.message === "Design status updated to VERIFIED successfully.") {
           toast.success("อัปเดตสถานะเป็น VERIFIED สำเร็จ", {
             autoClose: 1500,
-            onClose: () => navigate(`/Dashboard?project_id=${projectId}`),
+            onClose: () => navigate(`/Dashboard?project_id=${projectId}`) || null,
           });
+          
         } else {
-          toast.error("ไม่สามารถอัปเดตสถานะ design ได้");
+          toast.error("ไม่สามารถอัปเดตสถานะได้ กรุณาลองใหม่", {
+            autoClose: 2000,
+          });          
         }
       } else {
         toast.warning("ยังมี reviewer ที่ยังไม่ได้ทำการตรวจสอบ");

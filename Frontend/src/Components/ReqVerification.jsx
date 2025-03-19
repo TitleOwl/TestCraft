@@ -19,44 +19,49 @@ const ReqVerification = () => {
   const [checkboxState, setCheckboxState] = useState({});
 
   useEffect(() => {
+    console.log("Project ID:", projectId);
+    console.log("Verification ID:", verificationId);
+    console.log("Selected Requirements:", selectedRequirements);
+  
     if (!projectId || !verificationId) {
       console.error("Project ID or Verification ID is missing.");
       navigate("/VerificationList");
       return;
     }
-
-    const storedUsername = localStorage.getItem("username");
-    if (storedUsername) {
-      const storedCheckboxState = localStorage.getItem(
-        `checkboxState_${storedUsername}_${projectId}_${verificationId}`
-      );
-      if (storedCheckboxState) {
-        setCheckboxState(JSON.parse(storedCheckboxState));
-      }
-    }
-
+  
+    fetchCriteria();
+  
     if (selectedRequirements && selectedRequirements.length > 0) {
       fetchRequirementsDetails(selectedRequirements);
     }
-
-    fetchCriteria();
   }, [projectId, verificationId, selectedRequirements, navigate]);
-
+  
   const fetchCriteria = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://localhost:3001/reqcriteria/${projectId}`);
+  
+      // ✅ เปลี่ยนเป็นใช้ params แทนการใส่ projectId ใน URL
+      const response = await axios.get("http://localhost:3001/reqcriteria", {
+        params: { project_id: projectId },
+      });
+  
+      console.log("Fetched criteria data:", response.data); // ✅ Debug
+  
       const initialCheckboxState = response.data.reduce((acc, criteria) => {
         acc[criteria.reqcri_id] = false;
         return acc;
       }, {});
+  
       setReqcriList(response.data);
+      console.log("Initial checkbox state:", initialCheckboxState); // ✅ Debug
   
       const storedUsername = localStorage.getItem("username");
       if (storedUsername) {
         const storedCheckboxState = localStorage.getItem(
-          `checkboxState_${storedUsername}_${projectId}_${verificationId}`
+          `checkboxState_${storedUsername}_${projectId}`
         );
+        console.log("Stored checkbox state:", storedCheckboxState); // ✅ Debug
+  
         if (storedCheckboxState) {
           setCheckboxState(JSON.parse(storedCheckboxState));
         } else {
@@ -105,10 +110,6 @@ const ReqVerification = () => {
       toast.success("Criteria Checklist Saved", {
         position: "top-right",
         autoClose: 1500,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
         onClose: () => navigate(`/VerificationList?project_id=${projectId}`),
       });
       return;
@@ -124,6 +125,7 @@ const ReqVerification = () => {
       const response = await axios.get("http://localhost:3001/verifications", {
         params: { project_id: projectId, verification_id: verificationId },
       });
+  
       const verification = response.data.find((v) => v.id === parseInt(verificationId));
   
       if (verification) {
@@ -149,47 +151,52 @@ const ReqVerification = () => {
         if (allVerified) {
           const requirementIds = requirementsDetails.map((req) => req.requirement_id);
           
-          // Update requirement status to "VERIFIED" in the Backend
-          await axios.put("http://localhost:3001/update-requirements-status-verified", {
-            requirement_ids: requirementIds,
-            requirement_status: "VERIFIED",
-          });
+          console.log("Requirement IDs to update:", requirementIds);
   
-          // Loop through each requirement and log history in historyReqWorking with "VERIFIED"
-          for (const requirementId of requirementIds) {
-            const historyReqData = {
-              requirement_id: requirementId,
-              requirement_status: "VERIFIED",  // Set status to "VERIFIED"
-            };
-  
-            // Send to historyReqWorking
-            const historyResponse = await axios.post(
-              "http://localhost:3001/historyReqWorking",
-              historyReqData
-            );
-  
-            if (historyResponse.status !== 200) {
-              console.error("Failed to add history for requirement:", requirementId);
-            }
+          if (!requirementIds || requirementIds.length === 0) {
+            console.error("No requirements found to update.");
+            return;
           }
   
-          toast.success("All criteria verified! Status updated to VERIFIED.", {
-            position: "top-right",
-            autoClose: 1500,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            onClose: () => navigate(`/Dashboard?project_id=${projectId}`),
-          });
+          try {
+            const updateResponse = await axios.put(
+              "http://localhost:3001/update-requirements-status-verified",
+              {
+                requirement_ids: requirementIds,
+                requirement_status: "VERIFIED",
+              }
+            );
+  
+            console.log("Update response:", updateResponse.data);
+  
+            for (const requirementId of requirementIds) {
+              const historyReqData = {
+                requirement_id: requirementId,
+                requirement_status: "VERIFIED",
+              };
+  
+              const historyResponse = await axios.post(
+                "http://localhost:3001/historyReqWorking",
+                historyReqData
+              );
+  
+              if (historyResponse.status !== 200) {
+                console.error("Failed to add history for requirement:", requirementId);
+              }
+            }
+  
+            toast.success("All criteria verified! Status updated to VERIFIED.", {
+              position: "top-right",
+              autoClose: 1500,
+              onClose: () => navigate(`/Dashboard?project_id=${projectId}`),
+            });
+          } catch (error) {
+            console.error("Error updating requirement status:", error);
+          }
         } else {
           toast.warning("Not all users have verified. Please wait for everyone to verify.", {
             position: "top-right",
             autoClose: 1800,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
             onClose: () => navigate(`/VerificationList?project_id=${projectId}`),
           });
         }
@@ -199,13 +206,10 @@ const ReqVerification = () => {
       toast.error("Failed to update verification status. Please try again.", {
         position: "top-right",
         autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
       });
     }
   };
+  
   
 
   return (

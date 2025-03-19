@@ -73,7 +73,7 @@ const TestcaseDetail = () => {
         </div>
       </div>
 
-      {/* Attachments Section */}
+      {/* Attachments Section
       <div className="testcase-detail-section">
         <h3>
           <FontAwesomeIcon icon={faPaperclip} /> Attachments
@@ -87,7 +87,7 @@ const TestcaseDetail = () => {
         ) : (
           <p>No attachments available</p>
         )}
-      </div>
+      </div> */}
 
       {/* Test Procedures Section */}
       <div className="test-procedures-wrapper">

@@ -32,7 +32,6 @@ const TestExecution = () => {
                 setTestCase({
                     testcase_id: response.data[0].testcase_id,
                     testcase_at: response.data[0].testcase_at,
-                    tested_by: response.data[0].tested_by || "Unknown",
                     testcase_name: response.data[0].testcase_name || "No Name",
                 });
 
@@ -172,7 +171,6 @@ const TestExecution = () => {
       <button className="save-button" onClick={handleSave}>Save</button>
       <h3>Test Execution : TC-0{testCase?.testcase_id || "-" } {testCase?.testcase_name || "Unknown"}</h3>
 <p><strong>Completion Date:</strong> {testCase?.testcase_at ? new Date(testCase.testcase_at).toLocaleDateString("th-TH") : "-"}</p>
-<p><strong>Tested By:</strong> {testCase?.tested_by || "Not Assigned"}</p>
 
       
       <table className="test-execution-table">

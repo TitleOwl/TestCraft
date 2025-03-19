@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import "./testcase_css/CreateVeriTest.css";
 
 const CreateVeriTest = () => {
@@ -72,95 +73,108 @@ useEffect(() => {
     );
   };
 
-  const handleCreateVerification = async () => {
-    const selectedReviewerNames = Object.keys(selectedReviewers).filter(
-      (name) => selectedReviewers[name]
+
+const handleCreateVerification = async () => {
+  const selectedReviewerNames = Object.keys(selectedReviewers).filter(
+    (name) => selectedReviewers[name]
+  );
+
+  if (!projectId) {
+    toast.error("Invalid project ID.");
+    return;
+  }
+
+  if (selectedTestCase.length === 0 || selectedReviewerNames.length === 0) {
+    toast.warning("Please select at least one testcase and one reviewer.");
+    return;
+  }
+
+  const storedUsername = localStorage.getItem("username");
+  const createBy = storedUsername;
+
+  if (!createBy) {
+    toast.error("No user found. Please login again.");
+    return;
+  }
+
+  // 🔎 ตรวจสอบว่าทุก testCase มี test_procedures หรือไม่
+  try {
+    const checkResults = await Promise.all(
+      selectedTestCase.map((testcaseId) =>
+        axios.get(`http://localhost:3001/api/test-procedures?project_id=${projectId}&testcase_id=${testcaseId}`)
+      )
     );
 
-    if (!projectId) {
-      toast.error("Invalid project ID.");
-      return;
-    }
 
-    if (selectedTestCase.length === 0 || selectedReviewerNames.length === 0) {
-      toast.warning("Please select at least one testcase and one reviewer.");
-      return;
-    }
-
-    const storedUsername = localStorage.getItem("username");
-    const createBy = storedUsername;
-
-    if (!createBy) {
-      toast.error("No user found. Please login again.");
-      return;
-    }
-
-    // Create veritestcase payload
+    // ✅ ถ้ามี test_procedures ทุก testCase, ดำเนินการสร้าง verification ต่อไป
     const timestamp = new Date().toISOString();
     const payload = selectedTestCase.map((testcaseId) => ({
-      veritestcase_id: null, // Auto-incremented in the database
+      veritestcase_id: null,
       project_id: projectId,
       create_by: createBy,
       testcase_id: testcaseId,
       veritestcase_at: timestamp,
       veritestcase_by: selectedReviewerNames.reduce((acc, reviewerName) => {
-        acc[reviewerName] = false;  // Set reviewer as false
+        acc[reviewerName] = false;
         return acc;
       }, {}),
     }));
 
-    try {
-      setIsSubmitting(true); // Disable submit button
+    setIsSubmitting(true);
 
-      // Update the status of TestCase to "WAITING FOR VERIFICATION"
-      const updateResults = await Promise.allSettled(
+    // อัปเดตสถานะ testcase -> "WAITING FOR VERIFICATION"
+    await Promise.all(
+      selectedTestCase.map((testcaseId) =>
+        axios.put(`http://localhost:3001/update-testcase-status-waitingfor-ver/${testcaseId}`, {
+          testcase_status: "WAITING FOR VERIFICATION",
+        })
+      )
+    );
+
+    // สร้าง verification records ใน backend
+    const response = await axios.post("http://localhost:3001/createveritestcase", payload);
+
+    if (response.status === 201) {
+      toast.success("TestCase verification created successfully!", {
+        position: "top-center",
+      });
+
+      // เพิ่มประวัติ testcase ลงใน historytestcase
+      await Promise.all(
         selectedTestCase.map((testcaseId) =>
-          axios.put(`http://localhost:3001/update-testcase-status-waitingfor-ver/${testcaseId}`, {
-            testcase_status: "WAITING FOR VERIFICATION",  // Set status as "WAITING FOR VERIFICATION"
+          axios.post("http://localhost:3001/addHistoryTestcase", {
+            testcase_id: testcaseId,
+            testcase_status: "WAITING FOR VERIFICATION",
           })
         )
       );
 
-      console.log(updateResults); // ใช้ตัวแปรเพื่อป้องกัน warning
+      // อัปเดต UI
+      setWorkingTestCase((prev) =>
+        prev.filter((testcase) => !selectedTestCase.includes(testcase.testcase_id))
+      );
 
-      // Create veritestcase records in the backend
-      const response = await axios.post("http://localhost:3001/createveritestcase", payload);
-
-      
-      if (response.status === 201) {
-        toast.success("TestCase verification created successfully!", {
-          position: "top-center",
-        });
-
-        // Insert into historytestcase table
-        await Promise.all(
-            selectedTestCase.map((testcaseId) =>
-            axios.post("http://localhost:3001/addHistoryTestcase", {
-            testcase_id: testcaseId,
-              testcase_status: "WAITING FOR VERIFICATION", // Log status
-            })
-          )
-        );
-
-        // Update UI after successful creation
-        setWorkingTestCase((prev) =>
-          prev.filter((testcase) => !selectedTestCase.includes(testcase.testcase_id))
-        );
-
-        setSelectedTestCase([]);
-        setSelectedReviewers({});
-      } else {
-        toast.error(response.data.message || "Failed to create verification(s).", {
-          position: "top-center",
-        });
-      }
-    } catch (error) {
-      console.error("Error creating verification:", error);
-      toast.error(error.response?.data?.message || "An error occurred. Please try again.");
-    } finally {
-      setIsSubmitting(false); // Re-enable submit button
+      setSelectedTestCase([]);
+      setSelectedReviewers({});
+    } else {
+      toast.error(response.data.message || "Failed to create verification(s).", {
+        position: "top-center",
+      });
     }
-  };
+  } catch (error) {
+    console.error("Error checking test procedures:", error);
+    
+    // แสดงข้อผิดพลาดด้วย SweetAlert2
+    Swal.fire({
+      icon: "warning",
+      title: "ไม่สามารถ Create Verification",
+      text: "กรุณาเพิ่มขั้นตอนการทดสอบ Test Steps ก่อนดำเนินการสร้าง Verification Test",
+      confirmButtonText: "OK",
+    });
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
 
   // Handle cancel

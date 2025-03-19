@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import Swal from "sweetalert2"; // เพิ่มตรงนี้
 import "./testcase_css/ExecutionList.css";
 
 const ExecutionList = () => {
@@ -14,13 +15,13 @@ const ExecutionList = () => {
 
   useEffect(() => {
     if (project_id) {
-      axios.get(`http://localhost:3001/api/testcase_executions?project_id=${project_id}`)
+      axios
+        .get(`http://localhost:3001/api/testcase_executions?project_id=${project_id}`)
         .then((response) => setTestExecutions(response.data))
         .catch((error) => console.error("Error fetching test executions:", error));
     }
   }, [project_id]);
 
-  // แปลงวันที่ให้เป็นรูปแบบ วัน เดือน ปี (DD MM YYYY)
   const formatDate = (dateString) => {
     if (!dateString) return "-";
     const options = { day: "2-digit", month: "long", year: "numeric" };
@@ -30,12 +31,18 @@ const ExecutionList = () => {
   const filteredExecutions = testExecutions.filter((execution) =>
     execution.testcase_id.toString().includes(searchTerm)
   );
+  
 
-  const handleNavigate = (testcase_id) => {
-    if (testcase_id) {
-      navigate(`/TestExecution/${testcase_id}`);
+  const handleNavigate = (execution) => {
+    if (execution.testcase_status !== "BASELINE") {
+      Swal.fire({
+        icon: "warning",
+        title: "ไม่สามารถ Execute ได้",
+        text: "Test Case นี้ยังไม่อยู่ในสถานะ BASELINE",
+        confirmButtonText: "ตกลง",
+      });
     } else {
-      console.error("testcase_id is undefined or null");
+      navigate(`/TestExecution/${execution.testcase_id}`);
     }
   };
 
@@ -69,7 +76,10 @@ const ExecutionList = () => {
                 <td>{execution.test_execution_status}</td>
                 <td>{formatDate(execution.testcase_at)}</td>
                 <td>
-                  <button className="execute-btn" onClick={() => handleNavigate(execution.testcase_id)}>
+                  <button
+                    className="execute-btn"
+                    onClick={() => handleNavigate(execution)}
+                  >
                     Execute
                   </button>
                 </td>

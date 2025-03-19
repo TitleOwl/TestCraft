@@ -49,16 +49,16 @@ const UpdateDesign = () => {
                         design_type: design.design_type,
                         diagram_type: design.diagram_type,
                         design_description: design.design_description,
-                        requirement_id: design.requirement_id ? JSON.parse(design.requirement_id) : [],
+                        requirement_id: Array.isArray(design.requirement_id) ? design.requirement_id : [],
                         design_status: design.design_status || "WORKING",
                     });
-                    // กำหนดค่าเริ่มต้นให้กับ initialDesignData
+                    
                     setInitialDesignData({
                         diagram_name: design.diagram_name,
                         design_type: design.design_type,
                         diagram_type: design.diagram_type,
                         design_description: design.design_description,
-                        requirement_id: design.requirement_id ? JSON.parse(design.requirement_id) : [],
+                        requirement_id: design.requirement_id,
                     });
                 } else {
                     console.log("No design data found");
@@ -70,29 +70,41 @@ const UpdateDesign = () => {
                 setLoading(false);
             }
         };
-
+    
         const fetchRequirements = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/project/${projectId}/requirement`, {
-                    params: { status: "BASELINE" },
-                });
-                setBaselineRequirements(response.data);
+                const response = await axios.get(`http://localhost:3001/project/${projectId}/requirement`);
+        
+                // กรองข้อมูลที่มี status เป็น 'BASELINE'
+                const baselineReqs = response.data.filter(req => req.requirement_status === 'BASELINE');
+                setBaselineRequirements(baselineReqs);
             } catch (error) {
                 console.error("Error fetching requirements:", error);
                 alert("Failed to fetch baseline requirements");
-            } finally {
-                setLoading(false);  // เรียก setLoading(false) ใน finally เพื่อให้แน่ใจว่าโหลดเสร็จ
             }
         };
-
+        
+        
+    
+        const fetchFiles = async () => {
+            try {
+                const response = await axios.get(`http://localhost:3001/design/${designId}/files`);
+                setExistingFiles(response.data);
+            } catch (error) {
+                console.error("Error fetching files:", error);
+            }
+        };
+    
         if (designId && projectId) {
             fetchDesign();
             fetchRequirements();
+            fetchFiles(); // เรียกใช้งานฟังก์ชันดึงไฟล์
         } else {
             console.error("Missing designId or projectId");
             setLoading(false);
         }
-    }, [designId, projectId]);  // ให้ useEffect ทำงานใหม่เมื่อ designId หรือ projectId เปลี่ยน
+    }, [designId, projectId]);
+     // ให้ useEffect ทำงานใหม่เมื่อ designId หรือ projectId เปลี่ยน
 
     // ฟังก์ชันตรวจสอบว่าไม่มีการเปลี่ยนแปลง
     const isDataUnchanged =
@@ -100,91 +112,99 @@ const UpdateDesign = () => {
         designData.design_type === initialDesignData.design_type &&
         designData.diagram_type === initialDesignData.diagram_type &&
         designData.design_description === initialDesignData.design_description &&
-        JSON.stringify(designData.requirement_id) === JSON.stringify(initialDesignData.requirement_id) &&
+        designData.requirement_id === initialDesignData.requirement_id &&
         selectedFiles.length === 0;  // เช็คว่าไม่มีการอัปโหลดไฟล์ใหม่
 
 
-    const handleUpdate = async (e) => {
-        e.preventDefault();
-
-        if (designData.design_status !== "WORKING" && !isDataUnchanged) {
-            const confirmChange = await Swal.fire({
-                title: "ต้องการแก้ไขข้อมูลหรือไม่?",
-                text: "ถ้าคุณแก้ไขข้อมูล สถานะจะเปลี่ยนเป็น WORKING",
+        const handleUpdate = async (e) => {
+            e.preventDefault();
+        
+            const hasChanges = 
+                designData.diagram_name !== initialDesignData.diagram_name ||
+                designData.design_type !== initialDesignData.design_type ||
+                designData.diagram_type !== initialDesignData.diagram_type ||
+                designData.design_description !== initialDesignData.design_description ||
+                designData.requirement_id !== initialDesignData.requirement_id ||
+                selectedFiles.length > 0;
+        
+            if (!hasChanges) {
+                Swal.fire({
+                    title: "No Changes Detected",
+                    text: "ไม่มีการเปลี่ยนแปลงข้อมูล",
+                    icon: "info",
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                return;
+            }
+        
+            const confirmUpdate = await Swal.fire({
+                title: "ยืนยันการอัปเดต?",
+                text: "คุณต้องการอัปเดตการออกแบบหรือไม่?",
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonText: "ตกลง",
                 cancelButtonText: "ยกเลิก",
             });
-
-            if (!confirmChange.isConfirmed) return;
-            setDesignData(prev => ({ ...prev, design_status: "WORKING" }));
-        }
-
-        if (isDataUnchanged) {
-            Swal.fire({
-                title: "No Changes Detected",
-                text: "ไม่มีการแก้ไขข้อมูล ระบบจะกลับไปที่หน้าดีไซน์",
-                icon: "info",
-                timer: 2000,
-                showConfirmButton: false
-            }).then(() => {
-                navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } });
-            });
-            return;
-        }
-
-        const result = await Swal.fire({
-            title: "ยืนยันการอัปเดต?",
-            text: "คุณต้องการอัปเดตการออกแบบหรือไม่?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "ตกลง",
-            cancelButtonText: "ยกเลิก",
-        });
-
-        if (!result.isConfirmed) return;
-        updateDesign();
-    };
-
-    const updateDesign = async () => {
-        try {
-            const formData = new FormData();
-            formData.append("design_id", designId);
-            selectedFiles.forEach((file) => {
-                formData.append("files", file);
-            });
-
-            await axios.put(`http://localhost:3001/design/${designId}`, {
-                project_id: projectId,
-                diagram_name: designData.diagram_name,
-                design_type: designData.design_type,
-                diagram_type: designData.diagram_type,
-                design_description: designData.design_description,
-                requirement_id: designData.requirement_id,
-                design_status: designData.design_status
-            });
-
-            await axios.post("http://localhost:3001/uploadDesignFiles", formData, {
-                headers: { "Content-Type": "multipart/form-data" },
-            });
-
-            Swal.fire({
-                title: "อัปเดตสำเร็จ!",
-                text: "การออกแบบถูกอัปเดตเรียบร้อยแล้ว",
-                icon: "success",
-                timer: 1500,
-                showConfirmButton: false,
-            }).then(() => {
-                navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } });
-            });
-        } catch (error) {
-            console.error("Error updating design:", error);
-            Swal.fire("Error", "ไม่สามารถอัปเดตการออกแบบได้ กรุณาลองใหม่อีกครั้ง", "error");
-        }
-    };
-
-
+        
+            if (!confirmUpdate.isConfirmed) return;
+        
+            try {
+                await updateDesign();
+            } catch (error) {
+                console.error("Error updating design:", error);
+                Swal.fire("Error", "ไม่สามารถอัปเดตการออกแบบได้ กรุณาลองใหม่อีกครั้ง", "error");
+            }
+        };
+        
+        const updateDesign = async () => {
+            try {
+                if (!designId) {
+                    Swal.fire("Error", "ไม่พบ Design ID กรุณาลองใหม่", "error");
+                    return;
+                }
+        
+                console.log("Updating design with ID:", designId);
+        
+                const formData = new FormData();
+                selectedFiles.forEach((file) => {
+                    formData.append("files", file);
+                });
+                formData.append("design_id", designId);
+        
+                // อัปเดตข้อมูลการออกแบบ
+                await axios.put(`http://localhost:3001/design/${designId}`, {
+                    project_id: projectId,
+                    diagram_name: designData.diagram_name,
+                    design_type: designData.design_type,
+                    diagram_type: designData.diagram_type,
+                    design_description: designData.design_description,
+                    requirement_id: designData.requirement_id,
+                    design_status: "WORKING",
+                });
+        
+                // อัปโหลดไฟล์ (ถ้ามี)
+                if (selectedFiles.length > 0) {
+                    await axios.post("http://localhost:3001/uploadDesignFiles", formData, {
+                        headers: { "Content-Type": "multipart/form-data" },
+                    });
+                }
+        
+                Swal.fire({
+                    title: "อัปเดตสำเร็จ!",
+                    text: "การออกแบบถูกอัปเดตเรียบร้อยแล้ว",
+                    icon: "success",
+                    timer: 1500,
+                    showConfirmButton: false,
+                }).then(() => {
+                    navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } });
+                });
+        
+            } catch (error) {
+                console.error("Error updating design:", error);
+                Swal.fire("Error", "ไม่สามารถอัปเดตการออกแบบได้ กรุณาลองใหม่อีกครั้ง", "error");
+            }
+        };
 
     const handleChange = (e) => {
         setDesignData({ ...designData, [e.target.name]: e.target.value });
@@ -199,18 +219,55 @@ const UpdateDesign = () => {
 
     const handleFileChange = (e) => {
         const files = Array.from(e.target.files);
-        setSelectedFiles(files);
-
+        
+        // รวมไฟล์ที่เลือกใหม่เข้ากับไฟล์ที่เลือกก่อนหน้า
+        setSelectedFiles((prevFiles) => [...prevFiles, ...files]);
+    
+        // อัปเดตตัวอย่างไฟล์
         const previews = files.map((file) => URL.createObjectURL(file));
-        setFilePreviews(previews);
+        setFilePreviews((prevPreviews) => [...prevPreviews, ...previews]);
     };
-
-    const handleFileClick = (file) => {
-        const fileBlob = new Blob([file.file_design_data], { type: "application/pdf" });
-        const fileURL = URL.createObjectURL(fileBlob);
-        window.open(fileURL, "_blank");
+    
+    // ฟังก์ชันสำหรับลบไฟล์ที่เลือกก่อนอัปโหลด
+    const handleRemoveSelectedFile = (index) => {
+        setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+        setFilePreviews((prevPreviews) => prevPreviews.filter((_, i) => i !== index));
     };
+    
 
+    const handleDeleteFile = async (fileId) => {
+        try {
+            console.log("Attempting to delete file with ID:", fileId);
+    
+            await axios.delete(`http://localhost:3001/design/file/${fileId}`);
+            
+            // อัปเดตรายการไฟล์หลังจากลบ
+            const updatedFiles = existingFiles.filter(file => file.file_design_id !== fileId);
+            setExistingFiles(updatedFiles);
+    
+            console.log("Updated file list:", updatedFiles);
+    
+            // แสดง Swal.fire หลังจากลบเสร็จ โดยไม่รีเฟรชหน้า
+            Swal.fire({
+                icon: "success",
+                title: "Deleted Successfully",
+                text: "ไฟล์ถูกลบเรียบร้อยแล้ว",
+                timer: 1500,
+                showConfirmButton: false,
+            });
+    
+        } catch (error) {
+            console.error("Error deleting file:", error);
+            Swal.fire({
+                icon: "error",
+                title: "Delete Failed",
+                text: "เกิดข้อผิดพลาดในการลบไฟล์",
+            });
+        }
+    };
+    
+
+    
     return (
         <div className="update-design-container">
             <h1 className="update-design-title">Update Design</h1>
@@ -263,23 +320,25 @@ const UpdateDesign = () => {
                     </label>
 
                     <label className="update-design-label">
-                        Requirements:
-                        <Select
-                            className="update-design-select"
-                            isMulti
-                            options={baselineRequirements.map((req) => ({
-                                value: req.requirement_id,
-                                label: `REQ-00${req.requirement_id}: ${req.requirement_name}`,
-                            }))}
-                            onChange={handleRequirementChange}
-                            value={baselineRequirements
-                                .filter((req) => designData.requirement_id.includes(req.requirement_id))
-                                .map((req) => ({
-                                    value: req.requirement_id,
-                                    label: `REQ-00${req.requirement_id}: ${req.requirement_name}`,
-                                }))}
-                        />
-                    </label>
+    Requirements:
+    <Select 
+    isMulti
+    options={baselineRequirements.map(req => ({
+        value: req.requirement_id,
+        label: `REQ-00${req.requirement_id}: ${req.requirement_name}`,
+    }))}
+    defaultValue={baselineRequirements
+        .filter(req => designData.requirement_id.includes(req.requirement_id))
+        .map(req => ({
+            value: req.requirement_id,
+            label: `REQ-00${req.requirement_id}: ${req.requirement_name}`,
+        }))
+    }
+/>
+
+
+</label>
+
 
                     <label className="update-design-label">
                         Design Description:
@@ -302,39 +361,45 @@ const UpdateDesign = () => {
                         />
                     </label>
 
-                    <div className="update-design-files">
-                        <h3>Existing Files:</h3>
-                        {existingFiles.length > 0 ? (
-                            <ul>
-                                {existingFiles.map((file) => (
-                                    <li key={file.file_design_id}>
-                                        <button
-                                            type="button"
-                                            className="update-design-file-btn"
-                                            onClick={() => handleFileClick(file)}
-                                        >
-                                            View File {file.file_design_id}
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p>No files available.</p>
-                        )}
-                    </div>
+                    <div className="update-design-files"> 
+    <h3>Existing Files:</h3>
+    {existingFiles.length > 0 ? (
+        <ul>
+            {existingFiles.map((file) => (
+                <li key={file.file_design_id} className="file-item">
+                    <img 
+                        src={file.file_design_data} 
+                        alt={`File ${file.file_design_id}`} 
+                        width={100} 
+                        height={100} 
+                    />
+                    <button 
+                        className="delete-file-btn"
+                        onClick={() => handleDeleteFile(file.file_design_id)}
+                    >
+                        ❌
+                    </button>
+                </li>
+            ))}
+        </ul>
+    ) : (
+        <p>No files available.</p>
+    )}
 
-                    <div className="update-design-file-previews">
-                        {filePreviews.length > 0 && (
-                            <div>
-                                <h4>File Previews:</h4>
-                                {filePreviews.map((preview, index) => (
-                                    <div key={index}>
-                                        <img src={preview} alt={`Preview ${index}`} width={100} height={100} />
-                                    </div>
-                                ))}
-                            </div>
-                        )}
+    {filePreviews.length > 0 && (
+        <div className="selected-files-container">
+            <h4>Selected Files:</h4>
+            <div className="selected-files-preview">
+                {filePreviews.map((preview, index) => (
+                    <div key={index} className="selected-file-item">
+                        <img src={preview} alt={`Selected ${index}`} width={100} height={100} />
+                        <button onClick={() => handleRemoveSelectedFile(index)}>❌</button>
                     </div>
+                ))}
+            </div>
+        </div>
+    )}
+</div>
 
                     <div className="update-design-buttons">
                         <button

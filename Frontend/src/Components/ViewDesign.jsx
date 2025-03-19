@@ -16,7 +16,7 @@ const ViewDesign = () => {
         design_type: "",
         diagram_type: "",
         design_description: "",
-        requirement_id: [],
+        requirement_id: "",
         design_status: "",
     });
     const [baselineRequirements, setBaselineRequirements] = useState([]);
@@ -36,7 +36,7 @@ const ViewDesign = () => {
                         design_type: design.design_type,
                         diagram_type: design.diagram_type,
                         design_description: design.design_description,
-                        requirement_id: design.requirement_id ? JSON.parse(design.requirement_id) : [],
+                        requirement_id: design.requirement_id,
                         design_status: design.design_status || "WORKING",
                     });
                 } else {
@@ -118,12 +118,13 @@ const ViewDesign = () => {
                         <div className="view-design-item">
                             <strong>Requirements:</strong>
                             <ul>
-                                {baselineRequirements
-                                    .filter((req) => designData.requirement_id.includes(req.requirement_id))
-                                    .map((req) => (
-                                        <li key={req.requirement_id}>{`REQ-00${req.requirement_id}: ${req.requirement_name}`}</li>
-                                    ))}
-                            </ul>
+    {baselineRequirements
+        .filter((req) => Array.isArray(designData.requirement_id) && designData.requirement_id.includes(req.requirement_id))
+        .map((req) => (
+            <li key={req.requirement_id}>{`REQ-00${req.requirement_id}: ${req.requirement_name}`}</li>
+        ))}
+</ul>
+
                         </div>
                     </div>
                 )}

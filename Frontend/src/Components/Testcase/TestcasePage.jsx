@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
+import Swal from "sweetalert2";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faTrash, faEye } from "@fortawesome/free-solid-svg-icons";
 import "./testcase_css/TestcasePage.css";
@@ -68,6 +69,33 @@ const TestcasePage = () => {
     navigate(`/TestcaseBaseline?project_id=${projectId}`);
   };
 
+  const handleDeleteTestcase = async (id) => {
+    Swal.fire({
+      title: "คุณต้องการยืนยันที่จะลบ?",
+      text: "",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Delete",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await axios.delete(`http://localhost:3001/testcases/${id}`);
+          console.log("Deleted successfully:", response.data);
+  
+          // อัปเดตหน้าจอหลังจากลบสำเร็จ
+          setTestCases((prevTestCases) =>
+            prevTestCases.filter((test) => test.testcase_id !== id)
+          );
+  
+          Swal.fire("Deleted!", "Test case has been deleted.", "success");
+        } catch (error) {
+          console.error("Delete error:", error);
+          Swal.fire("Error!", "Failed to delete test case.", "error");
+        }
+      }
+    });
+  };
+  
 
   return (
     <div className="testcase-container">
@@ -84,15 +112,15 @@ const TestcasePage = () => {
           </div>
         </div>
         <div className="testcase-other-buttons">
-        <button className="testcase-create-verification-button" onClick={handleCreateVeri}>
+          <button className="testcase-create-verification-button" onClick={handleCreateVeri}>
             Create Verification
           </button>
-          <button className="testcase-view-verification-button"onClick={handleVerilist}> 
+          <button className="testcase-view-verification-button" onClick={handleVerilist}>
             View Verification
-            </button>
-            <button className="testcase-baseline-button"onClick={handleBaselineTest}> 
+          </button>
+          <button className="testcase-baseline-button" onClick={handleBaselineTest}>
             Baselined
-            </button>
+          </button>
         </div>
       </div>
       {loading ? <p>Loading test cases...</p> : error ? <p className="error-message">{error}</p> : (
@@ -144,10 +172,10 @@ const TestcasePage = () => {
                   >
                     <FontAwesomeIcon icon={faPen} className="testcase-icon" />
                   </button>
-
-                  <button className="testcase-delete">
+                  <button className="testcase-delete" onClick={() => handleDeleteTestcase(test.testcase_id)}>
                     <FontAwesomeIcon icon={faTrash} className="testcase-icon" />
                   </button>
+
                 </td>
                 <td>
                   <button

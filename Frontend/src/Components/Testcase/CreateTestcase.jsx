@@ -15,8 +15,6 @@ const CreateTestcase = () => {
   const [customTestType, setCustomTestType] = useState("");
   const [priority, setPriority] = useState("");
   const [completionDate, setCompletionDate] = useState("");
-  const [attachmentType, setAttachmentType] = useState("");
-  const [attachments, setAttachments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [loggedInUser, setLoggedInUser] = useState("");
@@ -28,9 +26,6 @@ const CreateTestcase = () => {
     if (user) setLoggedInUser(user.username);
   }, []);
 
-  useEffect(() => {
-    if (attachmentType) fetchAttachments(attachmentType);
-  }, [attachmentType]);
 
   useEffect(() => {
     // Fetch implement files
@@ -45,24 +40,7 @@ const CreateTestcase = () => {
     fetchImplementFiles();
   }, []);
 
-  const fetchAttachments = async (type) => {
-    if (!projectId || !type) return;
 
-    setLoading(true);
-    setError("");
-    setAttachments([]);
-
-    try {
-      const response = await axios.get(`http://localhost:3001/project/${projectId}/attachments`);
-      const data = response.data || {};
-
-      setAttachments(type === "requirement" ? data.requirements || [] : data.designs || []);
-    } catch (error) {
-      setError("Failed to load attachments.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleCreateTestCase = async () => {
     if (!title || !description || !testType || !priority || !completionDate) {
@@ -82,9 +60,6 @@ const CreateTestcase = () => {
       testcase_priority: priority,
       testcase_by: loggedInUser,
       testcase_at: completionDate,
-      testcase_attach: attachmentType && attachments.length > 0
-        ? attachments[0].requirement_id || attachments[0].design_id
-        : null,
       testcase_status: "WORKING",
       project_id: projectId,
       implement_id: selectedImplement.length > 0 ? selectedImplement[0].value : null, // ส่งค่าจาก implement_id ตัวแรก
@@ -150,33 +125,6 @@ const CreateTestcase = () => {
         <label>Test Completion Date:</label>
         <input type="date" value={completionDate} onChange={(e) => setCompletionDate(e.target.value)} />
       </div>
-
-      <div className="create-testcase-form-group">
-        <label>Attachments:</label>
-        <select value={attachmentType} onChange={(e) => setAttachmentType(e.target.value)}>
-          <option value="">Select Attachment Type</option>
-          <option value="requirement">Requirement</option>
-          <option value="design">Design</option>
-        </select>
-      </div>
-
-      {attachmentType && (
-        <div className="create-testcase-form-group">
-          <label>Select {attachmentType}:</label>
-          {loading ? <p>Loading {attachmentType}...</p> : error ? <p className="error-message">{error}</p> :
-            attachments.length > 0 ? (
-              <select>
-                <option value="">Select {attachmentType}</option>
-                {attachments.map((item) => (
-                  <option key={item.requirement_id || item.design_id} value={item.requirement_id || item.design_id}>
-                    {attachmentType === "requirement" ? `REQ-00${item.requirement_id}` : `SD-00${item.design_id}`} - {item.requirement_name || item.diagram_name}
-                  </option>
-                ))}
-              </select>
-            ) : <p className="no-data-message">No {attachmentType} available</p>
-          }
-        </div>
-      )}
 
       <div className="create-testcase-form-group">
         <label htmlFor="implementSelect">Select Implement (Multiple):</label>
