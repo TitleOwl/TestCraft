@@ -13,7 +13,6 @@ const ViewVerifyTrace = () => {
     const location = useLocation();
     const storedUsername = localStorage.getItem("username");
 
-
     // ดึงค่า project_id จาก URL
     const queryParams = new URLSearchParams(location.search);
     const projectId = queryParams.get("project_id");
@@ -47,9 +46,10 @@ const ViewVerifyTrace = () => {
         return acc;
     }, {});
 
-    const handleVerifyClick = (round, projectId, verificationBy) => {
+    const handleVerifyClick = (round, projectId, verificationBy, veritraceStatus) => {
         const reviewers = JSON.parse(verificationBy);
 
+        // เช็คสิทธิ์การ Verify
         if (!Object.keys(reviewers).includes(storedUsername)) {
             toast.error("❌ Permission Denied: คุณไม่มีสิทธิ์ Verify ในรอบนี้", {
                 position: "top-center",
@@ -63,7 +63,17 @@ const ViewVerifyTrace = () => {
             return;
         }
 
-        // ถ้ามีสิทธิ์ให้ไปหน้า Verify
+        // ถ้าสถานะเป็น VERIFIED ให้แสดง prompt ถามผู้ใช้
+        if (veritraceStatus === "VERIFIED") {
+            const confirmMessage = "Traceability record ที่ Verify ในรอบนี้เป็น VERIFIED แล้ว คุณต้องการแก้ไขหรือไม่?";
+            const userConfirmed = window.confirm(confirmMessage);
+
+            if (!userConfirmed) {
+                return; // ถ้าเลือกยกเลิกไม่ให้ไปหน้า Verify
+            }
+        }
+
+        // ถ้ามีสิทธิ์และยืนยันแล้ว ให้ไปหน้า Verify
         navigate(`/verifyTrace?project_id=${projectId}&round=${round}`);
     };
 
@@ -72,7 +82,6 @@ const ViewVerifyTrace = () => {
         setSelectedReviewers(parsedReviewers);
         setShowPopup(true);
     };
-
 
     return (
         <div>
@@ -114,7 +123,13 @@ const ViewVerifyTrace = () => {
                                     <button onClick={() => handleShowReviewers(firstItem.verification_by)}>ดู Reviewers</button>
                                 </td>
                                 <td>
-                                    <button onClick={() => handleVerifyClick(round, firstItem.project_id, firstItem.verification_by)}>
+                                    <button
+                                        onClick={() => handleVerifyClick(round, firstItem.project_id, firstItem.verification_by, firstItem.veritrace_status)}
+                                        disabled={firstItem.veritrace_status === "VERIFIED"}  // Disable if VERIFIED
+                                        style={{
+                                            cursor: firstItem.veritrace_status === "VERIFIED" ? "not-allowed" : "pointer",  // Change cursor to not-allowed if VERIFIED
+                                        }}
+                                    >
                                         Verify
                                     </button>
                                 </td>

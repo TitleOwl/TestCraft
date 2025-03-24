@@ -85,7 +85,6 @@ const VerifyTrace = () => {
             return newState;
         });
     };
-
     const handleSave = async () => {
         const storedUsername = localStorage.getItem("username");
 
@@ -130,9 +129,11 @@ const VerifyTrace = () => {
         try {
             const updateRequests = verificationData.flatMap((item) =>
                 item.details.map(async (detail) => {
+                    // Send createRound in the request body
                     return axios.put("http://localhost:3001/update-verification-trace", {
                         veritrace_id: detail.veritrace_id,
                         reviewer_name: storedUsername,
+                        create_round: createRound, // Pass createRound here
                     });
                 })
             );
@@ -163,20 +164,12 @@ const VerifyTrace = () => {
         }
     };
 
-    // ตรวจสอบ status การ verify
-    const isVerified = verificationData.some((item) =>
-        item.details.some(detail => detail.veritrace_status === "VERIFIED")
-    );
+
 
     return (
         <div>
             <h1>Verification Trace for Round {createRound}</h1>
 
-            {isVerified && (
-                <div className="verified-banner">
-                    ✅ VERIFIED
-                </div>
-            )}
 
             <table className="traceability-table">
                 <thead>
@@ -217,8 +210,6 @@ const VerifyTrace = () => {
                 </tbody>
             </table>
 
-
-            {!isVerified && (
                 <div className="tracecriteria-checklist-box">
                     <h2 className="tracecriteria-checklist-title">Trace Criteria Checklist</h2>
                     <ul className="tracecriteria-checklist-list">
@@ -237,9 +228,7 @@ const VerifyTrace = () => {
                         ))}
                     </ul>
                 </div>
-            )}
-
-            {!isVerified && <button onClick={handleSave}>SAVE</button>}
+            <button onClick={handleSave}>SAVE</button>
         </div>
     );
 };
