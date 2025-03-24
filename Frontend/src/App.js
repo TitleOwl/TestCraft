@@ -36,6 +36,7 @@ import ValidationList from './Components/ValidationList';
 import ReqValidation from './Components/ReqValidation';
 import Baseline from './Components/Baseline';
 import CreateBaseline from './Components/CreateBaseline';
+import VeriVaView from './Components/VeriVaView';
 import TryToReq from './Components/TryToReq';
 import Uploadfile from './Components/Uploadfile';
 import ViewFile from './Components/ViewFile';
@@ -76,7 +77,12 @@ import TraceabilityPage from './Components/Traceability/traceabilityPage';
 import ViewReqTrace from './Components/Traceability/viewReqTrace';
 import EditReqTrace from './Components/Traceability/editReqTrace';
 import ViewDesignTrace from './Components/Traceability/viewDesignTrace'
-import VerifyTrace from './Components/Traceability/createVerifyTrace';
+import CreateVerifyTrace from './Components/Traceability/createVerifyTrace';
+import ViewVerifyTrace from './Components/Traceability/viewVerifyTrace';
+import VerifyTrace from './Components/Traceability/verifyTrace';
+import ViewBaselineTrace from './Components/Traceability/viewBaselineTrace';
+import SetBaselineTrace from './Components/Traceability/setBaselineTrace';
+import CreateBaselineTrace from './Components/Traceability/createBaselineTrace';
 
 // Notify
 import { ToastContainer } from 'react-toastify';
@@ -128,6 +134,7 @@ const App = () => {
         <Route path="/ReqVerification" element={<ReqVerification />} />
         <Route path="/ReqValidation" element={<ReqValidation />} />
         <Route path="/ViewFile" element={<ViewFile />} />
+        <Route path="/VeriVaView" element={<VeriVaView />} />
 
         {/* Routes สำหรับ Login */}
         <Route path="/" element={<Login setUsername={setUsername} />} />
@@ -172,7 +179,6 @@ const App = () => {
         <Route path="/TestcaseBaseline" element={<TestcaseBaseline />} />
         <Route path="/CreateTestcasebaseline" element={<CreateTestcasebaseline />} />
 
-
         {/* ทำ Implement */}
         <Route path="/implementPage" element={<ImplementPage />} />
 
@@ -180,8 +186,13 @@ const App = () => {
         <Route path="/traceabilityPage" element={<TraceabilityPage />} />
         <Route path="/viewReqTrace" element={<ViewReqTrace />} />
         <Route path="/editReqTrace" element={<EditReqTrace />} />
-        <Route path="/createVerifyTrace" element={<VerifyTrace />} />
+        <Route path="/createVerifyTrace" element={<CreateVerifyTrace />} />
         <Route path="/viewDesignTrace" element={<ViewDesignTrace />} />
+        <Route path="/viewVerifyTrace" element={<ViewVerifyTrace />} />
+        <Route path="/verifyTrace" element={<VerifyTrace />} />
+        <Route path="/viewBaselineTrace" element={<ViewBaselineTrace />} />
+        <Route path="/setBaselineTrace" element={<SetBaselineTrace />} />
+        <Route path="/createBaselineTrace" element={<CreateBaselineTrace />} />
       </Routes>
     </>
   );

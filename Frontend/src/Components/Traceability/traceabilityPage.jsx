@@ -44,6 +44,8 @@ const TraceabilityPage = () => {
     return (
         <div className="traceability-container">
             <button className='verify-trace' onClick={() => navigate(`/createVerifyTrace?project_id=${projectId}`)}> <img src={createvervar} alt="createver" className="createver" />Create Verification</button>
+            <button className='view-verify-trace' onClick={() => navigate(`/viewVerifyTrace?project_id=${projectId}`)}> View Verification</button>
+            <button className='baseline-trace' onClick={() => navigate(`/viewBaselineTrace?project_id=${projectId}`)}>Baseline</button>
             <h1 className="traceability-title">Traceability Record</h1>
             <table className="traceability-table">
                 <thead>
@@ -58,7 +60,10 @@ const TraceabilityPage = () => {
                     {traceabilityData.map((item, index) => {
                         const designIDs = item.DesignIDs ? item.DesignIDs.split(',') : [];
                         const implementIDs = item.ImplementIDs ? item.ImplementIDs.split(',') : [];
+                        const implementFilenames = item.ImplementFilenames ? item.ImplementFilenames.split(',') : [];
                         const testCaseIDs = item.TestCaseIDs ? item.TestCaseIDs.split(',') : [];
+                        const testCaseNames = item.TestCaseNames ? item.TestCaseNames.split(',') : [];
+
                         const rowSpan = designIDs.length;
 
                         return designIDs.map((designID, idx) => (
@@ -76,11 +81,9 @@ const TraceabilityPage = () => {
                                             </button>
                                         </div>
                                     </td>
-
                                 )}
                                 <td>{`DE-${designID}`}
-                                    {/* <div className="reqid-trace" onClick={() => navigate(`/viewReqTrace?requirement_id=${item.DiagramNames}`)} style={{ cursor: 'pointer' }}>{`REQ-${item.RequirementID}`}</div> */}
-                                    <div className="reqname-trace">{`DESIGN-NAME : ${item.DiagramNames}`}</div>
+                                    <div className="designname-trace">{`DESIGN-NAME : ${item.DiagramNames}`}</div>
                                     <div className="req-allbutton-trace">
                                         <button className="design-action-btn view" onClick={() => navigate(`/viewDesignTrace?project_id=${projectId}&design_id=${designID}`)}>
                                             <FontAwesomeIcon icon={faEye} />
@@ -90,8 +93,12 @@ const TraceabilityPage = () => {
                                         </button>
                                     </div>
                                 </td>
-                                <td>{`IMP-${implementIDs[idx]}`}</td>
-                                <td>{`TC-${testCaseIDs[idx]}`}</td>
+                                <td>{`IMP-${implementIDs[idx]}`}
+                                    <div>{`Filename: ${implementFilenames[idx]}`}</div>
+                                </td>
+                                <td>{`TC-${testCaseIDs[idx]}`}
+                                    <div>{`TESTCASE-NAME: ${testCaseNames[idx] || ''}`}</div>
+                                </td>
                             </tr>
                         ));
                     })}

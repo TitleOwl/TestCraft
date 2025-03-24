@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./CSS/createVerifyTrace.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faPen } from "@fortawesome/free-solid-svg-icons";
 
 const CreateVerifyTrace = () => {
   const navigate = useNavigate();
@@ -93,65 +95,87 @@ const CreateVerifyTrace = () => {
       return;
     }
 
+    // ตรวจสอบว่ามีข้อมูลที่แสดงในตารางหรือไม่
+    if (traceabilityData.length === 0) {
+      alert("ไม่พบข้อมูลในการบันทึก");
+      return;
+    }
+
+    // ตรวจสอบว่ามีการเลือกสมาชิกหรือไม่
     if (selectedMembers.length === 0) {
-      alert("กรุณาเลือก member ก่อน");
+      alert("กรุณาเลือกสมาชิกก่อน");
       return;
     }
 
-    if (selectedRequirements.length === 0) {
-      alert("กรุณาเลือกข้อมูลที่ต้องการ Verify");
-      return;
-    }
-
-    // ฟิลเตอร์สมาชิกที่ถูกเลือกออกมา
+    // สร้างข้อมูลสำหรับการบันทึก
     const verificationData = {
       project_id: projectId,
       create_by: currentUser,
-      requirement_id: selectedRequirements,
-      design_id: selectedDesigns,
-      implement_id: selectedImplements,
-      testcase_id: selectedTestCases,
+      // ปรับค่า verification_by ให้รวมเฉพาะสมาชิกที่เลือก
       verification_by: members.reduce((acc, member) => {
-        // บันทึกเฉพาะสมาชิกที่เลือก
         if (selectedMembers.includes(member.name)) {
           acc[member.name] = false; // ตั้งค่าเป็น false สำหรับสมาชิกที่เลือก
         }
         return acc;
       }, {}),
-      veritrace_status: "WAITING FOR VERIFICATION",
+      veritrace_status: "WAITING FOR VERIFICATION", // ตั้งค่าระยะสถานะ
+      create_round: localStorage.getItem("create_round") || 1, // ใช้ localStorage หรือเพิ่ม logic สำหรับรอบการบันทึก
     };
 
-    try {
-      const response = await axios.post("http://localhost:3001/saveVerificationTrace", verificationData);
-      if (response.data.success) {
-        alert("บันทึกข้อมูลสำเร็จ!");
+    const rowsToInsert = [];
 
-        // ✅ Reset ข้อมูลที่ต้องการหลังบันทึก
-        setSelectedRequirements([]);
-        setSelectedDesigns([]);
-        setSelectedImplements([]);
-        setSelectedTestCases([]);
-        setSelectedMembers([]); // รีเซ็ท selectedMembers
+    // Loop ผ่านข้อมูล traceabilityData และจับคู่ข้อมูลแต่ละแถว
+    traceabilityData.forEach((item) => {
+      const designIDs = item.DesignIDs ? item.DesignIDs.split(",") : [];
+      const implementIDs = item.ImplementIDs ? item.ImplementIDs.split(",") : [];
+      const testCaseIDs = item.TestCaseIDs ? item.TestCaseIDs.split(",") : [];
 
-        // เปลี่ยนกลับไปที่หน้า Traceability
-        setStep(1); // กลับไปที่ขั้นตอน Traceability
-      } else {
-        alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล");
+      // สร้างแถวใหม่สำหรับข้อมูลแต่ละชุด
+      designIDs.forEach((designID, idx) => {
+        rowsToInsert.push([
+          projectId,
+          currentUser,
+          item.RequirementID,
+          designID,
+          implementIDs[idx] || "",
+          testCaseIDs[idx] || "",
+          JSON.stringify(verificationData.verification_by),
+          "WAITING FOR VERIFICATION",
+          verificationData.create_round, // เพิ่ม create_round ลงไปในแถว
+        ]);
+      });
+    });
+
+    // ถ้ามีข้อมูลให้บันทึก
+    if (rowsToInsert.length > 0) {
+      try {
+        const response = await axios.post("http://localhost:3001/saveVerificationTrace", { rowsToInsert });
+        if (response.data.success) {
+          alert("บันทึกข้อมูลสำเร็จ!");
+
+          // รีเซ็ทข้อมูลหลังจากบันทึกเสร็จ
+          setStep(1); // กลับไปที่หน้า Traceability
+
+          // รีเซ็ท selectedMembers เพื่อรีเซ็ทค่า checkbox
+          setSelectedMembers([]); // รีเซ็ท selectedMembers
+
+          // เพิ่มรอบการบันทึก
+          const newRound = parseInt(localStorage.getItem("create_round") || 1) + 1;
+          localStorage.setItem("create_round", newRound); // อัปเดตค่า create_round
+        } else {
+          alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล");
+        }
+      } catch (error) {
+        console.error(error);
+        alert("เซิร์ฟเวอร์มีปัญหา");
       }
-    } catch (error) {
-      console.error(error);
-      alert("เซิร์ฟเวอร์มีปัญหา");
+    } else {
+      alert("ไม่พบข้อมูลที่ต้องการบันทึก");
     }
   };
 
 
-
-
   const handleNextStep = () => {
-    if (selectedRequirements.length === 0) {
-      alert("กรุณาเลือกข้อมูล Traceability");
-      return;
-    }
     setStep(2); // ไปขั้นตอนเลือกสมาชิก
   };
 
@@ -161,15 +185,20 @@ const CreateVerifyTrace = () => {
 
   return (
     <div className="create-verify-container">
+      <button className="backveri-trace" onClick={() =>
+        navigate(`/Dashboard?project_id=${projectId}`, {
+          state: { selectedSection: "Traceability" },
+        })
+      }>Back</button>
+      
       <h1>Create Verification Trace</h1>
 
       {step === 1 && (
         <>
-          <h3>Select Traceability Data</h3>
+          <h3 className="trace-data">Traceability Data</h3>
           <table className="traceability-table">
             <thead>
               <tr>
-                <th>Select</th>
                 <th>Requirement ID</th>
                 <th>Design ID</th>
                 <th>Code Component ID</th>
@@ -177,21 +206,34 @@ const CreateVerifyTrace = () => {
               </tr>
             </thead>
             <tbody>
-              {traceabilityData.map((item) => {
+              {traceabilityData.map((item, index) => {
                 const designIDs = item.DesignIDs ? item.DesignIDs.split(",") : [];
                 const implementIDs = item.ImplementIDs ? item.ImplementIDs.split(",") : [];
                 const testCaseIDs = item.TestCaseIDs ? item.TestCaseIDs.split(",") : [];
+                const rowSpan = designIDs.length;
 
                 return designIDs.map((designID, idx) => (
                   <tr key={item.RequirementID + idx}>
-                    <td>
-                      <input
-                        type="checkbox"
-                        onChange={() => handleVerifyChange(item.RequirementID, designID, implementIDs[idx], testCaseIDs[idx])}
-                        checked={selectedRequirements.includes(item.RequirementID)}
-                      />
-                    </td>
-                    <td>{`REQ-${item.RequirementID}`}</td>
+                    {idx === 0 && (
+                      <td rowSpan={rowSpan} className="requirement-cell">
+                        <div
+                          className="reqid-trace"
+                          onClick={() => handleViewRequirement(item.RequirementID)}
+                          style={{ cursor: "pointer" }}
+                        >
+                          {`REQ-${item.RequirementID}`}
+                        </div>
+                        <div className="reqname-trace">{`REQ-NAME : ${item.RequirementName}`}</div>
+                        <div className="req-allbutton-trace">
+                          <button
+                            className="button-req-trace"
+                            onClick={() => navigate(`/viewReqTrace?requirement_id=${item.RequirementID}`)}
+                          >
+                            <FontAwesomeIcon icon={faEye} className="view-req-trace" />
+                          </button>
+                        </div>
+                      </td>
+                    )}
                     <td>{`DE-${designID}`}</td>
                     <td>{`IMP-${implementIDs[idx]}`}</td>
                     <td>{`TC-${testCaseIDs[idx]}`}</td>
