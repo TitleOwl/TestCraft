@@ -1,75 +1,109 @@
 /* ตั้งค่าพื้นหลังและฟอนต์โดยรวม */
 .traceability-container {
-    max-width: 80%;
+    max-width: 95%;
+    /* ปรับให้กว้างขึ้น */
     margin: auto;
     text-align: center;
-    font-family: "Inter", sans-serif;
-    background: #F9F9F9;
+    font-family: "Prompt", sans-serif;
+    /* เปลี่ยน font ให้เป็นทางการ */
+    background: #f8f9fa;
+    /* สีเทาอ่อนมาก */
     padding: 30px;
     border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* เงา */
 }
 
 /* ชื่อหัวข้อ */
 .traceability-title {
-    font-size: 32px;
-    font-weight: 700;
+    font-size: 2.25rem;
+    /* ขนาดใหญ่ขึ้น */
+    font-weight: 600;
+    /* หนา */
     margin-bottom: 25px;
-    color: #2C3E50;
-    text-transform: uppercase;
+    color: #2c3e50;
+    /* สีน้ำเงินเข้ม */
+    /* text-transform: uppercase; เอาออก หากไม่ต้องการตัวพิมพ์ใหญ่ */
 }
 
 /* ตารางหลัก */
 .traceability-table {
     width: 100%;
     border-collapse: collapse;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* เงา */
     border-radius: 8px;
     overflow: hidden;
+    /* เพื่อให้ border-radius ทำงานกับส่วนหัว */
     background: white;
 }
 
 /* หัวตาราง */
 .traceability-table th {
-    background-color: #34495E;
+    background-color: #0056b3;
+    /* น้ำเงินเข้ม */
     text-align: center;
     color: white;
-    font-size: 16px;
-    font-weight: 700;
-    padding: 15px;
-    text-transform: uppercase;
-    border-bottom: 3px solid #ddd;
+    font-size: 1rem;
+    /* ปรับขนาด */
+    font-weight: 500;
+    /* กึ่งหนา */
+    padding: 12px 15px;
+    /* padding */
+    /* text-transform: uppercase; เอาออก */
+    border-bottom: 2px solid #003d82;
+    /* เส้นขอบ */
+    cursor: pointer;
 }
 
 /* ข้อมูลในตาราง */
 .traceability-table td {
-    /* padding: 15px; */
+    padding: 12px 15px;
+    /* เพิ่ม padding */
     text-align: center;
-    border-bottom: 1px solid #ddd;
-    font-size: 14px;
-    font-weight: 500;
+    border-bottom: 1px solid #dee2e6;
+    /* เส้นแบ่ง */
+    font-size: 0.9rem;
+    /* ขนาดตัวอักษร */
+    font-weight: 400;
+    /* ความหนาปกติ */
+    vertical-align: top;
+    /* จัด Text ให้อยู่ด้านบน */
 }
 
 /* เพิ่มสไตล์พิเศษให้ Requirement ID */
 .requirement-cell {
-    background-color: #2C3E50;
-    color: white;
-    font-weight: bold;
-    font-size: 15px;
+    background-color: #e9ecef;
+    /* เทาอ่อน */
+    /* color: white;  สีตัวอักษรเซลล์นี้ */
+    font-weight: 500;
+    /* กึ่งหนา */
+    /* font-size: 15px; เอา font-size ออก ใช้ขนาดจาก td */
 }
-
 
 /* แสดง Requirement ID */
 .reqid-trace {
-    font-size: 16px;
-    font-weight: 700;
+    font-size: 0.9rem;
+    font-weight: 600;
+    /* หนา */
     margin-bottom: 5px;
+    color: #0056b3;
+    /* ID เป็นสีน้ำเงิน */
+    cursor: pointer;
+
+    /* เปลี่ยน cursor เมื่อชี้ */
+    &:hover {
+        text-decoration: underline;
+    }
 }
 
 /* แสดง Requirement Name */
 .reqname-trace {
-    font-size: 14px;
-    font-weight: 500;
-    color: #E0E0E0;
+    font-size: 0.85rem;
+    font-weight: 400;
+    /* ปกติ */
+    color: #495057;
+    /* เทาเข้ม */
     margin-bottom: 10px;
 }
 
@@ -82,32 +116,273 @@
 
 /* ปรับแต่งปุ่ม */
 .button-req-trace {
-    background-color: #ECF0F1; /* สีพื้นหลังอ่อน */
-    border: none;
-    padding: 6px 10px;
-    border-radius: 5px;
+    background-color: white;
+    border: 1px solid #007bff;
+    /* เส้นขอบ */
+    color: #007bff;
+    /* สีตัวอักษร */
+    padding: 6px 12px;
+    border-radius: 4px;
     cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
+    transition: background-color 0.2s, color 0.2s;
+    font-size: 0.8rem;
+    /* ขนาด */
+    white-space: nowrap;
+    /* ป้องกันการตัดคำ */
 }
 
 /* ไอคอนในปุ่ม */
-.button-req-trace .view-req-trace {
-    color: #3498DB; /* สีฟ้าสำหรับดูรายละเอียด */
-    font-size: 16px;
-}
-
-.button-req-trace .edit-req-trace {
-    color: #F39C12; /* สีเหลืองสำหรับแก้ไข */
-    font-size: 16px;
-}
+/* ไม่ต้องใส่ CSS class เพิ่ม เพราะใช้ Font Awesome โดยตรง */
 
 /* เอฟเฟกต์ Hover */
 .button-req-trace:hover {
-    background-color: #D5DBDB;
-    transform: scale(1.05);
+    background-color: #007bff;
+    color: white;
 }
 
 /* เอฟเฟกต์เมื่อกด */
 .button-req-trace:active {
-    transform: scale(0.95);
+    background-color: #0056b3;
+    /* เข้มขึ้น */
+    border-color: #0056b3;
+    color: white;
+}
+
+/* design id cell */
+.designname-trace {
+    color: #495057;
+    margin-bottom: 10px;
+    font-size: 0.85rem;
+}
+
+.design-action-btn {
+    background: none;
+    border: 1px solid #28a745;
+    color: #28a745;
+    padding: 5px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    white-space: nowrap;
+
+    &.view {
+        margin-right: 5px;
+        border-color: #007bff;
+        color: #007bff;
+    }
+
+    &:hover {
+        background-color: #e6f2ff;
+        border-color: #0056b3;
+        color: #0056b3;
+    }
+}
+
+/* implement id cell */
+.implement-cell {
+    /* ตัวอย่าง style */
+}
+
+/* testcase id cell */
+.testcase-cell {
+    /* ตัวอย่าง style */
+}
+
+/* Search Container */
+.search-bar-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 5px 10px;
+    background-color: white;
+}
+
+/* Search Input */
+.search-input {
+    flex: 1;
+    border: none;
+    padding: 8px;
+    margin-right: 5px;
+    font-size: 0.85rem;
+
+    &:focus {
+        outline: none;
+    }
+}
+
+/* Search Select */
+.search-select {
+    border: 1px solid #ced4da;
+    padding: 8px;
+    font-size: 0.85rem;
+    border-radius: 4px;
+    margin-right: 8px;
+    background-color: white;
+
+}
+
+/* Search Icon */
+.search-icon {
+    color: #6c757d;
+}
+
+/* Loading and Error */
+.loading,
+.error {
+    text-align: center;
+    padding: 20px;
+    font-style: italic;
+}
+
+.error {
+    color: #dc3545;
+    border: 1px solid #dc3545;
+    background-color: #f8d7da;
+    border-radius: 4px;
+}
+
+/* Header row */
+.traceability-table thead tr {
+    cursor: grab;
+}
+
+
+/* Button group  */
+.verify-trace,
+.view-verify-trace,
+.baseline-trace,
+.version-trace {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    margin-bottom: 10px;
+    /* Add some space below */
+
+    img {
+        height: 20px;
+        margin-right: 8px;
+        vertical-align: middle;
+    }
+
+    &:hover {
+        background-color: #0056b3;
+    }
+}
+
+/* Responsive adjustments for small screens */
+@media (max-width: 768px) {
+    .traceability-title {
+        font-size: 1.75rem;
+        /* Smaller title */
+    }
+
+    .search-bar-container {
+        flex-direction: column;
+        /* Stack elements */
+        align-items: stretch;
+        /* Full width */
+    }
+
+    .search-input,
+    .search-select {
+        width: 100%;
+        margin-bottom: 5px;
+        box-sizing: border-box;
+        /* Include padding in width */
+    }
+
+    .traceability-table th,
+    .traceability-table td {
+        padding: 8px 10px;
+        /* Smaller padding */
+        font-size: 0.8rem;
+    }
+
+    .verify-trace,
+    .view-verify-trace,
+    .baseline-trace,
+    .version-trace {
+        width: auto;
+        display: block;
+        margin-bottom: 10px;
+
+    }
+}
+
+.traceability-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 8px;
+    /* เพิ่มระยะห่างระหว่างเซลล์ */
+    border: 1px solid #e0e0e0;
+    padding: 10px;
+    font-family: sans-serif;
+    width: 90%;
+    margin: 20px auto;
+}
+
+.grid-header {
+    background-color: #f5f5f5;
+    /* สีพื้นหลังอ่อนลง */
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+    /* เพิ่มเส้นขอบล่าง */
+    font-weight: 500;
+}
+
+.req-cell,
+.design-cell,
+.code-cell,
+.test-cell {
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    text-align: left;
+    font-size: 14px;
+    /* ปรับขนาดฟอนต์ */
+    font-weight: 400;
+    /* กำหนดความหนาฟอนต์ */
+}
+
+/* เพิ่มสไตล์สำหรับช่องที่ไม่มีความสัมพันธ์ */
+.design-cell,
+.code-cell,
+.test-cell {
+    position: relative;
+}
+
+.design-cell::after,
+.code-cell::after,
+.test-cell::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 0, 0, 0.05);
+    /* สีแดงอ่อนมาก */
+    pointer-events: none;
+    display: none;
+}
+
+.design-cell:has(> span.no-relation),
+.code-cell:has(> span.no-relation),
+.test-cell:has(> span.no-relation) {
+    background-color: #fff0f0;
+    /* สีพื้นหลังแดงอ่อนมาก */
+}
+
+.design-cell:has(> span.no-relation)::after,
+.code-cell:has(> span.no-relation)::after,
+.test-cell:has(> span.no-relation)::after {
+    display: block;
 }

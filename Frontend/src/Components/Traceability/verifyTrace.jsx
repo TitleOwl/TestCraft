@@ -41,7 +41,8 @@ const VerifyTrace = () => {
                             implement_id: item.implement_id,
                             testcase_id: item.testcase_id,
                             veritrace_status: item.veritrace_status,
-                            verification_by: JSON.parse(item.verification_by)
+                            verification_by: JSON.parse(item.verification_by),
+                            create_round: item.create_round // Add create_round here
                         });
 
                         return acc;
@@ -77,6 +78,59 @@ const VerifyTrace = () => {
 
         fetchData();
     }, [projectId, createRound]);
+
+
+    useEffect(() => {
+        // Add this useEffect to re-fetch verification data whenever createRound changes.
+        // This is important to ensure the correct data is displayed when switching rounds.
+        const fetchData = async () => {
+            try {
+                const verificationResponse = await axios.get(
+                    "http://localhost:3001/getVerificationTrace",
+                    { params: { project_id: projectId, create_round: createRound } }
+                );
+
+                if (verificationResponse.data.success) {
+                    const groupedData = verificationResponse.data.data.reduce((acc, item) => {
+                        const key = item.requirement_id;
+
+                        if (!acc[key]) {
+                            acc[key] = {
+                                ...item,
+                                details: [],
+                            };
+                        }
+
+                        acc[key].details.push({
+                            veritrace_id: item.veritrace_id,
+                            design_id: item.design_id,
+                            implement_id: item.implement_id,
+                            testcase_id: item.testcase_id,
+                            veritrace_status: item.veritrace_status,
+                            verification_by: JSON.parse(item.verification_by),
+                            create_round: item.create_round,
+                        });
+
+                        return acc;
+                    }, {});
+
+                    const processedData = Object.values(groupedData);
+                    setVerificationData(processedData);
+                } else {
+                    // Handle the case where there is no data for the round.  Important!
+                    setVerificationData([]); // Clear the previous data.
+                    toast.info("No data found for this round.");
+                }
+            } catch (error) {
+                console.error("Error fetching verification data", error);
+                toast.error("Error fetching data.");
+            }
+        };
+
+        fetchData();
+    }, [projectId, createRound]);
+
+
 
     const handleCheckboxChange = (traceId) => {
         setCheckboxState((prevState) => {
@@ -127,14 +181,21 @@ const VerifyTrace = () => {
         }
 
         try {
-            const updateRequests = verificationData.flatMap((item) =>
+            // Filter verificationData to only include the current round
+            const currentRoundData = verificationData.filter(item => item.details.some(detail => parseInt(detail.create_round) === parseInt(createRound)));
+
+
+            const updateRequests = currentRoundData.flatMap((item) =>
                 item.details.map(async (detail) => {
-                    // Send createRound in the request body
-                    return axios.put("http://localhost:3001/update-verification-trace", {
-                        veritrace_id: detail.veritrace_id,
-                        reviewer_name: storedUsername,
-                        create_round: createRound, // Pass createRound here
-                    });
+                    if (parseInt(detail.create_round) === parseInt(createRound)) {
+                        // Only send update request if the detail belongs to the current round
+                        return axios.put("http://localhost:3001/update-verification-trace", {
+                            veritrace_id: detail.veritrace_id,
+                            reviewer_name: storedUsername,
+                            create_round: createRound, // Pass createRound here
+                        });
+                    }
+                    return Promise.resolve(); // If not the current round, return a resolved promise to avoid errors.
                 })
             );
 
@@ -169,8 +230,6 @@ const VerifyTrace = () => {
     return (
         <div>
             <h1>Verification Trace for Round {createRound}</h1>
-
-
             <table className="traceability-table">
                 <thead>
                     <tr>
@@ -187,7 +246,7 @@ const VerifyTrace = () => {
 
                         // กรองค่าซ้ำออก
                         requirement.details.forEach((detail) => {
-                            const key = `${detail.design_id}-${detail.implement_id}-${detail.testcase_id}`;
+                            const key = `<span class="math-inline">\{detail\.design\_id\}\-</span>{detail.implement_id}-${detail.testcase_id}`;
                             if (!seen.has(key)) {
                                 seen.add(key);
                                 uniqueDetails.push(detail);
@@ -195,7 +254,7 @@ const VerifyTrace = () => {
                         });
 
                         return uniqueDetails.map((detail, idx) => (
-                            <tr key={`${requirement.requirement_id}-${idx}`}>
+                            <tr key={`<span class="math-inline">\{requirement\.requirement\_id\}\-</span>{idx}`}>
                                 {idx === 0 && (
                                     <td rowSpan={uniqueDetails.length} className="requirement-cell">
                                         <div className="reqid-trace">{`REQ-${requirement.requirement_id}`}</div>
@@ -210,24 +269,24 @@ const VerifyTrace = () => {
                 </tbody>
             </table>
 
-                <div className="tracecriteria-checklist-box">
-                    <h2 className="tracecriteria-checklist-title">Trace Criteria Checklist</h2>
-                    <ul className="tracecriteria-checklist-list">
-                        {traceData.map((trace) => (
-                            <li key={trace.tracecriteria_id} className="tracecriteria-checklist-item">
-                                <label className="tracecriteria-checklist-label">
-                                    <input
-                                        type="checkbox"
-                                        className="tracecriteria-checklist-checkbox"
-                                        checked={checkboxState[trace.tracecriteria_id] || false}
-                                        onChange={() => handleCheckboxChange(trace.tracecriteria_id)}
-                                    />
-                                    {trace.tracecriteria_name}
-                                </label>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
+            <div className="tracecriteria-checklist-box">
+                <h2 className="tracecriteria-checklist-title">Trace Criteria Checklist</h2>
+                <ul className="tracecriteria-checklist-list">
+                    {traceData.map((trace) => (
+                        <li key={trace.tracecriteria_id} className="tracecriteria-checklist-item">
+                            <label className="tracecriteria-checklist-label">
+                                <input
+                                    type="checkbox"
+                                    className="tracecriteria-checklist-checkbox"
+                                    checked={checkboxState[trace.tracecriteria_id] || false}
+                                    onChange={() => handleCheckboxChange(trace.tracecriteria_id)}
+                                />
+                                {trace.tracecriteria_name}
+                            </label>
+                        </li>
+                    ))}
+                </ul>
+            </div>
             <button onClick={handleSave}>SAVE</button>
         </div>
     );

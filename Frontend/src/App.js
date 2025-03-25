@@ -83,6 +83,7 @@ import VerifyTrace from './Components/Traceability/verifyTrace';
 import ViewBaselineTrace from './Components/Traceability/viewBaselineTrace';
 import SetBaselineTrace from './Components/Traceability/setBaselineTrace';
 import CreateBaselineTrace from './Components/Traceability/createBaselineTrace';
+import ViewBaselineRound from './Components/Traceability/viewBaselineRound';
 
 // Notify
 import { ToastContainer } from 'react-toastify';
@@ -193,6 +194,7 @@ const App = () => {
         <Route path="/viewBaselineTrace" element={<ViewBaselineTrace />} />
         <Route path="/setBaselineTrace" element={<SetBaselineTrace />} />
         <Route path="/createBaselineTrace" element={<CreateBaselineTrace />} />
+        <Route path="/viewBaselineRound" element={<ViewBaselineRound />} />
       </Routes>
     </>
   );
