@@ -115,7 +115,7 @@ const UpdateRequirement = () => {
     let confirmText = "ยืนยันการเปลี่ยนแปลง";
   
     if (requirementStatus === "BASELINE") {
-      confirmText = "หากยืนยันแล้ว Requirement Status จะเปลี่ยนเป็น WORKING และความสัมพันธ์ทั้งหมดจะหายไป กรุณาตรวจสอบก่อนดำเนินการ";
+      confirmText = "หากยืนยันแล้ว Requirement Status จะเปลี่ยนเป็น WORKING จะเปลี่ยนเป็น WORKING ทันทีกรุณาตรวจสอบก่อนดำเนินการ";
       
     } else if (requirementStatus === "WORKING") {
       confirmText = "ยืนยันการเปลี่ยนแปลง";

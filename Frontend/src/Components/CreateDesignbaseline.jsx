@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./CSS/CreateDesignbaseline.css";
 
@@ -49,17 +49,26 @@ const CreateDesignbaseline = () => {
 
   const handleCreateBaseline = async () => {
     if (!projectId) {
-        toast.error("Invalid project ID.");
+        Swal.fire({
+            icon: "error",
+            title: "Invalid project ID.",
+        });
         return;
     }
 
     if (selectedDesign.length === 0) {
-        toast.warning("Please select at least one design.");
+        Swal.fire({
+            icon: "warning",
+            title: "Please select at least one design.",
+        });
         return;
     }
 
     if (isSubmitting) {
-        toast.warning("Submitting in progress. Please wait.");
+        Swal.fire({
+            icon: "warning",
+            title: "Submitting in progress. Please wait.",
+        });
         return;
     }
 
@@ -71,9 +80,13 @@ const CreateDesignbaseline = () => {
         const response = await axios.post("http://localhost:3001/createdesignbaseline", payload);
 
         if (response.status === 201) {
-            toast.success("Baseline set successfully!");
+            Swal.fire({
+                icon: "success",
+                title: "Baseline set successfully!",
+                timer: 2000,
+                showConfirmButton: false,
+            });
 
-            // อัปเดตสถานะของดีไซน์เป็น BASELINE
             setVerifiedDesign((prev) =>
                 prev.map((design) =>
                     selectedDesign.includes(design.design_id)
@@ -81,18 +94,24 @@ const CreateDesignbaseline = () => {
                         : design
                 )
             );
- // Insert into historydesign table
- await Promise.all(
-    selectedDesign.map((designId) =>
-      axios.post("http://localhost:3001/addHistoryDesign", {
-        design_id: designId,
-        design_status: "BASELINE", // Log status
-      })
-    )
-  );
+
+            await Promise.all(
+                selectedDesign.map((designId) =>
+                    axios.post("http://localhost:3001/addHistoryDesign", {
+                        design_id: designId,
+                        design_status: "BASELINE",
+                    })
+                )
+            );
+
             setSelectedDesign([]);
 
-            toast.success("Design status updated to BASELINE!");
+            Swal.fire({
+                icon: "success",
+                title: "Design status updated to BASELINE!",
+                timer: 2000,
+                showConfirmButton: false,
+            });
 
             navigate(`/DesignBaseline?project_id=${projectId}`);
         } else {
@@ -100,13 +119,16 @@ const CreateDesignbaseline = () => {
         }
     } catch (error) {
         console.error("Error creating baseline:", error.response?.data || error.message);
-        toast.error(error.response?.data?.message || "An error occurred. Please try again.");
+        Swal.fire({
+            icon: "error",
+            title: error.response?.data?.message || "An error occurred. Please try again.",
+        });
     } finally {
         setIsSubmitting(false);
     }
-  
+
     navigate(`/DesignBaseline?project_id=${projectId}`);
-  };
+};
 
   const handleCancel = () => {
     navigate(`/DesignBaseline?project_id=${projectId}`);

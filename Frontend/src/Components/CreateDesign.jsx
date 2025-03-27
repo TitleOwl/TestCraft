@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import Select from "react-select";
 import "./CSS/CreateDesign.css";
 
@@ -83,17 +84,16 @@ const CreateDesign = () => {
 
     const handleSubmit = async (e) => {
       e.preventDefault();
-  
+
       if (!designStatement || !designType || !diagramType || !description || selectedRequirementsId.length === 0) {
           setError("Please fill in all fields.");
           return;
       }
-  
+
       setLoading(true);
       setError("");
-  
+
       try {
-          // **1. สร้าง Design ก่อน**
           const newDesign = {
               diagram_name: designStatement,
               design_type: designType,
@@ -103,29 +103,33 @@ const CreateDesign = () => {
               design_status: "WORKING",
               requirement_id: selectedRequirementsId,
           };
-  
+
           const designResponse = await axios.post("http://localhost:3001/design", newDesign);
           if (designResponse.status !== 201) {
               throw new Error("Failed to create design.");
           }
-  
-          const design_id = designResponse.data.design_id; // ดึง design_id มาใช้
-  
-          // **2. บันทึกประวัติ Design**
+
+          const design_id = designResponse.data.design_id;
+
           await axios.post("http://localhost:3001/addHistoryDesign", {
               design_id,
               design_status: "WORKING",
           });
-  
+
           console.log("Design created successfully:", design_id);
-  
-          // **3. อัปโหลดไฟล์ และส่ง design_id ไปด้วย**
+
           const uploadedFileIds = await uploadFiles(design_id);
-  
+
           console.log("Uploaded File IDs:", uploadedFileIds);
-  
-          alert("Design created successfully!");
-          navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } });
+
+          Swal.fire({
+              icon: "success",
+              title: "Design created successfully!",
+              showConfirmButton: false,
+              timer: 1500,
+          }).then(() => {
+              navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } });
+          });
       } catch (error) {
           console.error("Error:", error);
           setError("Something went wrong");

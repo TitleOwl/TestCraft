@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 import axios from "axios";
 import notverify from "../image/notverify.png";
 import verifydone from "../image/verifydone.png";
@@ -130,28 +130,58 @@ const VeriDesign = () => {
   };
 
   const handleVerifyClick = (design) => {
-    if (!projectId || !design?.design_ids || !design?.veridesign_id) {
-      toast.error("Invalid project ID or no design selected.", {
-        autoClose: 3000, // ปิดอัตโนมัติใน 3 วินาที
-        closeButton: true // แสดงปุ่มปิด
+    const loggedInUsername = localStorage.getItem("username");
+
+    if (!loggedInUsername) {
+      Swal.fire({
+        icon: "error",
+        title: "กรุณาเข้าสู่ระบบ",
+        text: "กรุณาเข้าสู่ระบบก่อนทำการตรวจสอบ",
+        confirmButtonText: "ตกลง",
       });
-      
       return;
     }
 
-    // ตรวจสอบว่า design_ids เป็น array หรือไม่
+    const isAssignedReviewer = design.veridesign_by.some(
+      (reviewer) => reviewer.name === loggedInUsername
+    );
+
+    if (!isAssignedReviewer) {
+      Swal.fire({
+        icon: "error",
+        title: "ไม่มีสิทธิ์",
+        text: "คุณไม่มีสิทธิ์ในการตรวจสอบดีไซน์นี้",
+        confirmButtonText: "ตกลง",
+      });
+      return;
+    }
+
+    if (!projectId || !design?.design_ids || !design?.veridesign_id) {
+      Swal.fire({
+        icon: "error",
+        title: "ข้อมูลไม่ถูกต้อง",
+        text: "Invalid project ID or no design selected.",
+        confirmButtonText: "ตกลง",
+      });
+      return;
+    }
+
     const designIds = Array.isArray(design.design_ids) ? design.design_ids : [design.design_ids];
     const designId = designIds.join(",");
 
-    // ตรวจสอบว่ามี design_id หรือไม่ก่อนส่งไป
     if (!designId) {
-      toast.error("Design ID ไม่พบ กรุณาตรวจสอบใหม่");
+      Swal.fire({
+        icon: "error",
+        title: "ไม่พบ Design ID",
+        text: "Design ID ไม่พบ กรุณาตรวจสอบใหม่",
+        confirmButtonText: "ตกลง",
+      });
       return;
     }
 
-    const veridesignId = design.veridesign_id;  // Get veridesign_id
+    const veridesignId = design.veridesign_id;
     navigate(`/DesignVerifed?project_id=${projectId}&design_id=${designId}&veridesign_id=${veridesignId}`, {
-      state: { selectedDesign: designIds }
+      state: { selectedDesign: designIds },
     });
   };
   

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
+import Swal from "sweetalert2"; // Import SweetAlert2
 import { useLocation, useNavigate } from "react-router-dom";
 import "./CSS/CreateVeriDesign.css";
 
@@ -74,12 +74,20 @@ const CreateVeriDesign = () => {
     );
 
     if (!projectId) {
-      toast.error("Invalid project ID.");
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Invalid project ID.",
+      });
       return;
     }
 
     if (selectedDesigns.length === 0 || selectedReviewerNames.length === 0) {
-      toast.warning("Please select at least one design and one reviewer.");
+      Swal.fire({
+        icon: "warning",
+        title: "Warning",
+        text: "Please select at least one design and one reviewer.",
+      });
       return;
     }
 
@@ -87,7 +95,11 @@ const CreateVeriDesign = () => {
     const createBy = storedUsername;
 
     if (!createBy) {
-      toast.error("No user found. Please login again.");
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No user found. Please login again.",
+      });
       return;
     }
 
@@ -101,7 +113,7 @@ const CreateVeriDesign = () => {
       veridesign_at: timestamp,
       veridesign_status: "WAITING FOR VERIFICATION",
       veridesign_by: selectedReviewerNames.reduce((acc, reviewerName) => {
-        acc[reviewerName] = false;  // Set reviewer as false
+        acc[reviewerName] = false; // Set reviewer as false
         return acc;
       }, {}),
     }));
@@ -112,21 +124,36 @@ const CreateVeriDesign = () => {
       // Update the status of designs to "WAITING FOR VERIFICATION"
       const updateResults = await Promise.allSettled(
         selectedDesigns.map((designId) =>
-          axios.put(`http://localhost:3001/update-design-status-waitingfor-ver/${designId}`, {
-            design_status: "WAITING FOR VERIFICATION",  // Set status as "WAITING FOR VERIFICATION"
-          })
+          axios.put(
+            `http://localhost:3001/update-design-status-waitingfor-ver/${designId}`,
+            {
+              design_status: "WAITING FOR VERIFICATION", // Set status as "WAITING FOR VERIFICATION"
+            }
+          )
         )
       );
 
       console.log(updateResults); // ใช้ตัวแปรเพื่อป้องกัน warning
 
       // Create veridesign records in the backend
-      const response = await axios.post("http://localhost:3001/createveridesign", payload);
+      const response = await axios.post(
+        "http://localhost:3001/createveridesign",
+        payload
+      );
 
       if (response.status === 201) {
-        toast.success("Design verification created successfully!", {
-          position: "top-center",
+        // *********** เพิ่ม SweetAlert2 แจ้งเตือน ***************
+        Swal.fire({
+          icon: "success",
+          title: "Success",
+          text: "Design verification created successfully!",
+          timer: 2000,
+          timerProgressBar: true,
+          didClose: () => {
+            navigate(`/VeriDesign?project_id=${projectId}`);
+          },
         });
+        // *********** จบส่วนที่เพิ่ม ***************
 
         // Insert into historydesign table
         await Promise.all(
@@ -146,18 +173,24 @@ const CreateVeriDesign = () => {
         setSelectedDesigns([]);
         setSelectedReviewers({});
       } else {
-        toast.error(response.data.message || "Failed to create verification(s).", {
-          position: "top-center",
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: response.data.message || "Failed to create verification(s).",
         });
       }
     } catch (error) {
       console.error("Error creating verification:", error);
-      toast.error(error.response?.data?.message || "An error occurred. Please try again.");
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text:
+          error.response?.data?.message || "An error occurred. Please try again.",
+      });
     } finally {
       setIsSubmitting(false); // Re-enable submit button
     }
   };
-
 
   // Handle cancel
   const handleCancel = () => {
@@ -251,7 +284,8 @@ const CreateVeriDesign = () => {
                         onChange={() => handleCheckboxReviewer(info.name)}
                       />
                       <label htmlFor={info.name}>
-                        <strong>{info.name}</strong>: <span>{info.roles}</span>
+                        <strong>{info.name}</strong>:{" "}
+                        <span>{info.roles}</span>
                       </label>
                     </div>
                   ))}
@@ -259,7 +293,9 @@ const CreateVeriDesign = () => {
               );
             })
           )}
-          {members.length === 0 && <p>No reviewers are available for this project.</p>}
+          {members.length === 0 && (
+            <p>No reviewers are available for this project.</p>
+          )}
         </div>
       </div>
 
