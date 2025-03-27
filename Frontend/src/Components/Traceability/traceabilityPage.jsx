@@ -28,6 +28,36 @@ const TraceabilityPage = () => {
         { id: 'testCaseId', title: 'Test Case ID', nameKey: 'TestCaseNames' }
     ]);
     const [processedData, setProcessedData] = useState([]);
+    const [lastVisited, setLastVisited] = useState(Date.now()); // เก็บเวลาเข้าชมล่าสุด
+
+    useEffect(() => {
+        // ... (โค้ดส่วนอื่น ๆ)
+
+        const fetchData = async () => {
+            try {
+                // ... (โค้ดส่วนอื่น ๆ)
+                setTraceabilityData(response.data);
+                setLoading(false);
+
+                // ... (โค้ดส่วนอื่น ๆ)
+            } catch (err) {
+                // ... (โค้ดส่วนอื่น ๆ)
+            }
+        };
+        fetchData();
+        // อัปเดตเวลาเข้าชมล่าสุดเมื่อ component mount
+        return () => {
+            // อัปเดตเวลาเข้าชมล่าสุดเมื่อ component unmount
+            localStorage.setItem('lastVisitedTraceability', Date.now());
+        };
+    }, [projectId]);
+
+    useEffect(() => {
+        const lastVisitedTime = localStorage.getItem('lastVisitedTraceability');
+        if (lastVisitedTime) {
+            setLastVisited(parseInt(lastVisitedTime));
+        }
+    }, []);
 
 
     const NotMatchItem = React.memo(({ item }) => (
@@ -236,10 +266,13 @@ const TraceabilityPage = () => {
     });
 
     const Cell = React.memo(({ item, detail, columnId, rowSpan }) => {
+        const isNew = item.createdAt > lastVisited; // ตรวจสอบว่าเป็นข้อมูลใหม่หรือไม่
+        const cellStyle = isNew ? { border: '2px solid red' } : {}; // กำหนด style
+
         switch (columnId) {
             case 'requirementId':
                 return rowSpan ? (
-                    <td rowSpan={rowSpan} className="requirement-cell">
+                    <td rowSpan={rowSpan} className="requirement-cell" style={cellStyle}>
                         <div className="reqid-trace" onClick={() => navigate(`/viewReqTrace?requirement_id=${item.RequirementID}`)} style={{ cursor: 'pointer' }}>{`REQ-${item.RequirementID}`}</div>
                         <div className="reqname-trace">{`REQ-NAME : ${item.RequirementName}`}</div>
                         <div className="req-allbutton-trace">
@@ -254,7 +287,7 @@ const TraceabilityPage = () => {
                 ) : null;
             case 'designId':
                 return (
-                    <td >{`DE-${detail.designID}`}
+                    <td style={cellStyle}>{`DE-${detail.designID}`}
                         <div className="designname-trace">{`DESIGN-NAME : ${item.DiagramNames}`}</div>
                         <div className="req-allbutton-trace">
                             <button className="design-action-btn view" onClick={() => navigate(`/viewDesignTrace?project_id=${projectId}&design_id=${detail.designID}`)}>
@@ -268,14 +301,27 @@ const TraceabilityPage = () => {
                 );
             case 'implementId':
                 return (
-                    <td>{`IMP-${detail.implementID}`}
-                        <div>{`Filename: ${detail.implementFilename}`}</div>
+                    <td style={cellStyle}>
+                        <div> {`IMP-${detail.implementID}`} </div>
+                        <div className="implementname-trace">{`FILE-NAME: ${detail.implementFilename}`}</div>
                     </td>
                 );
             case 'testCaseId':
                 return (
-                    <td>{`TC-${detail.testCaseID}`}
-                        <div>{`TESTCASE-NAME : ${detail.testCaseName || ''}`}</div>
+                    <td style={cellStyle}>{`TC-${detail.testCaseID}`}
+                        <div className="testcasename-trace">{`TESTCASE-NAME : ${detail.testCaseName || ''}`}</div>
+                        <div className="req-allbutton-trace">
+                            <button className="design-action-btn view" onClick={() => {
+                                navigate(`/TestcaseDetail?testcase_id=${test.testcase_id}`, {
+                                    state: { testcase: test },
+                                })
+                            }}>
+                                <FontAwesomeIcon icon={faEye} />
+                            </button>
+                            <button className="button-req-trace" onClick={() => navigate(`/editReqTrace?requirement_id=${item.RequirementID}&project_id=${projectId}`)}>
+                                <FontAwesomeIcon icon={faPen} className="edit-req-trace" />
+                            </button>
+                        </div>
                     </td>
                 );
             default:
