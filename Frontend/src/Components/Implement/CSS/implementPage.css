@@ -1,69 +1,121 @@
+/* ImplementPage.css (Enterprise Theme) */
+
 :root {
-    --primary-color: #5c7cfa;
-    /* สีฟ้านุ่มๆ */
-    --secondary-color: #4caf50;
-    /* สีเขียวเย็นๆ */
-    --bg-color: #f5f7fa;
-    /* พื้นหลังอ่อนโยน */
-    --text-color: #333;
-    --border-radius: 8px;
+    --primary: #2563eb;
+    --primary-dark: #1e40af;
+    --primary-light: #dbeafe;
+    --neutral-100: #f3f4f6;
+    --neutral-200: #e5e7eb;
+    --neutral-300: #d1d5db;
+    --neutral-400: #9ca3af;
+    --neutral-500: #6b7280;
+    --neutral-600: #4b5563;
+    --neutral-700: #374151;
+    --neutral-800: #1f2937;
+    --neutral-900: #111827;
+    --radius-md: 6px;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --transition-base: all 0.3s ease;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.implement-page {
+    font-family: var(--font-sans);
+    padding: 1.5rem;
+    background-color: var(--neutral-100);
+    color: var(--neutral-800);
+    max-width: 1440px;
+    margin: 0 auto;
+}
+
+.implement-repo-branch-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
 }
 
 .implement-label {
-    font-size: 16px;
-    font-weight: bold;
-    margin-bottom: 8px;
-    padding: 7px;
+    display: flex;
+    align-items: center;
+    margin-right: 1rem;
+    font-weight: 500;
 }
 
 .implement-input {
-    width: 100%;
-    padding: 10px;
-    border: 2px solid #ddd;
-    border-radius: var(--border-radius);
-    font-size: 16px;
-    transition: border-color 0.3s;
+    flex: 1;
+    padding: 0.625rem;
+    margin-left: 0.5rem;
+    border: 1px solid var(--neutral-300);
+    border-radius: var(--radius-md);
+    box-sizing: border-box;
+    font-size: 0.875rem;
 }
 
-.implement-input:focus {
-    border-color: var(--primary-color);
-    outline: none;
+.implement-fetch-btn, .implement-save-btn {
+    background-color: var(--primary);
+    color: white;
+    padding: 0.625rem 1rem;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: var(--transition-base);
+    box-shadow: var(--shadow-sm);
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+}
+
+.implement-fetch-btn:hover, .implement-save-btn:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .implement-main-container {
     display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    margin-top: 20px;
+    margin-top: 1.5rem;
+    gap: 1rem;
 }
 
-.implement-left-column,
-.implement-right-column {
+.implement-left-column, .implement-right-column {
     flex: 1;
+    padding: 1rem;
+    background-color: white;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
 }
 
-.implement-files-section,
-.implement-designs-section {
-    height: 100%;
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.implement-files-section, .implement-designs-section {
+    margin-bottom: 1rem;
 }
 
 .implement-section-title {
-    color: #333;
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 15px;
+    color: var(--primary);
+    border-bottom: 1px solid var(--neutral-200);
+    padding-bottom: 0.75rem;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    font-weight: 600;
 }
 
-.implement-file-list {
+.implement-file-tree {
     list-style: none;
     padding: 0;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 7px;
+}
+
+.implement-file-item {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--neutral-200);
+}
+
+.implement-folder-label {
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.implement-checkbox {
+    margin-right: 0.5rem;
 }
 
 .implement-design-list {
@@ -71,206 +123,177 @@
     padding: 0;
 }
 
-.implement-file-item,
 .implement-design-item {
-    margin-bottom: 10px;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--neutral-200);
 }
 
-.implement-checkbox {
-    margin-right: 10px;
+.implement-relation {
+    background-color: white;
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    overflow-x: auto;
 }
 
-.implement-no-files,
-.implement-no-designs {
-    color: #888;
-    font-style: italic;
+.relation-topic {
+    color: var(--primary);
+    border-bottom: 1px solid var(--neutral-200);
+    padding-bottom: 0.75rem;
+    margin-bottom: 1rem;
+    font-size: 1.125rem;
+    font-weight: 600;
 }
 
-.implement-save-btn-wrapper {
-    margin-top: 20px;
-    text-align: end;
+.relation-table {
+    width: 100%;
+    border-collapse: collapse;
 }
 
-.implement-fetch-btn {
-    padding: 12px;
-    font-size: 16px;
-    background-color: var(--primary-color);
-    color: white;
-    margin-top: 10px;
-    margin-left: 10px;
-    border-radius: var(--border-radius);
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.1s;
+.relation-table th,
+.relation-table td {
+    padding: 0.875rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--neutral-200);
+    font-size: 0.875rem;
 }
 
-.implement-save-btn {
-    padding: 12px;
-    font-size: 16px;
-    background-color: var(--secondary-color);
-    color: white;
-    margin-top: 20px;
-    border-radius: var(--border-radius);
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.1s;
+.relation-table th {
+    font-weight: 600;
+    color: var(--neutral-700);
+    background-color: var(--neutral-50);
 }
 
-.implement-fetch-btn:hover,
-.implement-save-btn:hover {
-    filter: brightness(1.1);
+.relation-table tbody tr:hover {
+    background-color: var(--neutral-100);
 }
 
-.implement-fetch-btn:active,
-.implement-save-btn:active {
-    transform: scale(0.98);
+.relation-at {
+    white-space: nowrap;
 }
 
-.implement-file-tree {
-    list-style: none;
-    padding-left: 20px;
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .relation-table thead {
+        display: none;
+    }
+
+    .relation-table tbody tr {
+        display: block;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid var(--neutral-300);
+    }
+
+    .relation-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: right;
+        padding: 0.5rem 1rem;
+        border: none;
+    }
+
+    .relation-table td:before {
+        content: attr(data-label);
+        font-weight: 600;
+        float: left;
+        text-align: left;
+    }
 }
 
-.implement-file-item {
-    position: relative;
-    padding-left: 20px;
-    margin: 5px 0;
-}
-
-.implement-file-item::before {
-
-    position: absolute;
-    left: 5px;
-    top: 0;
-    bottom: 0;
-    color: #ccc;
-}
-
-.implement-file-item:last-child::before {
-    content: "";
-}
-
-.implement-folder-label {
-    cursor: pointer;
-    font-weight: bold;
+.relation-item {
     display: flex;
     align-items: center;
-    gap: 5px;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--neutral-200);
 }
 
-.implement-folder-label::before {
-    content: "▶";
-    font-size: 12px;
-    margin-right: 5px;
-    transition: transform 0.2s ease;
+.relation-item span {
+    margin-right: 0.75rem;
+    font-size: 0.875rem;
 }
 
-.implement-folder-label[aria-expanded="true"]::before {
-    transform: rotate(90deg);
-}
-
-.implement-checkbox {
-    margin-right: 5px;
-}
-
-.implement-file-item input[type="checkbox"] {
-    cursor: pointer;
+.relation-item span:last-child {
+    margin-right: 0;
 }
 
 .implement-progress-container {
     width: 100%;
-    height: 20px;
-    background-color: #f3f3f3;
-    border-radius: 10px;
-    margin: 10px 0;
+    background-color: var(--neutral-200);
+    border-radius: var(--radius-md);
+    margin-top: 0.5rem;
+    height: 1rem;
+    overflow: hidden;
 }
 
 .implement-progress-bar {
     height: 100%;
-    background-color: #4caf50;
-    border-radius: 10px;
-    transition: width 0.5s ease;
+    background-color: var(--primary);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.implement-no-files {
+    color: var(--neutral-600);
+    font-style: italic;
+    margin-top: 1rem;
 }
 
 .filter-design {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-family: 'Arial', sans-serif;
-    font-size: 14px;
-    color: #333;
-    padding: 10px 15px;
-    background-color: #f7f7f7;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-    margin-bottom: 14px;
+    margin-bottom: 1rem;
 }
 
 .filter-design input {
     width: 100%;
-    padding: 8px 12px;
-    font-size: 14px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    outline: none;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    padding: 0.5rem;
+    border: 1px solid var(--neutral-300);
+    border-radius: var(--radius-md);
+    box-sizing: border-box;
+    font-size: 0.875rem;
 }
 
-.filter-design input:focus {
-    border-color: #4e9cfa;
-    box-shadow: 0 0 5px rgba(78, 156, 250, 0.3);
-}
-
-.filter-design::before {
-    content: '🔍';
-    font-size: 16px;
-    color: #777;
-}
-
-.implement-relation {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    padding: 20px;
-    height: 100%;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.relation-topic {
-    font-size: 1.5em;
-    margin-bottom: 10px;
-    color: #333;
-    text-align: center;
-}
-
-.relations-container {
+/* เพิ่ม CSS ส่วนนี้เข้าไป */
+.implement-page > .implement-label:first-child {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap; /* ให้ขึ้นบรรทัดใหม่เมื่อเนื้อที่เหลือน้อย */
+    align-items: center;
 }
 
-.relation-item {
-    text-align: center;
-    margin-bottom: 10px;
-    font-size: 1.1em;
-    color: #555;
+.implement-page > .implement-label:first-child > input {
+    flex: 1 1 200px; /* input ขยายเต็มที่และมีขนาดขั้นต่ำ 200px */
+    margin-left: 0.5rem;
+    min-width: 200px; /* ขนาดขั้นต่ำของ input */
 }
 
-.relation-item span {
-    margin: 0 10px;
+/* ปรับ margin ของ label ที่สอง */
+.implement-page > .implement-label:nth-child(2) {
+    margin-top: 1rem;
 }
 
-.filename {
-    font-weight: bold;
+.implement-refresh-btn {
+    background-color: var(--neutral-300);
+    color: var(--neutral-800);
+    padding: 0.625rem 1rem;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    margin-top: 1rem;
+    margin-left: 0.5rem; /* เพิ่มระยะห่างจากปุ่ม Save */
+    transition: var(--transition-base);
+    box-shadow: var(--shadow-sm);
+    font-size: 0.875rem;
 }
 
-.separator {
-    color: #888;
+.implement-refresh-btn:hover {
+    background-color: var(--neutral-400);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
-.design-id {
-    font-weight: bold;
-    color: #2a9d8f;
+.design-id-select {
+    width: 200px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
-

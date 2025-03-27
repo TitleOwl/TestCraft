@@ -8,7 +8,7 @@ import "./testcase_css/TestcaseDetail.css";
 const TestcaseDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  
+
   const testcase = location.state?.testcase || {};
 
   // ✅ ดึง project_id จาก state, testcase หรือ URL query parameter
@@ -31,7 +31,11 @@ const TestcaseDetail = () => {
     <div className="testcase-detail-container">
       {/* Back Button */}
       <button
-        onClick={() => navigate(`/Dashboard${projectId ? `?project_id=${encodeURIComponent(projectId)}` : ""}`)}
+        onClick={() =>
+          navigate(`/Dashboard?project_id=${projectId}`, {
+            state: { selectedSection: "Traceability" },
+          })
+        }
         className="backreq-button"
       >
         <FontAwesomeIcon icon={faArrowLeft} className="faArrowLeft" />

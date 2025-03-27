@@ -53,6 +53,8 @@ import DesignVerifed from './Components/DesignVerifed';
 import DesignBaseline from './Components/DesignBaseline';
 import CreateDesignbaseline from './Components/CreateDesignbaseline';
 import UpdateDesign from './Components/UpdateDesign';
+import CreateDiagram from './Components/CreateDiagram';
+import ViewDiagram from './Components/viewDiagram';
 
 //Implement
 import ImplementPage from './Components/Implement/implementPage';
@@ -165,6 +167,8 @@ const App = () => {
         <Route path="/DesignVerifed" element={<DesignVerifed />} />
         <Route path="/DesignBaseline" element={<DesignBaseline />} />
         <Route path="/CreateDesignbaseline" element={<CreateDesignbaseline />} />
+        <Route path="/CreateDiagram" element={<CreateDiagram />} />
+        <Route path="/viewDiagram" element={<ViewDiagram />} />
 
         {/* ทำ Testcase */}
         <Route path="/CreateTestcase" element={<CreateTestcase />} />

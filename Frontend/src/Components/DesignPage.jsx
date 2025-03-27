@@ -68,7 +68,7 @@ const DesignPage = () => {
         const statusCondition = statusFilter === "All" || design.design_status === statusFilter;
 
         // เงื่อนไขการฟิลเตอร์ประเภท
-        const typeCondition = typeFilter === "All" || design.design_type === typeFilter;
+        const typeCondition = typeFilter === "All" || design.diagram_type === typeFilter;
 
         // คืนค่า true หากตรงตามเงื่อนไขทั้งหมด
         return searchCondition && statusCondition && typeCondition;
@@ -109,11 +109,11 @@ const DesignPage = () => {
                     onChange={(e) => setTypeFilter(e.target.value)}
                     className="design-filter-select"
                 >
-                    <option value="All">All Statuses</option>
-                <option value="Prototype">Prototype</option>
-                <option value="Flow Chart">Flow Chart</option>
-                <option value="ER Diagram">ER Diagram</option>
-                <option value="Pseudo Code">Pseudo Code</option>
+                    <option value="All">All Type</option>
+                    <option value="Prototype">Prototype</option>
+                    <option value="Flow Chart">Flow Chart</option>
+                    <option value="ER Diagram">ER Diagram</option>
+                    <option value="Pseudo Code">Pseudo Code</option>
                 </select>
                 <button className="design-btn" onClick={() => navigate(`/CreateDesign?project_id=${projectId}`)}>Add Design</button>
             </section>

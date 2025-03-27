@@ -3,6 +3,7 @@ import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import './CSS/ViewDesign.css';  // Make sure to import your CSS file here
 import backtodesign from '../image/arrow_left.png';
+import ViewDiagram from "./viewDiagram";
 
 const ViewDesign = () => {
     const location = useLocation();
@@ -118,12 +119,12 @@ const ViewDesign = () => {
                         <div className="view-design-item">
                             <strong>Requirements:</strong>
                             <ul>
-    {baselineRequirements
-        .filter((req) => Array.isArray(designData.requirement_id) && designData.requirement_id.includes(req.requirement_id))
-        .map((req) => (
-            <li key={req.requirement_id}>{`REQ-00${req.requirement_id}: ${req.requirement_name}`}</li>
-        ))}
-</ul>
+                                {baselineRequirements
+                                    .filter((req) => Array.isArray(designData.requirement_id) && designData.requirement_id.includes(req.requirement_id))
+                                    .map((req) => (
+                                        <li key={req.requirement_id}>{`REQ-00${req.requirement_id}: ${req.requirement_name}`}</li>
+                                    ))}
+                            </ul>
 
                         </div>
                     </div>
@@ -154,6 +155,10 @@ const ViewDesign = () => {
                 ) : (
                     <p>No history available</p>
                 )}
+            </div>
+            <div>
+                {/* Pass designId down as a prop */}
+                <ViewDiagram designId={designId} />
             </div>
         </>
     );
