@@ -143,3 +143,24 @@
 .update-design-modal-buttons button:hover {
     background-color: #f0f0f0;
 }
+
+.update-design-label.update-design-label-file {
+    display: block !important;        /* ทำให้เป็น block */
+    overflow: visible !important;     /* ไม่ซ่อนเนื้อหาที่ล้น */
+    min-height: 50px !important;      /* กำหนดความสูงขั้นต่ำ */
+    padding: 10px !important;         /* ใส่ padding */
+    margin-bottom: 10px !important;   /* ใส่ margin */
+}
+
+
+/* -- ส่วนที่ 2: บังคับตัว Input ให้แสดงผล -- */
+.update-design-input-file {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: auto !important;
+    height: auto !important;
+    position: static !important;
+    padding: 10px !important;
+    margin-top: 5px !important;
+}

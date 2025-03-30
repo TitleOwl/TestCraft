@@ -184,11 +184,6 @@ const VerificationList = () => {
     useEffect(() => {
         let result = [...verifications];
 
-        // Apply status filter
-        if (statusFilter !== "all") {
-            result = result.filter(item => item.requirement_status === statusFilter);
-        }
-
         // Apply search filter
         if (searchTerm) {
             const lowerSearchTerm = searchTerm.toLowerCase();

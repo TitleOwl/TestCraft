@@ -113,9 +113,6 @@
   }
 }
 
-.hidden-file-input {
-  display: none;
-}
 
 .custom-upload-button {
   background-color: #007bff;
@@ -128,4 +125,31 @@
 
 .custom-upload-button:hover {
   background-color: #0056b3;
+}
+
+/* -- ส่วนที่ 1: บังคับ Container แม่ -- */
+/* ใช้ selector ที่เจาะจง div ที่ครอบ input */
+.uploaded-files-container.create-design-form-group {
+  display: block !important;        /* ทำให้เป็น block */
+  overflow: visible !important;     /* สำคัญมาก: บังคับไม่ให้ซ่อนเนื้อหาที่ล้น */
+  height: auto !important;          /* ให้ความสูงปรับตามเนื้อหา */
+  min-height: 50px !important;      /* กำหนดความสูงขั้นต่ำ เผื่อไว้ให้เห็น */
+  width: auto !important;           /* ให้ความกว้างอัตโนมัติ */
+  opacity: 1 !important;            /* บังคับไม่ให้โปร่งใส */
+  visibility: visible !important;   /* บังคับให้มองเห็น */
+  position: static !important;      /* ล้างค่า position แปลกๆ */
+  padding: 10px !important;         /* ใส่ padding ให้เห็นขอบเขต */
+  margin-bottom: 20px !important;   /* ใส่ margin ข้างล่าง เผื่อระยะ */
+}
+
+/* -- ส่วนที่ 2: ยังคงบังคับตัว Input ด้วย เผื่อไว้ -- */
+.create-design-file-input {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: auto !important;         /* อาจจะปรับเป็น 100% ถ้าต้องการให้เต็ม Container */
+  height: auto !important;
+  position: static !important;
+  padding: 10px !important;
+  margin-top: 5px !important;
 }
