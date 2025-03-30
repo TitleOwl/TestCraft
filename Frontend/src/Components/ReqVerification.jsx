@@ -111,6 +111,8 @@ const ReqVerification = () => {
     };
     setCheckboxState(updatedState);
 
+    console.log("Checkbox state updated:", updatedState); // เพิ่ม log ที่นี่
+
     const storedUsername = localStorage.getItem("username");
     if (storedUsername) {
       localStorage.setItem(
@@ -148,109 +150,127 @@ const ReqVerification = () => {
   };
 
   const handleSave = async () => {
+    console.log("Current checkbox state before save:", checkboxState);
+
     const allChecked = Object.values(checkboxState).every((value) => value);
-  
+
     if (!allChecked) {
-      showCustomAlert("warning", "Criteria checklist saved, but not all items are checked");
-      
-      // Wait for alert animation to finish, then navigate
-      setTimeout(() => {
-        navigate(`/VerificationList?project_id=${projectId}`);
-      }, 1500);
-      return;
-    }
-  
-    try {
-      const storedUsername = localStorage.getItem("username");
-      if (!storedUsername) {
-        showCustomAlert("error", "Please log in first.");
-        return;
-      }
-  
-      const response = await axios.get("http://localhost:3001/verifications", {
-        params: { project_id: projectId, verification_id: verificationId },
-      });
-  
-      const verification = response.data.find((v) => v.id === parseInt(verificationId));
-  
-      if (verification) {
-        const updatedVerificationBy = verification.verification_by.map((entry) => {
-          const [username, status] = entry.split(":").map((item) => item.trim());
-          if (username === storedUsername) {
-            return `${username}: true`;
-          }
-          return entry;
-        });
-  
-        await axios.put("http://localhost:3001/update-verification-true", {
-          project_id: projectId,
-          verification_id: verificationId,
-          verification_by: updatedVerificationBy,
-        });
-  
-        const allVerified = updatedVerificationBy.every((entry) => {
-          const [, status] = entry.split(":").map((item) => item.trim());
-          return status === "true";
-        });
-  
-        if (allVerified) {
-          const requirementIds = requirementsDetails.map((req) => req.requirement_id);
-          
-          if (!requirementIds || requirementIds.length === 0) {
-            showCustomAlert("error", "No requirements found to update.");
-            return;
-          }
-  
-          try {
-            await axios.put(
-              "http://localhost:3001/update-requirements-status-verified",
-              {
-                requirement_ids: requirementIds,
-                requirement_status: "VERIFIED",
-              }
-            );
-  
-            for (const requirementId of requirementIds) {
-              const historyReqData = {
-                requirement_id: requirementId,
-                requirement_status: "VERIFIED",
-              };
-  
-              const historyResponse = await axios.post(
-                "http://localhost:3001/historyReqWorking",
-                historyReqData
-              );
-  
-              if (historyResponse.status !== 200) {
-                console.error("Failed to add history for requirement:", requirementId);
-              }
-            }
-  
-            showCustomAlert("success", "All criteria verified! Status updated to VERIFIED");
-            
-            // Wait for alert animation to finish, then navigate
-            setTimeout(() => {
-              navigate(`/Dashboard?project_id=${projectId}`);
-            }, 1500);
-          } catch (error) {
-            console.error("Error updating requirement status:", error);
-            showCustomAlert("error", "Failed to update requirements status");
-          }
-        } else {
-          showCustomAlert("warning", "Not all users have verified. Please wait for everyone to verify.");
-          
-          // Wait for alert animation to finish, then navigate
-          setTimeout(() => {
+        showCustomAlert("warning", "Criteria checklist saved, but not all items are checked");
+
+        setTimeout(() => {
             navigate(`/VerificationList?project_id=${projectId}`);
-          }, 1500);
-        }
-      }
-    } catch (error) {
-      console.error("Error updating verification status:", error);
-      showCustomAlert("error", "Failed to update verification status. Please try again.");
+        }, 1500);
+        return;
     }
-  };
-  
+
+    try {
+        const storedUsername = localStorage.getItem("username");
+        if (!storedUsername) {
+            showCustomAlert("error", "Please log in first.");
+            return;
+        }
+
+        const response = await axios.get("http://localhost:3001/verifications", {
+            params: { project_id: projectId, verification_id: verificationId },
+        });
+
+        const verification = response.data.find((v) => v.id === parseInt(verificationId));
+
+        if (verification) {
+            const updatedVerificationBy = verification.verification_by.map((entry) => {
+                const [username, status] = entry.split(":").map((item) => item.trim());
+                if (username === storedUsername) {
+                    return `${username}: true`;
+                }
+                return entry;
+            });
+
+            await axios.put("http://localhost:3001/update-verification-true", {
+                project_id: projectId,
+                verification_id: verificationId,
+                verification_by: updatedVerificationBy,
+            });
+
+            const allVerified = updatedVerificationBy.every((entry) => {
+                const [, status] = entry.split(":").map((item) => item.trim());
+                return status === "true";
+            });
+
+            if (allVerified) {
+                const requirementIds = requirementsDetails.map((req) => req.requirement_id);
+
+                if (!requirementIds || requirementIds.length === 0) {
+                    showCustomAlert("error", "No requirements found to update.");
+                    return;
+                }
+
+                try {
+                    await axios.put("http://localhost:3001/update-requirements-status-verified", {
+                        requirement_ids: requirementIds,
+                        requirement_status: "VERIFIED",
+                    });
+
+                    for (const requirementId of requirementIds) {
+                        const historyReqData = {
+                            requirement_id: requirementId,
+                            requirement_status: "VERIFIED",
+                        };
+
+                        const historyResponse = await axios.post("http://localhost:3001/historyReqWorking", historyReqData);
+
+                        if (historyResponse.status !== 200) {
+                            console.error("Failed to add history for requirement:", requirementId);
+                        }
+
+                        // Get checked criteria names
+                        const checkedCriteriaNames = reqcriList
+                            .filter((criteria) => checkboxState[criteria.reqcri_id])
+                            .map((criteria) => criteria.reqcri_name);
+
+                        const vericriReqData = {
+                            project_id: projectId,
+                            reqcri_names: checkedCriteriaNames, // Send as array
+                            requirement_id: requirementId,
+                        };
+
+                        const vericriReqResponse = await axios.post(
+                            "http://localhost:3001/vericri_req",
+                            vericriReqData
+                        );
+
+                        if (vericriReqResponse.status !== 201) {
+                            console.error("Failed to add vericri_req for requirement:", requirementId);
+                        }
+                    }
+
+                    showCustomAlert("success", "All criteria verified! Status updated to VERIFIED");
+
+                    setTimeout(() => {
+                        navigate(`/Dashboard?project_id=${projectId}`);
+                    }, 1500);
+                } catch (error) {
+                    console.error("Error updating requirement status:", error);
+                    showCustomAlert("error", "Failed to update requirements status");
+                }
+            } else {
+                showCustomAlert(
+                    "warning",
+                    "Not all users have verified. Please wait for everyone to verify."
+                );
+
+                setTimeout(() => {
+                    navigate(`/VerificationList?project_id=${projectId}`);
+                }, 1500);
+            }
+        }
+    } catch (error) {
+        console.error("Error updating verification status:", error);
+        showCustomAlert(
+            "error",
+            "Failed to update verification status. Please try again."
+        );
+    }
+};
   return (
     <div className="reqveri-container">
       <div className="reqveri-header">
