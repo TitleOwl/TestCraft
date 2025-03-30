@@ -79,59 +79,6 @@ const VerifyTrace = () => {
         fetchData();
     }, [projectId, createRound]);
 
-
-    useEffect(() => {
-        // Add this useEffect to re-fetch verification data whenever createRound changes.
-        // This is important to ensure the correct data is displayed when switching rounds.
-        const fetchData = async () => {
-            try {
-                const verificationResponse = await axios.get(
-                    "http://localhost:3001/getVerificationTrace",
-                    { params: { project_id: projectId, create_round: createRound } }
-                );
-
-                if (verificationResponse.data.success) {
-                    const groupedData = verificationResponse.data.data.reduce((acc, item) => {
-                        const key = item.requirement_id;
-
-                        if (!acc[key]) {
-                            acc[key] = {
-                                ...item,
-                                details: [],
-                            };
-                        }
-
-                        acc[key].details.push({
-                            veritrace_id: item.veritrace_id,
-                            design_id: item.design_id,
-                            implement_id: item.implement_id,
-                            testcase_id: item.testcase_id,
-                            veritrace_status: item.veritrace_status,
-                            verification_by: JSON.parse(item.verification_by),
-                            create_round: item.create_round,
-                        });
-
-                        return acc;
-                    }, {});
-
-                    const processedData = Object.values(groupedData);
-                    setVerificationData(processedData);
-                } else {
-                    // Handle the case where there is no data for the round.  Important!
-                    setVerificationData([]); // Clear the previous data.
-                    toast.info("No data found for this round.");
-                }
-            } catch (error) {
-                console.error("Error fetching verification data", error);
-                toast.error("Error fetching data.");
-            }
-        };
-
-        fetchData();
-    }, [projectId, createRound]);
-
-
-
     const handleCheckboxChange = (traceId) => {
         setCheckboxState((prevState) => {
             const newState = { ...prevState, [traceId]: !prevState[traceId] };

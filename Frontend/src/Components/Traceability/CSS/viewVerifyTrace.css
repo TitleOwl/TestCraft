@@ -1,76 +1,117 @@
-.popup-trace {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.3);
-    /* เพิ่มความโปร่งใสเพื่อให้ดูเรียบหรู */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.popup-trace-reviewer {
-    background: #ffffff;
+.verify-traceability {
+    max-width: 1200px;
+    margin: 20px auto;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    /* เพิ่มมิติ */
-    width: 320px;
-    text-align: center;
-    animation: fadeIn 0.3s ease-in-out;
-}
-
-.popup-trace-reviewer h2 {
-    margin-bottom: 12px;
-    font-size: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #333;
-    font-weight: 600;
 }
 
-.popup-trace-reviewer ul {
-    list-style: none;
-    padding: 0;
-    margin-bottom: 20px;
-}
-
-.popup-trace-reviewer ul li {
-    padding: 6px 0;
-    font-size: 16px;
-    color: #555;
-    border-bottom: 1px solid #eee;
-}
-
-.popup-trace-reviewer ul li:last-child {
-    border-bottom: none;
-}
-
-.popup-trace-reviewer button {
-    background: #007BFF;
+.backviewveri-trace {
+    background-color: #0056b3;
     color: white;
+    padding: 10px 20px;
     border: none;
-    padding: 10px 16px;
-    font-size: 14px;
     border-radius: 5px;
     cursor: pointer;
-    transition: background 0.2s;
+    font-size: 16px;
+    margin-bottom: 20px;
+    transition: background-color 0.3s ease;
 }
 
-.popup-trace-reviewer button:hover {
-    background: #0056b3;
+.backviewveri-trace:hover {
+    background-color: #003d82;
 }
 
-/* Fade-in effect */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
+.veri-trace-record {
+    text-align: center;
+    color: #0056b3;
+    margin-bottom: 30px;
+}
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.search-input-veritrace {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 250px;
+    font-size: 16px;
+    box-sizing: border-box;
+    margin-right: 10px;
+    margin-left: 10px;
+    /* เพิ่มระยะห่างด้านซ้าย */
+}
+
+/* ลบระยะห่างซ้ายขวาสุดท้าย */
+.search-inputs-container .search-input-veritrace:last-child {
+    margin-right: 0;
+}
+
+.search-inputs-container .search-input-veritrace:first-child {
+    margin-left: 0;
+}
+
+.verification-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.verification-table th,
+.verification-table td {
+    border: 1px solid #ddd;
+    padding: 12px 15px;
+    text-align: left;
+}
+
+.verification-table th {
+    background-color: #f0f0f0;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.verification-table th:hover {
+    background-color: #e0e0e0;
+}
+
+.verification-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.verification-table tbody tr:hover {
+    background-color: #f0f8ff;
+}
+
+.verification-table button {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.verification-table button:hover {
+    background-color: #0056b3;
+}
+
+/* เพิ่มการจัดรูปแบบสำหรับปุ่ม Verify และ View */
+.verification-table button[onClick*="handleVerifyClick"] {
+    background-color: #28a745;
+}
+
+.verification-table button[onClick*="handleVerifyClick"]:hover {
+    background-color: #218838;
+}
+
+.verification-table button[onClick*="handleViewClick"] {
+    background-color: #007bff;
+}
+
+.verification-table button[onClick*="handleViewClick"]:hover {
+    background-color: #0056b3;
 }

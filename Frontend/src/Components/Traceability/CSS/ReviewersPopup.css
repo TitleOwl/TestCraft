@@ -1,0 +1,116 @@
+/* ReviewersPopup.css (หรือ ViewVerifyTrace.css ถ้าคุณต้องการรวมไว้ในไฟล์เดียว) */
+
+.popup-veri-trace {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* พื้นหลังโปร่งใส */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    /* ให้ป๊อปอัปอยู่เหนือองค์ประกอบอื่น */
+    animation: fadeIn 0.3s ease-out;
+    /* เพิ่ม animation fade in */
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.popup-veri-trace-reviewer {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    /* เงา */
+    width: 400px;
+    max-height: 80vh;
+    /* จำกัดความสูงและเพิ่ม scroll ถ้าเนื้อหาเยอะ */
+    overflow-y: auto;
+    padding: 20px;
+    animation: slideIn 0.3s ease-out;
+    /* เพิ่ม animation slide in */
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.review-veritrace {
+    color: #0056b3;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.popup-veri-trace-reviewer ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.popup-veri-trace-reviewer li {
+    display: flex;
+    justify-content: space-between;
+    /* จัดชื่อและสถานะให้อยู่คนละฝั่ง */
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.popup-veri-trace-reviewer li:last-child {
+    border-bottom: none;
+}
+
+.popup-veri-trace-reviewer li>span:first-child {
+    font-size: 16px;
+    color: #333;
+}
+
+.popup-veri-trace-reviewer li>span:last-child {
+    font-weight: bold;
+    font-size: 18px;
+    margin-left: 10px;
+}
+
+.popup-veri-trace-reviewer li>span.verified {
+    color: green;
+}
+
+.popup-veri-trace-reviewer li>span.not-verified {
+    color: red;
+}
+
+.popup-veri-trace-reviewer button {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.popup-veri-trace-reviewer button:hover {
+    background-color: #0056b3;
+}

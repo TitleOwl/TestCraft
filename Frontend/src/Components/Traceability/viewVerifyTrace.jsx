@@ -4,16 +4,23 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./CSS/viewVerifyTrace.css";
+import "./CSS/ReviewersPopup.css";
+import { format } from 'date-fns';
 
 const ViewVerifyTrace = () => {
     const [verificationData, setVerificationData] = useState([]);
     const [showPopup, setShowPopup] = useState(false);
     const [selectedReviewers, setSelectedReviewers] = useState([]);
+    const [combinedSearchQuery, setCombinedSearchQuery] = useState('');
+    const [selectedDate, setSelectedDate] = useState('');
+    const [searchStatus, setSearchStatus] = useState('');
+    const [sortColumn, setSortColumn] = useState('round');
+    const [sortDirection, setSortDirection] = useState('asc');
     const navigate = useNavigate();
     const location = useLocation();
+    const [selectedDateObject, setSelectedDateObject] = useState(null); // Date object
+    const [displayedDate, setDisplayedDate] = useState(''); // mm/dd/yyyy
     const storedUsername = localStorage.getItem("username");
-
-    // ดึงค่า project_id จาก URL
     const queryParams = new URLSearchParams(location.search);
     const projectId = queryParams.get("project_id");
 
@@ -22,7 +29,6 @@ const ViewVerifyTrace = () => {
             try {
                 const response = await axios.get('http://localhost:3001/getVerificationTrace');
                 if (response.data.success) {
-                    // กรองเฉพาะข้อมูลที่ตรงกับ project_id ที่อยู่ใน URL
                     const filteredData = response.data.data.filter(item => item.project_id == projectId);
                     setVerificationData(filteredData);
                 } else {
@@ -35,7 +41,7 @@ const ViewVerifyTrace = () => {
         };
 
         fetchData();
-    }, [projectId]); // ใช้ projectId เป็น dependency เพื่ออัปเดตข้อมูลเมื่อเปลี่ยน project
+    }, [projectId]);
 
     const groupedData = verificationData.reduce((acc, item) => {
         const round = item.create_round;
@@ -49,11 +55,10 @@ const ViewVerifyTrace = () => {
     const handleVerifyClick = (round, projectId, verificationBy, veritraceStatus) => {
         const reviewers = JSON.parse(verificationBy);
 
-        // เช็คสิทธิ์การ Verify
         if (!Object.keys(reviewers).includes(storedUsername)) {
             toast.error("❌ Permission Denied: คุณไม่มีสิทธิ์ Verify ในรอบนี้", {
                 position: "top-center",
-                autoClose: 3000, // ปิดอัตโนมัติใน 3 วินาที
+                autoClose: 3000,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -63,18 +68,11 @@ const ViewVerifyTrace = () => {
             return;
         }
 
-        // ถ้าสถานะเป็น VERIFIED ให้แสดง prompt ถามผู้ใช้
-        if (veritraceStatus === "VERIFIED") {
-            const confirmMessage = "Traceability record ที่ Verify ในรอบนี้เป็น VERIFIED แล้ว คุณต้องการแก้ไขหรือไม่?";
-            const userConfirmed = window.confirm(confirmMessage);
-
-            if (!userConfirmed) {
-                return; // ถ้าเลือกยกเลิกไม่ให้ไปหน้า Verify
-            }
-        }
-
-        // ถ้ามีสิทธิ์และยืนยันแล้ว ให้ไปหน้า Verify
         navigate(`/verifyTrace?project_id=${projectId}&round=${round}`);
+    };
+
+    const handleViewClick = (round, projectId) => {
+        navigate(`/verifyTrace?project_id=<span class="math-inline">\{projectId\}&round\=</span>{round}`);
     };
 
     const handleShowReviewers = (verificationBy) => {
@@ -83,31 +81,129 @@ const ViewVerifyTrace = () => {
         setShowPopup(true);
     };
 
+    const handleSearchChange = (e, field) => {
+        switch (field) {
+            case 'date':
+                setSelectedDate(e.target.value);
+                break;
+            case 'status':
+                setSearchStatus(e.target.value);
+                break;
+            default:
+                setCombinedSearchQuery(e.target.value);
+        }
+    };
+
+    const handleDateChange = (e) => {
+        setSelectedDate(e.target.value);
+    };
+
+    const handleSort = (column) => {
+        if (sortColumn === column) {
+            setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+        } else {
+            setSortColumn(column);
+            setSortDirection('asc');
+        }
+    };
+
+    const filteredAndSortedRounds = Object.keys(groupedData).filter((round) => {
+        const roundItems = groupedData[round];
+        const firstItem = roundItems[0];
+        const date = firstItem.verification_at ? new Date(firstItem.verification_at) : null;
+        const formattedDate = date ? format(date, 'yyyy-MM-dd') : '';
+
+        const roundMatch = round.toLowerCase().includes(combinedSearchQuery.toLowerCase());
+        const createdByMatch = firstItem.create_by.toLowerCase().includes(combinedSearchQuery.toLowerCase());
+        const dateMatch = selectedDate === '' || formattedDate === selectedDate;
+        const statusMatch = searchStatus === '' || firstItem.veritrace_status.toLowerCase() === searchStatus.toLowerCase();
+
+        return (roundMatch || createdByMatch) && dateMatch && statusMatch;
+    }).sort((a, b) => {
+        if (sortColumn) {
+            const roundItemsA = groupedData[a];
+            const roundItemsB = groupedData[b];
+            const firstItemA = roundItemsA[0];
+            const firstItemB = roundItemsB[0];
+
+            let valueA, valueB;
+            switch (sortColumn) {
+                case 'round':
+                    valueA = a;
+                    valueB = b;
+                    break;
+                case 'createdBy':
+                    valueA = firstItemA.create_by;
+                    valueB = firstItemB.create_by;
+                    break;
+                case 'date':
+                    valueA = new Date(firstItemA.verification_at).toISOString().split('T')[0];
+                    valueB = new Date(firstItemB.verification_at).toISOString().split('T')[0];
+                    break;
+                case 'status':
+                    valueA = firstItemA.veritrace_status;
+                    valueB = firstItemB.veritrace_status;
+                    break;
+                default:
+                    return 0;
+            }
+
+            if (valueA < valueB) return sortDirection === 'asc' ? -1 : 1;
+            if (valueA > valueB) return sortDirection === 'asc' ? 1 : -1;
+            return 0;
+        }
+        return 0;
+    });
+
     return (
-        <div>
+        <div className='verify-traceability'>
             <button className="backviewveri-trace" onClick={() =>
                 navigate(`/Dashboard?project_id=${projectId}`, {
                     state: { selectedSection: "Traceability" },
                 })
             }>Back</button>
-            <h1>Verification Traceability Record</h1>
+            <h1 className='veri-trace-record'>Verification Traceability Record</h1>
+            <input
+                type="text"
+                placeholder="Search Round or Created By"
+                value={combinedSearchQuery}
+                onChange={(e) => handleSearchChange(e, '')}
+                className="search-input-veritrace"
+            />
+            <input
+                type="date"
+                value={selectedDate}
+                onChange={handleDateChange}
+                className="search-input-veritrace"
+            />
+            <select
+                value={searchStatus}
+                onChange={(e) => handleSearchChange(e, 'status')}
+                className="search-input-veritrace"
+            >
+                <option value="" className='option-search-veritrace'>All Status</option>
+                <option value="WAITING FOR VERIFICATION">WAITING FOR VERIFICATION</option>
+                <option value="VERIFIED">VERIFIED</option>
+                <option value="BASELINE">BASELINE</option>
+            </select>
+
             <table className="verification-table">
                 <thead>
                     <tr>
-                        <th>Round</th>
-                        <th>Created By</th>
-                        <th>Date</th>
-                        <th>Status</th>
+                        <th onClick={() => handleSort('round')}>Round {sortColumn === 'round' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
+                        <th onClick={() => handleSort('createdBy')}>Created By {sortColumn === 'createdBy' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
+                        <th onClick={() => handleSort('date')}>Date {sortColumn === 'date' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
+                        <th onClick={() => handleSort('status')}>Status {sortColumn === 'status' && (sortDirection === 'asc' ? '▲' : '▼')}</th>
                         <th>Reviewers</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {Object.keys(groupedData).map((round) => {
+                    {filteredAndSortedRounds.map((round) => {
                         const roundItems = groupedData[round];
                         const firstItem = roundItems[0];
                         const date = new Date(firstItem.verification_at);
-                        const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+                        const formattedDate = date.toISOString().split('T')[0];
 
                         const reviewers = Array.from(new Set(
                             roundItems.flatMap(item => Object.keys(JSON.parse(item.verification_by)))
@@ -117,21 +213,21 @@ const ViewVerifyTrace = () => {
                             <tr key={round}>
                                 <td>{round}</td>
                                 <td>{firstItem.create_by}</td>
-                                <td>{formattedDate}</td>
+                                <td>{formattedDate || '-'}</td>
                                 <td>{firstItem.veritrace_status}</td>
                                 <td>
                                     <button onClick={() => handleShowReviewers(firstItem.verification_by)}>ดู Reviewers</button>
                                 </td>
                                 <td>
-                                    <button
-                                        onClick={() => handleVerifyClick(round, firstItem.project_id, firstItem.verification_by, firstItem.veritrace_status)}
-                                        disabled={firstItem.veritrace_status === "VERIFIED"}  // Disable if VERIFIED
-                                        style={{
-                                            cursor: firstItem.veritrace_status === "VERIFIED" ? "not-allowed" : "pointer",  // Change cursor to not-allowed if VERIFIED
-                                        }}
-                                    >
-                                        Verify
-                                    </button>
+                                    {firstItem.veritrace_status === "VERIFIED" ? (
+                                        <button onClick={() => handleViewClick(round, firstItem.project_id)}>
+                                            View
+                                        </button>
+                                    ) : (
+                                        <button onClick={() => handleVerifyClick(round, firstItem.project_id, firstItem.verification_by, firstItem.veritrace_status)}>
+                                            Verify
+                                        </button>
+                                    )}
                                 </td>
                             </tr>
                         );
@@ -140,9 +236,9 @@ const ViewVerifyTrace = () => {
             </table>
 
             {showPopup && (
-                <div className="popup-trace">
-                    <div className="popup-trace-reviewer">
-                        <h2>Reviewers</h2>
+                <div className="popup-veri-trace">
+                    <div className="popup-veri-trace-reviewer">
+                        <h2 className='review-veritrace'>Reviewers</h2>
                         <ul>
                             {Object.entries(selectedReviewers).map(([reviewer, status], index) => (
                                 <li key={index}>
