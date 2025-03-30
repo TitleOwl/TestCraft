@@ -1,171 +1,240 @@
-/* Comment Section */
+/* Comment.css - สไตล์ที่สอดคล้องกับ ReqVerification */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Main comment section */
 .comment-section {
-  max-width: 600px;
-  margin: 20px auto;
-  font-family: Arial, sans-serif;
-  color: #1e3a56;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .comment-title {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  color: #1e3a56;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
 }
 
-/* Comment Input */
+/* Input area styling */
 .comment-input {
   display: flex;
   flex-direction: column;
-  margin-bottom: 20px;
+  gap: 12px;
+  margin-bottom: 24px;
 }
 
 .comment-textarea {
-  resize: none;
   width: 100%;
-  height: 80px;
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  margin-bottom: 10px;
+  min-height: 100px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text-primary);
+  background-color: white;
+  resize: none;
+  outline: none;
+  transition: var(--transition);
+}
+
+.comment-textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
 
 .submit-button {
   align-self: flex-end;
-  padding: 8px 16px;
-  background-color: #1e3a56;
-  color: #fff;
+  background-color: var(--primary);
+  color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: var(--radius-md);
+  padding: 8px 16px;
+  font-weight: 500;
+  font-size: 14px;
   cursor: pointer;
+  transition: var(--transition);
 }
 
 .submit-button:hover {
-  background-color: #163047;
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
 }
 
-/* Comment */
+/* Error message */
+.error-message {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--error);
+  padding: 10px;
+  border-radius: var(--radius-md);
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+/* Comment styling */
 .comment {
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 15px;
-  margin-bottom: 15px;
-  background-color: #fff;
+  background-color: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .comment-header {
   display: flex;
   justify-content: space-between;
-  font-size: 14px;
-  margin-bottom: 10px;
+  align-items: center;
+  margin-bottom: 12px;
 }
 
 .comment-name {
-  font-size: 18px;
-  font-weight: bolder;
-  color: #1e3a56;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 14px;
 }
 
 .comment-time {
-  color: #6b7280;
+  color: var(--text-secondary);
+  font-size: 12px;
 }
 
 .comment-text {
-  font-size: 16px;
-  margin-bottom: 10px;
-  color: #374151;
+  color: var(--text-primary);
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+  word-break: break-word;
 }
 
-/* Comment Footer */
 .comment-footer {
   display: flex;
-  gap: 10px;
+  gap: 12px;
+  margin-top: 8px;
 }
 
 .edit-button,
 .reply-button,
 .delete-comment-button {
-  background-color: #1e3a56;
-  color: #fff;
+  background: transparent;
   border: none;
-  border-radius: 5px;
-  padding: 5px 10px;
-  cursor: pointer;
   font-size: 14px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .edit-button:hover,
-.reply-button:hover,
-.delete-comment-button:hover {
-  background-color: #163047;
+.reply-button:hover {
+  color: var(--primary);
+  background-color: rgba(79, 70, 229, 0.1);
 }
 
-/* Reply Section */
+.delete-comment-button:hover {
+  color: var(--error);
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+.trash_comment {
+  width: 16px;
+  height: 16px;
+  opacity: 0.7;
+  transition: var(--transition);
+}
+
+.delete-comment-button:hover .trash_comment {
+  opacity: 1;
+}
+
+/* Reply styling */
 .reply {
-  margin-top: 20px;
-  margin-left: 20px;
-  padding: 10px;
-  background-color: #f1f1f1;
-  border-radius: 5px;
+  background-color: white;
+  border-radius: var(--radius-md);
+  padding: 12px;
+  margin: 8px 0 8px 20px;
+  border-left: 3px solid var(--primary-light);
 }
 
 .reply-name {
-  font-weight: bold;
-  font-size: 14px;
-  color: #4b5563;
-  display: inline;
-  margin-bottom: 5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 13px;
+  margin-right: 8px;
 }
 
 .reply-time {
-  font-size: 12px;
-  color: #6b7280;
-  margin-left: 48%;
-  font-style: italic;
-  display: inline;
+  color: var(--text-secondary);
+  font-size: 11px;
 }
 
-
-/* Reply Text */
 .reply-text {
-  font-size: 14px;
-  color: #374151;
-  margin-bottom: 10px;
-  margin-top: 15px;
+  color: var(--text-primary);
+  font-size: 13px;
+  margin-top: 8px;
+  line-height: 1.4;
 }
 
-/* Reply Input */
+/* Reply input form */
 .reply-input {
   display: flex;
   flex-direction: column;
-  margin-top: 10px;
-  margin-left: 20px;
+  gap: 8px;
+  margin: 12px 0 12px 20px;
 }
 
 .reply-input textarea {
   width: 100%;
-  min-height: 40px;
+  min-height: 80px;
   padding: 10px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-family: inherit;
   resize: none;
-  margin-bottom: 10px;
+  outline: none;
+  transition: var(--transition);
+}
+
+.reply-input textarea:focus {
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
 
 .reply-input button {
   align-self: flex-end;
-  background-color: #28a745;
-  color: #fff;
-  font-size: 14px;
-  padding: 8px 16px;
+  background-color: var(--primary);
+  color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: var(--radius-md);
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: var(--transition);
 }
 
 .reply-input button:hover {
-  background-color: #218838;
+  background-color: var(--primary-dark);
+}
+
+/* Loading state */
+.comment-section > p {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-secondary);
+  font-style: italic;
 }

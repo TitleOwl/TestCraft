@@ -1,9 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Comment from "./Comment";
 import "./CSS/ReqVerification.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faArrowLeft,
+  faClipboardCheck,
+  faListAlt,
+  faCheck,
+  faComment,
+  faTimes,
+  faInfoCircle,
+  faExclamationTriangle,
+  faCheckCircle
+} from "@fortawesome/free-solid-svg-icons";
 
 const ReqVerification = () => {
   const location = useLocation();
@@ -17,12 +29,15 @@ const ReqVerification = () => {
   const [requirementsDetails, setRequirementsDetails] = useState([]);
   const [loading, setLoading] = useState(true);
   const [checkboxState, setCheckboxState] = useState({});
+  
+  // Alert state
+  const [alertType, setAlertType] = useState(null);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
+  const alertRef = useRef(null);
+  const alertTimeoutRef = useRef(null);
 
   useEffect(() => {
-    console.log("Project ID:", projectId);
-    console.log("Verification ID:", verificationId);
-    console.log("Selected Requirements:", selectedRequirements);
-  
     if (!projectId || !verificationId) {
       console.error("Project ID or Verification ID is missing.");
       navigate("/VerificationList");
@@ -34,18 +49,21 @@ const ReqVerification = () => {
     if (selectedRequirements && selectedRequirements.length > 0) {
       fetchRequirementsDetails(selectedRequirements);
     }
+    
+    // Clean up alert timeout on unmount
+    return () => {
+      if (alertTimeoutRef.current) {
+        clearTimeout(alertTimeoutRef.current);
+      }
+    };
   }, [projectId, verificationId, selectedRequirements, navigate]);
   
   const fetchCriteria = async () => {
     try {
       setLoading(true);
-  
-      // ✅ เปลี่ยนเป็นใช้ params แทนการใส่ projectId ใน URL
       const response = await axios.get("http://localhost:3001/reqcriteria", {
         params: { project_id: projectId },
       });
-  
-      console.log("Fetched criteria data:", response.data); // ✅ Debug
   
       const initialCheckboxState = response.data.reduce((acc, criteria) => {
         acc[criteria.reqcri_id] = false;
@@ -53,14 +71,12 @@ const ReqVerification = () => {
       }, {});
   
       setReqcriList(response.data);
-      console.log("Initial checkbox state:", initialCheckboxState); // ✅ Debug
   
       const storedUsername = localStorage.getItem("username");
       if (storedUsername) {
         const storedCheckboxState = localStorage.getItem(
           `checkboxState_${storedUsername}_${projectId}`
         );
-        console.log("Stored checkbox state:", storedCheckboxState); // ✅ Debug
   
         if (storedCheckboxState) {
           setCheckboxState(JSON.parse(storedCheckboxState));
@@ -70,12 +86,12 @@ const ReqVerification = () => {
       }
     } catch (error) {
       console.error("Error fetching criteria:", error);
+      showCustomAlert("error", "Failed to load criteria. Please try again.");
     } finally {
       setLoading(false);
     }
   };
   
-
   const fetchRequirementsDetails = async (requirements) => {
     try {
       const response = await axios.get("http://localhost:3001/requirements", {
@@ -84,6 +100,7 @@ const ReqVerification = () => {
       setRequirementsDetails(response.data);
     } catch (error) {
       console.error("Error fetching requirements:", error);
+      showCustomAlert("error", "Failed to load requirements. Please try again.");
     }
   };
 
@@ -103,22 +120,50 @@ const ReqVerification = () => {
     }
   };
 
+  // Custom alert function
+  const showCustomAlert = (type, message) => {
+    setAlertType(type);
+    setAlertMessage(message);
+    setShowAlert(true);
+    
+    // Auto-hide after 5 seconds
+    if (alertTimeoutRef.current) {
+      clearTimeout(alertTimeoutRef.current);
+    }
+    
+    alertTimeoutRef.current = setTimeout(() => {
+      setShowAlert(false);
+    }, 5000);
+  };
+  
+  const handleCloseAlert = () => {
+    setShowAlert(false);
+    if (alertTimeoutRef.current) {
+      clearTimeout(alertTimeoutRef.current);
+    }
+  };
+  
+  const navigateBack = () => {
+    navigate(`/VerificationList?project_id=${projectId}`);
+  };
+
   const handleSave = async () => {
     const allChecked = Object.values(checkboxState).every((value) => value);
   
     if (!allChecked) {
-      toast.success("Criteria Checklist Saved", {
-        position: "top-right",
-        autoClose: 1500,
-        onClose: () => navigate(`/VerificationList?project_id=${projectId}`),
-      });
+      showCustomAlert("warning", "Criteria checklist saved, but not all items are checked");
+      
+      // Wait for alert animation to finish, then navigate
+      setTimeout(() => {
+        navigate(`/VerificationList?project_id=${projectId}`);
+      }, 1500);
       return;
     }
   
     try {
       const storedUsername = localStorage.getItem("username");
       if (!storedUsername) {
-        alert("Please log in first.");
+        showCustomAlert("error", "Please log in first.");
         return;
       }
   
@@ -151,23 +196,19 @@ const ReqVerification = () => {
         if (allVerified) {
           const requirementIds = requirementsDetails.map((req) => req.requirement_id);
           
-          console.log("Requirement IDs to update:", requirementIds);
-  
           if (!requirementIds || requirementIds.length === 0) {
-            console.error("No requirements found to update.");
+            showCustomAlert("error", "No requirements found to update.");
             return;
           }
   
           try {
-            const updateResponse = await axios.put(
+            await axios.put(
               "http://localhost:3001/update-requirements-status-verified",
               {
                 requirement_ids: requirementIds,
                 requirement_status: "VERIFIED",
               }
             );
-  
-            console.log("Update response:", updateResponse.data);
   
             for (const requirementId of requirementIds) {
               const historyReqData = {
@@ -185,50 +226,62 @@ const ReqVerification = () => {
               }
             }
   
-            toast.success("All criteria verified! Status updated to VERIFIED.", {
-              position: "top-right",
-              autoClose: 1500,
-              onClose: () => navigate(`/Dashboard?project_id=${projectId}`),
-            });
+            showCustomAlert("success", "All criteria verified! Status updated to VERIFIED");
+            
+            // Wait for alert animation to finish, then navigate
+            setTimeout(() => {
+              navigate(`/Dashboard?project_id=${projectId}`);
+            }, 1500);
           } catch (error) {
             console.error("Error updating requirement status:", error);
+            showCustomAlert("error", "Failed to update requirements status");
           }
         } else {
-          toast.warning("Not all users have verified. Please wait for everyone to verify.", {
-            position: "top-right",
-            autoClose: 1800,
-            onClose: () => navigate(`/VerificationList?project_id=${projectId}`),
-          });
+          showCustomAlert("warning", "Not all users have verified. Please wait for everyone to verify.");
+          
+          // Wait for alert animation to finish, then navigate
+          setTimeout(() => {
+            navigate(`/VerificationList?project_id=${projectId}`);
+          }, 1500);
         }
       }
     } catch (error) {
       console.error("Error updating verification status:", error);
-      toast.error("Failed to update verification status. Please try again.", {
-        position: "top-right",
-        autoClose: 2000,
-      });
+      showCustomAlert("error", "Failed to update verification status. Please try again.");
     }
   };
   
-  
-
   return (
-    <div className="container">
-      <h1 className="title">Verification Requirement</h1>
+    <div className="reqveri-container">
+      <div className="reqveri-header">
+        <button className="reqveri-back-btn" onClick={navigateBack}>
+          <FontAwesomeIcon icon={faArrowLeft} /> Back
+        </button>
+        <h1 className="reqveri-title">
+          <FontAwesomeIcon icon={faClipboardCheck} className="reqveri-title-icon" />
+          Verification Requirement
+        </h1>
+      </div>
 
-      <div className="flex-container">
-        <div className="box">
-          <h2>Checklist</h2>
+      <div className="reqveri-flex-container">
+        <div className="reqveri-box">
+          <h2>
+            <FontAwesomeIcon icon={faListAlt} className="reqveri-icon" />
+            Checklist
+          </h2>
           {loading ? (
-            <p>Loading...</p>
+            <div className="reqveri-loading">
+              <div className="reqveri-spinner"></div>
+              <span>Loading...</span>
+            </div>
           ) : (
-            <ul className="checklist">
+            <ul className="reqveri-checklist">
               {reqcriList.map((criteria) => (
                 <li key={criteria.reqcri_id}>
                   <label>
                     <input
                       type="checkbox"
-                      className="checkbox"
+                      className="reqveri-checkbox"
                       checked={checkboxState[criteria.reqcri_id] || false}
                       onChange={() => handleCheckboxChange(criteria.reqcri_id)}
                     />
@@ -239,14 +292,24 @@ const ReqVerification = () => {
             </ul>
           )}
         </div>
-        <div className="box">
-          <Comment verificationId={verificationId} />
+        
+        <div className="reqveri-box">
+          <h2>
+            <FontAwesomeIcon icon={faComment} className="reqveri-icon" />
+            Comments
+          </h2>
+          <div className="reqveri-comment-container">
+            <Comment verificationId={verificationId} />
+          </div>
         </div>
       </div>
 
-      <div className="box requirements">
-        <h2>Requirement</h2>
-        <table className="table">
+      <div className="reqveri-box reqveri-requirements">
+        <h2>
+          <FontAwesomeIcon icon={faClipboardCheck} className="reqveri-icon" />
+          Requirements
+        </h2>
+        <table className="reqveri-table">
           <thead>
             <tr>
               <th>ID</th>
@@ -258,25 +321,49 @@ const ReqVerification = () => {
             {requirementsDetails.length > 0 ? (
               requirementsDetails.map((req, index) => (
                 <tr key={index}>
-                  <td>REQ-0{req.requirement_id}</td>
+                  <td>REQ-{req.requirement_id.toString().padStart(3, '0')}</td>
                   <td>{req.requirement_name}</td>
                   <td>{req.requirement_type}</td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="3">No requirements details found</td>
+                <td colSpan="3" style={{ textAlign: 'center' }}>No requirements details found</td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
 
-      <div className="button-container">
-        <button className="save-button" onClick={handleSave}>
+      <div className="reqveri-button-container">
+        <button className="reqveri-cancel-button" onClick={navigateBack}>
+          Cancel
+        </button>
+        <button className="reqveri-save-button" onClick={handleSave}>
+          <FontAwesomeIcon icon={faCheck} />
           Save
         </button>
       </div>
+      
+      {/* Custom Alert Component */}
+      {showAlert && (
+        <div className={`reqveri-alert show`} ref={alertRef}>
+          <div className={`reqveri-alert-${alertType}`}>
+            <div className="reqveri-alert-content">
+              <div className="reqveri-alert-icon">
+                {alertType === 'success' && <FontAwesomeIcon icon={faCheckCircle} />}
+                {alertType === 'error' && <FontAwesomeIcon icon={faTimes} />}
+                {alertType === 'warning' && <FontAwesomeIcon icon={faExclamationTriangle} />}
+              </div>
+              <span className="reqveri-alert-message">{alertMessage}</span>
+            </div>
+            <button className="reqveri-alert-close" onClick={handleCloseAlert}>
+              <FontAwesomeIcon icon={faTimes} />
+            </button>
+          </div>
+          <div className="reqveri-alert-progress"></div>
+        </div>
+      )}
     </div>
   );
 };

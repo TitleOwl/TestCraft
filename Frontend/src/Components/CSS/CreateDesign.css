@@ -1,133 +1,131 @@
 /* General container styling */
 .create-design-container {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Heading styles */
-  .create-design-header {
-    font-size: 2rem;
-    margin-bottom: 20px;
-    text-align: center;
-    color: #333;
-  }
-  
-  /* Error message */
-  .create-design-error {
-    color: #ff4d4d;
-    font-size: 1rem;
-    margin-bottom: 15px;
-    text-align: center;
-  }
-  
-  /* Form styling */
-  .create-design-form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  /* Form group for label and input/textarea/select */
-  .create-design-form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  /* Input, textarea, and select styling */
-  .create-design-input,
-  .create-design-textarea,
-  .create-design-select {
-    padding: 10px;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    outline: none;
-    transition: border 0.3s;
-  }
-  
-  .create-design-input:focus,
-  .create-design-textarea:focus,
-  .create-design-select:focus {
-    border-color: #007bff;
-  }
-  
-  /* Buttons styling */
-  .create-design-form-buttons {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-  }
-  
-  .create-design-btn-back,
-  .create-design-btn-primary {
-    padding: 10px 20px;
-    font-size: 1rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-  }
-  
-  .create-design-btn-back {
-    background-color: #f0f0f0;
-    color: #333;
-  }
-  
-  .create-design-btn-back:hover {
-    background-color: #e0e0e0;
-  }
-  
-  .create-design-btn-primary {
-    background-color: #007bff;
-    color: white;
-  }
-  
-  .create-design-btn-primary:hover {
-    background-color: #0056b3;
-    transform: scale(1.05);
-  }
-  
-  /* Mobile responsiveness */
-  @media (max-width: 768px) {
-    .create-design-container {
-      padding: 15px;
-    }
-  
-    .create-design-header {
-      font-size: 1.75rem;
-    }
-  
-    .create-design-form {
-      gap: 15px;
-    }
-  
-    .create-design-form-buttons {
-      flex-direction: column;
-      gap: 15px;
-    }
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Heading styles */
+.create-design-header {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #333;
+}
+
+/* Error message */
+.create-design-error {
+  color: #ff4d4d;
+  font-size: 1rem;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* Form styling */
+.create-design-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Form group for label and input/textarea/select */
+.create-design-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Input, textarea, and select styling */
+.create-design-input,
+.create-design-textarea,
+.create-design-select {
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+  transition: border 0.3s;
+}
+
+.create-design-input:focus,
+.create-design-textarea:focus,
+.create-design-select:focus {
+  border-color: #007bff;
+}
+
+/* Buttons styling */
+.create-design-form-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.create-design-btn-back,
+.create-design-btn-primary {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.create-design-btn-back {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.create-design-btn-back:hover {
+  background-color: #e0e0e0;
+}
+
+.create-design-btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.create-design-btn-primary:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .create-design-container {
+    padding: 15px;
   }
 
-  .hidden-file-input {
-    display: none;
+  .create-design-header {
+    font-size: 1.75rem;
   }
-  
-  .custom-upload-button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
+
+  .create-design-form {
+    gap: 15px;
   }
-  
-  .custom-upload-button:hover {
-    background-color: #0056b3;
+
+  .create-design-form-buttons {
+    flex-direction: column;
+    gap: 15px;
   }
-  
-  
+}
+
+.hidden-file-input {
+  display: none;
+}
+
+.custom-upload-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.custom-upload-button:hover {
+  background-color: #0056b3;
+}

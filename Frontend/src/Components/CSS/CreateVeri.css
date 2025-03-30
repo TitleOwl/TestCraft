@@ -1,477 +1,398 @@
-/* CreateVeri.css */
+/* CreateVeri.css - Premium Colorful Luxury Design รวม Alert */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 :root {
-  --primary: #2563eb;
-  --primary-light: #dbeafe;
-  --primary-dark: #1d4ed8;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
-  --gray-50: #f9fafb;
-  --gray-100: #f3f4f6;
-  --gray-200: #e5e7eb;
-  --gray-300: #d1d5db;
-  --gray-400: #9ca3af;
-  --gray-500: #6b7280;
-  --gray-600: #4b5563;
-  --gray-700: #374151;
-  --gray-800: #1f2937;
-  --gray-900: #111827;
+  /* Base Colors */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fc;
+  --bg-tertiary: #eef1f8;
   
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  /* Text Colors */
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-light: #94a3b8;
   
-  --radius-sm: 0.125rem;
-  --radius: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
+  /* Primary Brand Colors */
+  --primary: #4f46e5;      /* Deep indigo */
+  --primary-light: #818cf8;
+  --primary-dark: #3730a3;
+  
+  /* Accent Colors */
+  --accent: #0ea5e9;       /* Sky blue */
+  --accent-light: #7dd3fc;
+  --accent-dark: #0369a1;
+  
+  /* Status Colors */
+  --success: #10b981;      /* Emerald */
+  --success-dark: #059669;
+  --warning: #f59e0b;      /* Amber */
+  --warning-dark: #b45309;
+  --error: #ef4444;        /* Red */
+  --error-dark: #b91c1c;
+  --info: #6366f1;         /* Indigo */
+  --working: #8b5cf6;      /* Purple */
+  
+  /* UI Elements */
+  --border: #e2e8f0;
+  --border-light: #f1f5f9;
+  --border-colored: #c7d2fe;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+  --shadow-colored: 0 4px 12px rgba(79, 70, 229, 0.15);
+  
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  
+  /* Transitions */
+  --transition: all 0.2s ease;
 }
 
-/* Main Container */
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-secondary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Main container */
 .createveri-container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 1.5rem;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  padding: 30px;
+  background-color: var(--bg-primary);
+  min-height: 100vh;
+  position: relative;
+}
+
+.createveri-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(to right, var(--primary), var(--accent));
+  z-index: 1;
 }
 
 /* Header */
 .createveri-header {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 30px;
   position: relative;
 }
 
-.createveri-back-btn {
-  background-color: var(--gray-100);
-  border: none;
-  border-radius: var(--radius);
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--gray-700);
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.createveri-back-btn:hover {
-  background-color: var(--gray-200);
-}
-
-.createveri-container h1 {
-  font-size: 1.75rem;
+.createveri-header h1 {
+  font-size: 24px;
   font-weight: 600;
-  color: var(--gray-800);
-  flex-grow: 1;
-  margin: 0;
+  color: var(--text-primary);
+  margin: 0 auto;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 10px;
+  letter-spacing: -0.02em;
 }
 
 .createveri-title-icon {
   color: var(--primary);
 }
 
-/* Content Layout */
+/* Back button */
+.createveri-back-btn {
+  background-color: transparent;
+  color: var(--primary);
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: var(--transition);
+  position: absolute;
+  left: 0;
+}
+
+.createveri-back-btn:hover {
+  color: var(--primary-dark);
+  transform: translateX(-3px);
+}
+
+/* Content layout */
 .createveri-content {
-  display: grid;
-  grid-template-columns: 3fr 2fr;
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
+  display: flex;
+  gap: 24px;
+  margin-bottom: 30px;
 }
 
-@media (max-width: 1024px) {
-  .createveri-content {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Panel Styling */
 .createveri-left-panel,
 .createveri-right-panel {
-  background-color: white;
+  background: var(--bg-primary);
   border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
   box-shadow: var(--shadow-md);
   overflow: hidden;
+}
+
+.createveri-left-panel {
+  flex: 3;
   display: flex;
   flex-direction: column;
 }
 
+.createveri-right-panel {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Panel headers */
 .createveri-panel-header {
-  padding: 1.25rem;
-  border-bottom: 1px solid var(--gray-200);
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 20px;
 }
 
 .createveri-panel-header h2 {
-  font-size: 1.25rem;
+  font-size: 16px;
   font-weight: 600;
-  margin: 0;
-  color: var(--gray-800);
+  color: var(--text-primary);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 8px;
+}
+
+.createveri-panel-header h2 svg {
+  color: var(--primary);
 }
 
 .createveri-count-badge {
   background-color: var(--primary-light);
-  color: var(--primary-dark);
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.125rem 0.5rem;
-  border-radius: 9999px;
-  margin-left: 0.5rem;
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-left: 8px;
 }
 
-/* Search and Filter */
+/* Search and filter tools */
 .createveri-tools {
   display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
+  gap: 12px;
+  margin-top: 12px;
 }
 
-.createveri-search {
-  position: relative;
-  flex-grow: 1;
+.createveri-search, 
+.createveri-filter {
+  display: flex;
+  align-items: center;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  flex: 1;
 }
 
-.createveri-search-icon {
-  position: absolute;
-  left: 0.75rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--gray-400);
-  pointer-events: none;
+.createveri-search-icon,
+.createveri-filter-icon {
+  color: var(--text-secondary);
+  margin-right: 8px;
 }
 
-.createveri-search-input {
+.createveri-search-input,
+.createveri-filter-select {
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  color: var(--text-primary);
   width: 100%;
-  padding: 0.625rem 2.5rem 0.625rem 2.25rem;
-  border: 1px solid var(--gray-300);
-  border-radius: var(--radius);
-  font-size: 0.875rem;
-}
-
-.createveri-search-input:focus {
   outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .createveri-clear-search {
-  position: absolute;
-  right: 0.75rem;
-  top: 50%;
-  transform: translateY(-50%);
   background: transparent;
   border: none;
-  color: var(--gray-400);
+  color: var(--text-secondary);
   cursor: pointer;
-  padding: 0.25rem;
+  transition: var(--transition);
 }
 
 .createveri-clear-search:hover {
-  color: var(--gray-600);
+  color: var(--primary);
 }
 
-.createveri-filter {
-  position: relative;
-}
-
-.createveri-filter-icon {
-  position: absolute;
-  left: 0.75rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--gray-400);
-  pointer-events: none;
-}
-
-.createveri-filter-select {
-  padding: 0.625rem 2.5rem 0.625rem 2.25rem;
-  border: 1px solid var(--gray-300);
-  border-radius: var(--radius);
-  font-size: 0.875rem;
-  background-color: white;
-  min-width: 150px;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.75rem center;
-  background-size: 1rem;
-}
-
-.createveri-filter-select:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
-
-/* Select All */
+/* Select all row */
 .createveri-select-all {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.25rem;
-  background-color: var(--gray-50);
-  border-bottom: 1px solid var(--gray-200);
+  padding: 12px 20px;
+  background-color: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border);
+}
+
+.createveri-select-all input[type="checkbox"] {
+  margin-right: 8px;
 }
 
 .createveri-select-all label {
-  font-size: 0.875rem;
+  font-size: 14px;
   font-weight: 500;
-  color: var(--gray-700);
-  cursor: pointer;
+  color: var(--text-primary);
 }
 
 .createveri-selected-count {
   margin-left: auto;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: var(--gray-500);
+  font-size: 13px;
+  color: var(--text-secondary);
 }
 
-/* Table Styling */
+/* Requirements table */
 .createveri-table-container {
-  flex-grow: 1;
-  overflow: auto;
-  max-height: 450px;
+  overflow-y: auto;
+  flex: 1;
 }
 
 .createveri-requirements-table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  font-size: 0.875rem;
 }
 
 .createveri-requirements-table th {
   position: sticky;
   top: 0;
-  z-index: 10;
-  background-color: var(--gray-50);
-  padding: 0.75rem 1rem;
+  background-color: var(--bg-secondary);
   text-align: left;
+  padding: 12px 16px;
+  font-size: 12px;
   font-weight: 600;
-  color: var(--gray-700);
-  border-bottom: 1px solid var(--gray-200);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-bottom: 1px solid var(--border);
 }
 
 .createveri-requirements-table td {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--gray-200);
-  color: var(--gray-800);
+  padding: 12px 16px;
+  font-size: 14px;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--text-primary);
 }
 
-.createveri-requirements-table tr:hover {
-  background-color: var(--gray-50);
-}
-
-.createveri-requirements-table .selected-row {
-  background-color: var(--primary-light);
-}
-
-.createveri-requirements-table .selected-row:hover {
-  background-color: #ccdffb;
-}
-
-.createveri-checkbox-column {
-  width: 48px;
-}
-
-/* Requirement ID, Type, Status */
-.req-id {
-  font-family: monospace;
-  font-weight: 500;
-}
-
-.req-type {
-  display: inline-block;
-  padding: 0.25rem 0.5rem;
-  border-radius: var(--radius);
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.type-functional {
-  background-color: #e0f2fe;
-  color: #0369a1;
-}
-
-.type-user-interface {
-  background-color: #f3e8ff;
-  color: #6b21a8;
-}
-
-.type-external-interfaces {
-  background-color: #dcfce7;
-  color: #166534;
-}
-
-.type-reliability {
-  background-color: #fef3c7;
-  color: #92400e;
-}
-
-.type-maintenance {
-  background-color: #fde2e2;
-  color: #b91c1c;
-}
-
-.type-portability {
-  background-color: #dbeafe;
-  color: #1e40af;
-}
-
-.type-limitations-design-and-construction {
-  background-color: #fce7f3;
-  color: #9d174d;
-}
-
-.type-interoperability {
-  background-color: #ffedd5;
-  color: #9a3412;
-}
-
-.type-reusability {
-  background-color: #e0e7ff;
-  color: #3730a3;
-}
-
-.type-legal-and-regulative {
-  background-color: #f5f5f4;
-  color: #44403c;
-}
-
-.req-status {
-  display: inline-block;
-  padding: 0.25rem 0.5rem;
-  border-radius: var(--radius);
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.status-working {
-  background-color: var(--gray-200);
-  color: var(--gray-700);
-}
-
-.status-verified {
-  background-color: #d1fae5;
-  color: #047857;
-}
-
-.status-validated {
-  background-color: #dbeafe;
-  color: #1e40af;
-}
-
-.status-waiting-ver {
-  background-color: #fef3c7;
-  color: #92400e;
-}
-
-.status-waiting-val {
-  background-color: #e0e7ff;
-  color: #4338ca;
-}
-
-/* Reviewers */
-.createveri-reviewers-container {
-  padding: 1rem;
-  overflow-y: auto;
-  max-height: 320px;
-}
-
-.createveri-reviewers-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  margin-top: 0.75rem;
-}
-
-.createveri-members-group {
-  border-bottom: 1px solid var(--gray-200);
-  padding-bottom: 0.75rem;
-}
-
-.createveri-members-group:last-child {
+.createveri-requirements-table tr:last-child td {
   border-bottom: none;
 }
 
-.createveri-reviewer-item {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.625rem 0.5rem;
-  border-radius: var(--radius);
-  transition: background-color 0.2s;
+.createveri-requirements-table .selected-row {
+  background-color: rgba(79, 70, 229, 0.05);
 }
 
-.createveri-reviewer-item:hover {
-  background-color: var(--gray-50);
+.createveri-requirements-table tr:hover:not(.selected-row) {
+  background-color: var(--bg-tertiary);
 }
 
-.createveri-reviewer-label {
-  display: flex;
-  flex-direction: column;
-  cursor: pointer;
+.createveri-checkbox-column {
+  width: 60px;
 }
 
-.createveri-reviewer-name {
+/* Requirement ID styling */
+.req-id {
+  font-family: "SF Mono", "Roboto Mono", monospace;
+  font-size: 13px;
+  color: var(--primary);
   font-weight: 500;
-  color: var(--gray-800);
 }
 
-.createveri-reviewer-role {
-  font-size: 0.75rem;
-  color: var(--gray-500);
+/* Requirement type badges */
+.req-type {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 500;
+  background-color: var(--bg-tertiary);
+  color: var(--text-secondary);
 }
 
-/* Selection Summary */
-.createveri-summary {
-  background-color: var(--gray-50);
-  padding: 1rem 1.25rem;
-  border-top: 1px solid var(--gray-200);
-  margin-top: auto;
+.type-functional {
+  background-color: rgba(14, 165, 233, 0.1);
+  color: var(--accent-dark);
 }
 
-.createveri-summary h3 {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--gray-700);
-  margin: 0 0 0.75rem 0;
+.type-non-functional {
+  background-color: rgba(249, 115, 22, 0.1);
+  color: #c2410c; /* Orange dark */
 }
 
-.createveri-summary-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.875rem;
-  color: var(--gray-600);
-  padding: 0.375rem 0;
+.type-constraint {
+  background-color: rgba(168, 85, 247, 0.1);
+  color: #7e22ce; /* Purple dark */
 }
 
-.createveri-summary-count {
-  background-color: var(--primary-light);
-  color: var(--primary-dark);
-  font-weight: 600;
-  padding: 0.125rem 0.5rem;
-  border-radius: var(--radius);
-  min-width: 1.5rem;
-  text-align: center;
+/* Status badge */
+.req-status {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 500;
 }
 
-/* Loading and error states */
-.createveri-loading, 
+.status-working {
+  background-color: rgba(139, 92, 246, 0.1);
+  color: var(--working);
+}
+
+/* Custom checkbox styling */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background-color: white;
+  cursor: pointer;
+  position: relative;
+  vertical-align: middle;
+  transition: var(--transition);
+}
+
+input[type="checkbox"]:checked {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  width: 5px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+input[type="checkbox"]:hover:not(:checked) {
+  border-color: var(--primary-light);
+}
+
+/* Empty states, loading, and error messages */
+.createveri-loading,
 .createveri-error-message,
 .createveri-empty-state,
 .createveri-no-results {
@@ -479,125 +400,337 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 3rem 1rem;
+  padding: 40px;
   text-align: center;
-  color: var(--gray-500);
+  color: var(--text-secondary);
+  gap: 12px;
 }
 
 .createveri-loading svg,
 .createveri-error-message svg {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-}
-
-.createveri-loading svg {
-  color: var(--primary);
-}
-
-.createveri-error-message svg {
-  color: var(--danger);
+  font-size: 24px;
+  margin-bottom: 8px;
 }
 
 .createveri-error-message {
-  color: var(--danger);
+  color: var(--error);
 }
 
 .createveri-no-results {
-  padding: 1.5rem;
-  text-align: center;
-  color: var(--gray-500);
+  padding: 30px;
   font-style: italic;
 }
 
-/* Action Buttons */
+/* Reviewers section */
+.createveri-reviewers-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.createveri-reviewers-list {
+  padding: 16px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.createveri-reviewer-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-radius: var(--radius-md);
+  transition: var(--transition);
+  margin-bottom: 8px;
+}
+
+.createveri-reviewer-item:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.createveri-reviewer-label {
+  display: flex;
+  flex-direction: column;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.createveri-reviewer-name {
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.createveri-reviewer-role {
+  color: var(--text-secondary);
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+/* Summary section */
+.createveri-summary {
+  background-color: var(--bg-tertiary);
+  padding: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.createveri-summary h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.createveri-summary-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.createveri-summary-count {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+/* Action buttons */
 .createveri-action-buttons {
   display: flex;
   justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 1.5rem;
+  gap: 16px;
+  margin-top: 24px;
 }
 
 .createveri-btn-create,
 .createveri-btn-cancel {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  border-radius: var(--radius);
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-size: 15px;
   font-weight: 500;
-  font-size: 0.9375rem;
   cursor: pointer;
-  transition: all 0.2s ease;
-  border: none;
+  transition: var(--transition);
 }
 
 .createveri-btn-create {
   background-color: var(--primary);
   color: white;
-  min-width: 180px;
+  border: none;
+  box-shadow: var(--shadow-colored);
 }
 
 .createveri-btn-create:hover:not(:disabled) {
   background-color: var(--primary-dark);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(79, 70, 229, 0.2);
 }
 
 .createveri-btn-create:disabled {
-  background-color: var(--gray-400);
+  background-color: var(--text-light);
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .createveri-btn-cancel {
-  background-color: var(--gray-100);
-  color: var(--gray-700);
+  background-color: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
 }
 
 .createveri-btn-cancel:hover {
-  background-color: var(--gray-200);
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--border);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--text-light);
+}
+
+/* ========== Alert Styles ========== */
+.createveri-alert {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 500px;
+  z-index: 9999;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.createveri-alert.show {
+  animation: slideDown 0.5s ease forwards, fadeOut 0.5s ease 5s forwards;
+  pointer-events: auto;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translate(-50%, -100%);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+/* Alert boxes for different types */
+.createveri-alert-success,
+.createveri-alert-error,
+.createveri-alert-warning {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+}
+
+.createveri-alert-success {
+  background: linear-gradient(135deg, var(--success), var(--success-dark));
+}
+
+.createveri-alert-error {
+  background: linear-gradient(135deg, var(--error), var(--error-dark));
+}
+
+.createveri-alert-warning {
+  background: linear-gradient(135deg, var(--warning), var(--warning-dark));
+}
+
+.createveri-alert-content {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.createveri-alert-icon {
+  background-color: rgba(255, 255, 255, 0.2);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+}
+
+.createveri-alert-message {
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.createveri-alert-close {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  font-size: 18px;
+  transition: var(--transition);
+}
+
+.createveri-alert-close:hover {
+  color: white;
+}
+
+/* Progress bar for alert timeout */
+.createveri-alert-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background-color: rgba(255, 255, 255, 0.7);
+  width: 100%;
+  transform-origin: left;
+  animation: progress 5s linear;
+}
+
+@keyframes progress {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
-  .createveri-container {
-    padding: 1rem;
+@media (max-width: 1200px) {
+  .createveri-content {
+    flex-direction: column;
   }
   
-  .createveri-header {
+  .createveri-left-panel,
+  .createveri-right-panel {
+    width: 100%;
+  }
+  
+  .createveri-right-panel {
+    display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
+  }
+  
+  .createveri-reviewers-list {
+    max-height: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .createveri-container {
+    padding: 20px 15px;
+  }
+  
+  .createveri-header h1 {
+    font-size: 20px;
   }
   
   .createveri-tools {
     flex-direction: column;
-    width: 100%;
   }
   
   .createveri-action-buttons {
     flex-direction: column;
   }
   
-  .createveri-btn-create, 
+  .createveri-btn-create,
   .createveri-btn-cancel {
     width: 100%;
-  }
-}
-
-@media (max-width: 640px) {
-  .createveri-requirements-table {
-    font-size: 0.75rem;
+    justify-content: center;
   }
   
-  .createveri-requirements-table th,
-  .createveri-requirements-table td {
-    padding: 0.625rem 0.5rem;
-  }
-  
-  .req-type,
-  .req-status {
-    font-size: 0.625rem;
-    padding: 0.125rem 0.375rem;
+  .createveri-alert {
+    max-width: 95%;
   }
 }

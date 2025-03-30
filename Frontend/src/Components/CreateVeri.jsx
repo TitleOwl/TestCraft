@@ -3,6 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./CSS/CreateVeri.css";
+import Joyride, { STATUS, CallBackProps } from 'react-joyride';
 
 // Import icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -14,7 +15,9 @@ import {
   faArrowLeft,
   faSearch,
   faFilter,
-  faSpinner
+  faSpinner,
+  faExclamationTriangle,
+  faQuestionCircle
 } from '@fortawesome/free-solid-svg-icons';
 
 const CreateVeri = () => {
@@ -30,10 +33,75 @@ const CreateVeri = () => {
   const [toastId, setToastId] = useState(null);
   const [searchQuery, setSearchQuery] = useState(""); // สำหรับการค้นหา requirements
   const [filterType, setFilterType] = useState(""); // สำหรับกรองประเภท requirement
+  
+  // เพิ่ม state สำหรับ alert
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertType, setAlertType] = useState("success");
+  const [alertMessage, setAlertMessage] = useState("");
+  
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const projectId = queryParams.get("project_id");
   const navigate = useNavigate();
+  const [runCreateVeriTutorial, setRunCreateVeriTutorial] = useState(false);
+  const [createVeriTutorialSteps, setCreateVeriTutorialSteps] = useState([
+    {
+      target: '.createveri-left-panel', // ชี้ไปที่ Panel ซ้าย
+      content: 'ขั้นแรก เลือก Requirement ที่ต้องการส่งตรวจสอบจากรายการด้านซ้าย (เฉพาะสถานะ WORKING)',
+      placement: 'right', // แสดงทางขวาของ Panel
+      disableBeacon: true,
+    },
+    {
+      target: '.createveri-right-panel', // ชี้ไปที่ Panel ขวา
+      content: 'ถัดไป เลือกผู้ตรวจสอบ (Reviewers) จากรายชื่อทางด้านขวา ที่จะให้ตรวจสอบ Requirement ที่คุณเลือก',
+      placement: 'left', // แสดงทางซ้ายของ Panel
+    },
+    {
+      // ชี้ไปที่ Checkbox แรกในรายการ Reviewers
+      target: '.createveri-reviewer-item:first-child input[type="checkbox"]',
+      content: "คลิกช่องสี่เหลี่ยมหน้าชื่อผู้ตรวจสอบ หรือกด 'Select All Reviewers' เพื่อเลือก",
+      placement: 'bottom',
+    },
+    {
+      target: '.createveri-btn-create', // ชี้ไปที่ปุ่ม Create Verification
+      content: 'เมื่อเลือก Requirement และ Reviewer ครบแล้ว กดปุ่มนี้เพื่อสร้างงาน Verification',
+      placement: 'top', // แสดงด้านบนปุ่ม
+    }
+  ]);
+
+  useEffect(() => {
+    // ตรวจสอบว่าเคยแสดง Tutorial หน้านี้หรือยัง
+    const tutorialShown = localStorage.getItem('createVeriTutorialShown');
+    if (!tutorialShown) {
+      // หน่วงเวลาเล็กน้อยเพื่อให้แน่ใจว่า elements โหลดเสร็จ โดยเฉพาะหลัง fetch data
+      const timer = setTimeout(() => {
+        setRunCreateVeriTutorial(true);
+      }, 500); // ปรับ delay ได้ตามความเหมาะสม
+  
+      return () => clearTimeout(timer); // Clear timeout ถ้า component unmount ก่อนทำงาน
+    }
+  }, []); // ใส่ dependency array ว่างเพื่อให้ทำงานครั้งเดียวตอน mount
+
+  const handleRestartCreateVeriTutorial = () => {
+    setRunCreateVeriTutorial(true);
+  };
+
+  // ฟังก์ชันสำหรับแสดง alert (แก้ไขให้มีการ redirect)
+  const showAlertMessage = (type, message) => {
+    setAlertType(type);
+    setAlertMessage(message);
+    setShowAlert(true);
+    
+    // ซ่อน alert หลังจาก 3 วินาที
+    setTimeout(() => {
+      setShowAlert(false);
+      
+      // ถ้าเป็น success alert ให้ redirect ไปที่หน้า Requirementpage
+      if (type === "success") {
+        navigate(`/Requirementpage?project_id=${projectId}`);
+      }
+    }, 3000);
+  };
 
   // Fetch working requirements
   useEffect(() => {
@@ -119,11 +187,13 @@ const CreateVeri = () => {
   
     if (!projectId) {
       toast.error("Invalid project ID.");
+      showAlertMessage("error", "Invalid project ID.");
       return;
     }
   
     if (selectedRequirements.length === 0 || selectedReviewerNames.length === 0) {
       toast.warning("Please select at least one requirement and one reviewer.");
+      showAlertMessage("warning", "Please select at least one requirement and one reviewer.");
       return;
     }
   
@@ -132,6 +202,7 @@ const CreateVeri = () => {
   
     if (!createBy) {
       toast.error("No user found. Please login again.");
+      showAlertMessage("error", "No user found. Please login again.");
       return;
     }
   
@@ -153,6 +224,9 @@ const CreateVeri = () => {
         if (!toast.isActive(toastId)) {  // Check if toast is active
           toast.success("Verification created successfully!", { toastId, position: "top-center" });
         }
+        
+        // แสดง Alert แบบสวยงาม
+        showAlertMessage("success", `Verification created successfully! (${selectedRequirements.length} requirements processed)`);
   
         setWorkingRequirements((prev) =>
           prev.filter((req) => !selectedRequirements.includes(req.requirement_id))
@@ -190,10 +264,12 @@ const CreateVeri = () => {
   
       } else {
         toast.error(response.data.message || "Failed to create verification(s).");
+        showAlertMessage("error", response.data.message || "Failed to create verification(s).");
       }
     } catch (error) {
       console.error("Error creating verification:", error);
       toast.error(error.response?.data?.message || "An error occurred. Please try again.");
+      showAlertMessage("error", error.response?.data?.message || "An error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);  // Re-enable submit button
     }
@@ -243,6 +319,25 @@ const CreateVeri = () => {
 
   return (
     <div className="createveri-container">
+            <Joyride
+        steps={createVeriTutorialSteps}
+        run={runCreateVeriTutorial}
+        continuous
+        showProgress
+        showSkipButton
+        styles={{
+          options: {
+            zIndex: 10000, // ให้แสดงทับ elements อื่นๆ
+          },
+        }}
+        callback={(data) => { // <--- ลบ : CallBackProps ออก
+          const { status } = data; // data ยังคงมี property status และอื่นๆ เหมือนเดิม
+          if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
+            setRunCreateVeriTutorial(false);
+            localStorage.setItem('createVeriTutorialShown', 'true');
+          }
+        }}
+      />
       <div className="createveri-header">
         <button className="createveri-back-btn" onClick={handleCancel}>
           <FontAwesomeIcon icon={faArrowLeft} /> Back
@@ -251,6 +346,25 @@ const CreateVeri = () => {
           <FontAwesomeIcon icon={faClipboardCheck} className="createveri-title-icon" />
           Create Verification
         </h1>
+                {/* ปุ่ม ? สำหรับเรียก Tutorial */}
+                <button
+          onClick={handleRestartCreateVeriTutorial}
+          className="tutorial-help-button tutorial-help-button-corner" // ใช้ class เดิมหรือสร้างใหม่
+          title="Show Tutorial"
+          style={{ /* เพิ่ม style inline หรือใช้ class */
+            position: 'absolute',
+            top: '15px',
+            right: '20px',
+            fontSize: '1.6rem',
+            background: 'none',
+            border: 'none',
+            color: 'gray', // ปรับสีตาม theme header
+            cursor: 'pointer'
+            
+          }}
+        >
+          <FontAwesomeIcon icon={faQuestionCircle} />
+        </button>
       </div>
 
       <div className="createveri-content">
@@ -481,6 +595,10 @@ const CreateVeri = () => {
 
       {/* Action Buttons */}
       <div className="createveri-action-buttons">
+  
+        <button className="createveri-btn-cancel" onClick={handleCancel}>
+          <FontAwesomeIcon icon={faTimes} /> Cancel
+        </button>
         <button
           className="createveri-btn-create"
           onClick={handleCreateVerification}
@@ -496,9 +614,26 @@ const CreateVeri = () => {
             </>
           )}
         </button>
-        <button className="createveri-btn-cancel" onClick={handleCancel}>
-          <FontAwesomeIcon icon={faTimes} /> Cancel
-        </button>
+      </div>
+
+      {/* Custom Alert Notification */}
+      <div className={`createveri-alert ${showAlert ? 'show' : ''}`}>
+        <div className={`createveri-alert-${alertType}`}>
+          <div className="createveri-alert-content">
+            <div className="createveri-alert-icon">
+              {alertType === 'success' && <FontAwesomeIcon icon={faCheckCircle} />}
+              {alertType === 'error' && <FontAwesomeIcon icon={faTimes} />}
+              {alertType === 'warning' && <FontAwesomeIcon icon={faExclamationTriangle} />}
+            </div>
+            <div className="createveri-alert-message">
+              {alertMessage}
+            </div>
+          </div>
+          <button className="createveri-alert-close" onClick={() => setShowAlert(false)}>
+            <FontAwesomeIcon icon={faTimes} />
+          </button>
+        </div>
+        <div className="createveri-alert-progress"></div>
       </div>
     </div>
   );

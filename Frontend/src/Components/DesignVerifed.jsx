@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 import "./CSS/DesignVerifed.css";
 import trash_comment from "../image/trash_comment.png";
 

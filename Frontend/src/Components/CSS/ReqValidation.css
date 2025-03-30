@@ -1,77 +1,769 @@
-.container {
-  padding: 20px;
-  font-family: Arial, sans-serif;
+/* ReqValidation.css - Optimized Layout */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* Base Colors */
+  --Vali-bg-primary: #ffffff;
+  --Vali-bg-secondary: #f8f9fc;
+  --Vali-bg-tertiary: #eef1f8;
+  
+  /* Text Colors */
+  --Vali-text-primary: #1e293b;
+  --Vali-text-secondary: #64748b;
+  --Vali-text-light: #94a3b8;
+  
+  /* Primary Brand Colors */
+  --Vali-primary: #4f46e5;      /* Deep indigo */
+  --Vali-primary-light: #818cf8;
+  --Vali-primary-dark: #3730a3;
+  
+  /* Accent Colors */
+  --Vali-accent: #0ea5e9;       /* Sky blue */
+  --Vali-accent-light: #7dd3fc;
+  --Vali-accent-dark: #0369a1;
+  
+  /* Status Colors */
+  --Vali-success: #10b981;      /* Emerald */
+  --Vali-success-dark: #059669;
+  --Vali-warning: #f59e0b;      /* Amber */
+  --Vali-warning-dark: #b45309;
+  --Vali-error: #ef4444;        /* Red */
+  --Vali-error-dark: #b91c1c;
+  --Vali-info: #6366f1;         /* Indigo */
+  --Vali-working: #8b5cf6;      /* Purple */
+  
+  /* UI Elements */
+  --Vali-border: #e2e8f0;
+  --Vali-border-light: #f1f5f9;
+  --Vali-border-colored: #c7d2fe;
+  
+  /* Shadows */
+  --Vali-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.03);
+  --Vali-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --Vali-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+  --Vali-shadow-colored: 0 4px 12px rgba(79, 70, 229, 0.15);
+  
+  /* Border Radius */
+  --Vali-radius-sm: 4px;
+  --Vali-radius-md: 6px;
+  --Vali-radius-lg: 8px;
+  
+  /* Transitions */
+  --Vali-transition: all 0.2s ease;
 }
 
-.title {
-  text-align: center;
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--Vali-bg-secondary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Main container */
+.Vali-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: var(--Vali-bg-primary);
+  min-height: 100vh;
+  position: relative;
+}
+
+.Vali-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(to right, var(--Vali-primary), var(--Vali-accent));
+  z-index: 1;
+}
+
+/* Header */
+.Vali-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--Vali-border);
+}
+
+.Vali-title {
   font-size: 24px;
+  font-weight: 600;
+  color: var(--Vali-text-primary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  letter-spacing: -0.02em;
+}
+
+.Vali-title-icon {
+  color: var(--Vali-primary);
+}
+
+.Vali-back-button {
+  padding: 10px 16px;
+  background-color: transparent;
+  border: 1px solid var(--Vali-border);
+  border-radius: var(--Vali-radius-md);
+  color: var(--Vali-text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--Vali-transition);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.Vali-back-button:hover {
+  background-color: var(--Vali-bg-tertiary);
+  color: var(--Vali-text-primary);
+}
+
+.Vali-save-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: var(--Vali-radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--Vali-transition);
+  background-color: var(--Vali-primary);
+  color: white;
+  border: none;
+  box-shadow: var(--Vali-shadow-colored);
+}
+
+.Vali-save-button:hover {
+  background-color: var(--Vali-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(79, 70, 229, 0.2);
+}
+
+/* Main content layout - improved two-column grid */
+.Vali-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+}
+
+/* Boxes and Cards */
+.Vali-box,
+.Vali-summary-card,
+.Vali-progress-card,
+.Vali-document-card,
+.Vali-comment-section {
+  background: var(--Vali-bg-primary);
+  border-radius: var(--Vali-radius-lg);
+  border: 1px solid var(--Vali-border);
+  box-shadow: var(--Vali-shadow-md);
+  overflow: hidden;
+  margin-bottom: 24px;
+  transition: var(--Vali-transition);
+}
+
+.Vali-box:hover,
+.Vali-summary-card:hover,
+.Vali-progress-card:hover,
+.Vali-document-card:hover {
+  box-shadow: var(--Vali-shadow-lg);
+}
+
+/* Headers */
+.Vali-box h2,
+.Vali-summary-header,
+.Vali-progress-header,
+.Vali-document-header {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--Vali-text-primary);
+  padding: 16px 20px;
+  background-color: var(--Vali-bg-secondary);
+  border-bottom: 1px solid var(--Vali-border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.Vali-icon {
+  color: var(--Vali-primary);
+}
+
+/* Requirements Table */
+.Vali-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.Vali-table th {
+  background-color: var(--Vali-bg-secondary);
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--Vali-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-bottom: 1px solid var(--Vali-border);
+}
+
+.Vali-table td {
+  padding: 12px 16px;
+  font-size: 14px;
+  border-bottom: 1px solid var(--Vali-border-light);
+  color: var(--Vali-text-primary);
+}
+
+.Vali-table tr:last-child td {
+  border-bottom: none;
+}
+
+.Vali-table tr:hover {
+  background-color: var(--Vali-bg-tertiary);
+}
+
+/* Requirement ID styling */
+.Vali-table td:first-child {
+  font-family: "SF Mono", "Roboto Mono", monospace;
+  font-size: 13px;
+  color: var(--Vali-primary);
+  font-weight: 500;
+}
+
+/* Badges */
+.Vali-type-badge, .Vali-status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.Vali-type-badge {
+  background-color: rgba(14, 165, 233, 0.1);
+  color: var(--Vali-accent);
+}
+
+.Vali-status-badge {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: var(--Vali-warning);
+}
+
+/* Summary Card */
+.Vali-summary-body,
+.Vali-progress-body,
+.Vali-document-body {
+  padding: 16px;
+}
+
+.Vali-summary-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--Vali-border-light);
+}
+
+.Vali-summary-item:last-child {
+  border-bottom: none;
+}
+
+.Vali-summary-label {
+  color: var(--Vali-text-secondary);
+  font-size: 14px;
+}
+
+.Vali-summary-value {
+  font-weight: 500;
+  color: var(--Vali-text-primary);
+  font-size: 14px;
+}
+
+/* Progress Bar and Steps */
+.Vali-progress-bar {
+  height: 8px;
+  background-color: var(--Vali-border-light);
+  border-radius: 4px;
+  margin: 16px 0;
+  overflow: hidden;
+}
+
+.Vali-progress {
+  height: 100%;
+  background: linear-gradient(to right, var(--Vali-primary), var(--Vali-accent));
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+.Vali-progress-text {
+  text-align: center;
+  display: block;
+  font-size: 14px;
+  color: var(--Vali-text-secondary);
   margin-bottom: 20px;
 }
 
-.flex-container {
+/* Progress Steps */
+.Vali-progress-steps {
   display: flex;
   justify-content: space-between;
-  gap: 20px;
-}
-
-.box {
-  flex: 1;
-  padding: 15px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-}
-
-.textarea {
-  width: 100%;
-  height: 150px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  resize: none;
-}
-
-.requirements .table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-
-.requirements .table th,
-.requirements .table td {
-  border: 1px solid #ccc;
-  padding: 8px;
-  text-align: left;
-}
-
-.button-container {
-  text-align: center;
+  align-items: center;
   margin-top: 20px;
 }
 
-.save-button,
-.upload-button {
-  padding: 10px 20px;
-  background-color: #007bff;
+.Vali-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  width: 60px;
+}
+
+.Vali-step-marker {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: var(--Vali-bg-secondary);
+  border: 2px solid var(--Vali-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--Vali-text-secondary);
+  margin-bottom: 8px;
+  transition: var(--Vali-transition);
+}
+
+.Vali-step.completed .Vali-step-marker {
+  background-color: var(--Vali-success);
+  border-color: var(--Vali-success);
+  color: white;
+}
+
+.Vali-step-label {
+  font-size: 12px;
+  color: var(--Vali-text-secondary);
+  text-align: center;
+}
+
+.Vali-step.completed .Vali-step-label {
+  color: var(--Vali-text-primary);
+  font-weight: 500;
+}
+
+.Vali-step-connector {
+  flex: 1;
+  height: 2px;
+  background-color: var(--Vali-border);
+  position: relative;
+  top: -15px;
+}
+
+/* File Upload Area */
+.Vali-file-drop-area {
+  border: 2px dashed var(--Vali-border);
+  border-radius: var(--Vali-radius-lg);
+  padding: 30px;
+  text-align: center;
+  transition: var(--Vali-transition);
+  margin-bottom: 16px;
+}
+
+.Vali-file-drop-area:hover {
+  border-color: var(--Vali-primary-light);
+  background-color: rgba(79, 70, 229, 0.05);
+}
+
+.Vali-file-label {
+  cursor: pointer;
+  color: var(--Vali-text-secondary);
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.Vali-upload-icon {
+  margin-bottom: 16px;
+}
+
+.Vali-file-icon {
+  display: inline-block;
+  width: 40px;
+  height: 50px;
+  background-color: var(--Vali-border-light);
+  position: relative;
+}
+
+.Vali-file-icon:before {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  border-style: solid;
+  border-width: 0 10px 10px 0;
+  border-color: transparent var(--Vali-bg-primary) transparent transparent;
+}
+
+input[type="file"] {
+  position: absolute;
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.Vali-selected-file {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--Vali-bg-secondary);
+  padding: 12px 16px;
+  border-radius: var(--Vali-radius-md);
+  margin-bottom: 16px;
+}
+
+.Vali-file-name {
+  font-size: 14px;
+  color: var(--Vali-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 200px;
+}
+
+.Vali-upload-button {
+  background-color: var(--Vali-primary);
   color: white;
   border: none;
-  border-radius: 5px;
+  padding: 8px 16px;
+  border-radius: var(--Vali-radius-md);
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
+  transition: var(--Vali-transition);
 }
 
-.save-button:hover,
-.upload-button:hover {
-  background-color: #0056b3;
+.Vali-upload-button:hover:not(:disabled) {
+  background-color: var(--Vali-primary-dark);
 }
 
-/* File attachment styles */
-input[type="file"] {
-  margin-top: 10px;
-  margin-bottom: 10px;
+.Vali-upload-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
-.upload-button {
-  display: block;
-  margin-top: 10px;
+/* Uploaded Files List */
+.Vali-uploaded-files {
+  margin-top: 16px;
+}
+
+.Vali-uploaded-files h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--Vali-text-primary);
+  margin-bottom: 12px;
+}
+
+.Vali-files-list {
+  list-style: none;
+}
+
+.Vali-file-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--Vali-border-light);
+  transition: var(--Vali-transition);
+}
+
+.Vali-file-item:hover {
+  background-color: var(--Vali-bg-tertiary);
+}
+
+.Vali-file-item:last-child {
+  border-bottom: none;
+}
+
+.Vali-file-icon-small {
+  margin-right: 10px;
+  color: var(--Vali-accent);
+}
+
+.Vali-file-item-name {
+  flex: 1;
+  font-size: 13px;
+  color: var(--Vali-text-primary);
+}
+
+.Vali-download-button {
+  background-color: transparent;
+  color: var(--Vali-accent);
+  border: 1px solid var(--Vali-accent);
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: var(--Vali-radius-sm);
+  cursor: pointer;
+  transition: var(--Vali-transition);
+}
+
+.Vali-download-button:hover {
+  background-color: var(--Vali-accent);
+  color: white;
+}
+
+/* Comment Section */
+.Vali-comment-section {
+  margin-bottom: 24px;
+}
+
+.Vali-comment-section h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--Vali-text-primary);
+  padding: 16px 20px;
+  background-color: var(--Vali-bg-secondary);
+  border-bottom: 1px solid var(--Vali-border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.Vali-comments-list {
+  padding: 16px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.Vali-comment {
+  padding: 16px;
+  background-color: var(--Vali-bg-secondary);
+  border-radius: var(--Vali-radius-md);
+  border-left: 3px solid var(--Vali-primary-light);
+  margin-bottom: 16px;
+}
+
+.Vali-comment:last-child {
+  margin-bottom: 0;
+}
+
+.Vali-comment-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.Vali-comment-name {
+  font-weight: 600;
+  color: var(--Vali-primary);
+  font-size: 14px;
+}
+
+.Vali-comment-time {
+  color: var(--Vali-text-light);
+  font-size: 12px;
+}
+
+.Vali-comment-text {
+  color: var(--Vali-text-primary);
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.Vali-comment-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.Vali-delete-comment-button {
+  background-color: transparent;
+  color: var(--Vali-error);
+  border: none;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--Vali-transition);
+  padding: 4px 8px;
+  border-radius: var(--Vali-radius-sm);
+}
+
+.Vali-delete-comment-button:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+.Vali-comment-input {
+  padding: 16px;
+  border-top: 1px solid var(--Vali-border-light);
+}
+
+.Vali-comment-input textarea {
+  width: 100%;
+  border: 1px solid var(--Vali-border);
+  border-radius: var(--Vali-radius-md);
+  padding: 12px;
+  resize: none;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--Vali-text-primary);
+  min-height: 120px;
+  outline: none;
+  transition: var(--Vali-transition);
+  margin-bottom: 12px;
+}
+
+.Vali-comment-input textarea:focus {
+  border-color: var(--Vali-primary-light);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.Vali-comment-input button {
+  background-color: var(--Vali-primary);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: var(--Vali-radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--Vali-transition);
+  float: right;
+  box-shadow: var(--Vali-shadow-colored);
+}
+
+.Vali-comment-input button:hover {
+  background-color: var(--Vali-primary-dark);
+  transform: translateY(-2px);
+}
+
+/* Loading State */
+.Vali-loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  color: var(--Vali-text-secondary);
+}
+
+.Vali-loader {
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--Vali-border);
+  border-radius: 50%;
+  border-top-color: var(--Vali-primary);
+  animation: Vali-spin 1s linear infinite;
+  margin-right: 10px;
+}
+
+@keyframes Vali-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Empty State */
+.Vali-empty-state {
+  padding: 40px;
+  text-align: center;
+  color: var(--Vali-text-secondary);
+  background-color: var(--Vali-bg-secondary);
+  border-radius: var(--Vali-radius-md);
+  margin: 16px;
+}
+
+/* Toast Notification Styling Override */
+.Toastify__toast {
+  border-radius: var(--Vali-radius-md);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.Toastify__toast--success {
+  background: linear-gradient(135deg, var(--Vali-success), var(--Vali-success-dark));
+}
+
+.Toastify__toast--error {
+  background: linear-gradient(135deg, var(--Vali-error), var(--Vali-error-dark));
+}
+
+.Toastify__toast--warn {
+  background: linear-gradient(135deg, var(--Vali-warning), var(--Vali-warning-dark));
+}
+
+.Toastify__progress-bar {
+  height: 3px;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+/* Animations */
+@keyframes Vali-fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.Vali-container {
+  animation: Vali-fadeIn 0.3s ease;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  .Vali-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .Vali-side-column {
+    order: -1;
+  }
+  
+  .Vali-progress-steps {
+    padding: 0 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .Vali-container {
+    padding: 20px 15px;
+  }
+  
+  .Vali-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+  
+  .Vali-title {
+    order: -1;
+    margin-bottom: 16px;
+    justify-content: center;
+  }
+  
+  .Vali-back-button, .Vali-save-button {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .Vali-summary-item {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .Vali-progress-steps {
+    display: none;
+  }
 }

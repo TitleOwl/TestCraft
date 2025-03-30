@@ -105,7 +105,7 @@ const CreateDesign = () => {
         design_status: "WORKING",
         // ตรวจสอบ Backend Endpoint /design ว่ารับ requirement_id เป็น Array หรือ JSON String
         // ถ้าเป็น JSON String ให้ใช้ JSON.stringify()
-        requirement_id: JSON.stringify(selectedRequirementsId), // --- ส่งเป็น JSON String ตามโค้ด Backend ที่ให้มา ---
+        requirement_id: selectedRequirementsId,
       };
       const designResponse = await axios.post("http://localhost:3001/design", newDesign);
       if (designResponse.status !== 201) {
@@ -119,7 +119,7 @@ const CreateDesign = () => {
       if (diagramRef.current) {
         console.log("Triggering diagram save for design ID:", createdDesignId);
         // เรียกฟังก์ชันที่ expose ผ่าน ref และรอผลลัพธ์
-        const diagramSaveSuccess = await diagramRef.current.triggerSave(createdDesignId);
+        const diagramSaveSuccess = await diagramRef.current.saveDiagram(createdDesignId);
 
         if (!diagramSaveSuccess) {
           // ถ้าบันทึก Diagram ไม่สำเร็จ ให้แจ้งเตือนและหยุดการทำงานส่วนที่เหลือ
@@ -219,12 +219,29 @@ const CreateDesign = () => {
             classNamePrefix="react-select"
           />
         </div>
-        {/* ... File Upload ... */}
-        <div className="uploaded-files-container create-design-form-group">
-          <h3>Attach Files (Optional)</h3>
-          <input type="file" multiple accept="image/*,.pdf,.doc,.docx,.txt" onChange={handleFileChange} className="create-design-file-input" />
-          {uploadedFiles.length > 0 && (<div className="file-preview-list"> {uploadedFiles.map((file, index) => <p key={index} className="file-preview-item">{file.name} ({file.type})</p>)} </div>)}
-        </div>
+{/* ... File Upload ... */}
+<div className="uploaded-files-container create-design-form-group">
+      <h3>Attach Files</h3>
+      {/* นี่คือ element ที่ใช้เลือกไฟล์ */}
+      <input
+          type="file"
+          multiple
+          accept="image/*,.pdf,.doc,.docx,.txt" // แก้ไข accept เล็กน้อยให้ถูกต้องขึ้น
+          onChange={handleFileChange}
+          className="create-design-file-input"
+      />
+      {/* ส่วนแสดงชื่อไฟล์ที่เลือกแล้ว */}
+      {uploadedFiles.length > 0 && (
+          <div className="file-preview-list">
+              {uploadedFiles.map((file, index) => (
+                  <p key={index} className="file-preview-item">
+                     {file.name} ({file.type})
+                  </p>
+              ))}
+          </div>
+       )}
+    </div>
+
         {/* ... Description ... */}
         <div className="create-design-form-group">
           <label htmlFor="description">Description:</label>
