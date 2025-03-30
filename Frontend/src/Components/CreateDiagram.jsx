@@ -33,29 +33,29 @@ const CreateDiagram = forwardRef((props, ref) => {
             alert('ไม่พบ Design ID ที่ถูกต้องสำหรับบันทึก Diagram');
             return false;
         }
-    
+
         const currentElements = excalidrawAPI.getSceneElements();
         if (!currentElements || currentElements.length === 0) {
             console.log("ไม่มีข้อมูล Diagram ให้บันทึก");
             return true;
         }
-    
+
         const payload = {
             elements: currentElements,
             design_id: designIdToUse
         };
-    
+
         try {
             const response = await fetch('http://localhost:3001/api/diagrams', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
             });
-    
+
             if (!response.ok) {
                 throw new Error(`เกิดข้อผิดพลาดจาก Server: ${response.status}`);
             }
-    
+
             console.log('บันทึก Diagram สำเร็จ');
             return true;
         } catch (error) {
@@ -63,10 +63,34 @@ const CreateDiagram = forwardRef((props, ref) => {
             return false;
         }
     };
-    
+
 
     const exportAsPng = async () => {
-        // ... (โค้ด exportAsPng ของคุณ) ...
+        if (!excalidrawAPI) {
+            console.error("Excalidraw API ยังไม่พร้อมใช้งาน");
+            alert("Excalidraw ยังไม่พร้อม โปรดลองอีกครั้ง");
+            return;
+        }
+        const elements = excalidrawAPI.getSceneElements();
+        const appState = excalidrawAPI.getAppState();
+        const files = excalidrawAPI.getFiles();
+
+        if (!elements || elements.length === 0) {
+            alert("ไม่มีข้อมูลให้ Export!");
+            return;
+        }
+        try {
+            const blob = await exportToBlob({
+                elements,
+                appState: { ...appState, exportBackground: true, exportPadding: 16 },
+                files,
+                mimeType: "image/png",
+            });
+            downloadBlob(blob, `รูปวาด-${Date.now()}.png`);
+        } catch (error) {
+            console.error("เกิดข้อผิดพลาดในการ Export PNG:", error);
+            alert("เกิดข้อผิดพลาดในการ Export เป็น PNG");
+        }
     };
 
     useImperativeHandle(ref, () => ({
