@@ -64,81 +64,108 @@ const CreateRequirement = () => {
     }
   }, [projectId]);
 
-  // ฟังก์ชันสำหรับการส่งข้อมูล
+  
+  // ฟังก์ชันสำหรับการส่งข้อมูล (อัปเดตแล้ว)
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     console.log("Form Data:", requirementStatement, requirementType, description, selectedFileIds);
 
     // ตรวจสอบว่าฟอร์มมีข้อมูลครบหรือไม่
-    if (!requirementStatement || !requirementType || !description || selectedFileIds.length === 0) {
+    if (!requirementStatement || !requirementType || !description /*|| selectedFileIds.length === 0*/) { // อาจปรับเงื่อนไขไฟล์ตามต้องการ
       setError("Please fill in all fields.");
-      showAlertMessage("warning", "Please fill in all fields and select at least one file.");
+      showAlertMessage("warning", "Please fill in all required fields."); // ปรับข้อความตามต้องการ
       return;
     }
 
+    // 1. เตรียมข้อมูลสำหรับสร้าง requirement หลัก
     const newRequirement = {
       requirement_name: requirementStatement,
       requirement_type: requirementType,
       requirement_description: description,
       project_id: projectId,
       filereq_ids: selectedFileIds,
-      requirement_status: "WORKING", // กำหนดสถานะเริ่มต้นเป็น WORKING
+      requirement_status: "WORKING",
     };
 
     try {
-      setIsSubmitting(true); // ปิดปุ่ม Submit ระหว่างการส่งข้อมูล
-      
-      // ส่งคำขอไปยัง API เพื่อสร้าง requirement ใหม่
+      setIsSubmitting(true);
+      setError("");
+
+      // 2. ส่งคำขอไปยัง API เพื่อสร้าง requirement ใหม่
       const response = await axios.post("http://localhost:3001/requirement", newRequirement);
 
-      // ตรวจสอบว่าการสร้าง requirement สำเร็จหรือไม่
-      if (response.status === 201) {
+      // 3. ตรวจสอบว่าการสร้าง requirement สำเร็จหรือไม่
+      if (response.status === 201 && response.data && response.data.requirement_id) {
         console.log("Requirement created successfully:", response.data);
+        const requirementId = response.data.requirement_id;
 
-        const requirementId = response.data.requirement_id; // ดึง requirement_id จาก response
-
-        // ตรวจสอบว่า requirement_id มีค่า
-        if (!requirementId) {
-          throw new Error("Requirement ID is missing from response.");
-        }
-
-        // ส่งข้อมูลไปยัง API เพื่อบันทึกประวัติใน historyreq
+        // 4. เตรียมข้อมูลสำหรับบันทึกประวัติ
         const historyReqData = {
           requirement_id: requirementId,
+          requirement_name: newRequirement.requirement_name,
+          requirement_description: newRequirement.requirement_description,
+          requirement_type: newRequirement.requirement_type,
           requirement_status: newRequirement.requirement_status,
         };
 
+        console.log("Sending history data:", historyReqData);
+
+        // 5. ส่งข้อมูลไปยัง API เพื่อบันทึกประวัติ
         const historyResponse = await axios.post("http://localhost:3001/historyReqWorking", historyReqData);
 
+        // 6. ตรวจสอบว่าการบันทึกประวัติสำเร็จหรือไม่
         if (historyResponse.status === 200) {
           console.log("History added successfully:", historyResponse.data);
-          
-          // แสดง Alert แบบสวยงาม
+
+          // แสดง Alert
           showAlertMessage("success", "Requirement created successfully!");
-          
-          // รีเซ็ตค่าฟอร์ม
+
+          // รีเซ็ตค่าฟอร์ม (ทำก่อน redirect เพื่อเคลียร์ state)
           setRequirementStatement("");
           setRequirementType("");
           setDescription("");
           setSelectedFileIds([]);
-          setError("");
+
+          // 3. หน่วงเวลาก่อนกลับไปหน้าเดิม
+          const redirectDelay = 1500; // หน่วงเวลา 1.5 วินาที (ปรับได้ตามต้องการ)
+          console.log(`Redirecting back in ${redirectDelay / 1000} seconds...`);
+
+          setTimeout(() => {
+            navigate(-1); // กลับไปยังหน้าก่อนหน้า
+          }, redirectDelay);
+
         } else {
+          // กรณี history ไม่สำเร็จ
           console.error("Failed to add history:", historyResponse);
-          showAlertMessage("error", "Failed to add history. Please try again.");
+          showAlertMessage("warning", `Requirement created (ID: ${requirementId}), but failed to add initial history.`);
         }
       } else {
+        // กรณีสร้าง requirement หลักไม่สำเร็จ
         console.error("Failed to create requirement:", response);
-        showAlertMessage("error", "Failed to create requirement. Please try again.");
+        const errorMessage = response.data?.message || "Failed to create requirement.";
+        setError(errorMessage);
+        showAlertMessage("error", errorMessage);
       }
     } catch (error) {
-      console.error("Error:", error);
-      setError(error.response?.data?.message || "Something went wrong");
-      showAlertMessage("error", error.response?.data?.message || "Something went wrong. Please try again.");
+      // จัดการกับ Error
+      console.error("Error during submission process:", error);
+      const errorMessage = error.response?.data?.message || error.message || "Something went wrong.";
+      setError(errorMessage);
+      showAlertMessage("error", errorMessage);
     } finally {
-      setIsSubmitting(false); // เปิดปุ่ม Submit อีกครั้ง
+      // ไม่ว่าจะสำเร็จหรือล้มเหลว ให้เปิดปุ่ม Submit คืน
+      // แต่ถ้าสำเร็จและกำลังจะ redirect อาจจะไม่ต้องเปิดคืนทันที
+      // เพราะหน้ากำลังจะเปลี่ยนไปแล้ว
+      // ตรวจสอบก่อนว่าไม่ได้กำลังจะ redirect (ถ้าจำเป็น)
+      // ในกรณีนี้ การ redirect เกิดใน setTimeout ดังนั้น setIsSubmitting(false) ใน finally จะทำงานก่อน
+      // ซึ่งอาจทำให้ปุ่มกลับมาคลิกได้ชั่วครู่ก่อน redirect ถ้าผู้ใช้เร็วมาก
+      // อาจพิจารณาตั้ง isSubmitting เป็น false *หลังจาก* redirect หรือใน cleanup effect
+      // แต่สำหรับกรณีทั่วไป การตั้งใน finally ก็มักจะเพียงพอ
+       setIsSubmitting(false);
     }
   };
+  
 
   // ฟังก์ชันสำหรับการจัดการการเปลี่ยนแปลงของ react-select
   const handleFileChange = (selectedOptions) => {

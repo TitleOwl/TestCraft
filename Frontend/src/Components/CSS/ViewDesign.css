@@ -1,166 +1,301 @@
-.view-design-container {
-    max-width: 70%;
-    margin: 20px auto;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #fff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
+/* === ViewDesign.css (Enhanced Beauty Focus) === */
 
-.view-design-container:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-}
-
-.view-design-title {
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 20px;
-    margin-top: 20px;
-}
-
-.view-design-details {
-    font-size: 16px;
-    color: #555;
-    display: flex;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-    gap: 50px;
-    padding: 10px 20px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-}
-
-.view-design-item {
-    margin: 10px 0;
-}
-
-.view-design-item strong {
-    font-weight: 600;
-}
-
-.history-table-design {
+/* --- Variables (ใช้ชุดเดิม หรือปรับโทนตามชอบ) --- */
+:root {
+    /* Primary (Slightly Desaturated Blue) */
+    --primary-color: #005fcc; /* Adjusted */
+    --primary-hover-color: #004c8a; /* Adjusted */
+    --primary-light-color: #e7f0ff; /* Adjusted */
+  
+    /* Neutrals */
+    --text-color: #2d3748; /* Slightly softer black */
+    --text-color-secondary: #4a5568; /* Lighter gray */
+    --text-color-muted: #718096;  /* Muted text (placeholders, etc.) */
+    --border-color: #e2e8f0;     /* Soft border */
+    --background-color: #ffffff;
+    --background-off-white: #f7fafc; /* Use a common off-white */
+    --background-hover: #edf2f7;   /* Subtle hover */
+    --background-header: transparent; /* Make table headers transparent */
+  
+    /* Functional Colors */
+    --error-color: #c53030; /* Slightly adjusted red */
+    --error-border-color: #fed7d7;
+    --error-background: #fff5f5;
+    --success-color: #2f855a; /* Slightly adjusted green */
+  
+    /* Shadows & Borders */
+    --box-shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* Softer */
+    --box-shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Tailwind's Medium */
+    --box-shadow-modal: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Tailwind's Large */
+    --border-radius: 6px; /* Softer radius */
+  
+    /* Typography */
+    --font-family-base: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif; /* Specify 'Inter' or similar first */
+    --font-size-base: 1rem; 
+    --font-size-sm: 0.875rem; 
+    --font-size-lg: 1.125rem;  /* Adjusted large size */
+    --font-size-xl: 1.5rem; /* Adjusted XL size */
+    --line-height-base: 1.65; /* Slightly more line height */
+    --line-height-tight: 1.5;
+  
+    /* Transitions */
+    --transition-base: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); /* Smooth cubic-bezier */
+  }
+  
+  /* --- Base Body Styles --- */
+  body {
+    font-family: var(--font-family-base);
+    color: var(--text-color);
+    background-color: var(--background-off-white);
+    margin: 0;
+    line-height: var(--line-height-base);
+    -webkit-font-smoothing: antialiased; 
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* --- Main Container Sections --- */
+  .view-design-container {
+    max-width: 900px; /* Adjusted width */
+    margin: 2.5rem auto; /* Consistent margin */
+    padding: 2.5rem 3rem; /* Increased padding */
+    background-color: var(--background-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow-medium); /* Use medium shadow */
+    /* Removed outer border for a cleaner look */
+  }
+  
+  /* Add margin between the two containers */
+  .view-design-container + .view-design-container {
+    margin-top: 2.5rem;
+  }
+  
+  /* --- Back Button --- */
+  .backtodesign-button {
+    display: inline-flex; 
+    align-items: center;
+    gap: 0.4rem;
+    background-color: transparent;
+    border: none; 
+    color: var(--text-color-secondary); 
+    padding: 0.25rem 0; /* Reduced padding */
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    transition: var(--transition-base);
+    margin-bottom: 1.5rem; /* Add space below button */
+  }
+  
+  .backtodesign-button:hover {
+    color: var(--primary-color); 
+  }
+  
+  .backtodesign { 
+    width: 15px;
+    height: 15px;
+    opacity: 0.8; 
+  }
+  
+  /* --- Titles --- */
+  .view-design-title,
+  .history-design-topic {
+    font-size: var(--font-size-xl); 
+    font-weight: 600; 
+    color: var(--text-color);
+    margin: 0 0 1.5rem 0; 
+    padding-bottom: 0.75rem;
+    /* Removed border, rely on spacing */
+    text-align: left; /* Left align all titles */
+  }
+  
+  .history-design-topic {
+    font-size: var(--font-size-lg); /* Use large size */
+    margin-bottom: 1rem;
+    padding-bottom: 0;
+  }
+  
+  /* --- Loading State --- */
+  .loading-text {
+    text-align: center;
+    color: var(--text-color-muted); /* Use muted color */
+    font-size: var(--font-size-base);
+    padding: 4rem 0;
+  }
+  
+  /* --- Design Details Section (Using CSS Grid) --- */
+  .view-design-details {
+    margin-top: 1rem; 
+    border-top: 1px solid var(--border-color); /* Add top border */
+    padding-top: 1.5rem; /* Space above first item */
+  }
+  
+  .view-design-item {
+    display: grid; /* Use Grid for layout */
+    grid-template-columns: minmax(150px, max-content) 1fr; /* Label column (adjust width) + Value column */
+    gap: 0.5rem 1.5rem; /* Row gap, Column gap */
+    margin-bottom: 1rem; /* Space between items */
+    align-items: start; /* Align items top */
+  }
+  
+  .view-design-item strong {
+    grid-column: 1 / 2; /* Place in first column */
+    font-weight: 500; /* Medium weight */
+    color: var(--text-color-secondary); /* Lighter color for label */
+    text-align: right; /* Align label text to the right */
+    padding-top: 0.1em; /* Fine-tune vertical alignment */
+    line-height: var(--line-height-tight);
+  }
+  
+  /* Style the value part (text or list) */
+  .view-design-item > *:not(strong) { 
+    grid-column: 2 / 3; /* Place in second column */
+    line-height: var(--line-height-base);
+    margin: 0; /* Reset default margins */
+    word-break: break-word; /* Prevent long words from overflowing */
+  }
+  
+  /* --- Requirements List Styling --- */
+  .view-design-item ul {
+    list-style: none; 
+    padding: 0; /* Remove padding */
+    margin: 0;
+  }
+  
+  .view-design-item li {
+    margin-bottom: 0.4rem;
+    color: var(--text-color); /* Use main text color for list items */
+    font-size: var(--font-size-sm); 
+    position: relative;
+    padding-left: 1.25rem; /* Indentation for icon/bullet */
+  }
+  .view-design-item li:last-child {
+      margin-bottom: 0;
+  }
+  
+  /* Custom list marker (e.g., a dash or icon) */
+  .view-design-item li::before {
+    content: "—"; /* Use mdash */
+    color: var(--text-color-muted); /* Muted color */
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+  
+  
+  /* --- History Table (.history-table-design) (Minimalist) --- */
+  .history-table-design {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.history-table-design th {
-    background-color: #2c3e50;
-    color: white;
-    padding: 12px 20px;
-    font-weight: bold;
+    margin-bottom: 2rem;
+    /* No outer border */
+  }
+  
+  .history-table-design th,
+  .history-table-design td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color); /* Only bottom border */
+    font-size: var(--font-size-sm);
+    transition: var(--transition-base); /* Add transition for hover */
+  }
+  
+  /* History Table Header (Transparent) */
+  .history-table-design thead th {
+    background-color: var(--background-header); /* Transparent */
+    font-weight: 600; 
+    color: var(--text-color-secondary); 
+    border-bottom-width: 2px; /* Keep thicker border */
+  }
+  
+  .history-table-design tbody tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .history-table-design tbody tr:hover td { /* Apply hover to cells */
+    background-color: var(--background-hover); 
+  }
+  
+  /* --- No History Message --- */
+  .view-design-container > p { 
     text-align: center;
-    border-bottom: 1px solid #ddd;
-}
-
-.history-table-design td {
-    background-color: #fff;
-    padding: 12px 20px;
-    border-bottom: 1px solid #ddd;
-    text-align: center;
-}
-
-.history-table-design tr:hover {
-    background-color: #f1f1f1;
-}
-
-.history-design-topic {
-    margin-right: 50%;
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    margin-top: 20px;
-    color: #333;
-}
-
-.backtodesign-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-}
-
-.backtodesign {
-    width: 26px;
-    height: auto;
-}
-
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    position: relative;
-}
-
-.close-modal {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: red;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-}
-
-.design-preview {
-    max-width: 100%;
-    height: auto;
-}
-
-.update-design-file-list {
-    list-style: none;
-    padding: 0;
-}
-
-.update-design-file-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
-}
-
-.update-design-file-image {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border-radius: 5px;
-}
-
-.update-design-delete-btn {
-    background: red;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-size: 14px;
-}
-
-.update-design-delete-btn:hover {
-    background: darkred;
-}
-
-.update-design-no-files {
-    font-style: italic;
-    color: gray;
-}
+    color: var(--text-color-muted);
+    font-style: normal; /* Remove italic */
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-size: var(--font-size-sm);
+  }
+  
+  /* --- Diagram Component Wrapper --- */
+  .view-design-container + div { 
+    max-width: 900px; /* Match container width */
+    margin: -1rem auto 2.5rem auto; /* Adjust top margin to overlap slightly or reduce gap */
+    padding: 0 1.5rem; /* Add horizontal padding */
+    /* Consider adding a background or border if ViewDiagram needs separation */
+  }
+  
+  
+  /* --- Responsive Adjustments --- */
+  @media (max-width: 768px) {
+    .view-design-container {
+      margin: 1.5rem auto;
+      padding: 1.5rem; 
+    }
+    .view-design-container + .view-design-container {
+      margin-top: 1.5rem;
+    }
+  
+    .backtodesign-button {
+       margin-bottom: 1rem; 
+    }
+  
+    .view-design-title,
+    .history-design-topic {
+      font-size: var(--font-size-lg); /* Adjust title sizes */
+      margin-bottom: 1.25rem;
+    }
+    .history-design-topic {
+       font-size: 1.05rem; /* Smaller history title */
+    }
+  
+    /* Adjust grid for details on smaller screens */
+    .view-design-item {
+      grid-template-columns: 1fr; /* Stack label and value */
+      gap: 0.1rem 0; /* Reduce gap */
+      margin-bottom: 1.25rem;
+    }
+    .view-design-item strong {
+       grid-column: 1 / -1; /* Span full width */
+       text-align: left; /* Left align label */
+       margin-bottom: 0.25rem;
+    }
+     .view-design-item > *:not(strong) { 
+       grid-column: 1 / -1; /* Span full width */
+    }
+    .view-design-item ul {
+       padding-left: 0; /* Remove indentation if label is above */
+    }
+     .view-design-item li {
+       padding-left: 0; /* Remove indentation */
+     }
+     .view-design-item li::before {
+       display: none; /* Hide custom bullet */
+     }
+  
+  
+    /* Horizontal scroll for tables */
+     .table-responsive-wrapper { 
+       overflow-x: auto;
+       margin-left: -1.5rem; 
+       margin-right: -1.5rem;
+       padding-left: 1.5rem;
+       padding-right: 1.5rem;
+     }
+     .history-table-design {
+        min-width: 450px; /* Adjust minimum width */
+     }
+  
+    .view-design-container + div {
+       margin-top: 1.5rem;
+       padding: 0; 
+    }
+  }

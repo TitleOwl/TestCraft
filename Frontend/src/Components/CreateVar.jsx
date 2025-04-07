@@ -95,6 +95,7 @@ const CreateVar = () => {
   };
 
   const handleCreateValidation = async () => {
+    // --- การตรวจสอบ Input (เหมือนเดิม) ---
     if (!projectId) {
       if (toastId) toast.dismiss(toastId);
       setToastId(toast.error("Invalid project ID."));
@@ -116,64 +117,97 @@ const CreateVar = () => {
       return;
     }
   
+    // --- สร้าง Payload สำหรับ /createvalidation (เหมือนเดิม) ---
     const payload = {
       requirements: [...new Set(selectedRequirements)], // Unique requirements
       project_id: projectId,
       create_by: createBy,
     };
   
+    // --- ตรวจสอบการ Submit ซ้ำซ้อน (เหมือนเดิม) ---
     if (isSubmitting) {
       if (toastId) toast.dismiss(toastId);
       setToastId(toast.warning("Submitting in progress. Please wait."));
       return;
     }
   
-    setIsSubmitting(true);
+    setIsSubmitting(true); // เริ่มการ Submit
   
     try {
+      // --- เรียก API /createvalidation (เหมือนเดิม) ---
       const response = await axios.post("http://localhost:3001/createvalidation", payload);
   
       if (response.status === 201) {
         if (toastId) toast.dismiss(toastId);
         setToastId(toast.success("Validation created successfully!"));
   
-        // Update frontend state
+        // --- อัปเดต State ฝั่ง Frontend (เหมือนเดิม) ---
+        // นำรายการที่ถูกเลือกออกจาก state `verifiedRequirements`
         setVerifiedRequirements((prev) =>
           prev.filter((req) => !selectedRequirements.includes(req.requirement_id))
         );
-        setSelectedRequirements([]);
+        setSelectedRequirements([]); // เคลียร์รายการที่เลือก
   
-        // Loop through selected requirements and add them to history with status "WAITING FOR VALIDATION"
+        // --- *** จุดที่แก้ไข: Loop เพื่อสร้าง History *** ---
+        console.log("Starting history creation loop for validation...");
         for (const requirementId of selectedRequirements) {
-          const historyReqData = {
-            requirement_id: requirementId,
-            requirement_status: "WAITING FOR VALIDATION",  // Set status to "WAITING FOR VALIDATION"
-          };
-  
-          // Send to historyReqWorking
-          const historyResponse = await axios.post(
-            "http://localhost:3001/historyReqWorking",
-            historyReqData
+          // 1. ค้นหาข้อมูล requirement เต็มจาก state `verifiedRequirements` (หรือ state ที่เก็บรายการต้นทาง)
+          const reqDetail = verifiedRequirements.find(
+            (req) => req.requirement_id === requirementId
           );
   
-          if (historyResponse.status !== 200) {
-            console.error("Failed to add history for requirement:", requirementId);
+          if (!reqDetail) {
+            console.error(`Could not find details for requirement ID: ${requirementId} in verifiedRequirements state. Skipping history creation.`);
+            continue; // ข้ามไปทำ requirement ID ถัดไป
           }
-        }
+  
+          // 2. สร้าง historyReqData โดยใช้ข้อมูลที่พบ
+          const historyReqData = {
+            requirement_id: requirementId,
+            requirement_name: reqDetail.requirement_name,         // <-- ดึงจาก details
+            requirement_description: reqDetail.requirement_description, // <-- ดึงจาก details
+            requirement_type: reqDetail.requirement_type,         // <-- ดึงจาก details
+            requirement_status: "WAITING FOR VALIDATION",        // กำหนดสถานะ
+          };
+  
+          console.log(`Sending history data for Req ID ${requirementId} (Validation):`, historyReqData);
+  
+          try {
+            // 3. ส่งข้อมูลไปที่ historyReqWorking
+            const historyResponse = await axios.post(
+              "http://localhost:3001/historyReqWorking",
+              historyReqData
+            );
+  
+            if (historyResponse.status !== 200) {
+              console.error(`Failed to add history for requirement ID: ${requirementId}. Status: ${historyResponse.status}`, historyResponse.data);
+              // อาจจะเก็บ ID ที่มีปัญหาไว้แจ้งเตือน
+            } else {
+              console.log(`History added successfully for Req ID ${requirementId} (Validation)`);
+            }
+          } catch (historyError) {
+            console.error(`Error sending history for requirement ID: ${requirementId}`, historyError.response?.data || historyError.message);
+            // จัดการ error ของ history item นี้
+          }
+        } // --- จบ Loop ---
+        console.log("Finished history creation loop for validation.");
+  
+         // (ไม่จำเป็นต้องมีส่วนอัปเดต status requirement ที่นี่ เพราะ /createvalidation น่าจะทำแล้ว หรือ flow คือรอ validate ก่อน)
   
       } else {
+        // กรณี /createvalidation ไม่สำเร็จ (เหมือนเดิม)
         if (toastId) toast.dismiss(toastId);
         setToastId(toast.error(response.data.message || "Failed to create validation."));
       }
     } catch (error) {
-      console.error("Error creating validation:", error);
-  
+      // จัดการ Error ทั่วไป (เหมือนเดิม)
+      console.error("Error creating validation process:", error);
       const errorMessage =
-        error.response?.data?.message || "An error occurred. Please try again.";
+        error.response?.data?.message || "An error occurred during the validation process.";
       if (toastId) toast.dismiss(toastId);
       setToastId(toast.error(errorMessage));
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false); // เสร็จสิ้นการ Submit
     }
   };
   

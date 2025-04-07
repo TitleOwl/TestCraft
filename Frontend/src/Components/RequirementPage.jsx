@@ -121,8 +121,14 @@ const RequirementPage = () => {
       placement: 'bottom',
     },
     {
-      // ชี้ไปที่ Tab "Baseline" (แท็บที่ 7)
+      // ชี้ไปที่ Tab "Version Control" (แท็บที่ 7)
       target: '.REQheader-tab-bar .REQheader-tab:nth-child(7)',
+      content: 'แสดง statement  verification และ validation',
+      placement: 'bottom',
+    },
+    {
+      // ชี้ไปที่ Tab "Baseline" (แท็บที่ 8)
+      target: '.REQheader-tab-bar .REQheader-tab:nth-child(8)',
       content: 'เมื่อ Requirement ผ่านการ Verify และ Validate แล้ว สามารถกำหนด Baseline (เวอร์ชันหลัก) ได้จากส่วนนี้',
       placement: 'bottom',
     },
@@ -262,6 +268,7 @@ const RequirementPage = () => {
       state: { requirementList, projectName } 
     });
   };
+  const handleVeriVar = () => navigate(`/VeriVaView?project_id=${projectId}`);
   const handleBaseline = () => navigate(`/Baseline?project_id=${projectId}`);
   
   const handleUploadSuccess = (newFile) => {
@@ -418,6 +425,13 @@ const RequirementPage = () => {
           >
             <FontAwesomeIcon icon={faCodeBranch} className="REQtab-icon" />
             Version Control
+          </div>
+          <div 
+            className={`REQheader-tab ${activeTab === 'veriva' ? 'REQactive' : ''}`}
+            onClick={handleVeriVar}
+          >
+            <FontAwesomeIcon icon={faCodeBranch} className="REQtab-icon" />
+            Verification & Validation
           </div>
           <div 
             className={`REQheader-tab ${activeTab === 'baseline' ? 'REQactive' : ''}`}

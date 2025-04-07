@@ -83,81 +83,130 @@ const CreateDesign = () => {
     setUploadedFiles((prevPreviews) => [...prevPreviews, ...filePreviews]); // ใช้ชื่อ uploadedFiles แต่เก็บแค่ Preview
   };
 
-  // --- handleSubmit ---
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // --- การตรวจสอบ Input (เหมือนเดิม) ---
     if (!designStatement || !designType || !diagramType || !description || selectedRequirementsId.length === 0) {
-      setError("Please fill in all required fields and select at least one requirement.");
-      return;
+        setError("Please fill in all required fields and select at least one requirement.");
+        // อาจจะใช้ Swal.fire แทนถ้าต้องการ
+        Swal.fire('ข้อมูลไม่ครบ', 'กรุณากรอกข้อมูล Design ให้ครบถ้วน และเลือก Requirement อย่างน้อย 1 รายการ', 'warning');
+        return;
     }
+
     setLoading(true);
     setError("");
-    let createdDesignId = null;
+    let createdDesignId = null; // เก็บ ID ของ Design ที่สร้าง
 
     try {
-      // 1. สร้าง Design Metadata
-      const newDesign = {
-        diagram_name: designStatement,
-        design_type: designType,
-        diagram_type: diagramType,
-        design_description: description,
-        project_id: projectId,
-        design_status: "WORKING",
-        requirement_id: selectedRequirementsId, // ส่งเป็น Array
-      };
-      const designResponse = await axios.post("http://localhost:3001/design", newDesign);
-      if (designResponse.status !== 201) {
-        throw new Error(designResponse.data?.message || "Failed to create design metadata.");
-      }
-      createdDesignId = designResponse.data.design_id;
-      console.log("Design metadata created successfully:", createdDesignId);
-
-      // 2. สั่งบันทึก Diagram ผ่าน ref
-      if (diagramRef.current) {
-        const diagramSaveSuccess = await diagramRef.current.saveDiagram(createdDesignId);
-        if (!diagramSaveSuccess) {
-          throw new Error("Created design metadata, but failed to save the diagram data automatically.");
+        // 1. สร้าง Design Metadata (เหมือนเดิม)
+        const newDesign = {
+            diagram_name: designStatement,
+            design_type: designType,
+            diagram_type: diagramType,
+            design_description: description,
+            project_id: projectId,
+            design_status: "WORKING", // สถานะเริ่มต้น
+            requirement_id: selectedRequirementsId, // ส่งเป็น Array ไปยัง /design
+        };
+        console.log("Sending design metadata:", newDesign);
+        const designResponse = await axios.post("http://localhost:3001/design", newDesign);
+        if (designResponse.status !== 201) { // ตรวจสอบ 201 Created
+            throw new Error(designResponse.data?.message || "Failed to create design metadata.");
         }
-        console.log("Diagram data saved successfully for design ID:", createdDesignId);
-      } else {
-        console.warn("Diagram component reference not available to trigger save.");
-      }
+        createdDesignId = designResponse.data.design_id; // รับ ID กลับมา
+        if (!createdDesignId) {
+             throw new Error("Design ID was not returned from the server after creation.");
+        }
+        console.log("✅ Design metadata created successfully:", createdDesignId);
 
-      // 3. บันทึก History
-      try {
-        await axios.post("http://localhost:3001/addHistoryDesign", {
-          design_id: createdDesignId,
-          design_status: "WORKING",
+
+        // 2. สั่งบันทึก Diagram ผ่าน ref (เหมือนเดิม)
+        if (diagramRef.current && typeof diagramRef.current.saveDiagram === 'function') {
+            console.log(`Triggering diagram save for design ID: ${createdDesignId}`);
+            const diagramSaveSuccess = await diagramRef.current.saveDiagram(createdDesignId);
+            if (!diagramSaveSuccess) {
+                // ไม่ควรหยุด process ทั้งหมด แต่ควร log error ไว้
+                 console.error("⚠️ Created design metadata, but failed to save the diagram data automatically.");
+                 // อาจจะโยน Error ถ้าการบันทึก diagram สำคัญมาก หรือแค่ log ไว้
+                 // throw new Error("Failed to save diagram data.");
+            } else {
+                console.log("✅ Diagram data presumed saved successfully via ref.");
+            }
+        } else {
+            console.warn("⚠️ Diagram component reference or saveDiagram method not available.");
+        }
+
+
+        // --- *** จุดที่แก้ไข: บันทึก History (Loop ตาม Requirement ID) *** ---
+        // 3. บันทึก History (สำหรับ Design ที่สร้าง และ Requirement แต่ละตัวที่เชื่อมโยง)
+        console.log("Starting history creation loop for design...");
+        for (const reqId of selectedRequirementsId) {
+            // 3.1 สร้างข้อมูลสำหรับ History แต่ละรายการ
+             const historyData = {
+                design_id: createdDesignId,         // ID ของ Design ที่เพิ่งสร้าง
+                requirement_id: reqId,              // ID ของ Requirement ปัจจุบันใน Loop
+                design_type: newDesign.design_type, // ดึงจาก newDesign
+                diagram_name: newDesign.diagram_name,// ดึงจาก newDesign
+                diagram_type: newDesign.diagram_type,// ดึงจาก newDesign
+                design_description: newDesign.design_description, // ดึงจาก newDesign
+                design_status: "WORKING"            // สถานะเริ่มต้น
+            };
+
+            console.log(`📜 Sending history data for Design ID ${createdDesignId} / Req ID ${reqId}:`, historyData);
+
+            try {
+                 // 3.2 ส่งข้อมูลไปยัง /addHistoryDesign
+                const historyResponse = await axios.post("http://localhost:3001/addHistoryDesign", historyData);
+
+                if (historyResponse.status !== 201) { // ตรวจสอบ 201 Created
+                    console.error(`⚠️ Failed to add history for Design ID ${createdDesignId} / Req ID ${reqId}. Status: ${historyResponse.status}`, historyResponse.data);
+                    // ไม่ควรหยุด process อาจจะแค่ log หรือแจ้งเตือนเบาๆ
+                } else {
+                     console.log(`✅ History added successfully for Design ID ${createdDesignId} / Req ID ${reqId}`);
+                }
+            } catch (historyError) {
+                console.error(`❌ Error sending history for Design ID ${createdDesignId} / Req ID ${reqId}`, historyError.response?.data || historyError.message);
+                // จัดการ error ของ history item นี้
+            }
+        } // --- จบ Loop ---
+        console.log("Finished history creation loop.");
+
+
+        // 4. อัปโหลดไฟล์ (เหมือนเดิม)
+        if (selectedFiles.length > 0) {
+            console.log("Starting file upload...");
+            await uploadFiles(createdDesignId); // <<<< เรียก Upload ตรงนี้
+            console.log("✅ File upload process finished.");
+        }
+
+
+        // 5. แสดงผลสำเร็จ และ นำทางกลับ (เหมือนเดิม)
+        Swal.fire({
+            icon: "success",
+            title: "Design Created!",
+            text: "Design, diagram, and related information saved successfully.",
+            showConfirmButton: false,
+            timer: 2000, // เพิ่มเวลาเล็กน้อย
+        }).then(() => {
+            navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } });
         });
-        console.log("Design history added successfully.");
-      } catch (historyError) {
-        console.error("Error adding design history:", historyError);
-      }
-
-      // 4. อัปโหลดไฟล์ (เรียกใช้ uploadFiles ที่เตรียมไว้)
-      if (selectedFiles.length > 0) {
-        console.log("Starting file upload...");
-        await uploadFiles(createdDesignId); // <<<< เรียก Upload ตรงนี้
-        console.log("File upload process finished.");
-      }
-
-      // 5. แสดงผลสำเร็จ และ นำทางกลับ
-      Swal.fire({
-        icon: "success",
-        title: "Design and Diagram created successfully!",
-        showConfirmButton: false,
-        timer: 1500,
-      }).then(() => {
-        navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } });
-      });
 
     } catch (error) {
-      console.error("Error during design creation process:", error);
-      setError(error.message || "Something went wrong during the creation process.");
+        // --- จัดการ Error หลัก --- (เหมือนเดิม)
+        console.error("❌ Error during design creation process:", error);
+        // แสดง Error ให้ผู้ใช้ทราบ
+         Swal.fire({
+             icon: 'error',
+             title: 'Creation Failed',
+             text: error.message || 'An unexpected error occurred. Please try again.',
+         });
+        setError(error.message || "Something went wrong during the creation process.")
+
     } finally {
-      setLoading(false);
+        setLoading(false); // หยุด Loading เสมอ
     }
-  };
+};
 
   // --- ส่วน JSX ---
   return (

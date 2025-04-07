@@ -1,0 +1,335 @@
+/* --- Enhanced Styles & Variables --- */
+:root {
+    /* Primary (Calmer Blue) */
+    --primary-color: #0062cc; /* Adjusted Blue */
+    --primary-hover-color: #004a99;
+    --primary-light-color: #e6f0ff; /* Light blue for subtle backgrounds */
+  
+    /* Neutrals (Slightly Warmer Grays) */
+    --text-color: #333;          /* Darker gray for main text */
+    --text-color-secondary: #555; /* Lighter gray for secondary text */
+    --border-color: #e0e0e0;     /* Lighter, softer border */
+    --background-color: #ffffff;
+    --background-off-white: #f9f9f9; /* Very subtle off-white */
+    --background-hover: #f1f3f5;   /* Subtle hover background */
+    --background-header: #f8f9fa;
+  
+    /* Functional Colors */
+    --error-color: #e63946;
+    --error-border-color: #f5c6cb;
+    --error-background: #fdeded;
+    --success-color: #2a9d8f;
+  
+    /* Shadows & Borders */
+    --box-shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.06);
+    --box-shadow-modal: 0 8px 24px rgba(0, 0, 0, 0.12);
+    --border-radius: 4px; /* Slightly smaller radius */
+  
+    /* Typography */
+    --font-family-base: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    --font-size-base: 1rem; /* 16px */
+    --font-size-sm: 0.875rem; /* 14px */
+    --font-size-lg: 1.25rem;  /* 20px */
+    --line-height-base: 1.6;
+  
+    /* Transitions */
+    --transition-base: all 0.2s ease-in-out;
+  }
+  
+  body {
+    font-family: var(--font-family-base);
+    color: var(--text-color);
+    background-color: var(--background-off-white); /* Use off-white */
+    margin: 0;
+    line-height: var(--line-height-base);
+    -webkit-font-smoothing: antialiased; /* Smoother fonts on Mac */
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* --- Container --- */
+  .design-version-control-container {
+    max-width: 1140px; /* Slightly wider max-width */
+    margin: 2.5rem auto;
+    padding: 2rem 2.5rem; /* Increased padding */
+    background-color: var(--background-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow-subtle);
+    border: 1px solid var(--border-color); /* Subtle border for container */
+  }
+  
+  /* --- Header --- */
+  .design-version-control-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1rem;
+    margin-bottom: 2rem; /* Increased margin */
+    /* Removed border-bottom for cleaner look, relying on margin */
+  }
+  
+  .design-version-control-title {
+    font-size: 1.6rem; /* Slightly smaller title */
+    font-weight: 600; /* Medium weight */
+    color: var(--text-color);
+    margin: 0;
+  }
+  
+  /* --- Back Button (Minimalist) --- */
+  .design-version-control-backbutton {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background-color: transparent;
+    border: none; /* No border */
+    color: var(--text-color-secondary); /* Use secondary text color */
+    padding: 0.5rem 0; /* Only vertical padding, no horizontal needed */
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    transition: var(--transition-base);
+  }
+  
+  .design-version-control-backbutton:hover {
+    color: var(--primary-color); /* Change color on hover */
+  }
+  
+  .backfromvercontrol {
+    width: 14px;
+    height: 14px;
+    opacity: 0.7; /* Slightly transparent icon */
+    transition: opacity 0.2s ease;
+  }
+  .design-version-control-backbutton:hover .backfromvercontrol {
+    opacity: 1;
+  }
+  
+  
+  /* --- Main & History Tables --- */
+  .design-version-control-main-table,
+  .design-version-control-history-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+    /* Removed outer border/shadow from table itself */
+  }
+  
+  .design-version-control-main-table th,
+  .design-version-control-main-table td,
+  .design-version-control-history-table th,
+  .design-version-control-history-table td {
+    padding: 0.8rem 1rem; /* Adjusted padding */
+    text-align: left;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color); /* Row separator */
+    font-size: var(--font-size-sm); /* Smaller base font for tables */
+  }
+  
+  /* Table Header */
+  .design-version-control-main-table thead th,
+  .design-version-control-history-table thead th {
+    background-color: var(--background-header); /* Use header background color */
+    font-weight: 600; /* Medium-Bold weight */
+    color: var(--text-color-secondary); /* Secondary text color */
+    text-transform: none; /* Removed uppercase */
+    letter-spacing: normal; /* Removed letter spacing */
+    border-bottom-width: 2px; /* Thicker border below header */
+    border-top: 1px solid var(--border-color); /* Add top border to header */
+  }
+  
+  /* Table Body */
+  .design-version-control-main-table tbody tr:last-child td,
+  .design-version-control-history-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .design-version-control-main-table tbody tr:hover,
+  .design-version-control-history-table tbody tr:hover {
+    background-color: var(--background-hover); /* Use subtle hover */
+  }
+  
+  /* Give ID columns a slightly smaller width (adjust as needed) */
+  .design-version-control-main-table td:first-child,
+  .design-version-control-history-table td:first-child {
+      width: 10%; /* Example width */
+      white-space: nowrap; /* Prevent ID wrapping */
+      color: var(--text-color-secondary);
+  }
+  
+  
+  /* --- View Button in Main Table (Refined) --- */
+  .design-version-control-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.35rem 0.75rem; /* Slightly adjusted padding */
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    transition: var(--transition-base);
+    line-height: 1.4; /* Adjust line height */
+  }
+  
+  .design-version-control-button:hover {
+    background-color: var(--primary-hover-color);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Add subtle shadow on hover */
+  }
+  
+  .design-version-control-button:active {
+    transform: scale(0.98); /* Click feedback */
+  }
+  
+  
+  /* --- Modal Styles (Enhanced Animation & Style) --- */
+  .design-version-control-modal {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(30, 30, 30, 0.65); /* Slightly darker overlay */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    z-index: 1050; /* Ensure high z-index */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease-out, visibility 0.25s ease-out; /* Faster fade */
+  }
+  
+  .design-version-control-modal.active { /* Add class 'active' when showing modal */
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .design-version-control-modal-content {
+    background-color: var(--background-color);
+    padding: 2rem 2.5rem; /* Increased padding */
+    border-radius: 6px; /* Slightly larger radius */
+    box-shadow: var(--box-shadow-modal);
+    width: 100%; /* Responsive width */
+    max-width: 750px; /* Adjusted max width */
+    max-height: 85vh;
+    overflow-y: auto;
+    transform: translateY(-20px); /* Start slightly up */
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smoother transform */
+  }
+  
+  .design-version-control-modal.active .design-version-control-modal-content {
+    transform: translateY(0); /* Move down to final position */
+  }
+  
+  .design-version-control-modal-content h2 {
+    font-size: var(--font-size-lg); /* Use variable */
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .design-version-control-modal-content h2:not(:first-of-type) {
+    margin-top: 2rem; /* More space before History */
+  }
+  
+  .design-version-control-modal-content p {
+    margin-bottom: 0.5rem; /* Tighter paragraph spacing */
+    line-height: var(--line-height-base);
+    color: var(--text-color-secondary); /* Lighter text for details */
+  }
+  
+  .design-version-control-modal-content p strong {
+    color: var(--text-color); /* Make label darker */
+    font-weight: 500;
+    margin-right: 0.5em;
+  }
+  
+  /* --- History Table in Modal (Refined) --- */
+  .design-version-control-history-table {
+    margin-top: 1.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border-color); /* Add subtle border around history table */
+    border-radius: var(--border-radius);
+    overflow: hidden;
+  }
+  
+  .design-version-control-history-table th,
+  .design-version-control-history-table td {
+    border: none; /* Remove inner borders */
+    border-bottom: 1px solid var(--border-color); /* Only use bottom borders */
+    padding: 0.75rem 1rem;
+  }
+  .design-version-control-history-table thead th {
+     border-bottom-width: 2px;
+     border-top: none; /* No top border needed inside modal table */
+  }
+  
+  /* --- Close Button (Styled as Secondary) --- */
+  .close-button {
+    display: inline-block; /* Allow text alignment if needed */
+    float: right; /* Position to the right */
+    margin-top: 1rem;
+    background-color: var(--background-color); /* White background */
+    color: var(--text-color-secondary); /* Secondary text color */
+    border: 1px solid var(--border-color); /* Border */
+    padding: 0.5rem 1.2rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    transition: var(--transition-base);
+  }
+  
+  .close-button:hover {
+    background-color: var(--background-hover);
+    border-color: #adb5bd; /* Slightly darker border on hover */
+    color: var(--text-color);
+  }
+  
+  .close-button:active {
+    transform: scale(0.98);
+  }
+  
+  /* --- Error Message (Subtler) --- */
+  .error-message {
+    color: var(--error-color);
+    background-color: var(--error-background);
+    border: 1px solid var(--error-border-color); /* Lighter border */
+    padding: 0.75rem 1rem;
+    border-radius: var(--border-radius);
+    margin: 1.5rem 0; /* Consistent margin */
+    font-size: var(--font-size-sm);
+  }
+  
+  /* --- Responsive Adjustments --- */
+  @media (max-width: 768px) {
+    .design-version-control-container {
+      margin: 1rem;
+      padding: 1.5rem; /* Adjusted padding */
+    }
+  
+     .design-version-control-title {
+       font-size: 1.4rem;
+     }
+  
+    /* Consider making tables scrollable horizontally on small screens */
+    .design-diagrams, /* Assuming history table is inside a similar section */
+    .design-version-control-modal-content { /* Add to modal as well */
+       overflow-x: auto; /* Allow horizontal scroll for tables */
+    }
+    .design-version-control-main-table,
+    .design-version-control-history-table {
+        min-width: 600px; /* Ensure table has minimum width before scrolling */
+    }
+  
+  
+    .design-version-control-modal-content {
+      padding: 1.5rem;
+      max-height: 90vh;
+    }
+  
+     .close-button {
+       width: 100%; /* Make close button full width on small screens */
+       text-align: center;
+       float: none;
+       margin-top: 1.5rem;
+     }
+  }

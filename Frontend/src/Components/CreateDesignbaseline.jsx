@@ -48,6 +48,7 @@ const CreateDesignbaseline = () => {
   };
 
   const handleCreateBaseline = async () => {
+    // --- ส่วน Validation เหมือนเดิม ---
     if (!projectId) {
         Swal.fire({
             icon: "error",
@@ -71,22 +72,25 @@ const CreateDesignbaseline = () => {
         });
         return;
     }
+    // --- จบส่วน Validation ---
 
     setIsSubmitting(true);
 
-    const payload = { design_id: selectedDesign };
+    const payloadCreateBaseline = { design_id: selectedDesign }; // Payload สำหรับสร้าง Baseline หลัก
 
     try {
-        const response = await axios.post("http://localhost:3001/createdesignbaseline", payload);
+        // 1. เรียก API เพื่อสร้าง/อัปเดต Baseline หลักก่อน
+        const responseCreateBaseline = await axios.post("http://localhost:3001/createdesignbaseline", payloadCreateBaseline);
 
-        if (response.status === 201) {
+        if (responseCreateBaseline.status === 201) {
             Swal.fire({
                 icon: "success",
                 title: "Baseline set successfully!",
-                timer: 2000,
+                timer: 1500, // ลดเวลาลงเล็กน้อย
                 showConfirmButton: false,
             });
 
+            // 2. อัปเดต State ใน Frontend (เหมือนเดิม)
             setVerifiedDesign((prev) =>
                 prev.map((design) =>
                     selectedDesign.includes(design.design_id)
@@ -95,38 +99,171 @@ const CreateDesignbaseline = () => {
                 )
             );
 
-            await Promise.all(
-                selectedDesign.map((designId) =>
-                    axios.post("http://localhost:3001/addHistoryDesign", {
-                        design_id: designId,
-                        design_status: "BASELINE",
-                    })
-                )
-            );
+// 3. เตรียมข้อมูลและเรียก API เพื่อเพิ่ม History (ส่วนที่แก้ไข)
+const historyPromises = selectedDesign.map((designId) => {
+  const fullDesignData = verifiedDesign.find(design => design.design_id === designId);
 
+  if (!fullDesignData) {
+      const errorMessage = `❌ Could not find full data for design_id: ${designId}.`;
+      console.error(errorMessage);
+      return Promise.reject(errorMessage);
+  }
+
+  let { design_id, requirement_id, design_type, diagram_name, diagram_type, design_description } = fullDesignData;
+
+  // ✅ แก้ไข: design_status = "BASELINE" เสมอ
+  const design_status = "BASELINE";
+
+  // ✅ ตรวจสอบ requirement_id และแปลงเป็น JSON ถ้าจำเป็น
+  try {
+      if (typeof requirement_id === "string") {
+          requirement_id = JSON.parse(requirement_id);
+      }
+  } catch (error) {
+      console.error(`❌ Error parsing requirement_id for designId: ${designId}:`, error);
+      requirement_id = null;
+  }
+
+  console.log(`[History] Parsed requirement_id for designId: ${designId}:`, requirement_id);
+
+  const promises = [];
+
+  if (Array.isArray(requirement_id)) {
+      requirement_id.forEach(reqId => {
+          const parsedReqId = parseInt(reqId, 10);
+
+          if (!isNaN(parsedReqId)) { 
+              const historyPayload = {
+                  design_id: design_id?.toString() || '',
+                  requirement_id: parsedReqId,
+                  design_type: design_type || '',
+                  diagram_name: diagram_name || '',
+                  diagram_type: diagram_type || '',
+                  design_description: design_description || '',
+                  design_status // ✅ ตั้งเป็น BASELINE เสมอ
+              };
+
+              console.log(`[History] Sending payload for designId: ${designId}, requirement_id: ${parsedReqId}:`, historyPayload);
+
+              promises.push(
+                  axios.post("http://localhost:3001/addHistoryDesign", historyPayload)
+                      .then(response => {
+                          console.log(`[History] Successfully added history for designId: ${designId}, requirement_id: ${parsedReqId}`, response);
+                          return { status: 'fulfilled', designId, reqId: parsedReqId, response };
+                      })
+                      .catch(error => {
+                          const errorMessage = `[History] Error adding history for designId: ${designId}, requirement_id: ${parsedReqId}: ${error.response?.data?.message || error.message}`;
+                          console.error(errorMessage, error.response || error);
+                          return { status: 'rejected', designId, reqId: parsedReqId, error: errorMessage };
+                      })
+              );
+          } else {
+              console.warn(`[History] Skipping invalid requirement_id: ${reqId} for designId: ${designId}`);
+          }
+      });
+  } 
+  else if (requirement_id && typeof requirement_id === "object") {
+      Object.values(requirement_id).forEach(reqId => {
+          const parsedReqId = parseInt(reqId, 10);
+          if (!isNaN(parsedReqId)) {
+              const historyPayload = {
+                  design_id: design_id?.toString() || '',
+                  requirement_id: parsedReqId,
+                  design_type: design_type || '',
+                  diagram_name: diagram_name || '',
+                  diagram_type: diagram_type || '',
+                  design_description: design_description || '',
+                  design_status // ✅ ตั้งเป็น BASELINE เสมอ
+              };
+
+              console.log(`[History] Sending payload for designId: ${designId}, requirement_id: ${parsedReqId}:`, historyPayload);
+
+              promises.push(
+                  axios.post("http://localhost:3001/addHistoryDesign", historyPayload)
+                      .then(response => {
+                          console.log(`[History] Successfully added history for designId: ${designId}, requirement_id: ${parsedReqId}`, response);
+                          return { status: 'fulfilled', designId, reqId: parsedReqId, response };
+                      })
+                      .catch(error => {
+                          const errorMessage = `[History] Error adding history for designId: ${designId}, requirement_id: ${parsedReqId}: ${error.response?.data?.message || error.message}`;
+                          console.error(errorMessage, error.response || error);
+                          return { status: 'rejected', designId, reqId: parsedReqId, error: errorMessage };
+                      })
+              );
+          } else {
+              console.warn(`[History] Skipping invalid requirement_id: ${reqId} for designId: ${designId}`);
+          }
+      });
+  } 
+  else if (requirement_id != null) {
+      const parsedReqId = parseInt(requirement_id, 10);
+      if (!isNaN(parsedReqId)) {
+          const historyPayload = {
+              design_id: design_id?.toString() || '',
+              requirement_id: parsedReqId,
+              design_type: design_type || '',
+              diagram_name: diagram_name || '',
+              diagram_type: diagram_type || '',
+              design_description: design_description || '',
+              design_status // ✅ ตั้งเป็น BASELINE เสมอ
+          };
+
+          console.log(`[History] Sending payload for designId: ${designId}, requirement_id: ${parsedReqId}:`, historyPayload);
+
+          promises.push(
+              axios.post("http://localhost:3001/addHistoryDesign", historyPayload)
+                  .then(response => {
+                      console.log(`[History] Successfully added history for designId: ${designId}, requirement_id: ${parsedReqId}`, response);
+                      return { status: 'fulfilled', designId, reqId: parsedReqId, response };
+                  })
+                  .catch(error => {
+                      const errorMessage = `[History] Error adding history for designId: ${designId}, requirement_id: ${parsedReqId}: ${error.response?.data?.message || error.message}`;
+                      console.error(errorMessage, error.response || error);
+                      return { status: 'rejected', designId, reqId: parsedReqId, error: errorMessage };
+                  })
+          );
+      } else {
+          console.warn(`[History] Skipping invalid requirement_id: ${requirement_id} for designId: ${designId}`);
+      }
+  } else {
+      console.warn(`[History] No valid requirement_id for designId: ${designId}`);
+  }
+
+  return Promise.allSettled(promises);
+});
+
+await Promise.all(historyPromises);
+
+console.log("✅ All design history additions attempted.");
+
+            // 4. เคลียร์รายการที่เลือก (เหมือนเดิม)
             setSelectedDesign([]);
 
+            // 5. แสดงข้อความสำเร็จ (อาจจะรวมกับข้อความแรก หรือแยกตามเดิม)
             Swal.fire({
                 icon: "success",
-                title: "Design status updated to BASELINE!",
+                title: "Design history updated!",
                 timer: 2000,
                 showConfirmButton: false,
             });
 
+            // 6. Navigate ไปยังหน้า Baseline (เหมือนเดิม)
             navigate(`/DesignBaseline?project_id=${projectId}`);
+
         } else {
-            throw new Error(response.data.message || "Failed to set baseline.");
+            // กรณี responseCreateBaseline ไม่ใช่ 201
+            throw new Error(responseCreateBaseline.data.message || "Failed to set baseline.");
         }
     } catch (error) {
-        console.error("Error creating baseline:", error.response?.data || error.message);
+        console.error("❌ Error creating baseline or adding history:", error.response?.data || error.message);
         Swal.fire({
             icon: "error",
-            title: error.response?.data?.message || "An error occurred. Please try again.",
+            title: "An Error Occurred",
+            text: error.response?.data?.message || "Could not complete the baseline process. Please try again.",
         });
     } finally {
         setIsSubmitting(false);
     }
-
     navigate(`/DesignBaseline?project_id=${projectId}`);
 };
 

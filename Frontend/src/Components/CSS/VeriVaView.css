@@ -1,141 +1,229 @@
-/* Container */
-.veriVaView {
-    background-color: #f9fafb; /* พื้นหลังโทนอ่อน */
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* เงา */
-    font-family: 'Arial', sans-serif; /* ฟอนต์มาตรฐาน */
+/* VeriVaView.css */
+
+/* Define some variables for consistent theming */
+:root {
+  --primary-color: #007bff; /* A common professional blue */
+  --primary-color-dark: #0056b3;
+  --secondary-color: #6c757d;
+  --light-gray: #f8f9fa;
+  --medium-gray: #dee2e6;
+  --dark-gray: #343a40;
+  --text-color: #212529;
+  --white-color: #ffffff;
+  --danger-color: #dc3545;
+  --border-radius: 4px;
+  --box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.VeriVaView {
+  font-family: 'Roboto', sans-serif; /* Apply the chosen font */
+  padding: 25px;
+  max-width: 1200px; /* Limit width for better readability on large screens */
+  margin: 20px auto; /* Center the component */
+  background-color: var(--white-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  color: var(--text-color);
+}
+
+.VeriVaView__title {
+  color: var(--dark-gray);
+  font-size: 2rem; /* Larger title */
+  font-weight: 700;
+  margin-bottom: 25px;
+  text-align: center;
+  border-bottom: 1px solid var(--medium-gray);
+  padding-bottom: 15px;
+}
+
+.VeriVaView__export-button-container {
+  display: flex;
+  justify-content: space-between; /* Pushes buttons to opposite ends */
+  align-items: center;
+  margin-bottom: 30px;
+  padding: 0 10px; /* Add slight horizontal padding */
+}
+
+/* General Button Styles */
+.VeriVaView__back-btn,
+.VeriVaView__export-button,
+.VeriVaView__view-button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  display: inline-flex; /* Helps align icon and text */
+  align-items: center;
+  gap: 8px; /* Space between icon and text */
+  text-decoration: none; /* Remove underline if used as a link */
+  line-height: 1.5; /* Ensure consistent line height */
+}
+
+.VeriVaView__back-btn {
+  background-color: var(--secondary-color);
+  color: var(--white-color);
+}
+
+.VeriVaView__back-btn:hover {
+  background-color: #5a6268; /* Darker shade of secondary */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.VeriVaView__export-button {
+  background-color: var(--primary-color);
+  color: var(--white-color);
+}
+
+.VeriVaView__export-button:hover {
+  background-color: var(--primary-color-dark);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Loading and Error Messages */
+.VeriVaView p {
+  text-align: center;
+  padding: 15px;
+  margin: 20px 0;
+  font-size: 1rem;
+}
+
+.VeriVaView p:first-of-type[style*="Loading"] { /* Basic selector for loading */
+  color: var(--secondary-color);
+  font-style: italic;
+}
+
+.VeriVaView p:last-of-type { /* Basic selector for error */
+  color: var(--danger-color);
+  background-color: #f8d7da; /* Light red background for error */
+  border: 1px solid #f5c6cb;
+  border-radius: var(--border-radius);
+}
+
+/* Table Container and Title */
+.VeriVaView__table-container {
+  margin-top: 30px; /* Space between tables */
+  overflow-x: auto; /* Add horizontal scroll on smaller screens if needed */
+}
+
+.VeriVaView__table-container h2 {
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  margin-bottom: 15px;
+  padding-bottom: 5px;
+  border-bottom: 2px solid var(--primary-color);
+  display: inline-block; /* Make border only as wide as text */
+}
+
+/* Table Styling */
+.VeriVaView__table {
+  width: 100%;
+  border-collapse: collapse; /* Clean borders */
+  margin-top: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* Subtle shadow on table */
+}
+
+.VeriVaView__table-header {
+  background-color: var(--light-gray); /* Light background for header */
+  border-bottom: 2px solid var(--medium-gray); /* Stronger border below header */
+}
+
+.VeriVaView__table-cell {
+  padding: 12px 15px; /* Comfortable padding */
+  border: 1px solid var(--medium-gray); /* Cell borders */
+  text-align: left; /* Left-align text for readability */
+  vertical-align: middle; /* Align content vertically */
+  font-size: 0.9rem;
+}
+
+/* Header Cell Specifics */
+.VeriVaView__table thead .VeriVaView__table-cell {
+  font-weight: 700; /* Bold header text */
+  color: var(--dark-gray);
+  text-transform: uppercase; /* Uppercase headers (optional) */
+  letter-spacing: 0.5px;
+}
+
+/* Body Row Specifics */
+.VeriVaView__table-row {
+  transition: background-color 0.15s ease-in-out;
+}
+
+.VeriVaView__table-row:nth-child(even) {
+  background-color: var(--light-gray); /* Subtle striping for rows */
+}
+
+.VeriVaView__table-row:hover {
+  background-color: #e9ecef; /* Slightly darker hover effect */
+}
+
+/* Center align specific columns if needed (overriding the general left align) */
+.VeriVaView__table-row .VeriVaView__table-cell:nth-child(1), /* Requirement ID */
+.VeriVaView__table-row .VeriVaView__table-cell:nth-child(4), /* Status */
+.VeriVaView__table-row .VeriVaView__table-cell:nth-child(5) { /* Action Column */
+  text-align: center;
+}
+
+/* Header alignment matching body alignment */
+.VeriVaView__table thead .VeriVaView__table-cell:nth-child(1),
+.VeriVaView__table thead .VeriVaView__table-cell:nth-child(4),
+.VeriVaView__table thead .VeriVaView__table-cell:nth-child(5) {
+  text-align: center;
+}
+
+
+/* View Requirement Button Specific Styling */
+.VeriVaView__view-button {
+  background-color: #28a745; /* Green for action */
+  color: var(--white-color);
+  padding: 6px 12px; /* Slightly smaller button */
+  font-size: 0.85rem;
+}
+
+.VeriVaView__view-button:hover {
+  background-color: #218838; /* Darker green */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Handle N/A text */
+.VeriVaView__table-cell:empty::before,
+.VeriVaView__table-cell:contains("N/A") { /* You might need JS to add a class for N/A for more robust styling */
+  color: var(--secondary-color);
+  font-style: italic;
+}
+
+/* Responsive Adjustments (Example) */
+@media (max-width: 768px) {
+  .VeriVaView {
+    padding: 15px;
+    margin: 10px;
   }
-  
-  /* Title */
-  .veriVaView__title {
+
+  .VeriVaView__title {
     font-size: 1.8rem;
-    font-weight: bold;
-    color: #2c3e50; /* สีโทนเข้ม */
-    border-bottom: 2px solid #3498db; /* เส้นขอบสีฟ้า */
-    padding-bottom: 10px;
-    margin-bottom: 20px;
   }
-  
-  /* Filter */
-  .veriVaView__filter {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
+
+  .VeriVaView__export-button-container {
+     flex-direction: column; /* Stack buttons on smaller screens */
+     gap: 10px;
+     align-items: stretch; /* Make buttons full width */
   }
-  
-  .veriVaView__filter-label {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #34495e; /* สีโทนเข้ม */
+
+  .VeriVaView__back-btn,
+  .VeriVaView__export-button {
+     width: 100%; /* Make buttons take full width */
+     justify-content: center; /* Center text/icon */
   }
-  
-  .veriVaView__filter-select {
-    padding: 8px 12px;
-    font-size: 1rem;
-    border: 1px solid #bdc3c7;
-    border-radius: 4px;
-    background-color: #ffffff;
-    color: #2c3e50;
-    outline: none;
-    transition: all 0.3s;
+
+  .VeriVaView__table-cell {
+    padding: 10px 8px;
+    font-size: 0.85rem;
   }
-  
-  .veriVaView__filter-select:hover,
-  .veriVaView__filter-select:focus {
-    border-color: #3498db;
-    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+
+  .VeriVaView__table thead .VeriVaView__table-cell {
+     font-size: 0.8rem; /* Slightly smaller header text */
   }
-  
-  /* Loading & Error Messages */
-  .veriVaView__loading {
-    font-size: 1.1rem;
-    color: #2980b9;
-    font-weight: 500;
-  }
-  
-  .veriVaView__error {
-    font-size: 1.1rem;
-    color: #e74c3c;
-    font-weight: 500;
-  }
-  
-  /* Table */
-  .veriVaView__table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    background-color: #ffffff;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .veriVaView__table-header {
-    background-color: #3498db; /* สีพื้นหลัง */
-    color: #ffffff; /* สีตัวอักษร */
-    text-align: left;
-  }
-  
-  .veriVaView__table-header th {
-    padding: 12px 16px;
-    font-size: 1rem;
-    font-weight: 600;
-  }
-  
-  .veriVaView__table-row:nth-child(even) {
-    background-color: #f2f2f2;
-  }
-  
-  .veriVaView__table-row:nth-child(odd) {
-    background-color: #ffffff;
-  }
-  
-  .veriVaView__table-row:hover {
-    background-color: #ecf3fa;
-  }
-  
-  .veriVaView__table-cell {
-    padding: 12px 16px;
-    font-size: 0.95rem;
-    color: #34495e;
-    border-bottom: 1px solid #ecf0f1;
-    text-align: center;
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .veriVaView {
-      padding: 10px;
-    }
-  
-    .veriVaView__title {
-      font-size: 1.5rem;
-    }
-  
-    .veriVaView__filter {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 5px;
-    }
-  
-    .veriVaView__filter-select {
-      width: 100%;
-    }
-  
-    .veriVaView__table-cell {
-      font-size: 0.85rem;
-    }
-  }
-  
-  .veriVaView__export-button {
-    background: #4caf50;
-    color: #fff;
-    align-items: end;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    margin-right: 10px;
-    border-radius: 4px;
-  }
+
+}

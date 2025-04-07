@@ -81,100 +81,161 @@ const UpdateRequirement = () => {
 };
 
   
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-  
-    // ตรวจสอบว่ามีการกรอกข้อมูลครบถ้วนหรือไม่
-    const isDataFilled = requirementStatement && requirementType && description && selectedFileIds.length > 0;
-    const isDataUnchanged = 
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  // --- การตรวจสอบข้อมูล (เหมือนเดิม) ---
+  const isDataFilled = requirementStatement && requirementType && description && selectedFileIds.length > 0;
+  const isDataUnchanged =
       requirementStatement === initialRequirementStatement &&
       requirementType === initialRequirementType &&
       description === initialDescription &&
-      JSON.stringify(selectedFileIds) === JSON.stringify(initialSelectedFileIds);
-  
-    if (!isDataFilled) {
-      Swal.fire({
-        title: "กรุณากรอกข้อมูลเพื่อทำการยืนยัน",
-        text: "ทุกช่องต้องถูกกรอกก่อนดำเนินการ",
-        icon: "error",
-        confirmButtonText: "ตกลง",
-      });
-      return;
-    }
-  
-    if (isDataUnchanged) {
-      Swal.fire({
-        text: "ไม่มีการแก้ไขข้อมูล",
-        icon: "info",
-        timer: 2000,
-        showConfirmButton: false,
-      });
-      return;
-    }
-  
-    let confirmText = "ยืนยันการเปลี่ยนแปลง";
-  
-    if (requirementStatus === "BASELINE") {
-      confirmText = "หากยืนยันแล้ว Requirement Status จะเปลี่ยนเป็น WORKING จะเปลี่ยนเป็น WORKING ทันทีกรุณาตรวจสอบก่อนดำเนินการ";
-      
-    } else if (requirementStatus === "WORKING") {
-      confirmText = "ยืนยันการเปลี่ยนแปลง";
-    } else {
-      confirmText = "ยืนยันการเปลี่ยนแปลง สถานะจะเปลี่ยนเป็น WORKING";
-    }
-  
-// แสดง Popup ยืนยัน
-const result = await Swal.fire({
-  title: requirementStatus === "BASELINE" ? "คำเตือน!" : "",
-  text: confirmText,
-  icon: "warning",
-  showCancelButton: true,
-  confirmButtonText: "ตกลง",
-  cancelButtonText: "ยกเลิก",
-});
+      JSON.stringify(selectedFileIds.sort()) === JSON.stringify(initialSelectedFileIds.sort()); // Sort ก่อนเทียบ Array
 
-  
-    if (!result.isConfirmed) return;
-  
-    const updatedRequirement = {
+  if (!isDataFilled) {
+      Swal.fire({
+          title: "ข้อมูลไม่ครบถ้วน",
+          text: "กรุณากรอกข้อมูลทุกช่อง และเลือกไฟล์ Requirement Specification อย่างน้อย 1 ไฟล์",
+          icon: "warning",
+          confirmButtonText: "ตกลง",
+      });
+      return;
+  }
+
+  if (isDataUnchanged) {
+      Swal.fire({
+          text: "ไม่มีการแก้ไขข้อมูล",
+          icon: "info",
+          timer: 1500,
+          showConfirmButton: false,
+      });
+      return;
+  }
+
+  // --- กำหนดข้อความยืนยัน และสถานะใหม่ ---
+  let confirmText = "ยืนยันการเปลี่ยนแปลงข้อมูล Requirement?";
+  let newStatus = requirementStatus; // สถานะเริ่มต้นคือสถานะปัจจุบัน
+  let needsStatusUpdate = false;
+
+  // *** จุดสำคัญ: กำหนดเงื่อนไขการเปลี่ยนสถานะ ***
+  if (requirementStatus === "BASELINE") {
+      confirmText = "Requirement นี้เป็น Baseline หากยืนยันการแก้ไข สถานะจะเปลี่ยนกลับเป็น 'WORKING' คุณต้องการดำเนินการต่อหรือไม่?";
+      newStatus = "WORKING"; // กำหนดสถานะใหม่
+      needsStatusUpdate = true;
+  } else if (requirementStatus !== "WORKING") {
+       // สมมติว่าถ้าสถานะอื่นที่ไม่ใช่ WORKING เมื่อแก้ไข ก็ให้กลับเป็น WORKING (อาจปรับตามกฎ)
+       confirmText = `ยืนยันการแก้ไข Requirement? (สถานะปัจจุบัน: ${requirementStatus} จะเปลี่ยนเป็น 'WORKING')`;
+       newStatus = "WORKING";
+       needsStatusUpdate = true;
+  }
+   // ถ้าเป็น WORKING อยู่แล้ว แก้ไขก็ยังเป็น WORKING (newStatus ไม่เปลี่ยน)
+
+  // --- แสดง Popup ยืนยัน (เหมือนเดิม) ---
+  const result = await Swal.fire({
+      title: needsStatusUpdate ? "คำเตือนเรื่องสถานะ!" : "ยืนยันการแก้ไข",
+      text: confirmText,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "ตกลง",
+      cancelButtonText: "ยกเลิก",
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+  });
+
+  if (!result.isConfirmed) {
+      console.log("Edit cancelled by user.");
+      return; // ผู้ใช้กดยกเลิก
+  }
+
+  // --- เตรียมข้อมูลที่จะส่งไปอัปเดต ---
+  const updatedRequirement = {
       requirement_name: requirementStatement,
       requirement_type: requirementType,
       requirement_description: description,
       project_id: projectId,
       filereq_ids: selectedFileIds,
-    };
-  
-    try {
-      const response = await axios.put(
-        `http://localhost:3001/requirement/${requirementId}`,
-        updatedRequirement
-      );
-  
-      if (response.status === 200) {
-        await Swal.fire({
-          title: "อัปเดตสำเร็จ!",
-          text: "Requirement ถูกอัปเดตเรียบร้อยแล้ว",
-          icon: "success",
-          confirmButtonText: "ตกลง",
-          timer: 1500,
-          showConfirmButton: false,
-        });
-  
-        navigate(`/Dashboard?project_id=${projectId}`, {
-          state: { selectedSection: "Requirement" },
-        });
-      }
-    } catch (error) {
-      const errorMessage = error.response?.data?.message || "เกิดข้อผิดพลาดในการเชื่อมต่อเครือข่าย กรุณาลองใหม่อีกครั้ง";
-      Swal.fire({
-        title: "❌ Error!",
-        text: `Error updating requirement: ${errorMessage}`,
-        icon: "error",
-        confirmButtonText: "ตกลง",
-      });
-    }
+      // *** เพิ่มสถานะใหม่เข้าไปใน payload ถ้ามีการเปลี่ยนแปลง ***
+      ...(needsStatusUpdate && { requirement_status: newStatus })
+      // บรรทัดบนหมายถึง: ถ้า needsStatusUpdate เป็น true ให้เพิ่ม { requirement_status: newStatus } เข้าไปใน object
+      // ถ้า backend ของคุณแยก API อัปเดตสถานะ คุณต้องเรียก API นั้นต่างหาก
   };
 
+  console.log("Submitting updated requirement:", updatedRequirement);
+
+  try {
+      // --- เรียก API เพื่ออัปเดต Requirement หลัก (PUT /requirement/:id) ---
+      const response = await axios.put(
+          `http://localhost:3001/requirement/${requirementId}`,
+          updatedRequirement
+      );
+
+      // --- ถ้าอัปเดต Requirement หลักสำเร็จ ---
+      if (response.status === 200) {
+          console.log("Requirement updated successfully:", response.data);
+
+          // --- *** จุดที่แก้ไข: สร้างและส่ง History *** ---
+          // 1. สร้าง historyReqData (ใช้ข้อมูลล่าสุดที่เพิ่งอัปเดตไป)
+          const historyReqData = {
+              requirement_id: requirementId, // ID ของ Requirement ที่แก้ไข
+              requirement_name: updatedRequirement.requirement_name,
+              requirement_description: updatedRequirement.requirement_description,
+              requirement_type: updatedRequirement.requirement_type,
+              requirement_status: newStatus, // ใช้สถานะใหม่ที่กำหนดไว้ (เช่น WORKING)
+          };
+
+          console.log("Sending history data:", historyReqData);
+
+          try {
+               // 2. ส่งข้อมูลไปที่ historyReqWorking
+              const historyResponse = await axios.post(
+                  "http://localhost:3001/historyReqWorking",
+                  historyReqData
+              );
+
+              if (historyResponse.status !== 200) {
+                  console.error(`Failed to add history after edit for requirement ID: ${requirementId}. Status: ${historyResponse.status}`, historyResponse.data);
+                  // แจ้งเตือนเบาๆ ว่า history อาจจะไม่ถูกบันทึก แต่การแก้ไขหลักสำเร็จแล้ว
+                  toast.warn(`Requirement updated, but failed to record history (REQ-${requirementId}).`);
+              } else {
+                   console.log(`History added successfully after edit for Req ID ${requirementId}`);
+              }
+          } catch (historyError) {
+              console.error(`Error sending history after edit for requirement ID: ${requirementId}`, historyError.response?.data || historyError.message);
+              toast.error(`Requirement updated, but error recording history (REQ-${requirementId}). Check console.`);
+          }
+          // --- จบส่วน History ---
+
+
+          // --- แสดงข้อความสำเร็จ และ Navigate (เหมือนเดิม) ---
+          await Swal.fire({
+              title: "อัปเดตสำเร็จ!",
+              text: "Requirement ถูกอัปเดตเรียบร้อยแล้ว" + (needsStatusUpdate ? ` และสถานะเปลี่ยนเป็น ${newStatus}` : ""),
+              icon: "success",
+              timer: 2000, // แสดงผล 2 วินาที
+              showConfirmButton: false,
+          });
+
+          // กลับไปหน้า Dashboard หรือหน้าที่เหมาะสม
+          navigate(`/Dashboard?project_id=${projectId}`, {
+              state: { selectedSection: "Requirement" }, // ส่ง state ไปด้วยถ้าต้องการ
+          });
+
+      } else {
+          // กรณี status ไม่ใช่ 200 (อาจไม่ค่อยเกิดกับ PUT ที่สำเร็จ)
+           throw new Error(response.data.message || `Unexpected status code: ${response.status}`);
+      }
+  } catch (error) {
+      // --- จัดการ Error ตอนเรียก API หลัก (PUT) --- (เหมือนเดิม)
+      console.error("Error updating requirement:", error.response || error.message);
+      const errorMessage = error.response?.data?.message || "เกิดข้อผิดพลาดในการอัปเดต Requirement";
+      Swal.fire({
+          title: "เกิดข้อผิดพลาด!",
+          text: errorMessage,
+          icon: "error",
+          confirmButtonText: "ตกลง",
+      });
+  }
+};
 
   return (
     <div className="create-requirement-container">

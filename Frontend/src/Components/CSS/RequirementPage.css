@@ -744,6 +744,7 @@ button, input, select {
   letter-spacing: 0.05em;
   padding: var(--space-md) var(--space-lg);
   text-align: left;
+  white-space: nowrap;
 }
 
 .REQtable-file td {

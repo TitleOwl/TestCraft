@@ -109,7 +109,7 @@ const VerificationList = () => {
     const [searchTerm, setSearchTerm] = useState("");
 
     const [sortField, setSortField] = useState("id");
-    const [sortDirection, setSortDirection] = useState("desc");
+    const [sortDirection, setSortDirection] = useState("asc");
     const [isRefreshing, setIsRefreshing] = useState(false);
     
     const navigate = useNavigate();
@@ -407,7 +407,7 @@ const VerificationList = () => {
                             <table className="verificationlist-table">
                                 <thead>
                                     <tr>
-                                        <th>Verification ID</th>
+                                        <th>Verification Round</th>
                                         <th>Created By</th>
                                         <th>Date Assigned</th>
                                         <th>Status</th>

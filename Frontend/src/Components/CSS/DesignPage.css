@@ -1,143 +1,391 @@
-/* General Styles */
-.design-container {
-  max-width: 1200px;
-  margin: 20px auto;
-  padding: 20px;
-  background: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  font-family: "Arial", sans-serif;
+/* === DesignPage.css (Professional Data Display Focus) === */
+
+/* --- Variables (Import or define, ensure consistency with CreateDesign.css) --- */
+:root {
+  /* Primary */
+  --primary-color: #005abc; 
+  --primary-hover-color: #004a9c;
+  --primary-light-color: #e0eefe; 
+
+  /* Neutrals */
+  --text-color: #1a202c; 
+  --text-color-secondary: #4a5568; 
+  --text-color-muted: #6b7280;  
+  --border-color: #cbd5e1;     
+  --border-color-light: #e2e8f0; 
+  --background-color: #ffffff;
+  --background-off-white: #f8fafc; 
+  --background-input: #ffffff; 
+  --background-hover: #f1f5f9;   
+  --background-header: #f8fafc; /* Use slightly off-white for header bg */
+
+  /* Functional Colors (Adjust as needed) */
+  --status-working-text: #2563eb; /* Blue 600 */
+  --status-working-bg: #dbeafe;   /* Blue 100 */
+  --status-verified-text: #16a34a; /* Green 600 */
+  --status-verified-bg: #d1fae5;   /* Green 100 */
+  --status-baseline-text: #4b5563; /* Gray 600 */
+  --status-baseline-bg: #e5e7eb;   /* Gray 200 */
+  --status-waiting-text: #d97706; /* Amber 600 */
+  --status-waiting-bg: #fef3c7;   /* Amber 100 */
+  --error-color: #dc2626; 
+  --error-border-color: #fca5a5; 
+  --error-background: #fee2e2; 
+
+  /* Shadows & Borders */
+  --box-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.03); 
+  --box-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04); 
+  --box-shadow-focus: 0 0 0 3px var(--primary-light-color); 
+  --border-radius: 6px; /* Use slightly smaller radius than CreateDesign container */
+  --border-radius-lg: 8px; /* Larger radius for main container */
+
+  /* Typography */
+  --font-family-base: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --font-size-base: 1rem; 
+  --font-size-sm: 0.875rem; 
+  --font-size-lg: 1.125rem;  
+  --font-size-xl: 1.5rem; 
+  --line-height-base: 1.6; 
+  --line-height-tight: 1.5;
+
+  /* Transitions */
+  --transition-base: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
 }
 
-/* Header Styles */
+/* --- Base Body Styles --- */
+body {
+  font-family: var(--font-family-base);
+  color: var(--text-color);
+  background-color: var(--background-off-white);
+  margin: 0;
+  line-height: var(--line-height-base);
+  -webkit-font-smoothing: antialiased; 
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- Main Container --- */
+.design-container {
+  max-width: 1280px; /* Wider for table data */
+  margin: 2.5rem auto;
+  padding: 0; /* Remove padding, handle inside sections */
+  background-color: var(--background-color);
+  border-radius: var(--border-radius-lg); /* Use larger radius */
+  box-shadow: var(--box-shadow-md);
+  overflow: hidden; /* Ensure child borders respect radius */
+}
+
+/* --- Header Section --- */
 .design-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; 
   align-items: center;
-  margin-bottom: 20px;
+  padding: 1.5rem 2rem; /* Header padding */
+  border-bottom: 1px solid var(--border-color-light);
+  background-color: var(--background-header); /* Subtle header background */
 }
 
 .design-header h1 {
-  font-size: 24px;
-  color: #333;
+  font-size: var(--font-size-lg); /* Slightly smaller H1 */
+  font-weight: 600; 
+  color: var(--text-color);
+  margin: 0; 
 }
 
 .design-header-buttons {
   display: flex;
-  gap: 10px;
+  gap: 0.75rem; /* Space between header buttons */
 }
 
-.design-btn {
-  background: #1e3a8a;
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 5px;
+/* --- Header Buttons (.design-btn in header) --- */
+.design-header-buttons .design-btn {
+  padding: 0.5rem 1rem; /* Smaller padding for header buttons */
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  border-radius: var(--border-radius);
   cursor: pointer;
-  font-size: 14px;
-  transition: background 0.3s ease-in-out;
+  transition: var(--transition-base);
+  border: 1px solid transparent; 
+  line-height: var(--line-height-tight);
+
+  /* Default to Secondary Style */
+  background-color: var(--background-color);
+  color: var(--text-color-secondary);
+  border-color: var(--border-color);
+  box-shadow: var(--box-shadow-sm);
+}
+.design-header-buttons .design-btn:hover {
+  background-color: var(--background-hover);
+  border-color: #a0aec0;
+  color: var(--text-color);
+  transform: translateY(-1px); /* Subtle lift */
+}
+/* Style specific important buttons differently if needed */
+/* .design-header-buttons .add-design-btn { ... primary style ... } */
+
+
+/* --- Filters Section --- */
+.design-filters {
+  display: flex;
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+  gap: 1rem; /* Space between filter elements */
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--border-color-light);
+  background-color: var(--background-color); /* Match container bg */
 }
 
-.design-btn:hover {
-  background: #1e3a8a;
+/* --- Search Input & Filter Selects (Inherit from CreateDesign) --- */
+.design-search-input,
+.design-filter-select {
+  /* Base styles (Copy from CreateDesign or use shared class) */
+  padding: 0.65rem 0.75rem; 
+  font-size: var(--font-size-sm);
+  font-family: inherit;
+  line-height: var(--line-height-tight);
+  color: var(--text-color);
+  background-color: var(--background-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow-sm); 
+  transition: var(--transition-base);
+  transition-property: border-color, box-shadow; 
 }
 
-/* Table Styles */
-.design-summary-table, .design-diagram-table {
+.design-search-input:focus,
+.design-filter-select:focus {
+  outline: none;
+  border-color: var(--border-color-focus);
+  box-shadow: var(--box-shadow-focus), var(--box-shadow-sm); 
+}
+
+.design-search-input {
+  min-width: 250px; /* Give search input some width */
+  flex-grow: 1; /* Allow search to grow */
+}
+
+.design-filter-select {
+  min-width: 180px; /* Min width for selects */
+  appearance: none; 
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); 
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 1.2em 1.2em;
+  padding-right: 2.5rem; 
+}
+
+/* --- Add Design Button (in filters) --- */
+.design-filters .design-btn {
+  /* Use Primary Style */
+  padding: 0.65rem 1.25rem; 
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition-base);
+  border: 1px solid transparent; 
+  line-height: var(--line-height-tight);
+
+  background-color: var(--primary-color);
+  color: white;
+  box-shadow: var(--box-shadow-sm);
+}
+.design-filters .design-btn:hover {
+  background-color: var(--primary-hover-color);
+  box-shadow: var(--box-shadow-md);
+  transform: translateY(-1px);
+}
+
+
+/* --- Diagrams (Table) Section --- */
+.design-diagrams {
+  padding: 1.5rem 2rem 2rem 2rem; /* Padding around the table */
+  background-color: var(--background-color);
+}
+
+/* Loading state inside diagrams section */
+.design-diagrams > p {
+  text-align: center;
+  color: var(--text-color-muted);
+  padding: 3rem 0;
+}
+
+/* --- Main Diagram Table --- */
+.design-diagram-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 15px;
+  /* No outer border for minimalist look */
 }
 
-.design-summary-table th, .design-summary-table td,
-.design-diagram-table th, .design-diagram-table td {
-  padding: 12px;
-  border: 1px solid #ddd;
-  text-align: center;
+.design-diagram-table th,
+.design-diagram-table td {
+  padding: 0.9rem 1rem; /* Increased padding for readability */
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--border-color-light); /* Use lighter border */
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-tight);
+  transition: background-color 0.15s ease-out; /* Faster hover transition */
 }
 
-.design-summary-table th, .design-diagram-table th {
-  background: #1e3a8a;
-  color: white;
-  font-weight: bold;
+/* Table Header */
+.design-diagram-table thead th {
+  background-color: var(--background-header); /* Subtle header background */
+  font-weight: 600; 
+  color: var(--text-color-secondary); 
+  border-bottom-width: 1px; /* Make header border same as rows */
+  border-color: var(--border-color); /* Use normal border color */
 }
 
-.design-diagram-table tbody tr:nth-child(even) {
-  background: #f9f9f9;
+/* Table Body */
+.design-diagram-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
-/* Action Buttons */
+.design-diagram-table tbody tr:hover td { 
+  background-color: var(--background-hover); 
+}
+
+/* Specific Column Styling */
+.design-diagram-table th:first-child,
+.design-diagram-table td:first-child { /* ID Column */
+  width: 8%; 
+  color: var(--text-color-muted);
+}
+.design-diagram-table th:nth-child(2),
+.design-diagram-table td:nth-child(2) { /* Name Column */
+  width: 30%;
+  font-weight: 500; /* Make name slightly bolder */
+  color: var(--text-color);
+}
+.design-diagram-table th:nth-child(3),
+.design-diagram-table td:nth-child(3) { /* Type Column */
+  width: 15%;
+}
+.design-diagram-table th:nth-child(4),
+.design-diagram-table td:nth-child(4) { /* Actions Column */
+  width: 12%;
+  text-align: center; /* Center align actions */
+}
+.design-diagram-table th:last-child,
+.design-diagram-table td:last-child { /* Status Column */
+  width: 15%;
+  text-align: center; /* Center status */
+}
+
+
+/* --- Table Action Buttons (Icon Buttons) --- */
+.design-diagram-table td:nth-child(4) { /* Target the actions cell directly */
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem; /* Space between icons */
+}
+
 .design-action-btn {
   background: none;
   border: none;
+  padding: 0.3rem; /* Click area */
+  margin: 0;
+  color: var(--text-color-muted); /* Muted color */
   cursor: pointer;
-  font-size: 18px;
-  margin: 0 5px;
-  transition: transform 0.2s ease-in-out, opacity 0.3s;
+  transition: var(--transition-base);
+  transition-property: color, transform;
+  font-size: 0.9rem; /* Icon size */
+  line-height: 1; /* Prevent extra space */
 }
-
-.design-action-btn.view { color: #555; }
-.design-action-btn.edit { color: #4caf50; }
-.design-action-btn.delete { color: #f44336; }
 
 .design-action-btn:hover {
-  transform: scale(1.2);
-  opacity: 0.8;
+  color: var(--text-color-secondary);
+  transform: scale(1.15); /* Slightly larger on hover */
 }
 
-/* Responsive Design */
+/* Optional: Specific colors on hover */
+.design-action-btn.view:hover { color: var(--primary-color); }
+.design-action-btn.edit:hover { color: #d97706; } /* Amber */
+.design-action-btn.delete:hover { color: var(--error-color); }
+
+
+/* --- Status Indicator Span --- */
+.status-btn { /* Renamed from status-btn for clarity */
+  display: inline-block;
+  padding: 0.25rem 0.75rem; /* Badge padding */
+  font-size: 0.75rem; /* Smaller font size */
+  font-weight: 500;
+  line-height: 1.4;
+  border-radius: 12px; /* Pill shape */
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Status-specific colors */
+.status-btn.working {
+  color: var(--status-working-text);
+  background-color: var(--status-working-bg);
+}
+.status-btn.verified {
+  color: var(--status-verified-text);
+  background-color: var(--status-verified-bg);
+}
+.status-btn.baseline {
+  color: var(--status-baseline-text);
+  background-color: var(--status-baseline-bg);
+}
+.status-btn.waiting-for-verification { /* Handle long class name */
+  color: var(--status-waiting-text);
+  background-color: var(--status-waiting-bg);
+}
+/* Add other statuses as needed */
+
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 992px) { /* Adjust breakpoint */
+   .design-filters {
+      flex-direction: column; /* Stack filters */
+      align-items: stretch; /* Make filters full width */
+   }
+   .design-search-input,
+   .design-filter-select {
+       min-width: 100%; /* Full width on smaller screens */
+   }
+    .design-filters .design-btn {
+        align-self: flex-end; /* Keep add button aligned right */
+        width: auto; /* Don't make add button full width */
+    }
+}
+
 @media (max-width: 768px) {
+  .design-container {
+    margin: 1.5rem auto;
+    border-radius: 0; /* Remove radius on small screens */
+    box-shadow: none;
+  }
   .design-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
   }
-  .design-header-buttons {
-    flex-wrap: wrap;
-    gap: 5px;
-  }
-  .design-summary-table th, .design-summary-table td,
-  .design-diagram-table th, .design-diagram-table td {
-    padding: 10px;
-    font-size: 14px;
-  }
-}
+   .design-header-buttons {
+      width: 100%; /* Make button group full width */
+      flex-wrap: wrap; /* Allow buttons to wrap */
+   }
+   .design-filters {
+     padding: 1rem 1.5rem;
+   }
+   .design-diagrams {
+     padding: 1rem 0 1.5rem 0; /* Remove horizontal padding, adjust vertical */
+   }
 
-/* ปุ่มสถานะหลัก */
-.status-btn {
-  display: inline-block;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: bold;
-  text-align: center;
-  border: 2px solid transparent;
-  background-color: white;
-  cursor: default;
-  min-width: 120px;
-}
-
-/* สีของแต่ละสถานะ */
-.waiting {
-  color: #e6a800;
-  border-color: #e6a800;
-}
-
-.validated {
-  color: #0088cc;
-  border-color: #0088cc;
-}
-
-.working {
-  color: #ff6600;
-  border-color: #ff6600;
-}
-
-.baseline {
-  color: #444;
-  border-color: #444;
-}
-
-.verified {
-  color: #009933;
-  border-color: #009933;
+  /* Horizontal scroll for table */
+   .table-responsive-wrapper { /* Add this wrapper in JSX */
+     overflow-x: auto;
+     /* No negative margins needed if diagrams section has no padding */
+   }
+   .design-diagram-table {
+      min-width: 700px; /* Adjust based on content */
+   }
+   .design-diagram-table th,
+   .design-diagram-table td {
+      padding: 0.75rem; /* Adjust padding */
+      white-space: nowrap; /* Prevent wrapping in table cells */
+   }
 }

@@ -58,49 +58,86 @@ const ReqValidation = () => {
   };
 
   const handleSave = async () => {
-    if (!projectId || requirementsDetails.length === 0) {
-      toast.warn("Project ID or requirements details are missing.");
-      return;
+    // --- การตรวจสอบ Input เบื้องต้น ---
+    if (!projectId || !requirementsDetails || requirementsDetails.length === 0) {
+        toast.warn("Project ID or requirements details are missing or empty.");
+        return;
     }
+
+    console.log("Saving validation for requirements:", requirementsDetails);
 
     try {
-      const requirementIds = requirementsDetails.map((req) => req.requirement_id);
+        // ดึง ID ทั้งหมดออกมา
+        const requirementIds = requirementsDetails.map((req) => req.requirement_id);
 
-      // Step 1: Update the status of the requirements to "VALIDATED"
-      await axios.put("http://localhost:3001/update-requirements-status-validated", {
-        requirement_ids: requirementIds,
-        requirement_status: "VALIDATED",
-      });
+        // Step 1: อัปเดตสถานะ Requirements เป็น "VALIDATED" ใน Backend (เหมือนเดิม)
+        console.log(`Updating status to VALIDATED for IDs: ${requirementIds.join(', ')}`);
+        await axios.put("http://localhost:3001/update-requirements-status-validated", {
+            requirement_ids: requirementIds,
+            requirement_status: "VALIDATED",
+        });
+        console.log("Status update successful.");
 
-      // Step 2: Record history for each requirement in historyReqWorking with "VALIDATED" status
-      for (const requirementId of requirementIds) {
-        const historyReqData = {
-          requirement_id: requirementId,
-          requirement_status: "VALIDATED",  // Set status to "VALIDATED"
-        };
+        // --- *** จุดที่แก้ไข: Loop เพื่อสร้าง History *** ---
+        // Step 2: บันทึก History สำหรับแต่ละ Requirement
+        console.log("Starting history creation loop for validation completion...");
+        for (const requirementId of requirementIds) {
+            // 2.1 ค้นหาข้อมูล requirement เต็มจาก state `requirementsDetails`
+            const reqDetail = requirementsDetails.find(
+                (req) => req.requirement_id === requirementId
+            );
 
-        // Send to historyReqWorking
-        const historyResponse = await axios.post(
-          "http://localhost:3001/historyReqWorking",
-          historyReqData
-        );
+            if (!reqDetail) {
+                console.error(`Could not find details for requirement ID: ${requirementId} in requirementsDetails. Skipping history creation.`);
+                // อาจจะแจ้งเตือนเบาๆ หรือข้ามไปเลย
+                // toast.warn(`Could not find details for REQ-${requirementId}, history not recorded.`);
+                continue; // ข้ามไปทำ requirement ID ถัดไป
+            }
 
-        if (historyResponse.status !== 200) {
-          console.error("Failed to add history for requirement:", requirementId);
-          // Consider only showing a warning instead of stopping the whole process
-          // toast.warn(`Failed to record history for REQ-${requirementId}`);
-        }
-      }
+            // 2.2 สร้าง historyReqData โดยใช้ข้อมูลที่พบ
+            const historyReqData = {
+                requirement_id: requirementId,
+                requirement_name: reqDetail.requirement_name,         // <-- ดึงจาก details
+                requirement_description: reqDetail.requirement_description, // <-- ดึงจาก details
+                requirement_type: reqDetail.requirement_type,         // <-- ดึงจาก details
+                requirement_status: "VALIDATED",                     // กำหนดสถานะ
+            };
 
-      // Show success message
-      toast.success("Status updated to VALIDATED successfully.");
-      navigate(`/Dashboard?project_id=${projectId}`);
+            console.log(`Sending history data for Req ID ${requirementId} (Validated):`, historyReqData);
+
+            try {
+                // 2.3 ส่งข้อมูลไปที่ historyReqWorking
+                const historyResponse = await axios.post(
+                    "http://localhost:3001/historyReqWorking",
+                    historyReqData
+                );
+
+                if (historyResponse.status !== 200) {
+                    console.error(`Failed to add history for requirement ID: ${requirementId}. Status: ${historyResponse.status}`, historyResponse.data);
+                    toast.warn(`Failed to record history for REQ-${requirementId}`); // แจ้งเตือนเบาๆ
+                } else {
+                     console.log(`History added successfully for Req ID ${requirementId} (Validated)`);
+                }
+            } catch (historyError) {
+                console.error(`Error sending history for requirement ID: ${requirementId}`, historyError.response?.data || historyError.message);
+                toast.error(`Error recording history for REQ-${requirementId}. Check console.`);
+                // อาจจะตัดสินใจว่าจะหยุด process หรือทำต่อ
+            }
+        } // --- จบ Loop ---
+        console.log("Finished history creation loop for validation completion.");
+
+        // Step 3: แจ้งเตือนสำเร็จ และ Navigate (เหมือนเดิม)
+        toast.success("Status updated to VALIDATED successfully.");
+        navigate(`/Dashboard?project_id=${projectId}`); // ไปยัง Dashboard หรือหน้าที่เหมาะสม
 
     } catch (error) {
-      console.error("Error updating status:", error.response || error.message);
-      toast.error("Failed to update status.");
+        // จัดการ Error ตอนอัปเดต status หรือตอน loop สร้าง history (เหมือนเดิม)
+        console.error("Error during validation save process:", error.response || error.message);
+        // ตรวจสอบว่าเป็น error จาก axios หรือไม่
+        const errorMessage = error.response?.data?.message || "Failed to update status or record history.";
+        toast.error(errorMessage);
     }
-  };
+};
 
   // Function เมื่อมีการเลือกไฟล์ใน input
   const handleFileChange = (event) => {
@@ -210,19 +247,33 @@ const fetchUploadedFiles = async (requirementId) => {
       setLoading(false);
     }
   };
-
   const handleCommentSubmit = async () => {
     if (!newComment.trim()) {
       toast.warn("Please enter a comment!"); // ใช้ toast แทน alert
       return;
     }
 
+    // --- START FIX ---
+    // Check if requirements are selected before proceeding
+    if (!selectedRequirements || selectedRequirements.length === 0) {
+      toast.error("Cannot add comment: No requirement is associated with this validation session.");
+      return;
+    }
+
+    // Assume the comment relates to the first selected requirement
+    const requirementIdToSubmit = selectedRequirements[0];
+    // --- END FIX ---
+
     try {
       const payload = {
         member_name: loggedInUser || "Anonymous", // Handle case where username might not be set
         comment_var_text: newComment,
         validation_id: validationId, // Should already be validated
+        // --- FIX: Use the variable defined above ---
+        requirement_id: requirementIdToSubmit,
       };
+
+      // console.log("Submitting comment payload:", payload); // Optional: for debugging
 
       const response = await axios.post("http://localhost:3001/createvarcomment", payload);
       if (response.status === 201) { // Check for 201 Created status
@@ -239,22 +290,20 @@ const fetchUploadedFiles = async (requirementId) => {
       toast.error(`Failed to post comment: ${error.response?.data?.message || error.message}`);
     }
   };
-
+  
   const handleCommentDelete = async (commentId) => {
-    // เพิ่มการยืนยันก่อนลบ
     if (window.confirm("Are you sure you want to delete this comment?")) {
       try {
         const response = await axios.delete(`http://localhost:3001/deletecomment/${commentId}`);
         if (response.status === 200) {
           toast.success("Comment deleted.");
-          fetchComments(); // โหลด comment ใหม่หลังจากลบสำเร็จ
+          fetchComments(); // โหลดคอมเมนต์ใหม่
         } else {
-           console.warn("Comment deletion returned status:", response.status);
-           // Handle unexpected success status if necessary
-           fetchComments();
+          console.warn("Unexpected response status:", response.status);
+          fetchComments();
         }
       } catch (error) {
-        console.error("Error deleting comment:", error.response || error.message);
+        console.error("Error deleting comment:", error);
         toast.error(`Failed to delete comment: ${error.response?.data?.message || error.message}`);
       }
     }
@@ -400,7 +449,13 @@ const fetchUploadedFiles = async (requirementId) => {
                     </div>
                     <p className="Vali-comment-text">{comment.comment_var_text}</p>
                     <div className="Vali-comment-footer">
-                      <button className="Vali-delete-comment-button" onClick={() => handleCommentDelete(comment.comment_id)}>Delete</button>
+                    <button
+    className="Vali-delete-comment-button"
+    onClick={() => handleCommentDelete(comment.comment_id)}
+>
+    Delete
+</button>
+
                     </div>
                   </div>
                 ))}
@@ -425,7 +480,7 @@ const fetchUploadedFiles = async (requirementId) => {
             <div className="Vali-summary-body">
               <div className="Vali-summary-item"><span className="Vali-summary-label">Requirements</span><span className="Vali-summary-value">{requirementsDetails.length}</span></div>
               <div className="Vali-summary-item"><span className="Vali-summary-label">Project ID</span><span className="Vali-summary-value">{projectId}</span></div>
-              <div className="Vali-summary-item"><span className="Vali-summary-label">Validation ID</span><span className="Vali-summary-value">{validationId}</span></div>
+              <div className="Vali-summary-item"><span className="Vali-summary-label">Validation Round</span><span className="Vali-summary-value">{validationId}</span></div>
             </div>
           </div>
           

@@ -91,16 +91,7 @@ const CreateVeri = () => {
     setAlertType(type);
     setAlertMessage(message);
     setShowAlert(true);
-    
-    // ซ่อน alert หลังจาก 3 วินาที
-    setTimeout(() => {
-      setShowAlert(false);
-      
-      // ถ้าเป็น success alert ให้ redirect ไปที่หน้า Requirementpage
-      if (type === "success") {
-        navigate(`/Requirementpage?project_id=${projectId}`);
-      }
-    }, 3000);
+  
   };
 
   // Fetch working requirements
@@ -185,6 +176,7 @@ const CreateVeri = () => {
       (name) => selectedReviewers[name]
     );
   
+    // --- การตรวจสอบ Input (เหมือนเดิม) ---
     if (!projectId) {
       toast.error("Invalid project ID.");
       showAlertMessage("error", "Invalid project ID.");
@@ -206,54 +198,85 @@ const CreateVeri = () => {
       return;
     }
   
+    // --- สร้าง Payload สำหรับ /createveri (เหมือนเดิม) ---
     const payload = {
       requirements: [...new Set(selectedRequirements)], // Remove duplicates
-      reviewers: selectedReviewerNames.map((name) => `${name}: false`), // reviewers as array
+      reviewers: selectedReviewerNames.map((name) => `${name}: false`),
       project_id: projectId,
       create_by: createBy,
     };
   
-    console.log("Payload:", payload);
+    console.log("Payload for /createveri:", payload);
   
     try {
-      setIsSubmitting(true);  // Disable submit button
+      setIsSubmitting(true); // Disable submit button
+  
+      // --- เรียก API /createveri ---
       const response = await axios.post("http://localhost:3001/createveri", payload);
   
       if (response.status === 201) {
-        const toastId = "create-verification-toast"; // Assign toastId
-        if (!toast.isActive(toastId)) {  // Check if toast is active
+        const toastId = "create-verification-toast";
+        if (!toast.isActive(toastId)) {
           toast.success("Verification created successfully!", { toastId, position: "top-center" });
         }
-        
-        // แสดง Alert แบบสวยงาม
         showAlertMessage("success", `Verification created successfully! (${selectedRequirements.length} requirements processed)`);
   
+        // --- อัปเดต State ฝั่ง Frontend (เหมือนเดิม) ---
         setWorkingRequirements((prev) =>
           prev.filter((req) => !selectedRequirements.includes(req.requirement_id))
         );
-  
         setSelectedRequirements([]);
         setSelectedReviewers({});
   
-        // Loop through selected requirements and add them to history with status "WAITING FOR VERIFICATION"
+        // --- *** จุดที่แก้ไข: Loop เพื่อสร้าง History *** ---
+        console.log("Starting history creation loop...");
         for (const requirementId of selectedRequirements) {
-          const historyReqData = {
-            requirement_id: requirementId,
-            requirement_status: "WAITING FOR VERIFICATION",
-          };
-  
-          // ส่งข้อมูลไปที่ historyReqWorking
-          const historyResponse = await axios.post(
-            "http://localhost:3001/historyReqWorking",
-            historyReqData
+          // 1. ค้นหาข้อมูล requirement เต็มจาก state `workingRequirements`
+          const requirementDetails = workingRequirements.find(
+            (req) => req.requirement_id === requirementId
           );
   
-          if (historyResponse.status !== 200) {
-            console.error("Failed to add history for requirement:", requirementId);
+          if (!requirementDetails) {
+            console.error(`Could not find details for requirement ID: ${requirementId} in workingRequirements state. Skipping history creation.`);
+            // อาจจะแจ้งเตือนผู้ใช้ หรือ log ไว้ แต่ไม่ควรหยุด process ทั้งหมด
+            continue; // ข้ามไปทำ requirement ID ถัดไป
+          }
+  
+          // 2. สร้าง historyReqData โดยใช้ข้อมูลที่พบ
+          const historyReqData = {
+            requirement_id: requirementId,
+            requirement_name: requirementDetails.requirement_name, 
+            requirement_description: requirementDetails.requirement_description,
+            requirement_type: requirementDetails.requirement_type,   
+            requirement_status: "WAITING FOR VERIFICATION",      
+          };
+  
+          console.log(`Sending history data for Req ID ${requirementId}:`, historyReqData);
+  
+          try {
+            // 3. ส่งข้อมูลไปที่ historyReqWorking
+            const historyResponse = await axios.post(
+              "http://localhost:3001/historyReqWorking",
+              historyReqData
+            );
+  
+            if (historyResponse.status !== 200) {
+              // Log หรือแจ้งเตือนเฉพาะส่วนถ้าการสร้าง history ของรายการนี้ล้มเหลว
+              console.error(`Failed to add history for requirement ID: ${requirementId}. Status: ${historyResponse.status}`, historyResponse.data);
+              // อาจจะเก็บ ID ที่มีปัญหาไว้แจ้งผู้ใช้ตอนท้าย
+            } else {
+               console.log(`History added successfully for Req ID ${requirementId}`);
+            }
+          } catch (historyError) {
+              console.error(`Error sending history for requirement ID: ${requirementId}`, historyError.response?.data || historyError.message);
+              // จัดการ error ของ history item นี้
           }
         }
+        console.log("Finished history creation loop.");
+        // --- จบส่วนแก้ไข ---
   
-        // Update the status of requirements in the Backend to "WAITING FOR VERIFICATION"
+        // --- อัปเดตสถานะ Requirement ใน Backend ---
+        console.log("Starting status update requests...");
         const updateResults = await Promise.allSettled(
           selectedRequirements.map((requirementId) =>
             axios.put(`http://localhost:3001/update-requirements-status-waitingfor-ver/${requirementId}`, {
@@ -261,17 +284,21 @@ const CreateVeri = () => {
             })
           )
         );
+        console.log("Finished status update requests:", updateResults);
+        // (อาจเพิ่มการตรวจสอบ updateResults เพื่อดูว่ามีรายการไหนอัปเดตไม่สำเร็จหรือไม่)
   
       } else {
+        // กรณี /createveri ไม่สำเร็จ
         toast.error(response.data.message || "Failed to create verification(s).");
         showAlertMessage("error", response.data.message || "Failed to create verification(s).");
       }
     } catch (error) {
-      console.error("Error creating verification:", error);
-      toast.error(error.response?.data?.message || "An error occurred. Please try again.");
+      // จัดการ Error ทั่วไป
+      console.error("Error creating verification process:", error);
+      toast.error(error.response?.data?.message || "An error occurred during the verification process.");
       showAlertMessage("error", error.response?.data?.message || "An error occurred. Please try again.");
     } finally {
-      setIsSubmitting(false);  // Re-enable submit button
+      setIsSubmitting(false); // Re-enable submit button
     }
   };
   

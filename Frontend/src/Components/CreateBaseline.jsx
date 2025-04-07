@@ -54,88 +54,131 @@ const CreateBaseline = () => {
   };
 
   const handleCreateBaseline = async () => {
+    // --- การตรวจสอบ Input (เหมือนเดิม) ---
     if (!projectId) {
-      toast.error("Invalid project ID.");
-      return;
+        toast.error("Invalid project ID.");
+        return;
     }
 
     if (selectedRequirements.length === 0) {
-      toast.warning("Please select at least one requirement.");
-      return;
+        toast.warning("Please select at least one requirement.");
+        return;
     }
 
     if (isSubmitting) {
-      toast.warning("Submitting in progress. Please wait.");
-      return;
+        toast.warning("Submitting in progress. Please wait.");
+        return;
     }
 
-    setIsSubmitting(true);
+    setIsSubmitting(true); // เริ่มการ Submit
 
-    const baselineAt = new Date().toISOString();
+    const baselineAt = new Date().toISOString(); // เวลาที่สร้าง Baseline
 
+    // --- Payload สำหรับ /createbaseline (เหมือนเดิม) ---
     const payload = {
-      requirement_id: selectedRequirements,
-      baseline_at: baselineAt,
+        requirement_id: selectedRequirements, // ส่งเป็น Array ของ ID
+        baseline_at: baselineAt,
     };
 
+    console.log("Creating baseline with payload:", payload);
+
     try {
-      const response = await axios.post(
-        "http://localhost:3001/createbaseline",
-        payload
-      );
-
-      if (response.status === 201) {
-        const result = response.data;
-
-        toast.success("Baseline set successfully!");
-
-        // Step 1: Update requirement status to 'BASELINE'
-        const updatePayload = {
-          requirement_id: selectedRequirements,
-          requirement_status: `BASELINE`,
-        };
-
-        await axios.post("http://localhost:3001/updaterequirements", updatePayload);
-
-        // Step 2: Record history for each requirement in historyReqWorking with "BASELINE" status
-        for (const requirementId of selectedRequirements) {
-          const historyReqData = {
-            requirement_id: requirementId,
-            requirement_status: "BASELINE",  // Set status to "BASELINE"
-          };
-
-          // Send to historyReqWorking
-          const historyResponse = await axios.post(
-            "http://localhost:3001/historyReqWorking",
-            historyReqData
-          );
-
-          if (historyResponse.status !== 200) {
-            console.error("Failed to add history for requirement:", requirementId);
-          }
-        }
-
-        // Step 3: Filter out processed requirements and clear selection
-        setValidatedRequirements((prev) =>
-          prev.filter((req) => !selectedRequirements.includes(req.requirement_id))
+        // --- เรียก API /createbaseline (เหมือนเดิม) ---
+        const response = await axios.post(
+            "http://localhost:3001/createbaseline",
+            payload
         );
-        setSelectedRequirements([]);
 
-        console.log("Baseline and requirement statuses updated successfully.");
-      } else {
-        throw new Error(response.data.message || "Failed to set baseline.");
-      }
+        // --- ถ้าสร้าง Baseline สำเร็จ ---
+        if (response.status === 201) { // ปกติสร้างสำเร็จ trả về 201
+            const result = response.data; // ข้อมูล Baseline ที่สร้าง (ถ้ามี)
+            console.log("Baseline created successfully:", result);
+            toast.success("Baseline set successfully!");
+
+            // Step 1: อัปเดตสถานะ Requirement เป็น 'BASELINE' ใน Backend (เหมือนเดิม)
+            const updatePayload = {
+                requirement_id: selectedRequirements, // ส่งเป็น Array ของ ID
+                requirement_status: `BASELINE`,      // สถานะใหม่
+            };
+            console.log("Updating requirement statuses to BASELINE:", updatePayload);
+            await axios.post("http://localhost:3001/updaterequirements", updatePayload); // หรืออาจจะเป็น PUT ถ้า API เป็นแบบนั้น
+            console.log("Requirement statuses updated.");
+
+
+            // --- *** จุดที่แก้ไข: Loop เพื่อสร้าง History *** ---
+            // Step 2: บันทึก History สำหรับแต่ละ Requirement
+            console.log("Starting history creation loop for baseline...");
+            for (const requirementId of selectedRequirements) {
+                // 2.1 ค้นหาข้อมูล requirement เต็มจาก state `validatedRequirements`
+                const reqDetail = validatedRequirements.find(
+                    (req) => req.requirement_id === requirementId
+                );
+
+                if (!reqDetail) {
+                    console.error(`Could not find details for requirement ID: ${requirementId} in validatedRequirements state. Skipping history creation.`);
+                    toast.warn(`Could not find details for REQ-${requirementId}, history not recorded.`);
+                    continue; // ข้ามไปทำ requirement ID ถัดไป
+                }
+
+                // 2.2 สร้าง historyReqData โดยใช้ข้อมูลที่พบ
+                const historyReqData = {
+                    requirement_id: requirementId,
+                    requirement_name: reqDetail.requirement_name,         // <-- ดึงจาก details
+                    requirement_description: reqDetail.requirement_description, // <-- ดึงจาก details
+                    requirement_type: reqDetail.requirement_type,         // <-- ดึงจาก details
+                    requirement_status: "BASELINE",                      // กำหนดสถานะ
+                };
+
+                console.log(`Sending history data for Req ID ${requirementId} (Baseline):`, historyReqData);
+
+                try {
+                    // 2.3 ส่งข้อมูลไปที่ historyReqWorking
+                    const historyResponse = await axios.post(
+                        "http://localhost:3001/historyReqWorking",
+                        historyReqData
+                    );
+
+                    if (historyResponse.status !== 200) {
+                        console.error(`Failed to add history for requirement ID: ${requirementId}. Status: ${historyResponse.status}`, historyResponse.data);
+                        toast.warn(`Failed to record history for REQ-${requirementId}`);
+                    } else {
+                         console.log(`History added successfully for Req ID ${requirementId} (Baseline)`);
+                    }
+                } catch (historyError) {
+                    console.error(`Error sending history for requirement ID: ${requirementId}`, historyError.response?.data || historyError.message);
+                    toast.error(`Error recording history for REQ-${requirementId}. Check console.`);
+                }
+            } // --- จบ Loop ---
+            console.log("Finished history creation loop for baseline.");
+
+
+            // Step 3: อัปเดต State ฝั่ง Frontend (เหมือนเดิม)
+            // นำรายการที่ถูก Baseline ออกจาก state `validatedRequirements`
+            setValidatedRequirements((prev) =>
+                prev.filter((req) => !selectedRequirements.includes(req.requirement_id))
+            );
+            setSelectedRequirements([]); // เคลียร์รายการที่เลือก
+
+            console.log("Frontend state updated successfully.");
+
+            // Navigate หลังจากทุกอย่างสำเร็จใน try block
+            navigate(`/Baseline?project_id=${projectId}`);
+
+        } else {
+             // กรณี /createbaseline ไม่สำเร็จ แต่ status ไม่ใช่ error (อาจไม่ควรเกิด)
+            throw new Error(response.data.message || "Failed to set baseline. Unexpected status.");
+        }
     } catch (error) {
-      console.error("Error creating baseline:", error.response?.data || error.message);
-      const errorMessage =
-        error.response?.data?.message || "An error occurred. Please try again.";
-      toast.error(errorMessage);
+        // จัดการ Error ทั่วไป (ตอนเรียก API หรืออื่นๆ) (เหมือนเดิม)
+        console.error("Error during baseline creation process:", error.response?.data || error.message);
+        const errorMessage =
+            error.response?.data?.message || "An error occurred during the baseline process.";
+        toast.error(errorMessage);
     } finally {
-      setIsSubmitting(false);
+        setIsSubmitting(false); // เสร็จสิ้นการ Submit (ไม่ว่าจะสำเร็จหรือล้มเหลว)
     }
+};
 
-    navigate(`/Baseline?project_id=${projectId}`);
-  };
 
 
 
