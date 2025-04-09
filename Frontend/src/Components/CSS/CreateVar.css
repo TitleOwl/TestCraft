@@ -655,18 +655,6 @@ input[type="checkbox"]:hover:not(:checked) {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
 
-.Toastify__toast--success {
-  background: linear-gradient(135deg, var(--success), var(--success-dark)) !important;
-}
-
-.Toastify__toast--error {
-  background: linear-gradient(135deg, var(--error), var(--error-dark)) !important;
-}
-
-.Toastify__toast--warning {
-  background: linear-gradient(135deg, var(--warning), var(--warning-dark)) !important;
-}
-
 .Toastify__toast-body {
   font-weight: 500 !important;
 }

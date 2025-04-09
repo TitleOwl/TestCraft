@@ -97,7 +97,7 @@ const flattenNestedDataForTable = (data) => {
 // ==================================================================================
 
 // --- Component หลัก ---
-const ViewBaselineRound = () => {
+const ViewBaselineCurrent = () => {
     const [nestedData, setNestedData] = useState([]); // <<--- ใช้ State นี้เก็บ Nested Data
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -150,14 +150,14 @@ const ViewBaselineRound = () => {
             <div className="traceability-container">
                 <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Baseline Traceability Record for Round {round}</h2>
                 <div className="no-data">No traceability data found for this baseline round.</div>
-                <button className="back-button" style={{ marginTop: '20px' }} onClick={() => navigate(`/viewBaselineTrace?project_id=${projectId}`)}>Back to Baseline List</button>
+                <button className="" onClick={() => navigate(`/currentBaselineTrace?project_id=${projectId}`)}>Back</button>
             </div>
         );
     }
 
     return (
         <div className="traceability-container">
-            <button className="back-button-viewbaselineround" onClick={() => navigate(`/viewBaselineTrace?project_id=${projectId}`)}>Back to Baseline List</button>
+            <button className="back-button-viewbaselineround" onClick={() => navigate(`/currentBaselineTrace?project_id=${projectId}`)}>Back</button>
             <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Baseline Traceability Record for Round {round}</h2>
             <table className="traceability-table">
                 <thead>
@@ -220,4 +220,4 @@ const ViewBaselineRound = () => {
     );
 };
 
-export default ViewBaselineRound;
+export default ViewBaselineCurrent;

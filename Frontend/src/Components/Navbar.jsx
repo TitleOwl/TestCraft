@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import './CSS/Navbar.css'; // ใช้ CSS ไฟล์ใหม่ที่เราสร้าง
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import logo from '../image/testcraft-logo.png';
+import logo from '../image/tracecraft-logo.png';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

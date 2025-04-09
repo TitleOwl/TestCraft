@@ -120,7 +120,7 @@ const TestcaseBaseline = () => {
             ) : (
               <ul>
                 {selectedTestCase.map((testcase, index) => (
-                  <li key={index}>{testcase}</li>
+                  <li key={index}>TC-{testcase}</li>
                 ))}
               </ul>
             )}

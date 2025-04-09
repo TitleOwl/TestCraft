@@ -9,7 +9,6 @@ const ExecutionList = () => {
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const project_id = queryParams.get("project_id");
-
   const [testExecutions, setTestExecutions] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -31,7 +30,7 @@ const ExecutionList = () => {
   const filteredExecutions = testExecutions.filter((execution) =>
     execution.testcase_id.toString().includes(searchTerm)
   );
-  
+
 
   const handleNavigate = (execution) => {
     if (execution.testcase_status !== "BASELINE") {
@@ -48,7 +47,10 @@ const ExecutionList = () => {
 
   return (
     <div className="execution-list">
-      <h2>Test Execution for Project {project_id}</h2>
+      <button onClick={() => navigate(`/Dashboard?project_id=${project_id}`, { state: { selectedSection: "Testcase" } })}>
+        Back
+      </button>
+      <h2>Test Execution</h2>
       <div className="search-bar">
         <input
           type="text"

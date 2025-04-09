@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import './CSS/Home.css';
-import logo from '../image/testcraft-logo.png';
+import logo from '../image/tracecraft-logo.png';
 import { toast } from 'react-toastify';  // เพิ่มการนำเข้า toast
 
 const Home = () => {

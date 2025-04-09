@@ -12,8 +12,8 @@ const Modal = ({ show, onClose, details = {}, veritestcaseBy = [] }) => {
   if (!show) return null;
 
   // ตรวจสอบว่ามี testcase_id หรือไม่
-  const testcaseId = details.testcase_id 
-    ? (Array.isArray(details.testcase_id) ? details.testcase_id : [details.testcase_id]) 
+  const testcaseId = details.testcase_id
+    ? (Array.isArray(details.testcase_id) ? details.testcase_id : [details.testcase_id])
     : [];
 
   return (
@@ -22,7 +22,7 @@ const Modal = ({ show, onClose, details = {}, veritestcaseBy = [] }) => {
         <h3>Testcase Details</h3>
         <div>
           <p>
-            <strong>Testcase ID:</strong> 
+            <strong>Testcase ID:</strong>
             {testcaseId.length > 0 ? testcaseId.join(", ") : "N/A"}
           </p>
           <p><strong>Created By:</strong> {details.created_by || "Unknown"}</p>
@@ -135,7 +135,7 @@ const VeriTestcase = () => {
     setAssignedReviewers(veritestcaseBy || []);
     setShowModal(true);
   };
-  
+
 
 
   const handleVerifyClick = (testcase) => {
@@ -165,6 +165,9 @@ const VeriTestcase = () => {
 
   return (
     <div className="testcase-list-container">
+      <button onClick={() => navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Testcase" } })}>
+         Back
+      </button>
       <h1 className="testcase-list">Testcase List</h1>
       {testcase.length === 0 ? (
         <p>No testcase available.</p>
@@ -194,8 +197,8 @@ const VeriTestcase = () => {
                     onClick={() =>
                       handleSearchClick(
                         {
-                            testcase_id: testcase.testcase_id,
-                            testcase_status: testcase.testcase_status,
+                          testcase_id: testcase.testcase_id,
+                          testcase_status: testcase.testcase_status,
                           created_by: testcase.create_by,
                         },
                         testcase.veritestcase_by // ส่งข้อมูลที่ถูกแปลงแล้ว

@@ -62,16 +62,16 @@ const SetBaselineTrace = () => {
 
     return (
         <div className="traceability-container">
+            <button className="viewbaseline-to-trace" onClick={() =>navigate(`/viewBaselineTrace?project_id=${projectId}`) }>Back</button>
             <h1 className="traceability-title">Set Baseline Traceability</h1>
             <table className="traceability-table">
                 <thead>
                     <tr>
-                        <th>Round</th>
+                        <th>No.</th>
                         <th>Created By</th>
                         <th>Date</th>
                         <th>Status</th>
                         <th>Reviewers</th>
-                        <th>Action</th>
                         <th>Set Baseline</th>
                     </tr>
                 </thead>
@@ -79,13 +79,13 @@ const SetBaselineTrace = () => {
                     {verifiedData.length === 0 ? (
                         <tr>
                             <td colSpan="7" style={{ textAlign: "center", color: "red" }}>
-                                ❌ ไม่มีข้อมูลสำหรับโปรเจกต์นี้
+                                ❌ No verified traceability records found
                             </td>
                         </tr>
                     ) : (
                         verifiedData.map((item, index) => (
                             <tr key={index}>
-                                <td>{item.create_round}</td>
+                                <td>{index + 1}</td> {/* 🔄 เปลี่ยนจาก item.create_round เป็น index + 1 */}
                                 <td>{item.create_by}</td>
                                 <td>{new Date(item.verification_at).toLocaleDateString()}</td>
                                 <td>{item.veritrace_status}</td>
@@ -93,9 +93,6 @@ const SetBaselineTrace = () => {
                                     <button onClick={() => handleShowReviewers(item.verification_by)}>
                                         ดู Reviewers
                                     </button>
-                                </td>
-                                <td>
-                                    <button onClick={() => alert('Verify')}>Verify</button>
                                 </td>
                                 <td>
                                     <button onClick={() => navigate(`/createBaselineTrace?project_id=${projectId}&round=${item.create_round}`)}>
@@ -106,6 +103,7 @@ const SetBaselineTrace = () => {
                         ))
                     )}
                 </tbody>
+
             </table>
 
             {showPopup && (

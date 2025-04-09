@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './CSS/Login.css';
-import logo from '../image/testcraft-logo.png';
+import logo from '../image/tracecraft-logo.png';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';

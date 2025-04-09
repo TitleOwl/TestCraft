@@ -71,114 +71,117 @@ const CreateTestcasebaseline = () => {
       );
 
       if (response.status === 201) {
-        toast.success("Baseline set successfully!");
+        toast.success("Baseline set successfully!", {
+          onClose: () => {
+            navigate(`/TestcaseBaseline?project_id=${projectId}`);
+          }
+        });
 
-        setVerifiedTestCase((prev) =>
-          prev.map((testcase) =>
-            selectedTestCase.includes(testcase.testcase_id)
-              ? { ...testcase, testcase_status: "BASELINE" }
-              : testcase
-          )
-        );
-
-        // Insert into historytestcase table
-        await Promise.all(
-          selectedTestCase.map((testcaseId) =>
-            axios.post("http://localhost:3001/addHistorytestcase", {
-              testcase_id: testcaseId,
-              testcase_status: "BASELINE",
-            })
-          )
-        );
-
-        setSelectedTestCase([]);
-
-        toast.success("Testcase status updated to BASELINE!");
-        navigate(`/TestcaseBaseline?project_id=${projectId}`);
-      } else {
-        throw new Error(response.data.message || "Failed to set baseline.");
-      }
-    } catch (error) {
-      console.error(
-        "Error creating baseline:",
-        error.response?.data || error.message
+      setVerifiedTestCase((prev) =>
+        prev.map((testcase) =>
+          selectedTestCase.includes(testcase.testcase_id)
+            ? { ...testcase, testcase_status: "BASELINE" }
+            : testcase
+        )
       );
-      toast.error(
-        error.response?.data?.message || "An error occurred. Please try again."
+
+      // Insert into historytestcase table
+      await Promise.all(
+        selectedTestCase.map((testcaseId) =>
+          axios.post("http://localhost:3001/addHistorytestcase", {
+            testcase_id: testcaseId,
+            testcase_status: "BASELINE",
+          })
+        )
       );
-    } finally {
-      setIsSubmitting(false);
+
+      setSelectedTestCase([]);
+
+      navigate(`/TestcaseBaseline?project_id=${projectId}`);
+    } else {
+      throw new Error(response.data.message || "Failed to set baseline.");
     }
-  };
+  } catch (error) {
+    console.error(
+      "Error creating baseline:",
+      error.response?.data || error.message
+    );
+    toast.error(
+      error.response?.data?.message || "An error occurred. Please try again."
+    );
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
-  const handleCancel = () => {
-    navigate(`/TestcaseBaseline?project_id=${projectId}`);
-  };
+const handleCancel = () => {
+  navigate(`/TestcaseBaseline?project_id=${projectId}`);
+};
 
-  return (
-    <div className="create-baseline-container">
-      <h1 className="create-baseline-title">Set Baseline</h1>
-      <div className="create-baseline-content">
-        <div className="create-baseline-left-panel">
-          <h2 className="create-baseline-section-title">Testcases</h2>
-          {loading ? (
-            <p className="create-baseline-loading-message">
-              Loading testcases...
-            </p>
-          ) : error ? (
-            <p className="create-baseline-error-message">{error}</p>
-          ) : verifiedTestcase?.length === 0 ? (
-            <p className="create-baseline-no-data">
-              No verified testcases found.
-            </p>
-          ) : (
-            <table className="create-baseline-testcases-table">
-              <thead>
-                <tr>
-                  <th>Select</th>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Type</th>
-                  <th>Status</th>
+return (
+  <div className="create-baseline-container">
+    <h1 className="create-baseline-title">Set Baseline</h1>
+    <div className="create-baseline-content">
+      <div className="create-baseline-left-panel">
+        <h2 className="create-baseline-section-title">Testcases</h2>
+        {loading ? (
+          <p className="create-baseline-loading-message">
+            Loading testcases...
+          </p>
+        ) : error ? (
+          <p className="create-baseline-error-message">{error}</p>
+        ) : verifiedTestcase?.length === 0 ? (
+          <p className="create-baseline-no-data">
+            No verified testcases found.
+          </p>
+        ) : (
+          <table className="create-baseline-testcases-table">
+            <thead>
+              <tr>
+                <th>Select</th>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {verifiedTestcase.map((testcase) => (
+                <tr key={testcase.testcase_id}>
+                  <td>
+                    <input
+                      type="checkbox"
+                      checked={selectedTestCase.includes(testcase.testcase_id)}
+                      onChange={() => handleSelect(testcase.testcase_id)}
+                    />
+                  </td>
+                  <td>SD-0{testcase.testcase_id}</td>
+                  <td>{testcase.testcase_name}</td>
+                  <td>{testcase.testcase_type}</td>
+                  <td>{testcase.testcase_status}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {verifiedTestcase.map((testcase) => (
-                  <tr key={testcase.testcase_id}>
-                    <td>
-                      <input
-                        type="checkbox"
-                        checked={selectedTestCase.includes(testcase.testcase_id)}
-                        onChange={() => handleSelect(testcase.testcase_id)}
-                      />
-                    </td>
-                    <td>SD-0{testcase.testcase_id}</td>
-                    <td>{testcase.testcase_name}</td>
-                    <td>{testcase.testcase_type}</td>
-                    <td>{testcase.testcase_status}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
-      </div>
-
-      <div className="create-baseline-action-buttons">
-        <button
-          className="create-baseline-create-button"
-          onClick={handleCreateBaseline}
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "Creating..." : "Set Baseline"}
-        </button>
-
-        <button className="create-baseline-btn-cancel" onClick={handleCancel}>
-          Cancel
-        </button>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
-  );
+
+    <div className="create-baseline-action-buttons">
+      <button
+        className="create-baseline-create-button"
+        onClick={handleCreateBaseline}
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? "Creating..." : "Set Baseline"}
+      </button>
+
+      <button className="create-baseline-btn-cancel" onClick={handleCancel}>
+        Cancel
+      </button>
+    </div>
+  </div>
+);
 };
 
 export default CreateTestcasebaseline;

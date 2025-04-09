@@ -81,12 +81,12 @@ const TestcasePage = () => {
         try {
           const response = await axios.delete(`http://localhost:3001/testcases/${id}`);
           console.log("Deleted successfully:", response.data);
-  
+
           // อัปเดตหน้าจอหลังจากลบสำเร็จ
           setTestCases((prevTestCases) =>
             prevTestCases.filter((test) => test.testcase_id !== id)
           );
-  
+
           Swal.fire("Deleted!", "Test case has been deleted.", "success");
         } catch (error) {
           console.error("Delete error:", error);
@@ -95,7 +95,7 @@ const TestcasePage = () => {
       }
     });
   };
-  
+
 
   return (
     <div className="testcase-container">
@@ -119,7 +119,7 @@ const TestcasePage = () => {
             View Verification
           </button>
           <button className="testcase-baseline-button" onClick={handleBaselineTest}>
-            Baselined
+            Baseline
           </button>
         </div>
       </div>
@@ -156,7 +156,7 @@ const TestcasePage = () => {
                   <button
                     className="testcase-view"
                     onClick={() =>
-                      navigate(`/TestcaseDetail?testcase_id=${test.testcase_id}`, {
+                      navigate(`/TestcaseDetail?testcase_id=${test.testcase_id}&project_id=${projectId}`, {
                         state: { testcase: test },
                       })
                     }

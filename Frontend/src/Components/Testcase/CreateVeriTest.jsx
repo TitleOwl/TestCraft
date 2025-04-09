@@ -136,7 +136,6 @@ const handleCreateVerification = async () => {
 
     if (response.status === 201) {
       toast.success("TestCase verification created successfully!", {
-        position: "top-center",
       });
 
       // เพิ่มประวัติ testcase ลงใน historytestcase

@@ -688,18 +688,6 @@ input[type="file"] {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-.Toastify__toast--success {
-  background: linear-gradient(135deg, var(--Vali-success), var(--Vali-success-dark));
-}
-
-.Toastify__toast--error {
-  background: linear-gradient(135deg, var(--Vali-error), var(--Vali-error-dark));
-}
-
-.Toastify__toast--warn {
-  background: linear-gradient(135deg, var(--Vali-warning), var(--Vali-warning-dark));
-}
-
 .Toastify__progress-bar {
   height: 3px;
   background: rgba(255, 255, 255, 0.7);
