@@ -6,7 +6,6 @@ import backtoreq from '../image/arrow_left.png'; // Ensure the image path is cor
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Uncomment if using icons
 // import { faEye, faHistory } from '@fortawesome/free-solid-svg-icons'; // Uncomment if using icons
 
-
 const ViewEditReq = () => {
     const location = useLocation();
     const navigate = useNavigate(); // useNavigate hook
@@ -41,12 +40,23 @@ const ViewEditReq = () => {
     };
 
     useEffect(() => {
-        // ... (useEffect logic remains the same) ...
         const fetchRequirement = async (requirementId) => {
             try {
                 const response = await axios.get(`http://localhost:3001/requirement/${requirementId}`);
+                console.log('[FRONTEND] Received raw response data:', JSON.stringify(response.data));
+                // *** Check the console log above to confirm the actual key for file IDs ***
+                // Example logs (adjust 'files' if your key is different):
+                console.log('[FRONTEND] Does response.data have "files" key?', response.data.hasOwnProperty('files'));
+                console.log('[FRONTEND] Value of response.data.files:', response.data.files);
+
                 setRequirement(response.data);
-                fetchHistory(response.data.requirement_id);
+                // Ensure requirement_id exists before fetching history
+                if (response.data && response.data.requirement_id) {
+                    fetchHistory(response.data.requirement_id);
+                } else {
+                     console.error("Requirement ID missing in fetched data, cannot fetch history.");
+                     setLoadingHistory(false);
+                }
             } catch (error) {
                 console.error('Error fetching requirement:', error);
                 setRequirement(null);
@@ -76,35 +86,44 @@ const ViewEditReq = () => {
         };
 
         let requirementIdToFetch = null;
-        if (location.state?.requirement?.requirement_id) {
-            requirementIdToFetch = location.state.requirement.requirement_id;
-            setRequirement(location.state.requirement);
-            fetchHistory(requirementIdToFetch);
-        } else if (location.search) {
+        // Prefer fetching fresh data if coming from URL directly
+        if (location.search) {
             const queryParams = new URLSearchParams(location.search);
             const requirementIdFromUrl = queryParams.get('requirement_id');
             if (requirementIdFromUrl) {
                 requirementIdToFetch = requirementIdFromUrl;
-                fetchRequirement(requirementIdToFetch);
+                fetchRequirement(requirementIdToFetch); // Fetch fresh data
             } else {
                  console.error("Requirement ID not found in URL params.");
                  setLoadingHistory(false);
             }
-        } else {
+        }
+        // Use state only if no URL param (e.g., navigating back)
+        else if (location.state?.requirement?.requirement_id) {
+            requirementIdToFetch = location.state.requirement.requirement_id;
+            setRequirement(location.state.requirement); // Use potentially stale data from state
+            fetchHistory(requirementIdToFetch); // Still fetch history
+        }
+        // No ID found anywhere
+        else {
              console.error("Requirement ID not provided.");
              setLoadingHistory(false);
         }
-    }, [location]);
+    }, [location]); // Rerun effect if location changes
 
+    // Filter history data after it's loaded
     const verifiedHistoryData = historyData.filter(history => history.requirement_status === 'VERIFIED');
     const validatedHistoryData = historyData.filter(history => history.requirement_status === 'VALIDATED');
 
+    // Safely access project_id only if requirement exists
     const projectId = requirement?.project_id || '';
 
-    if (!requirement && loadingHistory) {
+    // Loading state for the main requirement data
+    if (!requirement && loadingHistory) { // Show loading if requirement isn't set AND history is still loading (initial load)
         return <p>Loading requirement data...</p>;
     }
 
+    // Error state if requirement failed to load
     if (!requirement) {
          return <p>Requirement data could not be loaded or does not exist.</p>;
     }
@@ -118,29 +137,38 @@ const ViewEditReq = () => {
         }
     };
 
-    // *** เพิ่มฟังก์ชันสำหรับนำทางไปยัง HistoryValidationReq ***
+    // Function to navigate to HistoryValidationReq
     const navigateToValiHistory = (reqId) => {
         if (reqId) {
-            // Navigate using URL Path Param
             navigate(`/HistoryValidationReq/${reqId}`);
         } else {
             console.error("Missing requirementId for Vali navigation");
         }
     };
-    // *********************************************************
+
+// *** Helper function to get the correct file array ***
+const getFileArray = () => {
+    const fileKey = 'filereq_ids'; // <--- แก้เป็นชื่อนี้ (ตรงตามรูปภาพ)
+    if (requirement && Array.isArray(requirement[fileKey])) {
+        return requirement[fileKey]; // จะได้ [1] ออกมา
+    }
+    return [];
+};
+
+    const filesToDisplay = getFileArray();
 
     return (
         <div>
-            {/* --- Requirement Details Container (เหมือนเดิม) --- */}
+            {/* --- Requirement Details Container --- */}
             <div className="view-requirement-container">
-                 <button
+                <button
                     onClick={() =>
                         navigate(`/Dashboard?project_id=${projectId}`, {
                             state: { selectedSection: "Requirement" },
                         })
                     }
                     className="backreq-button"
-                    disabled={!projectId}
+                    disabled={!projectId} // Disable if projectId is not available
                 >
                     <img src={backtoreq} alt="backtoreq" className="backtoreq" />
                 </button>
@@ -148,25 +176,36 @@ const ViewEditReq = () => {
                     <h1 className="view-requirement-title">Requirement: {requirement.requirement_name}</h1>
                 </div>
                 <div className="view-requirement-header">
-                     <p><strong className="view-requirement-label">ID:</strong> REQ-0{requirement.requirement_id}</p>
-                     <p><strong className="view-requirement-label">Type:</strong> {requirement.requirement_type}</p>
-                     <p><strong className="view-requirement-label">Status:</strong> {requirement.requirement_status}</p>
-                     <p>
+                    <p><strong className="view-requirement-label">ID:</strong> REQ-0{requirement.requirement_id}</p>
+                    <p><strong className="view-requirement-label">Type:</strong> {requirement.requirement_type}</p>
+                    <p><strong className="view-requirement-label">Status:</strong> {requirement.requirement_status}</p>
+                    <p>
                         <strong className="view-requirement-label">File ID:</strong>
                         <span>
-                            {Array.isArray(requirement.filereq_ids) && requirement.filereq_ids.length > 0 ? (
+                            {/* *** UPDATED FILE DISPLAY LOGIC *** */}
+                            {filesToDisplay.length > 0 ? (
                                 <ul>
-                                    {requirement.filereq_ids.map((filereq_id, index) => (
+                                    {filesToDisplay.map((fileId, index) => ( // Assuming it's an array of IDs
                                         <li key={index} className="file-item" style={{ cursor: 'pointer', textDecoration: 'underline' }}
                                             onClick={() => {
-                                                const file = { filereq_id, requirement_id: requirement.requirement_id };
+                                                // Prepare data for ViewFile page
+                                                const file = {
+                                                    filereq_id: fileId, // Pass the ID
+                                                    requirement_id: requirement.requirement_id
+                                                    // You might need to fetch file details (like name) separately
+                                                    // or ensure the backend includes them if needed on the ViewFile page.
+                                                };
+                                                // Navigate to ViewFile, passing filereq_id in query params and file object in state
                                                 navigate(`/ViewFile?filereq_id=${file.filereq_id}`, { state: { file } });
                                             }}>
-                                            {filereq_id}
+                                            {fileId} {/* Display the File ID */}
                                         </li>
                                     ))}
                                 </ul>
-                            ) : (<span>No File IDs available</span>)}
+                            ) : (
+                                <span>No File IDs available</span> // Displayed if array is empty or data wasn't an array
+                            )}
+                             {/* ****************************** */}
                         </span>
                     </p>
                 </div>
@@ -176,7 +215,7 @@ const ViewEditReq = () => {
                 </div>
             </div>
 
-            {/* --- Full History Table (เหมือนเดิม) --- */}
+            {/* --- Full History Table --- */}
             <div className="view-requirement-container">
                  <div className="view-requirement-header-with-button">
                     <h1 className="view-requirement-title">Full History: {requirement.requirement_name}</h1>
@@ -210,7 +249,7 @@ const ViewEditReq = () => {
                 </table>
             </div>
 
-            {/* --- Verified History Table (เหมือนเดิม) --- */}
+            {/* --- Verified History Table --- */}
             <div className="view-requirement-container">
                 <div className="view-requirement-header-with-button">
                     <h1 className="view-requirement-title">Verified History</h1>
@@ -256,7 +295,7 @@ const ViewEditReq = () => {
                 </table>
             </div>
 
-            {/* --- Validated History Table (อัปเดตส่วนนี้) --- */}
+            {/* --- Validated History Table --- */}
             <div className="view-requirement-container">
                 <div className="view-requirement-header-with-button">
                     <h1 className="view-requirement-title">Validated History</h1>
@@ -268,14 +307,11 @@ const ViewEditReq = () => {
                             <th>Requirement Status</th>
                             <th>Date</th>
                             <th>Time</th>
-                            {/* *** เพิ่ม Header *** */}
                             <th>Validation Details</th>
-                            {/* ******************* */}
                         </tr>
                     </thead>
                     <tbody>
                         {loadingHistory ? (
-                            // *** อัปเดต colSpan ***
                             <tr><td colSpan="5">Loading history...</td></tr>
                         ) : validatedHistoryData.length > 0 ? (
                             validatedHistoryData.map((history, index) => {
@@ -286,28 +322,24 @@ const ViewEditReq = () => {
                                         <td>{history.requirement_status}</td>
                                         <td>{date}</td>
                                         <td>{time}</td>
-                                        {/* *** เพิ่ม Cell และ Button *** */}
                                         <td>
                                             <button
                                                 className="view-validation-history-btn" // Add class for styling if needed
-                                                onClick={() => navigateToValiHistory(history.requirement_id)} // ใช้ requirement_id จาก history
+                                                onClick={() => navigateToValiHistory(history.requirement_id)} // Use requirement_id from history
                                             >
                                                  {/* <FontAwesomeIcon icon={faHistory} /> */}
                                                  View Validation
                                             </button>
                                         </td>
-                                        {/* ************************** */}
                                     </tr>
                                 );
                             })
                         ) : (
-                            // *** อัปเดต colSpan ***
                             <tr><td colSpan="5">No validated history available</td></tr>
                         )}
                     </tbody>
                 </table>
             </div>
-            {/* ******************************************* */}
 
         </div>
     );

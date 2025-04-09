@@ -118,7 +118,6 @@ const DesignPage = () => {
                     {/* Other header buttons */}
                     <button className="design-btn" onClick={() => navigate(`/CreateVeriDesign?project_id=${projectId}`)}>Create Verification</button>
                     <button className="design-btn" onClick={() => navigate(`/VeriDesign?project_id=${projectId}`)}>List Verify</button>
-                    <button className="design-btn" onClick={() => navigate(`/VeriDesign?project_id=${projectId}&status=VERIFIED`)}>View Verified</button> {/* Example with param */}
                     <button
                         className="design-btn"
                         onClick={() => {

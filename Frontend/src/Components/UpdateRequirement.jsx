@@ -308,9 +308,10 @@ const handleSubmit = async (e) => {
                 value: file.filereq_id,
                 label: `${file.filereq_id} - ${file.filereq_name}`,
               }))}
-            onChange={(selectedOptions) =>
-              setSelectedFileIds(selectedOptions.map((option) => option.value)) // อัพเดท selectedFileIds ตามที่เลือก
-            }
+              onChange={(selectedOptions) =>
+                setSelectedFileIds((selectedOptions || []).map(option => option.value))
+              }
+
             placeholder="Select files"
             className="select-files"
           />

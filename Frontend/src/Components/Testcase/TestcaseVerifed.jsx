@@ -127,7 +127,7 @@ const TestcaseVerifed = () => {
           // ✅ ตรวจสอบว่า checklist ทั้งหมดถูกเลือก
           const allChecked = testcasecriList.every(criteria => checkboxState[criteria.testcasecri_id]);
           if (!allChecked) {
-              toast.warning("กรุณาเลือกทุกข้อก่อนกด Save");
+              toast.warning("บันทึกรายการตรวจสอบ Criteria แล้ว");
               return;
           }
   

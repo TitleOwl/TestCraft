@@ -1,0 +1,237 @@
+/* --- Base Styles --- */
+:root {
+    --vd-primary-color: #0056b3; /* A professional blue */
+    --vd-secondary-color: #6c757d; /* Muted gray for secondary text */
+    --vd-light-gray: #f8f9fa; /* Light background */
+    --vd-border-color: #dee2e6; /* Standard border color */
+    --vd-text-color: #212529; /* Dark text for readability */
+    --vd-white: #ffffff;
+    --vd-error-bg: #f8d7da;
+    --vd-error-border: #f5c6cb;
+    --vd-error-text: #721c24;
+    --vd-info-bg: #d1ecf1;
+    --vd-info-border: #bee5eb;
+    --vd-info-text: #0c5460;
+    --vd-success-bg: #d4edda; /* Example for success, if needed */
+    --vd-success-border: #c3e6cb;
+    --vd-success-text: #155724;
+  
+    --vd-font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --vd-border-radius: 0.3rem; /* Consistent rounded corners */
+    --vd-box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); /* Subtle shadow */
+    --vd-transition: all 0.2s ease-in-out; /* Smooth transitions */
+  }
+  
+  /* Apply base font and box-sizing */
+  * {
+    box-sizing: border-box;
+  }
+  
+  body { /* Or a more specific parent container if needed */
+    font-family: var(--vd-font-family);
+    color: var(--vd-text-color);
+    line-height: 1.6;
+    background-color: var(--vd-light-gray); /* Set a base background for the page */
+    margin: 0; /* Remove default body margin */
+  }
+  
+  /* --- Component Container --- */
+  .vericri-design-details-container {
+    max-width: 900px; /* Limit width for readability */
+    margin: 2rem auto; /* Center the container with space top/bottom */
+    padding: 1.5rem 2rem; /* Inner spacing */
+    background-color: var(--vd-white);
+    border-radius: var(--vd-border-radius);
+    box-shadow: var(--vd-box-shadow);
+    border: 1px solid var(--vd-border-color);
+  }
+  
+  /* --- Header --- */
+  .vericri-design-details-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Pushes button and title apart */
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--vd-border-color);
+  }
+  
+  .vericri-design-details-back-btn {
+    display: inline-flex; /* Aligns icon and text */
+    align-items: center;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--vd-primary-color);
+    background-color: transparent;
+    border: 1px solid var(--vd-border-color);
+    border-radius: var(--vd-border-radius);
+    cursor: pointer;
+    transition: var(--vd-transition);
+    text-decoration: none; /* Remove underline if it's an <a> */
+  }
+  
+  .vericri-design-details-back-btn:hover {
+    background-color: var(--vd-light-gray);
+    border-color: #adb5bd; /* Slightly darker border on hover */
+    color: #003c80; /* Darker blue */
+  }
+  
+  .vericri-design-details-back-btn .fa-arrow-left {
+    margin-right: 0.5rem;
+  }
+  
+  .vericri-design-details-title {
+    display: flex;
+    align-items: center;
+    font-size: 1.75rem; /* Larger title */
+    font-weight: 600;
+    color: var(--vd-text-color);
+    margin: 0; /* Remove default margin */
+    /* Adjust flex properties if needed to control positioning relative to the button */
+    flex-grow: 1; /* Allow title to take up space */
+    justify-content: center; /* Center title text if desired */
+    text-align: center; /* Ensure text aligns center if container is wide */
+    margin-left: 1rem; /* Space between button and title */
+  }
+  
+  .vericri-design-details-title-icon {
+    margin-right: 0.75rem;
+    color: var(--vd-primary-color); /* Use primary color for icon */
+    font-size: 1.5rem; /* Slightly smaller than title text */
+  }
+  
+  /* --- Messages (Loading, Error, Info) --- */
+  .vericri-design-details-loading-message,
+  .vericri-design-details-error-message,
+  .vericri-design-details-info-message {
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid transparent;
+    border-radius: var(--vd-border-radius);
+    font-size: 0.95rem;
+  }
+  
+  .vericri-design-details-loading-message {
+    color: var(--vd-info-text);
+    background-color: var(--vd-info-bg);
+    border-color: var(--vd-info-border);
+    text-align: center;
+  }
+  
+  .vericri-design-details-error-message {
+    color: var(--vd-error-text);
+    background-color: var(--vd-error-bg);
+    border-color: var(--vd-error-border);
+  }
+  
+  .vericri-design-details-info-message {
+    color: var(--vd-info-text);
+    background-color: var(--vd-info-bg);
+    border-color: var(--vd-info-border);
+  }
+  
+  /* --- Content Sections (Details, Summary) --- */
+  .vericri-design-details-section,
+  .vericri-design-details-criteria-count-section {
+    margin-bottom: 2rem; /* Space between sections */
+    padding: 1.5rem; /* Padding within section */
+    background-color: var(--vd-white); /* White background for sections */
+    border: 1px solid var(--vd-border-color); /* Border to define sections */
+    border-radius: var(--vd-border-radius); /* Rounded corners */
+  }
+  
+  .vericri-design-details-section h3,
+  .vericri-design-details-criteria-count-section h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--vd-primary-color); /* Use primary color for section headers */
+    margin-top: 0; /* Remove default top margin */
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem; /* Space under heading */
+    border-bottom: 1px solid #eee; /* Subtle line under heading */
+    display: flex; /* Align icon and text */
+    align-items: center;
+  }
+  
+  .vericri-design-details-criteria-count-section h3 .fa-clipboard-check {
+     /* Icon styling already handled inline, but could be moved here */
+  }
+  
+  /* --- Detail Fields --- */
+  .vericri-design-details-field {
+    margin-bottom: 0.8rem; /* Space between fields */
+    font-size: 1rem;
+  }
+  
+  .vericri-design-details-field strong {
+    display: inline-block; /* Better control over spacing */
+    min-width: 150px; /* Align values roughly */
+    color: var(--vd-secondary-color); /* Muted color for labels */
+    font-weight: 500; /* Slightly less bold */
+    margin-right: 0.5rem;
+  }
+  
+  .vericri-design-details-field span {
+    color: var(--vd-text-color); /* Standard text color for values */
+  }
+  
+  /* --- Criteria Summary Table --- */
+  .vericri-design-details-criteria-count-table {
+    width: 100%;
+    border-collapse: collapse; /* Clean table lines */
+    margin-top: 1rem; /* Space above table */
+  }
+  
+  .vericri-design-details-criteria-count-table thead {
+     /* Header background */
+     border-bottom: 2px solid var(--vd-border-color); /* Stronger line under header */
+  }
+  
+  .vericri-design-details-criteria-count-table th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600; /* Bold headers */
+    color: var(--vd-text-color);
+    background-color: var(--vd-light-gray);
+  }
+  
+  /* Style only the first TH differently if needed */
+  .vericri-design-details-criteria-count-table th:first-child {
+    /* Potential specific styles for the first column header */
+  }
+  
+  
+  .vericri-design-details-criteria-count-table tbody tr {
+    border-bottom: 1px solid var(--vd-border-color); /* Line between rows */
+    transition: background-color 0.15s ease-in-out; /* Subtle hover effect */
+  }
+  
+  .vericri-design-details-criteria-count-table tbody tr:last-child {
+    border-bottom: none; /* Remove line under the last row */
+  }
+  
+  .vericri-design-details-criteria-count-table tbody tr:hover {
+    background-color: rgba(0, 86, 179, 0.05); /* Very subtle blue tint on hover */
+  }
+  
+  .vericri-design-details-criteria-count-table td {
+    padding: 0.75rem 1rem; /* Consistent padding */
+    vertical-align: middle; /* Align text vertically */
+    color: var(--vd-secondary-color); /* Slightly muted text for table data */
+  }
+  
+  /* Style first TD if it should stand out */
+  .vericri-design-details-criteria-count-table td:first-child {
+    color: var(--vd-text-color); /* Make the name more prominent */
+    font-weight: 500;
+  }
+  
+  
+  /* --- Fallback text when no criteria --- */
+  .vericri-design-details-criteria-count-section p {
+    font-style: italic;
+    color: var(--vd-secondary-color);
+    text-align: center;
+    padding: 1rem;
+  }

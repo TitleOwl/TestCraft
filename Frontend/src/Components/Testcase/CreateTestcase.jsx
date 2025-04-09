@@ -42,41 +42,99 @@ const CreateTestcase = () => {
 
 
   const handleCreateTestCase = async () => {
+    // --- ส่วน Validation เหมือนเดิม ---
     if (!title || !description || !testType || !priority || !completionDate) {
       alert("Please fill in all required fields.");
       return;
     }
-  
-    if (selectedImplement.length === 0) { // ตรวจสอบว่าเลือก implement_id หรือยัง
+
+    if (selectedImplement.length === 0) {
       alert("Please select at least one implement.");
       return;
     }
-  
+    // --- จบส่วน Validation ---
+
+    // กำหนดค่า status เริ่มต้น
+    const initialStatus = "WORKING";
+
+    // เก็บข้อมูล Test Case ที่จะส่งไปสร้าง
     const testCaseData = {
       testcase_name: title,
       testcase_des: description,
       testcase_type: testType === "Other" ? customTestType : testType,
       testcase_priority: priority,
-      testcase_by: loggedInUser,
+      testcase_by: loggedInUser, // ตรวจสอบว่า loggedInUser มีค่าถูกต้อง
       testcase_at: completionDate,
-      testcase_status: "WORKING",
-      project_id: projectId,
-      implement_id: selectedImplement.length > 0 ? selectedImplement[0].value : null, // ส่งค่าจาก implement_id ตัวแรก
+      testcase_status: initialStatus, // ใช้ status เริ่มต้น
+      project_id: projectId, // ตรวจสอบว่า projectId มีค่าถูกต้อง
+      implement_id: selectedImplement.length > 0 ? selectedImplement[0].value : null,
     };
-  
+
     try {
+      // 1. สร้าง Test Case
       const response = await axios.post("http://localhost:3001/testcases", testCaseData);
-  
+
       if (response.status === 201) {
         const { testcase_id, test_execution_id } = response.data;
         console.log(`✅ Testcase ID: ${testcase_id}, Execution ID: ${test_execution_id}`);
-  
-        alert("Test Case and Execution created successfully!");
-        navigate(`/Dashboard?project_id=${projectId}`);
+
+        // 2. เพิ่ม History หลังจากสร้าง Test Case สำเร็จ
+        try {
+          // ***** แก้ไขตรงนี้: สร้าง historyData ให้มีข้อมูลครบตาม Backend ใหม่ *****
+          const historyData = {
+            testcase_id: testcase_id,              // ID ที่ได้จาก response
+            testcase_name: testCaseData.testcase_name, // ดึงจาก testCaseData
+            testcase_des: testCaseData.testcase_des,   // ดึงจาก testCaseData
+            testcase_type: testCaseData.testcase_type,  // ดึงจาก testCaseData
+            testcase_priority: testCaseData.testcase_priority, // ดึงจาก testCaseData
+            testcase_by: testCaseData.testcase_by,      // ดึงจาก testCaseData
+            testcase_status: initialStatus,         // Status เริ่มต้น
+            project_id: testCaseData.project_id,      // ดึงจาก testCaseData
+            implement_id: testCaseData.implement_id   // ดึงจาก testCaseData (อาจเป็น null)
+          };
+          // ***** สิ้นสุดการแก้ไข *****
+
+          const historyResponse = await axios.post("http://localhost:3001/addHistoryTestcase", historyData); // ส่ง historyData ที่มีข้อมูลครบ
+
+          if (historyResponse.status === 201) {
+            console.log(`📜 History added successfully for testcase ID: ${testcase_id}`);
+            alert("Test Case, Execution, and History created successfully!"); // แจ้งเตือนสำเร็จทั้งหมด
+            navigate(`/Dashboard?project_id=${projectId}`); // นำทางหลังจากทุกอย่างสำเร็จ
+          } else {
+            // กรณี History เพิ่มไม่สำเร็จ (แต่ Test Case สร้างสำเร็จแล้ว)
+            console.warn(`⚠️ Test Case created (ID: ${testcase_id}), but failed to add history. Status: ${historyResponse.status}`);
+            alert(`Test Case and Execution created, but failed to record history (Status: ${historyResponse.status}).`);
+            navigate(`/Dashboard?project_id=${projectId}`); // ยังคงนำทางไปหน้า Dashboard
+          }
+        } catch (historyError) {
+          // กรณีเกิด Error ตอนเรียก API เพิ่ม History
+          console.error("Error adding test case history:", historyError);
+          let historyErrorMessage = historyError.message;
+          if (historyError.response) {
+              // ถ้ามี response จาก server ให้ใช้ message จาก server ถ้ามี
+              historyErrorMessage = `Server responded with status ${historyError.response.status}: ${historyError.response.data?.message || historyErrorMessage}`;
+          }
+          alert(`Test Case and Execution created, but failed to record history. Error: ${historyErrorMessage}`);
+          navigate(`/Dashboard?project_id=${projectId}`); // ยังคงนำทางไปหน้า Dashboard
+        }
+
+      } else {
+         // กรณีสร้าง Test Case ไม่สำเร็จตั้งแต่แรก (response.status ไม่ใช่ 201)
+         // axios ปกติจะ throw error สำหรับ status ที่ไม่ใช่ 2xx
+         console.error("Failed to create test case, status:", response.status);
+         alert(`Failed to create test case. Status: ${response.status}`);
       }
     } catch (error) {
+      // กรณีเกิด Error ตอนเรียก API สร้าง Test Case
       console.error("Error creating test case:", error);
-      alert("Failed to create test case. Please try again.");
+      // ตรวจสอบว่าเป็น error จาก axios response หรือไม่ เพื่อแสดงข้อมูลที่เป็นประโยชน์มากขึ้น
+      if (error.response) {
+         alert(`Failed to create test case. Server responded with status ${error.response.status}: ${error.response.data?.message || 'No details'}`);
+      } else if (error.request) {
+         alert("Failed to create test case. No response received from server. Please check network or server status.");
+      } else {
+         alert(`Failed to create test case. Error: ${error.message}`);
+      }
     }
   };
   

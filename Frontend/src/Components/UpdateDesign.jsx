@@ -2,9 +2,27 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import Select from "react-select";
-import "./CSS/UpdateDesign.css";
+import "./CSS/UpdateDesign.css"; // Make sure this CSS file exists and is styled appropriately
 import Swal from "sweetalert2";
-import CreateDiagram from "./CreateDiagram"; // Assume CreateDiagram can accept initial data
+import CreateDiagram from "./CreateDiagram"; // Assume CreateDiagram can accept initial data and has necessary methods like saveDiagram and hasUnsavedChanges
+
+// Helper function to format file size (Optional, but good practice)
+const formatFileSize = (bytes) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+};
+
+// Helper function to check if a filename likely represents an image (Optional)
+const isImageFile = (filename) => {
+    if (!filename) return false;
+    const imageExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.bmp', '.ico'];
+    const lowerCaseFilename = filename.toLowerCase();
+    return imageExtensions.some(ext => lowerCaseFilename.endsWith(ext));
+};
+
 
 const UpdateDesign = () => {
     const navigate = useNavigate();
@@ -19,258 +37,241 @@ const UpdateDesign = () => {
         design_type: "",
         diagram_type: "",
         design_description: "",
-        requirement_id: [],
-        design_status: "WORKING", // Default status
+        requirement_id: [], // Array of numbers
+        design_status: "WORKING",
     });
     const [baselineRequirements, setBaselineRequirements] = useState([]);
-    const [loading, setLoading] = useState(true); // Combined loading state
+    const [loading, setLoading] = useState(true);
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [filePreviews, setFilePreviews] = useState([]);
     const [existingFiles, setExistingFiles] = useState([]);
-    const [initialDesignData, setInitialDesignData] = useState(null); // For comparison
-    // --- State for Diagram Data ---
-    const [diagramElements, setDiagramElements] = useState(null); // Initialize as null
+    const [initialDesignData, setInitialDesignData] = useState(null);
+    const [diagramElements, setDiagramElements] = useState(null);
 
-    const diagramRef = useRef(null); // Ref for CreateDiagram
+    const diagramRef = useRef(null); // Ref for CreateDiagram component
 
     // --- Effect for Initial Data Fetching ---
     useEffect(() => {
-        // Reset states on ID change
         setLoading(true);
+        // Reset state...
         setDesignData({ diagram_name: "", design_type: "", diagram_type: "", design_description: "", requirement_id: [], design_status: "WORKING"});
         setInitialDesignData(null);
         setBaselineRequirements([]);
         setExistingFiles([]);
         setSelectedFiles([]);
         setFilePreviews([]);
-        setDiagramElements(null); // Reset diagram data
+        setDiagramElements(null);
 
         if (!designId || !projectId) {
-            console.error("Missing designId or projectId");
+            console.error("Missing designId or projectId in URL");
             Swal.fire("Error", "ไม่พบ Design ID หรือ Project ID ใน URL", "error");
             setLoading(false);
-            navigate("/"); // Navigate to a safe page
+            navigate("/"); // Or appropriate error/dashboard page
             return;
         }
+         console.log(`Initial Fetch - Project ID: ${projectId}, Design ID: ${designId}`);
+
 
         // --- Fetch Functions ---
         const fetchDesign = async () => {
-            // Ensure necessary IDs are present (usually checked in useEffect before calling)
-            if (!projectId || !designId) {
-                console.error("[fetchDesign] Error: Missing projectId or designId.");
-                Swal.fire("Error", "ไม่พบ Project ID หรือ Design ID ที่จำเป็น", "error");
-                // Optional: Navigate back if called directly and IDs are missing
-                // navigate(`/Dashboard?project_id=${projectId || ''}`, { state: { selectedSection: "Design" } });
-                return false; // Indicate failure
-            }
-    
+            // Guard clause already checked projectId and designId
             const apiUrl = `http://localhost:3001/designedit`;
             const params = { project_id: projectId, design_id: designId };
-            console.log(`[fetchDesign] Fetching design data from ${apiUrl} with params:`, params);
-    
+            console.log(`[fetchDesign] Fetching from ${apiUrl} with params:`, params);
             try {
                 const response = await axios.get(apiUrl, { params });
-                console.log("[fetchDesign] Raw response data:", response.data);
-    
-                // Check if data received is an array and has at least one row
+                console.log("[fetchDesign] Raw response:", response.data);
                 if (response.data && Array.isArray(response.data) && response.data.length > 0) {
-    
-                    // Since the JOIN might return multiple rows for the same design (one per file),
-                    // we take the core design details from the first row.
                     const firstRow = response.data[0];
-    
-                    // --- Process Core Design Details ---
-                    const fetchedRequirementId = firstRow.requirement_id; // Get the single integer ID
-    
-                    // Prepare the data for the state update
+                    const fetchedReqIdString = firstRow.requirement_id;
+                    let parsedReqIds = [];
+                    if (fetchedReqIdString) {
+                        try {
+                            const parsed = JSON.parse(fetchedReqIdString);
+                            if (Array.isArray(parsed)) {
+                                parsedReqIds = parsed.map(id => Number(id)).filter(id => !isNaN(id));
+                            } else { console.warn("requirement_id from DB not JSON array:", fetchedReqIdString); }
+                        } catch (e) { console.error("Error parsing requirement_id JSON:", e); }
+                    }
+
                     const currentData = {
                         diagram_name: firstRow.diagram_name || "",
                         design_type: firstRow.design_type || "",
                         diagram_type: firstRow.diagram_type || "",
                         design_description: firstRow.design_description || "",
-                        // IMPORTANT: Adapt the single ID to an array for the state,
-                        // because the Select component/handler seems set up for multi-select state.
-                        requirement_id: (fetchedRequirementId !== null && fetchedRequirementId !== undefined) ? [fetchedRequirementId] : [],
+                        requirement_id: parsedReqIds,
                         design_status: firstRow.design_status || "WORKING",
                     };
-                    console.log("[fetchDesign] Setting designData state:", currentData);
+                    console.log("[fetchDesign] Setting designData:", currentData);
                     setDesignData(currentData);
-    
-                    // Create a deep copy for initial state comparison after setting state
-                    const initialDataCopy = JSON.parse(JSON.stringify(currentData));
-                     console.log("[fetchDesign] Setting initialDesignData state:", initialDataCopy);
-                    setInitialDesignData(initialDataCopy);
-    
-    
-                    // --- Process Files ---
-                    // Use a Map to collect unique files, as each row might duplicate design info but have different file info
+                    setInitialDesignData(JSON.parse(JSON.stringify(currentData))); // Deep copy
+
+                    // Process Files - Construct displayUrl assuming backend route exists
                     const filesMap = new Map();
                     response.data.forEach(row => {
-                        // Check if file data exists in the current row (it might be null due to LEFT JOIN)
-                        if (row.file_design_id !== null && row.file_design_id !== undefined) {
-                            // Add file to map only if it's not already there
+                        if (row.file_design_id != null) {
                             if (!filesMap.has(row.file_design_id)) {
+                                const fileUrl = `http://localhost:3001/files/design/${row.file_design_id}`; // ADJUST ROUTE IF NEEDED
                                 filesMap.set(row.file_design_id, {
-                                    // Map backend fields to frontend state fields if names differ
                                     file_design_id: row.file_design_id,
-                                    file_design_data: row.file_design_data, // This might be buffer data - handle appropriately for display (e.g., create URLs or use metadata)
-                                    file_design_name: row.file_design_name || `File_${row.file_design_id}`, // Attempt to get name or generate one
-                                    create_at: row.file_created_at, // Match backend alias
-                                    update_at: row.file_updated_at, // Match backend alias
-                                    // uploaded_at: row.uploaded_at // Include if needed
+                                    file_url: fileUrl,
+                                    file_design_name: row.file_design_name || `File_${row.file_design_id}`,
+                                    create_at: row.file_created_at,
+                                    update_at: row.file_updated_at,
                                 });
                             }
                         }
                     });
-                    // Convert the map values back to an array for the state
                     const fetchedFiles = Array.from(filesMap.values());
-                    console.log("[fetchDesign] Setting existingFiles state with fetched files:", fetchedFiles);
+                    console.log("[fetchDesign] Setting existingFiles:", fetchedFiles);
                     setExistingFiles(fetchedFiles);
-    
-                    return true; // Indicate success
-    
+                    return true;
                 } else {
-                     // Handle case where no data is returned for the given IDs
-                    console.warn(`[fetchDesign] No design data found for project_id: ${projectId}, design_id: ${designId}`);
+                    console.warn("No design data found for ID:", designId);
                     Swal.fire("ไม่พบข้อมูล", `ไม่พบข้อมูล Design สำหรับ ID: ${designId}`, "warning");
-                    navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } }); // Navigate back
-                    return false; // Indicate failure
+                    navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } });
+                    return false;
                 }
             } catch (error) {
-                 // Handle network or other errors during the fetch
-                console.error("[fetchDesign] Error fetching design data:", error.response?.data || error.message || error);
-                Swal.fire("เกิดข้อผิดพลาด", "ไม่สามารถโหลดข้อมูล Design ได้ (ดู Console สำหรับรายละเอียด)", "error");
-                 // It might be good practice to reset related states or navigate back on critical errors
-                 // setInitialDesignData(null); // Prevent potential comparison issues
-                 // setDesignData({...}); // Reset to default
-                 // setExistingFiles([]);
-                return false; // Indicate failure
+                console.error("[fetchDesign] Error fetching:", error.response?.data || error.message);
+                Swal.fire("เกิดข้อผิดพลาด", "ไม่สามารถโหลดข้อมูล Design ได้", "error");
+                return false;
             }
         };
 
         const fetchRequirements = async () => {
-             if (!projectId) return; // Guard clause
+            if (!projectId) return;
             try {
                 const response = await axios.get(`http://localhost:3001/project/${projectId}/requirement`);
                 const baselineReqs = response.data.filter(req => req.requirement_status === 'BASELINE');
                 setBaselineRequirements(baselineReqs);
+                console.log("[fetchRequirements] Baseline requirements loaded:", baselineReqs.length);
             } catch (error) {
                 console.error("Error fetching requirements:", error);
-                // Potentially notify user, but maybe non-critical
             }
         };
 
-        const fetchFiles = async () => {
-             if (!designId) return; // Guard clause
+        const fetchDiagramData = async () => {
+            if (!designId) return;
             try {
-                const response = await axios.get(`http://localhost:3001/design/${designId}/files`);
-                setExistingFiles(response.data);
+                console.log(`Workspaceing diagram data for design ID: ${designId}`);
+                // Adjust API endpoint if needed
+                const response = await axios.get(`http://localhost:3001/api/diagrams/design/${designId}`);
+                // --- เพิ่ม LOGS ---
+                console.log(">>> Diagram data RAW response:", response);
+                console.log(">>> Diagram data response.data:", response.data);
+                // --- สิ้นสุด LOGS ---
+        
+                let elementsData = null;
+                // Adjust based on the actual structure of your response data
+                if (response.data && Array.isArray(response.data.elements)) { // ถ้า backend ส่ง { elements: [...] }
+                    elementsData = response.data.elements;
+                     console.log(">>> Extracted elements (from response.data.elements):", elementsData);
+                } else if (response.data && Array.isArray(response.data)) { // ถ้า backend ส่ง [...] โดยตรง
+                    elementsData = response.data;
+                     console.log(">>> Extracted elements (from response.data directly):", elementsData);
+                } else {
+                     console.warn("Diagram data received but not in expected array format:", response.data);
+                     elementsData = []; // Default to empty array if format is wrong
+                }
+        
+                if (elementsData && elementsData.length > 0) {
+                     console.log(">>> Setting diagramElements state with fetched data.");
+                } else {
+                     console.log(">>> Setting diagramElements state to empty array (no elements returned or format issue).");
+                }
+                // Ensure state is always an array, default to empty if null/undefined
+                setDiagramElements(elementsData || []);
+        
             } catch (error) {
-                console.error("Error fetching files:", error);
-                 // Maybe show a warning that files couldn't be loaded
+                 if (error.response && error.response.status === 404) {
+                    console.log(`No diagram found for design ID: ${designId}. Setting empty array.`);
+                    setDiagramElements([]); // Important: Set empty array on 404
+                } else {
+                    console.error("Error fetching diagram data:", error.response || error);
+                    Swal.fire("Warning", "ไม่สามารถโหลดข้อมูล Diagram ได้", "warning");
+                    setDiagramElements('error'); // Indicate error state
+                }
             }
         };
 
-        // --- Run all fetch operations ---
         const fetchAllData = async () => {
             setLoading(true);
             try {
-                 // Fetch design first
                 const designFetched = await fetchDesign();
-
-                // Only fetch related data if design was found
                 if (designFetched) {
-                     await Promise.all([
-                        fetchRequirements(),
-                        fetchFiles(),
-                        fetchDiagramData() // Fetch diagram data too
-                    ]);
+                    await Promise.all([fetchRequirements(), fetchDiagramData()]);
                 } else {
-                     // Handle the case where the design itself wasn't found (already navigated back)
-                    console.log("Skipping related data fetch because design was not found.");
+                    console.log("Skipping related data fetch because design fetch failed.");
                 }
             } catch (error) {
                 console.error("Error during initial data fetching:", error);
-                 // A general error might occur in Promise.all
-                 Swal.fire("Error", "เกิดข้อผิดพลาดในการโหลดข้อมูลเริ่มต้น", "error");
+                Swal.fire("Error", "เกิดข้อผิดพลาดในการโหลดข้อมูลเริ่มต้น", "error");
             } finally {
-                setLoading(false); // Ensure loading is always set to false
+                setLoading(false);
             }
         };
 
         fetchAllData();
 
-    }, [designId, projectId, navigate]); // Dependencies for the effect
+    }, [designId, projectId, navigate]); // Dependencies
 
     // --- Check if Data is Unchanged ---
     const isDataUnchanged = !initialDesignData || (
         designData.diagram_name === initialDesignData.diagram_name &&
         designData.design_type === initialDesignData.design_type &&
         designData.diagram_type === initialDesignData.diagram_type &&
-        designData.design_description === initialDesignData.description &&
-        // Compare requirement arrays properly (sort and stringify)
-        JSON.stringify([...(designData.requirement_id || [])].sort()) === JSON.stringify([...(initialDesignData.requirement_id || [])].sort()) &&
-        selectedFiles.length === 0
-        // Note: Diagram changes need separate handling via CreateDiagram's state/props/save logic
+        designData.design_description === initialDesignData.design_description &&
+        JSON.stringify([...(designData.requirement_id || [])].sort()) === JSON.stringify([...(initialDesignData.requirement_id || [])].sort())
     );
 
-    const fetchDiagramData = async () => {
-        if (!designId) return;
-        try {
-            console.log(`Workspaceing diagram data for design ID: ${designId}`); // แก้ Typo "Workspaceing" ด้วยก็ดีครับ
-            const response = await axios.get(`http://localhost:3001/api/diagrams/design/${designId}`);
-            console.log("Diagram data response:", response.data);
-            if (response.data && Array.isArray(response.data.elements)) {
-                setDiagramElements(response.data.elements);
-            } else {
-                setDiagramElements([]);
-            }
-        } catch (error) {
-            console.error("Error fetching diagram data:", error.response || error);
-            Swal.fire("Warning", "ไม่สามารถโหลดข้อมูล Diagram ได้", "warning");
-            setDiagramElements([]);
-        }
-    };
-     // --- Update Handler ---
-     const handleUpdate = async (e) => {
+    // --- Update Handler ---
+    const handleUpdate = async (e) => {
         e.preventDefault();
-    
+
         if (!initialDesignData) {
             Swal.fire("Error", "ข้อมูลเริ่มต้นยังไม่ถูกโหลด กรุณารอสักครู่", "error");
             return;
         }
-    
-        // ตรวจสอบข้อมูลที่ต้องมี
+
         const isDataFilled =
             designData.diagram_name.trim() &&
             designData.design_type &&
             designData.diagram_type &&
             designData.design_description.trim() &&
-            designData.requirement_id && designData.requirement_id.length > 0;
-    
+            (designData.requirement_id === null || (Array.isArray(designData.requirement_id) && designData.requirement_id.length > 0));
+
         if (!isDataFilled) {
-            Swal.fire("ข้อมูลไม่ครบถ้วน", "กรุณากรอกข้อมูลในช่องที่มีเครื่องหมาย * ให้ครบ", "warning");
+            Swal.fire("ข้อมูลไม่ครบถ้วน", "กรุณากรอกข้อมูลในช่องที่มีเครื่องหมาย * ให้ครบ (รวมถึง Requirements)", "warning");
             return;
         }
-    
-        // เช็คการเปลี่ยนแปลง
+
         let diagramHasChanged = false;
-        if (diagramRef.current && typeof diagramRef.current.hasUnsavedChanges === 'function') {
-            diagramHasChanged = diagramRef.current.hasUnsavedChanges();
+        try {
+            if (diagramRef.current && typeof diagramRef.current.hasUnsavedChanges === 'function') {
+                diagramHasChanged = diagramRef.current.hasUnsavedChanges();
+                console.log("Diagram has unsaved changes:", diagramHasChanged);
+            } else {
+                 console.warn("Cannot check diagram changes: Ref or method not available.");
+            }
+        } catch (err) {
+            console.error("Error checking diagram changes:", err);
+            Swal.fire("Warning", "Could not determine if diagram has changes.", "warning");
         }
-    
-        if (isDataUnchanged && !diagramHasChanged) {
+
+        const hasNewFiles = selectedFiles.length > 0;
+        // Check if anything actually changed before proceeding
+        if (isDataUnchanged && !diagramHasChanged && !hasNewFiles) {
             Swal.fire({ text: "ไม่มีการแก้ไขข้อมูล", icon: "info", timer: 1500, showConfirmButton: false });
             return;
         }
-    
-        // ถ้าสถานะเป็น BASELINE -> เปลี่ยนเป็น WORKING
+
         let newStatus = designData.design_status;
-        if (initialDesignData.design_status === "BASELINE") {
+        if (initialDesignData.design_status === "BASELINE" && (!isDataUnchanged || diagramHasChanged || hasNewFiles)) {
             newStatus = "WORKING";
+            console.log("Status changed from BASELINE to WORKING due to modifications.");
         }
-    
-        // ยืนยันการอัปเดต
+
         const confirmResult = await Swal.fire({
             title: "ยืนยันการอัปเดต",
             text: "ต้องการอัปเดตข้อมูลนี้หรือไม่?",
@@ -279,256 +280,295 @@ const UpdateDesign = () => {
             confirmButtonText: "ตกลง",
             cancelButtonText: "ยกเลิก",
         });
-    
         if (!confirmResult.isConfirmed) return;
-    
+
         Swal.fire({ title: 'กำลังอัปเดต...', text: 'กรุณารอสักครู่', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-    
+
         try {
-            // ถ้ามีการเปลี่ยนแปลง Diagram ให้บันทึกก่อน
-            if (diagramRef.current && typeof diagramRef.current.saveDiagram === 'function') {
+            // STEP 1: Save Diagram Changes (if any)
+            if (diagramHasChanged && diagramRef.current && typeof diagramRef.current.saveDiagram === 'function') {
+                console.log("Attempting to save diagram...");
+                 // *** This is where the error originates if designId is missing/invalid INSIDE CreateDiagram ***
                 await diagramRef.current.saveDiagram();
+                console.log("✅ Diagram saved successfully.");
+            } else {
+                 console.log("Skipping diagram save (no changes or function unavailable).");
             }
-    
-            // 📌 ตรวจสอบค่า requirement_id ก่อนส่ง API
-            const updatedData = { 
-                ...designData, 
-                requirement_id: designData.requirement_id ? Number(designData.requirement_id) : null, 
-                design_status: newStatus 
-            };
-    
-            // ตรวจสอบว่า designId ถูกต้องหรือไม่
-            if (!designId) {
-                Swal.fire("Error", "Design ID ไม่ถูกต้อง", "error");
-                return;
+
+            // STEP 2: Update Design Metadata (if changed)
+            if (!isDataUnchanged || newStatus !== initialDesignData.design_status) {
+                console.log("Attempting to update design metadata...");
+                const metadataPayload = {
+                    project_id: projectId,
+                    diagram_name: designData.diagram_name,
+                    design_type: designData.design_type,
+                    diagram_type: designData.diagram_type,
+                    design_description: designData.design_description,
+                    // Send Array or null (ensure backend PUT expects this format)
+                    requirement_id: designData.requirement_id && designData.requirement_id.length > 0
+                        ? designData.requirement_id
+                        : null,
+                    design_status: newStatus
+                };
+                if (!designId) throw new Error("Design ID is invalid before sending metadata.");
+                console.log("📤 Sending metadata to API:", metadataPayload);
+                await axios.put(`http://localhost:3001/design/${designId}`, metadataPayload);
+                console.log("✅ Design metadata updated successfully.");
+            } else {
+                console.log("Metadata unchanged, skipping metadata update call.");
             }
-    
-            console.log("📤 ส่งข้อมูลไป API:", updatedData);
-    
-            // อัปเดตข้อมูล
-            await axios.put(`http://localhost:3001/design/${designId}`, updatedData);
-    
+
+            // STEP 3: Upload New Files (if any)
+            if (hasNewFiles) {
+                console.log("Attempting to upload new files...");
+                if (!designId || !projectId) throw new Error("Cannot upload files: Missing designId or projectId.");
+
+                const formData = new FormData();
+                selectedFiles.forEach(file => formData.append("files", file));
+                formData.append("design_id", designId);
+                formData.append("project_id", projectId);
+
+                try {
+                    console.log("📤 Sending files to API:", { designId, projectId, fileCount: selectedFiles.length });
+                    await axios.post("http://localhost:3001/uploadDesignFiles", formData, {
+                        headers: { "Content-Type": "multipart/form-data" },
+                    });
+                    console.log("✅ New files uploaded successfully via API.");
+                    setSelectedFiles([]);
+                    setFilePreviews([]);
+                    // TODO: Consider re-fetching existing files here if needed immediately
+                    // await fetchDesign(); // Or a lighter fetchFiles if available
+                } catch (uploadError) {
+                    console.error("❌ Error during file upload POST request:", uploadError.response?.data || uploadError.message || uploadError);
+                    const uploadErrorMessage = uploadError.response?.data?.message || "A problem occurred while uploading files.";
+                    throw new Error(uploadErrorMessage); // Re-throw to be caught by outer catch
+                }
+            } else {
+                console.log("No new files selected for upload.");
+            }
+
+            // If all steps successful
+            Swal.close();
             Swal.fire({ title: "อัปเดตสำเร็จ!", icon: "success", timer: 1500, showConfirmButton: false })
-                .then(() => navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } }));
-    
-        } catch (error) {
-            Swal.fire("Update Failed", error.response?.data?.message || "เกิดข้อผิดพลาดระหว่างการอัปเดต", "error");
-            console.error("❌ Error during update:", error);
-        }
-    };
-    
-    // --- Helper: Update Design Metadata ---
-    const updateDesignMetadata = async (statusToSend) => {
-        if (!designId || !projectId) throw new Error("Missing ID for metadata update");
-        try {
-            await axios.put(`http://localhost:3001/design/${designId}`, {
-                project_id: projectId, // Make sure backend expects/uses this
-                diagram_name: designData.diagram_name,
-                design_type: designData.design_type,
-                diagram_type: designData.diagram_type,
-                design_description: designData.design_description,
-                // Send requirement_id as JSON string (adjust if backend expects array directly)
-                 requirement_id: JSON.stringify(designData.requirement_id || []),
-                design_status: statusToSend,
-            });
-             console.log("Design metadata updated successfully.");
-             // Update initial data state to prevent "unsaved changes" warning after save
-             setInitialDesignData(JSON.parse(JSON.stringify({...designData, design_status: statusToSend})));
-        } catch (error) {
-            console.error("Error updating design metadata:", error.response?.data || error.message);
-            throw new Error("ไม่สามารถอัปเดตข้อมูลหลักของ Design ได้");
-        }
-    };
+                .then(() => {
+                    navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } });
+                });
 
-    // --- Helper: Upload New Files ---
-    const uploadNewFiles = async () => {
-         if (selectedFiles.length === 0 || !designId) return;
-        const formData = new FormData();
-        selectedFiles.forEach(file => formData.append("files", file));
-        formData.append("design_id", designId); // Ensure backend uses this ID
-
-        try {
-            await axios.post("http://localhost:3001/uploadDesignFiles", formData, {
-                headers: { "Content-Type": "multipart/form-data" },
-            });
-            console.log("New files uploaded successfully.");
-            setSelectedFiles([]); // Clear the selection
-            setFilePreviews([]); // Clear previews
-        } catch (error) {
-            console.error("Error uploading new files:", error.response?.data || error.message);
-            throw new Error("ไม่สามารถอัปโหลดไฟล์ใหม่ได้");
+        } catch (error) { // Outer catch for all steps
+            Swal.close();
+            // error.message should contain the specific reason (from diagram save, metadata update, or file upload)
+            const errorMessage = error.message || "เกิดข้อผิดพลาดระหว่างการอัปเดต";
+            Swal.fire("Update Failed", errorMessage, "error");
+            console.error("❌ Error during update process in handleUpdate:", error); // Log the actual error object
         }
-    };
+    }; // End handleUpdate
 
     // --- Form Input Handlers ---
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setDesignData(prevData => ({ ...prevData, [name]: value }));
+        setDesignData(prev => ({ ...prev, [name]: value }));
     };
 
     const handleRequirementChange = (selectedOptions) => {
-        setDesignData(prevData => ({
-            ...prevData,
-            requirement_id: selectedOptions ? selectedOptions.map(option => option.value) : [],
+        setDesignData(prev => ({
+            ...prev,
+            requirement_id: selectedOptions ? selectedOptions.map(option => option.value) : [], // Store array of numbers
         }));
     };
 
     const handleFileChange = (e) => {
         const files = Array.from(e.target.files);
-        // Basic validation example (add more as needed)
-        const validFiles = files.filter(file => file.size < 5 * 1024 * 1024); // Max 5MB example
-        if (validFiles.length !== files.length) {
-            Swal.fire("Warning", "มีบางไฟล์ขนาดใหญ่เกิน 5MB และจะไม่ถูกเพิ่ม", "warning");
+        const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+        const currentFileNames = new Set([...selectedFiles.map(f => f.name), ...existingFiles.map(f => f.file_design_name)]);
+        const validFiles = [];
+        const oversizedFiles = [];
+        const duplicateFiles = [];
+
+        files.forEach(file => {
+            if (currentFileNames.has(file.name)) {
+                duplicateFiles.push(file.name);
+            } else if (file.size > MAX_SIZE) {
+                oversizedFiles.push(file.name);
+            } else {
+                validFiles.push(file);
+                currentFileNames.add(file.name); // Add to set for checks within same selection
+            }
+        });
+
+         if (oversizedFiles.length > 0) {
+            Swal.fire("Warning", `ไฟล์ต่อไปนี้มีขนาดใหญ่เกิน 5MB และจะไม่ถูกเพิ่ม: ${oversizedFiles.join(', ')}`, "warning");
         }
+        if (duplicateFiles.length > 0) {
+             Swal.fire("Warning", `ไฟล์ต่อไปนี้มีชื่อซ้ำกับไฟล์ที่มีอยู่หรือไฟล์ที่เลือกแล้ว และจะไม่ถูกเพิ่ม: ${duplicateFiles.join(', ')}`, "warning");
+        }
+
 
         setSelectedFiles(prev => [...prev, ...validFiles]);
 
         const newPreviews = validFiles.map(file => {
-            if (file.type.startsWith('image/')) {
-                return { url: URL.createObjectURL(file), type: 'image', name: file.name, size: file.size };
-            }
-            return { url: null, type: 'other', name: file.name, size: file.size }; // Placeholder for non-images
+            const previewUrl = file.type.startsWith('image/') ? URL.createObjectURL(file) : null;
+            return { url: previewUrl, type: file.type.startsWith('image/') ? 'image' : 'other', name: file.name, size: file.size };
         });
         setFilePreviews(prev => [...prev, ...newPreviews]);
+
+        e.target.value = null; // Allow re-selecting the same file if removed
     };
 
     const handleRemoveSelectedFile = (indexToRemove) => {
         const previewToRemove = filePreviews[indexToRemove];
         if (previewToRemove?.type === 'image' && previewToRemove.url) {
-            URL.revokeObjectURL(previewToRemove.url); // Free memory
+            URL.revokeObjectURL(previewToRemove.url);
         }
         setSelectedFiles(prev => prev.filter((_, i) => i !== indexToRemove));
         setFilePreviews(prev => prev.filter((_, i) => i !== indexToRemove));
     };
 
     const handleDeleteFile = async (fileIdToDelete) => {
-         if (!fileIdToDelete) {
-             console.error("Attempted to delete file with undefined ID.");
-             return;
-         }
-         const confirmResult = await Swal.fire({
-            title: 'ต้องการลบไฟล์นี้?',
+        if (!fileIdToDelete) return;
+
+        const fileToDelete = existingFiles.find(f => f.file_design_id === fileIdToDelete);
+        const fileName = fileToDelete ? fileToDelete.file_design_name : `File ID ${fileIdToDelete}`;
+
+        const confirmResult = await Swal.fire({
+            title: `ต้องการลบไฟล์ "${fileName}"?`,
             text: "การดำเนินการนี้ไม่สามารถย้อนกลับได้!",
             icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33', cancelButtonColor: '#3085d6',
+            showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#3085d6',
             confirmButtonText: 'ใช่, ลบเลย!', cancelButtonText: 'ยกเลิก'
         });
-
         if (!confirmResult.isConfirmed) return;
 
+        Swal.fire({ title: 'กำลังลบไฟล์...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
         try {
+            // ADJUST DELETE API ENDPOINT AS NEEDED
             await axios.delete(`http://localhost:3001/design/file/${fileIdToDelete}`);
             setExistingFiles(prev => prev.filter(file => file.file_design_id !== fileIdToDelete));
             Swal.fire({ icon: "success", title: "ลบไฟล์สำเร็จ", timer: 1500, showConfirmButton: false });
         } catch (error) {
             console.error("Error deleting file:", error.response?.data || error.message);
-            Swal.fire("Error", "เกิดข้อผิดพลาดในการลบไฟล์", "error");
+            Swal.fire("Error", `เกิดข้อผิดพลาดในการลบไฟล์: ${error.response?.data?.message || error.message}`, "error");
         }
     };
 
     // --- Prepare data for React-Select ---
     const requirementOptions = baselineRequirements.map(req => ({
         value: req.requirement_id,
-        label: `REQ-${String(req.requirement_id).padStart(3, '0')}: ${req.requirement_name}`, // Improved formatting
+        label: `REQ-${String(req.requirement_id).padStart(3, '0')}: ${req.requirement_name}`,
     }));
+
     const selectedRequirementValues = requirementOptions.filter(option =>
         Array.isArray(designData.requirement_id) && designData.requirement_id.includes(option.value)
     );
 
     // --- Render Logic ---
+    console.log("--- Rendering UpdateDesign ---"); // Log when component renders
+    console.log("Current designId state for rendering:", designId); // Check ID before render
+    console.log("Diagram Elements state for rendering:", diagramElements); // Check diagram data
+
     return (
         <div className="update-design-container">
-            <h1 className="update-design-title">Update Design (ID: {designId})</h1>
+            <h1 className="update-design-title">Update Design (ID: {designId || 'N/A'})</h1>
 
             {loading ? (
-                <div className="loading-indicator">Loading...</div> // Simple loading text
+                <div className="loading-indicator">Loading...</div>
             ) : !initialDesignData ? (
-                 // Display when design fetch failed or ID was invalid leading to no data
-                 <div className="error-container">
+                <div className="error-container">
                     <p>ไม่สามารถโหลดข้อมูล Design ได้ หรือ Design ID ไม่ถูกต้อง</p>
                     <button onClick={() => navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } })}>
                         กลับหน้า Dashboard
                     </button>
-                 </div>
+                </div>
             ) : (
-                 // --- Main Form ---
                 <form className="update-design-form" onSubmit={handleUpdate} noValidate>
                     {/* Metadata Fields */}
-                     <fieldset>
-                       <legend>Design Details</legend>
-                        <label className="update-design-label">
+                    <fieldset>
+                        <legend>Design Details</legend>
+                        {/* Input fields for diagram_name, design_type, diagram_type, requirements, description */}
+                          <label className="update-design-label">
                             Diagram Name: <span className="required-star">*</span>
-                            <input /* ... props ... */ className="update-design-input" type="text" name="diagram_name" value={designData.diagram_name} onChange={handleChange} required />
-                        </label>
-                        <label className="update-design-label">
-                            Design Type: <span className="required-star">*</span>
-                            <select /* ... props ... */ className="update-design-select" name="design_type" value={designData.design_type} onChange={handleChange} required>
+                            <input className="update-design-input" type="text" name="diagram_name" value={designData.diagram_name} onChange={handleChange} required />
+                          </label>
+                          <label className="update-design-label">
+                             Design Type: <span className="required-star">*</span>
+                             <select className="update-design-select" name="design_type" value={designData.design_type} onChange={handleChange} required>
+                                 <option value="" disabled>Select...</option>
+                                 <option value="High-Level Design">High-Level Design</option>
+                                 <option value="Low-Level Design">Low-Level Design</option>
+                             </select>
+                           </label>
+                            <label className="update-design-label">
+                             Diagram Type: <span className="required-star">*</span>
+                             <select className="update-design-select" name="diagram_type" value={designData.diagram_type} onChange={handleChange} required >
                                 <option value="" disabled>Select...</option>
-                                <option value="High-Level Design">High-Level Design</option>
-                                <option value="Low-Level Design">Low-Level Design</option>
+                                <option value="Prototype">Prototype</option>
+                                <option value="Flow Chart">Flow Chart</option>
+                                <option value="ER Diagram">ER Diagram</option>
+                                <option value="Pseudo Code">Pseudo Code</option>
+                                <option value="Use Case Diagram">Use Case Diagram</option>
+                                <option value="Sequence Diagram">Sequence Diagram</option>
+                                <option value="Other">Other</option>
                             </select>
-                        </label>
-                         <label className="update-design-label">
-                            Diagram Type: <span className="required-star">*</span>
-                            <select /* ... props ... */ className="update-design-select" name="diagram_type" value={designData.diagram_type} onChange={handleChange} required >
-                               <option value="" disabled>Select...</option>
-                               <option value="Prototype">Prototype</option>
-                               <option value="Flow Chart">Flow Chart</option>
-                               <option value="ER Diagram">ER Diagram</option>
-                               <option value="Pseudo Code">Pseudo Code</option>
-                               <option value="Use Case Diagram">Use Case Diagram</option>
-                               <option value="Sequence Diagram">Sequence Diagram</option>
-                               <option value="Other">Other</option>
-                           </select>
-                       </label>
-                       <label className="update-design-label">
-                           Requirements: <span className="required-star">*</span>
-                           <Select
-                               isMulti options={requirementOptions} value={selectedRequirementValues}
-                               onChange={handleRequirementChange} classNamePrefix="react-select"
-                               placeholder="Select linked requirements..."
-                               noOptionsMessage={() => 'No baseline requirements found'}
-                           />
-                       </label>
-                       <label className="update-design-label">
-                           Design Description: <span className="required-star">*</span>
-                           <textarea /* ... props ... */ className="update-design-textarea" name="design_description" value={designData.design_description} onChange={handleChange} required rows={5}/>
-                       </label>
-                   </fieldset>
-
+                            </label>
+                            <label className="update-design-label">
+                                Requirements: <span className="required-star">*</span>
+                                <Select
+                                    isMulti
+                                    options={requirementOptions}
+                                    value={selectedRequirementValues}
+                                    onChange={handleRequirementChange}
+                                    className="react-select-container"
+                                    classNamePrefix="react-select"
+                                    placeholder="Select linked requirements..."
+                                    noOptionsMessage={() => 'No baseline requirements found'}
+                                />
+                            </label>
+                            <label className="update-design-label">
+                                Design Description: <span className="required-star">*</span>
+                                <textarea className="update-design-textarea" name="design_description" value={designData.design_description} onChange={handleChange} required rows={5}/>
+                            </label>
+                    </fieldset>
 
                     {/* File Management Section */}
                     <fieldset>
                         <legend>Attached Files</legend>
-                        {/* Existing Files */}
+                        {/* Existing Files Display */}
                         <div className="existing-files-section">
-                            <h3>Existing Files:</h3>
+                           <h3>Existing Files:</h3>
                             {existingFiles.length > 0 ? (
                                 <ul className="file-list existing-files-list">
-                                    {existingFiles.map((file) => (
-                                        <li key={file.file_design_id} className="file-item">
-                                            <img src={file.file_design_data} alt={file.file_design_name || `File ${file.file_design_id}`} className="file-thumbnail" onError={(e) => e.target.style.display='none'} /* Hide broken img */ />
-                                            <span className="file-name">{file.file_design_name || `File ID: ${file.file_design_id}`}</span>
-                                            <button type="button" className="delete-file-btn" onClick={() => handleDeleteFile(file.file_design_id)} title="Delete this file">❌</button>
-                                        </li>
-                                    ))}
+                                    {existingFiles.map((file) => {
+                                        const isImage = isImageFile(file.file_design_name);
+                                        const fileUrl = file.file_url; // Use pre-constructed URL
+                                        return (
+                                            <li key={file.file_design_id} className="file-item existing-file-item">
+                                                {isImage ? (
+                                                    <img src={fileUrl} alt={file.file_design_name} className="file-thumbnail" onError={(e) => { e.target.style.display = 'none'; /* Add placeholder or text */ }} />
+                                                ) : (
+                                                    <span className="file-icon" title={file.file_design_name}>📄</span>
+                                                )}
+                                                <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="file-name-link" title={`View/Download ${file.file_design_name}`}>
+                                                    <span className="file-name">{file.file_design_name || `File ID: ${file.file_design_id}`}</span>
+                                                </a>
+                                                <button type="button" className="delete-file-btn" onClick={() => handleDeleteFile(file.file_design_id)} title="Delete this file">❌</button>
+                                            </li>
+                                        );
+                                    })}
                                 </ul>
-                            ) : <p>No existing files.</p>}
+                             ) : <p>No existing files attached.</p>}
                         </div>
-                         {/* Upload New Files */}
-                         <label className="update-design-label update-design-label-file"> Add New Files:
-                            <input className="update-design-input-file" type="file" multiple onChange={handleFileChange} accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt" />
-                         </label>
-                         {/* Preview New Files */}
-                        {selectedFiles.length > 0 && (
-                             <div className="selected-files-section">
+                        {/* Upload New Files Input */}
+                        <label className="update-design-label update-design-label-file"> Add New Files:
+                             <input className="update-design-input-file" type="file" multiple onChange={handleFileChange} accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.ppt,.pptx,.zip,.rar" />
+                        </label>
+                        {/* Preview New Files */}
+                         {selectedFiles.length > 0 && (
+                            <div className="selected-files-section">
                                 <h4>Files Queued for Upload:</h4>
                                 <ul className="file-list selected-files-list">
                                     {filePreviews.map((preview, index) => (
                                         <li key={index} className="file-item">
-                                             {preview.type === 'image' && preview.url ? <img src={preview.url} alt={`Preview ${preview.name}`} className="file-thumbnail"/> : <span className="file-icon">📄</span>}
-                                             <span className="file-name">{preview.name} ({(preview.size / 1024).toFixed(1)} KB)</span>
+                                            {preview.type === 'image' && preview.url ? <img src={preview.url} alt={`Preview ${preview.name}`} className="file-thumbnail"/> : <span className="file-icon" title={preview.name}>📄</span>}
+                                            <span className="file-name">{preview.name} ({formatFileSize(preview.size)})</span>
                                             <button type="button" className="remove-selected-btn" onClick={() => handleRemoveSelectedFile(index)} title="Remove from upload queue">❌</button>
                                         </li>
                                     ))}
@@ -538,24 +578,29 @@ const UpdateDesign = () => {
                     </fieldset>
 
                     {/* Diagram Editor Section */}
-                     <fieldset>
-     <legend>Diagram Editor</legend>
-     {diagramElements === null ? (
-         <p>Loading diagram...</p>
-     ) : diagramElements === 'error' ? (
-         <p style={{color: 'red'}}>Could not load diagram data.</p>
-     ) : (
-        <CreateDiagram
-        ref={diagramRef}
-        designId={designId}
-        initialElements={diagramElements} // ส่งข้อมูล Diagram ที่ดึงมา
-    />
-     )}
- </fieldset>
+                    <fieldset>
+                        <legend>Diagram Editor</legend>
+                        {diagramElements === null && !loading ? (
+                            <p>Loading diagram...</p>
+                        ) : diagramElements === 'error' ? (
+                            <p style={{ color: 'red' }}>Could not load diagram data.</p>
+                        ) : diagramElements !== null ? (
+                            <>
+                                {/* ADDING LOG HERE */}
+                                {console.log("Rendering CreateDiagram with designId:", designId)}
+                                <CreateDiagram
+                                    ref={diagramRef}
+                                    designId={designId} // Check this value!
+                                    initialElements={diagramElements}
+                                    // Pass any other necessary props
+                                />
+                            </>
+                        ) : null /* Don't render if still loading */ }
+                    </fieldset>
 
                     {/* Action Buttons */}
                     <div className="update-design-buttons">
-                        <button type="button" className="update-design-btn-cancel" onClick={() => navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } })}>
+                        <button type="button" className="update-design-btn-cancel" onClick={() => navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } })} disabled={loading}>
                             Cancel
                         </button>
                         <button type="submit" className="update-design-btn" disabled={loading}>

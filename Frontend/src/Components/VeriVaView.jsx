@@ -91,7 +91,7 @@ const handleVarViewRequirement = (projectId, requirementId) => {
     setError("Missing required parameters to view validation details.");
   }
 };
-  
+
   const navigateBack = () => {
     navigate(`/Dashboard?project_id=${projectId}`, {
       state: { selectedSection: "Requirement" },
