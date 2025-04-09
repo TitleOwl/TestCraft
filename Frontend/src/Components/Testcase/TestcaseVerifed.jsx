@@ -64,7 +64,7 @@ const TestcaseVerifed = () => {
         return acc;
       }, {});
       setTestcasecriList(response.data);
-  
+
       const storedUsername = localStorage.getItem("username");
       if (storedUsername) {
         const storedCheckboxState = localStorage.getItem(
@@ -79,7 +79,7 @@ const TestcaseVerifed = () => {
     } finally {
       setLoading(false);
     }
-  };  
+  };
 
   const fetchTestcaseDetails = async () => {
     try {
@@ -115,100 +115,190 @@ const TestcaseVerifed = () => {
       return updatedState;
     });
   };
-  
-      const handleSave = async () => {
-          console.log("testcase_id:", testcaseId);
-  
-          if (!storedUsername) {
-              toast.warning("ข้อมูล reviewer ขาดหาย กรุณารีเฟรชหน้า");
-              return;
-          }
-  
-          // ✅ ตรวจสอบว่า checklist ทั้งหมดถูกเลือก
-          const allChecked = testcasecriList.every(criteria => checkboxState[criteria.testcasecri_id]);
-          if (!allChecked) {
-              toast.warning("บันทึกรายการตรวจสอบ Criteria แล้ว");
-              return;
-          }
-  
-          try {
-              // 1️⃣ ดึงข้อมูลปัจจุบันของ veritestcase
-              const { data } = await axios.get("http://localhost:3001/testcaseveri", {
-                  params: { project_id: projectId, veritestcase_id: veriTestcaseId },
-              });
-  
-              console.log("API Response Data:", data);
-              if (!data.length) {
-                  toast.error("ไม่พบข้อมูล veritestcase กรุณาตรวจสอบใหม่");
-                  return;
-              }
-  
-              const veritestcaseData = data[0];
-  
-              // 2️⃣ ตรวจสอบว่าข้อมูล reviewer มีอยู่แล้วหรือไม่
-              let currentVeritestcaseBy = veritestcaseData.veritestcase_by || {};
-  
-              // 3️⃣ อัปเดต reviewer โดยไม่ลบคนอื่น
-              const updatedVeritestcaseBy = { ...currentVeritestcaseBy, [storedUsername]: true };
-  
-              console.log("Updated veritestcase_by:", updatedVeritestcaseBy);
-  
-              // 4️⃣ ส่งข้อมูลอัปเดตไปยังเซิร์ฟเวอร์
-              const response = await axios.put("http://localhost:3001/update-veritestcase-by", {
-                  veritestcaseid: veriTestcaseId, // ✅ ต้องตรงกับ API
-                  veritestcaseby: updatedVeritestcaseBy, // ✅ ส่งเป็น Object ตรง ๆ
-              });
-  
-              console.log("📤 ส่งข้อมูลไปยัง API:", response.data);
-  
-              if (response.data.message.includes("ไม่พบข้อมูล")) {
-                  toast.error("ไม่พบข้อมูล veritestcase ID กรุณาตรวจสอบใหม่");
-                  return;
-              }
-  
-              // 5️⃣ ตรวจสอบว่า reviewer ทุกคนตรวจสอบครบหรือยัง
-              const { data: newData } = await axios.get("http://localhost:3001/testcaseveri", {
-                  params: { project_id: projectId, veritestcase_id: veriTestcaseId },
-              });
-  
-              console.log("Updated API Response Data:", newData);
-  
-              const allReviewed = newData[0].veritestcase_by &&
-                  Object.values(newData[0].veritestcase_by).every(status => status === true);
-  
-              console.log("All Reviewed:", allReviewed);
-  
-              if (!allReviewed) {
-                  toast.warning("ยังมี reviewer ที่ยังไม่ได้ทำการตรวจสอบ");
-                  return;
-              }
-  
-              const testcaseIdsArray = testcaseId.split(",").map(id => id.trim());
-              if (testcaseIdsArray.length === 0) {
-                  toast.error("ไม่พบข้อมูล testcase ID กรุณาตรวจสอบใหม่");
-                  return;
-              }
-  
-              // 6️⃣ ถ้า reviewer ทุกคนตรวจสอบแล้ว อัปเดตสถานะเป็น VERIFIED
-              const updateStatusResponse = await axios.put("http://localhost:3001/update-testcase-status-verified", {
-                  testcase_ids: testcaseIdsArray,
-                  testcase_status: "VERIFIED",
-              });
-  
-              if (updateStatusResponse.data.message.includes("VERIFIED successfully")) {
-                  toast.success("อัปเดตสถานะเป็น VERIFIED สำเร็จ", {
-                      autoClose: 1500,
-                      onClose: () => navigate(`/Dashboard?project_id=${projectId}`),
-                  });
-              } else {
-                  toast.error("ไม่สามารถอัปเดตสถานะ testcase ได้");
-              }
-          } catch (error) {
-              console.error("Error updating verification status:", error);
-              toast.error("ไม่สามารถอัปเดตสถานะได้ กรุณาลองใหม่");
-          }
-      };
 
+  const handleSave = async () => {
+    console.log("testcase_id:", testcaseId); // testcaseId จาก query params
+
+    if (!storedUsername) {
+      toast.warning("ข้อมูล reviewer ขาดหาย กรุณารีเฟรชหน้า");
+      return;
+    }
+
+    // ✅ ตรวจสอบว่า checklist ทั้งหมดถูกเลือก
+    const allChecked = testcasecriList.every(criteria => !!checkboxState[criteria.testcasecri_id]); // ใช้ !! เพื่อความแน่นอน
+    if (!allChecked) {
+      toast.success("Save Criteria Checklist", {
+        onClose: () => {
+          navigate(`/Dashboard?project_id=${projectId}`, {
+            state: { selectedSection: "Testcase" }
+          });
+        }
+      });
+      return;
+    }
+
+
+    try {
+      // 1️⃣ ดึงข้อมูลปัจจุบันของ veritestcase (เหมือนเดิม)
+      const { data } = await axios.get("http://localhost:3001/testcaseveri", {
+        params: { project_id: projectId, veritestcase_id: veriTestcaseId },
+      });
+
+      console.log("API Response Data:", data);
+
+      // หาข้อมูลที่ตรงกับ veriTestcaseId (เหมือนเดิม)
+      const veritestcaseData = data.find(item => item.id === parseInt(veriTestcaseId));
+
+      if (!veritestcaseData) { // เหมือนเดิม
+        toast.error(`ไม่พบข้อมูล veritestcase ID: ${veriTestcaseId} กรุณาตรวจสอบใหม่`);
+        return;
+      }
+
+      // 2️⃣ ตรวจสอบข้อมูล reviewer ปัจจุบัน (เหมือนเดิม)
+      let currentVeritestcaseBy = veritestcaseData.veritestcase_by || {};
+
+      // 3️⃣ อัปเดต reviewer โดยไม่ลบคนอื่น (เหมือนเดิม)
+      const updatedVeritestcaseBy = { ...currentVeritestcaseBy, [storedUsername]: true };
+      console.log("Updated veritestcase_by:", updatedVeritestcaseBy);
+
+      // 4️⃣ ส่งข้อมูลอัปเดต reviewer ไปยังเซิร์ฟเวอร์ (เหมือนเดิม)
+      const updateReviewerResponse = await axios.put("http://localhost:3001/update-veritestcase-by", {
+        veritestcaseid: parseInt(veriTestcaseId), // เหมือนเดิม
+        veritestcaseby: updatedVeritestcaseBy,
+      });
+
+      console.log("📤 ส่งข้อมูลอัปเดต reviewer:", updateReviewerResponse.data);
+
+      // เหมือนเดิม
+      if (updateReviewerResponse.status !== 200 || updateReviewerResponse.data.message?.includes("ไม่พบข้อมูล")) {
+        toast.error(`ไม่สามารถอัปเดตข้อมูล reviewer ได้: ${updateReviewerResponse.data.message || 'Unknown error'}`);
+        return;
+      }
+
+      // 5️⃣ ตรวจสอบว่า reviewer ทุกคนตรวจสอบครบหรือยัง (เหมือนเดิม)
+      const { data: newData } = await axios.get("http://localhost:3001/testcaseveri", {
+        params: { project_id: projectId, veritestcase_id: veriTestcaseId },
+      });
+
+      console.log("Updated API Response Data (newData):", newData);
+
+      // เหมือนเดิม
+      const latestVeritestcaseData = newData.find(item => item.id === parseInt(veriTestcaseId));
+
+      if (!latestVeritestcaseData || typeof latestVeritestcaseData.veritestcase_by !== 'object') {
+        toast.error("ไม่สามารถดึงข้อมูล reviewer ล่าสุดหลังการอัปเดตได้");
+        return;
+      }
+
+      const latestVeritestcaseBy = latestVeritestcaseData.veritestcase_by || {}; // เหมือนเดิม
+      const allReviewed = Object.keys(latestVeritestcaseBy).length > 0 && // เหมือนเดิม
+        Object.values(latestVeritestcaseBy).every(status => status === true);
+
+      console.log("All Reviewed:", allReviewed);
+
+      if (!allReviewed) { // เหมือนเดิม
+        toast.info("Your review has been saved, but other reviewers have not completed theirs.", {
+          onClose: () => {
+            navigate(`/Dashboard?project_id=${projectId}`, {
+              state: { selectedSection: "Testcase" }
+            });
+          }
+        });
+        return;
+      }
+
+      const testcaseIdsArray = testcaseId // เหมือนเดิม
+        .split(",")
+        .map(id => id.trim())
+        .filter(id => id && !isNaN(id));
+
+      if (testcaseIdsArray.length === 0) { // เหมือนเดิม
+        toast.error("ไม่พบข้อมูล testcase ID ที่ถูกต้องใน query parameter");
+        return;
+      }
+      console.log("Testcase IDs to verify:", testcaseIdsArray);
+
+      // 6️⃣ อัปเดตสถานะเป็น VERIFIED (เหมือนเดิม)
+      const updateStatusResponse = await axios.put("http://localhost:3001/update-testcase-status-verified", {
+        testcase_ids: testcaseIdsArray.map(id => parseInt(id)), // เหมือนเดิม
+        testcase_status: "VERIFIED",
+      });
+
+      // 7️⃣ ตรวจสอบผลการอัปเดตสถานะ และเพิ่มการบันทึกต่างๆ
+      if (updateStatusResponse.data.message?.includes("VERIFIED successfully")) { // เหมือนเดิม
+        console.log("✅ Status updated to VERIFIED successfully.");
+
+        // ---- ส่วนบันทึกข้อมูลเพิ่มเติม ----
+        try {
+          console.log("Attempting to save verification results and history..."); // ปรับ log เล็กน้อย
+          const criteriaNames = testcasecriList.map(c => c.testcasecri_name); // เหมือนเดิม
+          const reviewerNames = Object.keys(latestVeritestcaseBy); // เหมือนเดิม
+
+          // วนลูปบันทึกสำหรับแต่ละ testcase ID
+          for (const tcId of testcaseIdsArray) {
+            const currentTcIdInt = parseInt(tcId); // แปลงเป็น Int เก็บไว้ใช้ซ้ำ
+
+            // --- บันทึก Verification Result (เหมือนเดิม) ---
+            const verificationResultPayload = {
+              testcase_id: currentTcIdInt,
+              verification_checklist: JSON.stringify(criteriaNames),
+              verify_by: JSON.stringify(reviewerNames),
+              project_id: parseInt(projectId),
+              veritestcase_id: parseInt(veriTestcaseId)
+            };
+            console.log("💾 Saving payload to /save-testcase-verification-result:", verificationResultPayload);
+            await axios.post('http://localhost:3001/save-testcase-verification-result', verificationResultPayload);
+            console.log(`✅ Saved verification result for testcase ID: ${currentTcIdInt}`); // เพิ่ม log ความสำเร็จ
+
+            // ***** ส่วนที่เพิ่มเข้ามา *****
+            // --- บันทึก History Testcase ---
+            const historyPayload = {
+              testcase_id: currentTcIdInt, // ใช้ ID ที่แปลงเป็น Int แล้ว
+              testcase_status: "VERIFIED"  // สถานะที่ต้องการบันทึก
+            };
+            console.log("📜 Saving payload to /addHistoryTestcase:", historyPayload);
+            await axios.post('http://localhost:3001/addHistoryTestcase', historyPayload);
+            console.log(`✅ Saved history for testcase ID: ${currentTcIdInt}`); // เพิ่ม log ความสำเร็จ
+            // ***** จบส่วนที่เพิ่มเข้ามา *****
+
+          } // จบ loop for
+
+          // Log รวมหลัง loop เสร็จ (เหมือนเดิม)
+          console.log("✅ Successfully saved verification results and history for all testcases.");
+
+          // เคลียร์ localStorage (เหมือนเดิม)
+          if (storedUsername) {
+            const storageKey = `checkboxState_${storedUsername}_${projectId}_${veriTestcaseId}`;
+            localStorage.removeItem(storageKey);
+            console.log("Cleared localStorage state:", storageKey);
+          }
+
+          // แจ้งเตือนสำเร็จ (เหมือนเดิม)
+          toast.success("Status updated to VERIFIED", {
+            autoClose: 1200,
+            onClose: () => navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Testcase" } }),
+          });
+
+        } catch (saveError) { // เหมือนเดิม (catch นี้จะครอบคลุม error จาก history save ด้วย)
+          console.error("❌ Error during saving process (verification result or history):", saveError);
+          toast.error("Status updated, but failed to save results or history. Please contact admin.");
+          // navigate(`/Dashboard?project_id=${projectId}`); // ส่วนนี้เหมือนเดิม
+        }
+        // ---- สิ้นสุดส่วนบันทึกข้อมูลเพิ่มเติม ----
+
+      } else { // เหมือนเดิม
+        toast.error(`ไม่สามารถอัปเดตสถานะ testcase เป็น VERIFIED ได้: ${updateStatusResponse.data.message || 'Unknown error'}`);
+      }
+    } catch (error) { // เหมือนเดิม
+      console.error("Error during handleSave process:", error);
+      if (error.response) {
+        console.error("Error Response Data:", error.response.data);
+        toast.error(`เกิดข้อผิดพลาด: ${error.response.data.message || 'ไม่สามารถดำเนินการได้'}`);
+      } else {
+        toast.error("เกิดข้อผิดพลาดในการเชื่อมต่อ หรือการประมวลผลบางอย่าง");
+      }
+    }
+  }; // --- สิ้นสุด handleSave ---
   const handleSubmit = async () => {
     if (!newComment.trim()) {
       setError("กรุณาใส่ข้อความก่อนโพสต์");
@@ -225,7 +315,7 @@ const TestcaseVerifed = () => {
       if (response.status === 201) {
         setNewComment("");  // เคลียร์ช่องคอมเมนต์หลังจากโพสต์สำเร็จ
         fetchComments(); // โหลดคอมเมนต์ใหม่
-        toast.success("The comment has been successfully added.",{
+        toast.success("The comment has been successfully added.", {
           autoClose: 2000,
         });
       }
@@ -263,6 +353,9 @@ const TestcaseVerifed = () => {
 
   return (
     <div className="testcaseveri-container">
+      <button onClick={() => navigate(`/VeriTestcase?project_id=${projectId}`)}>
+        Back
+      </button>
       <h1 className="title-testcasever">Verification Requirement</h1>
       <div className="testcase-verified-container">
         {/* Checklist Section */}
