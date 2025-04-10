@@ -31,12 +31,21 @@ const CreateTestcase = () => {
   useEffect(() => {
     const fetchImplementFiles = async () => {
       try {
-        const response = await axios.get("http://localhost:3001/implementrelation");
+        const response = await axios.get("http://localhost:3001/implementrelation", {
+          params: {
+            project_id: projectId,
+          }
+        });
         setImplementFiles(response.data.data || []);
-      } catch (error) { console.error("Error fetching implementation files:", error); }
+      } catch (error) {
+        console.error("Error fetching implementation files:", error);
+      }
     };
-    fetchImplementFiles();
-  }, []);
+    if (projectId) {
+      fetchImplementFiles();
+    }
+  }, [projectId]);
+
 
   // --- *** แก้ไขฟังก์ชันนี้ *** ---
   const handleCreateTestCase = async () => {
@@ -96,10 +105,10 @@ const CreateTestcase = () => {
           }
         });
       } else {
-         // จัดการกรณีที่ status ไม่ใช่ 201 แต่ไม่ error (อาจจะไม่เกิดบ่อยกับ POST)
-         console.warn("Test case creation responded with status:", response.status);
-         toast.warning(`Test case created, but received status: ${response.status}`);
-         navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Testcase" } });
+        // จัดการกรณีที่ status ไม่ใช่ 201 แต่ไม่ error (อาจจะไม่เกิดบ่อยกับ POST)
+        console.warn("Test case creation responded with status:", response.status);
+        toast.warning(`Test case created, but received status: ${response.status}`);
+        navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Testcase" } });
       }
     } catch (error) {
       console.error("❌ Error creating test case:", error);
@@ -123,7 +132,7 @@ const CreateTestcase = () => {
 
       {/* Input fields */}
       {[{ label: "Title", value: title, setter: setTitle },
-       { label: "Description", value: description, setter: setDescription }].map(({ label, value, setter }) => (
+      { label: "Description", value: description, setter: setDescription }].map(({ label, value, setter }) => (
         <div key={label} className="create-testcase-form-group">
           <label>{label}:</label>
           <input type="text" value={value} onChange={(e) => setter(e.target.value)} />
