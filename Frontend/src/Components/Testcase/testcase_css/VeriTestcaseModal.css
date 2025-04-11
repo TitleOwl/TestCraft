@@ -1,0 +1,258 @@
+/* ./testcase_css/VeriTestcaseModal.css - Adjusted Size */
+
+/* --- CSS Variables --- */
+:root {
+    --theme-color-veritestcase-modal: #10b981;
+    /* Theme color */
+    --light-grey-bg-veritestcase-modal: #f8f9fa;
+    --border-color-veritestcase-modal: #e9ecef;
+    --text-color-primary-veritestcase-modal: #212529;
+    --text-color-secondary-veritestcase-modal: #495057;
+    --text-color-muted-veritestcase-modal: #6c757d;
+    --verified-color-veritestcase-modal: var(--theme-color-veritestcase-modal);
+    /* Green for verified */
+    --not-verified-color-veritestcase-modal: #dc3545;
+    /* Red for not verified */
+    --item-bg-veritestcase-modal: #f8f9fc;
+    /* Background for items */
+}
+
+/* --- Overlay and Content --- */
+.modal-overlay-vt {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(15, 23, 42, 0.7);
+    /* Example overlay color from other CSS */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050;
+    padding: 15px;
+    backdrop-filter: blur(3px);
+    animation: vtModalFadeIn 0.3s ease-out;
+}
+
+@keyframes vtModalFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-content-vt {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    width: 90%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    animation: vtModalSlideDown 0.3s ease-out;
+    overflow: hidden;
+
+}
+
+@keyframes vtModalSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- Modal Header --- */
+.modal-header-vt {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    /* Use rem for scalable padding */
+    border-bottom: 1px solid var(--border-color-veritestcase-modal);
+    /* background-color: #f8f9fa; /* Optional light header background */
+}
+
+.modal-title-vt {
+    font-size: 1.1rem;
+    /* Adjust size */
+    font-weight: 600;
+    color: var(--text-color-primary-veritestcase-modal);
+    margin: 0;
+}
+
+.modal-close-btn-vt {
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    /* Adjust size */
+    color: var(--text-color-muted-veritestcase-modal);
+    cursor: pointer;
+    padding: 0.25rem;
+    /* Small padding for click area */
+    line-height: 1;
+    transition: color 0.2s ease;
+}
+
+.modal-close-btn-vt:hover {
+    color: var(--text-color-primary-veritestcase-modal);
+}
+
+/* --- Modal Body --- */
+.modal-body-vt {
+    padding: 1.25rem 1.5rem;
+    /* Consistent padding */
+    overflow-y: auto;
+    /* Allow body to scroll if content overflows */
+    flex-grow: 1;
+    /* Allow body to take space */
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    /* Space between sections */
+}
+
+/* --- Sections --- */
+.modal-section-vt {
+    /* Section container */
+}
+
+.section-header-vt {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    /* Adjust gap */
+    font-size: 1rem;
+    /* Adjust size */
+    font-weight: 600;
+    color: var(--text-color-primary-veritestcase-modal);
+    margin: 0 0 0.8rem 0;
+    /* Margin below header */
+}
+
+.section-icon-vt {
+    color: var(--theme-color-veritestcase-modal);
+    /* Use theme color */
+    font-size: 1.1em;
+}
+
+.section-content-vt {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    /* Space between items */
+}
+
+/* --- Reviewer Item --- */
+.reviewer-item-vt {
+    display: flex;
+    align-items: center;
+    background-color: var(--item-bg-veritestcase-modal);
+    padding: 0.75rem 1rem;
+    /* Adjust padding */
+    border-radius: 6px;
+    border: 1px solid var(--border-color-veritestcase-modal);
+}
+
+.reviewer-avatar-icon-vt {
+    font-size: 1.75rem;
+    /* Adjust size */
+    color: #6ee7b7;
+    margin-right: 0.8rem;
+
+}
+
+/* .reviewer-avatar-icon-vt svg { font-size: 1rem; } */
+/* If using background circle */
+
+.reviewer-info-vt {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.reviewer-name-vt {
+    font-weight: 500;
+    color: var(--text-color-primary-veritestcase-modal);
+    margin-bottom: 1px;
+    font-size: 0.9rem;
+}
+
+.reviewer-status-vt {
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.reviewer-status-vt.verified {
+    color: var(--verified-color-veritestcase-modal);
+    /* Green */
+}
+
+.reviewer-status-vt.not-verified {
+    color: var(--not-verified-color-veritestcase-modal);
+    /* Red */
+}
+
+.reviewer-status-icon-vt {
+    font-size: 1.25rem;
+    /* Adjust icon size */
+    margin-left: 1rem;
+}
+
+.reviewer-status-icon-vt.verified {
+    color: var(--verified-color-veritestcase-modal);
+    /* Green */
+}
+
+.reviewer-status-icon-vt.not-verified {
+    color: var(--not-verified-color-veritestcase-modal);
+    /* Red */
+}
+
+/* --- Requirement Item --- */
+.testcase-item-vt {
+    font-family: "SF Mono", "Roboto Mono", monospace;
+    display: flex;
+    align-items: center;
+    background-color: var(--item-bg-veritestcase-modal);
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    border: 1px solid var(--border-color-veritestcase-modal);
+    gap: 0.75rem;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* --- vvv เปลี่ยน Selector vvv --- */
+.testcase-icon-vt {
+    color: var(--theme-color-veritestcase-modal);
+    /* Theme color */
+    font-size: 1.05rem;
+}
+
+/* --- vvv เปลี่ยน Selector vvv --- */
+.testcase-id-vt {
+    font-weight: 500;
+    color: var(--text-color-secondary-veritestcase-modal);
+    font-size: 0.9rem;
+}
+
+/* --- ^^^ สิ้นสุดการเปลี่ยน Selector ^^^ --- */
+
+/* --- No Data Message --- */
+.no-data-vt {
+    color: var(--text-color-muted-veritestcase-modal);
+    font-style: italic;
+    padding: 0.75rem 0;
+    text-align: center;
+    font-size: 0.9rem;
+}

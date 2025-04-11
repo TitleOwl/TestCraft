@@ -1,0 +1,355 @@
+/* ./testcase_css/VeriTestcase.css */
+
+/* --- CSS Variables --- */
+:root {
+    --theme-color-veritestcase: #10b981; /* Theme color */
+    --light-grey-bg-veritestcase: #f8f9fa;
+    --border-color-veritestcase: #e9ecef;
+    --text-color-primary-veritestcase: #212529;
+    --text-color-secondary-veritestcase: #495057;
+    --text-color-muted-veritestcase: #6c757d;
+    --status-badge-bg-veritestcase: #fff9db; /* Light yellow for WAITING FOR VERIFICATION */
+    --status-badge-text-veritestcase: #e67700; /* Dark yellow/orange text */
+    --card-bg-veritestcase: #ffffff;
+    --table-header-bg-veritestcase: #f8f9fa;
+  }
+  
+  /* --- Page Container --- */
+  /* หมายเหตุ: รูปภาพมี header สีม่วง/น้ำเงิน ซึ่งอาจจะอยู่นอก component นี้ */
+  /* สไตล์นี้จะเริ่มตั้งแต่ใต้ header นั้น */
+  .container-veritestcase { /* <<< เพิ่ม Div นี้ครอบทั้งหมดใน return ของ VeriTestcase */
+    padding: 20px 30px;
+    background-color: var(--light-grey-bg-veritestcase); /* สีพื้นหลังอ่อนๆ */
+    min-height: calc(100vh - 60px); /* ปรับ 60px ตามความสูงของ header หลัก (ถ้ามี) */
+  }
+  
+  /* --- Back Button --- */
+  .back-button-veritestcase { /* <<< ใช้ class นี้กับปุ่ม Back */
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    padding: 6px 12px;
+    background-color: var(--card-bg-veritestcase);
+    border: 1px solid var(--border-color-veritestcase);
+    border-radius: 4px;
+    color: var(--text-color-secondary-veritestcase);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+  }
+  .back-button-veritestcase:hover {
+    background-color: #f1f3f5;
+    border-color: #ced4da;
+  }
+  /* อาจจะต้องเพิ่ม Icon ลูกศรซ้ายใน JSX */
+  
+  
+  /* --- Page Title --- */
+  .page-title-container-veritestcase { /* <<< เพิ่ม Div นี้ครอบ Title */
+      text-align: center;
+      margin-bottom: 25px;
+      position: relative; /* สำหรับไอคอน ? */
+  }
+  .page-title-veritestcase { /* <<< ใช้ class นี้กับ h1 */
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--text-color-primary-veritestcase);
+    display: inline-flex; /* จัดไอคอนกับข้อความ */
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+  }
+  /* ควรเพิ่ม Icon ใน JSX เช่น <FontAwesomeIcon icon={faCheckSquare} /> ก่อนข้อความ */
+  .page-title-veritestcase .title-icon-veritestcase { /* <<< Class สำหรับ Icon หน้า Title */
+      color: var(--theme-color-veritestcase); /* หรือสีอื่นตามต้องการ */
+  }
+  
+  .help-icon-veritestcase { /* <<< Icon ? ด้านขวา (ถ้ามี) */
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+      font-size: 1.5rem;
+      color: var(--text-color-muted-veritestcase);
+      cursor: pointer;
+  }
+  
+  
+  /* --- Content Card --- */
+  .content-card-veritestcase { /* <<< เพิ่ม Div นี้ครอบตั้งแต่ Header ของ Card ถึง Table */
+    background-color: var(--card-bg-veritestcase);
+    border-radius: 8px;
+    border: 1px solid var(--border-color-veritestcase);
+    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); */ /* ลดเงา */
+    overflow: hidden; /* สำหรับกรณีที่ table ล้น */
+  }
+  
+  /* --- Card Header --- */
+  .card-header-veritestcase { /* <<< Div ส่วนหัวของ Card (Verification Requests) */
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--border-color-veritestcase);
+  }
+  .card-title-veritestcase { /* <<< h2 หรือ h3 สำหรับ Title "Verification Requests" */
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color-primary-veritestcase);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .request-count-badge-veritestcase { /* <<< Span สำหรับ Badge นับจำนวน */
+    background-color: #e9ecef; /* สีเทาอ่อน */
+    color: var(--text-color-secondary-veritestcase);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+  
+  /* --- Toolbar (Search/Refresh) --- */
+  .toolbar-veritestcase { /* <<< Div ครอบ Search และ Refresh */
+    background-color: var(--table-header-bg-veritestcase); /* สีเทาอ่อนเหมือน Header ตาราง */
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color-veritestcase);
+  }
+  
+  .search-input-container-veritestcase { /* <<< Div ครอบ input search และ icon */
+      position: relative;
+      display: flex;
+      align-items: center;
+      flex-grow: 1; /* ให้ช่องค้นหายืดได้ */
+      margin-right: 20px; /* ระยะห่างจากปุ่ม Refresh */
+      max-width: 400px; /* จำกัดความกว้างสูงสุด */
+  }
+  
+  .search-input-icon-veritestcase { /* <<< Icon แว่นขยายในช่องค้นหา */
+      position: absolute;
+      left: 12px;
+      color: var(--text-color-muted-veritestcase);
+      font-size: 0.9rem;
+  }
+  
+  .search-input-veritestcase { /* <<< Input สำหรับค้นหา */
+    padding: 8px 12px 8px 35px; /* เว้นที่ให้ไอคอนซ้าย */
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    width: 100%;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .search-input-veritestcase:focus {
+      outline: none;
+      border-color: var(--theme-color-veritestcase);
+      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2); /* เงาเมื่อ focus สีเขียวอ่อน */
+  }
+  
+  .refresh-button-veritestcase { /* <<< ปุ่ม Refresh */
+    padding: 8px 15px;
+    background-color: var(--card-bg-veritestcase);
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    color: var(--text-color-secondary-veritestcase);
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.2s, border-color 0.2s;
+  }
+  .refresh-button-veritestcase:hover {
+    background-color: #f1f3f5;
+    border-color: #adb5bd;
+  }
+  /* ควรเพิ่ม Icon ใน JSX เช่น <FontAwesomeIcon icon={faSyncAlt} /> */
+  
+  /* --- Table Styling --- */
+  .testcase-table-container-veritestcase { /* <<< Div ครอบ Table (ถ้าต้องการ scroll) */
+      overflow-x: auto; /* ทำให้ scroll แนวนอนได้ถ้าตารางล้น */
+  }
+  
+  .testcase-table-veritestcase { /* <<< ใช้ class นี้กับ Table */
+    width: 100%;
+    border-collapse: collapse; /* รวมเส้นขอบ */
+    font-size: 0.875rem; /* 14px */
+  }
+  
+  .testcase-table-veritestcase thead th {
+    background-color: var(--table-header-bg-veritestcase);
+    padding: 12px 15px;
+    text-align: left; /* จัดชิดซ้ายเป็นหลัก */
+    font-weight: 600; /* ตัวหนา */
+    color: var(--text-color-secondary-veritestcase);
+    border-bottom: 2px solid var(--border-color-veritestcase); /* เส้นหนาขึ้นเล็กน้อย */
+    white-space: nowrap; /* ไม่ให้ขึ้นบรรทัดใหม่ */
+  }
+  
+  .testcase-table-veritestcase thead th.text-center-veritestcase { /* Class เพิ่มเติมสำหรับจัดกลาง */
+      text-align: center;
+  }
+  
+  .testcase-table-veritestcase tbody tr {
+    border-bottom: 1px solid var(--border-color-veritestcase);
+    transition: background-color 0.15s ease-in-out;
+  }
+  .testcase-table-veritestcase tbody tr:last-child {
+    border-bottom: none; /* แถวสุดท้ายไม่มีเส้น */
+  }
+  .testcase-table-veritestcase tbody tr:hover {
+    background-color: #f1f3f5; /* สีพื้นหลังเมื่อ hover */
+  }
+  
+  .testcase-table-veritestcase tbody td {
+    padding: 12px 15px;
+    vertical-align: middle; /* จัดเนื้อหาตรงกลางแนวตั้ง */
+    color: var(--text-color-primary-veritestcase);
+  }
+  
+  /* จัดรูปแบบเฉพาะคอลัมน์ */
+  .testcase-table-veritestcase td .created-by-veritestcase,
+  .testcase-table-veritestcase td .date-assigned-veritestcase { /* <<< ใช้ span/div ครอบ icon+text ใน Created By, Date */
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-color-secondary-veritestcase);
+  }
+  .testcase-table-veritestcase td .icon-veritestcase { /* <<< class สำหรับ icon ในเซลล์ */
+      color: var(--text-color-muted-veritestcase);
+  }
+  
+  
+  /* Status Badge */
+  .status-badge-veritestcase { /* <<< ใช้ class นี้กับ td หรือ span ที่แสดง Status */
+    display: inline-block; /* ทำให้ padding, border-radius ทำงาน */
+    padding: 4px 10px;
+    border-radius: 12px; /* ทรงแคปซูล */
+    font-size: 0.75rem; /* 12px */
+    font-weight: 500;
+    text-transform: uppercase;
+    background-color: var(--status-badge-bg-veritestcase);
+    color: var(--status-badge-text-veritestcase);
+    border: 1px solid #ffd8a8; /* เส้นขอบสีเหลืองอ่อน */
+  }
+  
+  /* Reviewer Button */
+  .search-icon-button-veritestcase { /* <<< ใช้ class นี้กับปุ่มแว่นขยาย */
+    background: none;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    color: #0d6efd; /* สีน้ำเงิน */
+    font-size: 1.1rem; /* ปรับขนาดไอคอน */
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%; /* ทำให้กลม */
+    width: 30px;
+    height: 30px;
+  }
+  .search-icon-button-veritestcase:hover {
+    background-color: rgba(13, 110, 253, 0.1); /* พื้นหลังฟ้าอ่อนๆ เมื่อ hover */
+  }
+  
+  /* Verify Button */
+  .verify-button-veritestcase { /* <<< ใช้ class นี้กับปุ่ม Verify */
+    background-color: var(--theme-color-veritestcase);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.2s;
+  }
+  .verify-button-veritestcase:hover {
+    background-color: #059669; /* สีเขียวเข้มขึ้น */
+  }
+  /* ควรเพิ่ม Icon ใน JSX เช่น <FontAwesomeIcon icon={faCheck} /> */
+  
+  /* --- Modal Styles (จาก Component Modal) --- */
+  .modal-overlay-review-veritestcase { /* <<< ควรแก้ชื่อ class ใน Modal component ให้ลงท้ายด้วย */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050;
+  }
+  
+  .modal-content-review-veritestcase { /* <<< ควรแก้ชื่อ class ใน Modal component ให้ลงท้ายด้วย */
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+  
+  .modal-content-review-veritestcase h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: var(--text-color-primary-veritestcase);
+    border-bottom: 1px solid var(--border-color-veritestcase);
+    padding-bottom: 10px;
+  }
+  .modal-content-review-veritestcase p {
+      margin-bottom: 8px;
+      color: var(--text-color-secondary-veritestcase);
+  }
+  .modal-content-review-veritestcase p strong {
+      color: var(--text-color-primary-veritestcase);
+  }
+  
+  .list-reviewer-veritestcase { /* <<< ควรแก้ชื่อ class ใน Modal component ให้ลงท้ายด้วย */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--border-color-veritestcase);
+  }
+  .list-reviewer-veritestcase:last-child {
+      border-bottom: none;
+  }
+  
+  .verification-status-icon-veritestcase { /* <<< ควรแก้ชื่อ class ใน Modal component ให้ลงท้ายด้วย */
+    width: 20px;
+    height: 20px;
+  }
+  
+  .close-modal-review-button-veritestcase { /* <<< ควรแก้ชื่อ class ใน Modal component ให้ลงท้ายด้วย */
+    margin-top: 20px;
+    padding: 8px 16px;
+    background-color: var(--text-color-muted-veritestcase);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    float: right; /* จัดไปทางขวา */
+  }
+  .close-modal-review-button-veritestcase:hover {
+      background-color: var(--text-color-secondary-veritestcase);
+  }
+  
+  /* --- Empty State --- */
+  .no-testcase-message-veritestcase { /* <<< Class สำหรับ <p>No testcase available.</p> */
+      text-align: center;
+      padding: 40px;
+      color: var(--text-color-muted-veritestcase);
+      font-style: italic;
+  }
