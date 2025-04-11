@@ -6,25 +6,25 @@ import axios from "axios";
 import "./CSS/VerificationList.css";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { 
-  faSearch, 
-  faCheck, 
-  faTimes, 
-  faCalendarAlt, 
-  faUser, 
-  faClipboardCheck, 
-  faClipboardList,
-  faFilter,
-  faArrowLeft,
-  faSync,
-  faPlus,
-  faSortAmountDown,
-  faSortAmountUp,
-  faEye,
-  faUsers,
-  faListAlt,
-  faCheckCircle,
-  faQuestionCircle
+import {
+    faSearch,
+    faCheck,
+    faTimes,
+    faCalendarAlt,
+    faUser,
+    faClipboardCheck,
+    faClipboardList,
+    faFilter,
+    faArrowLeft,
+    faSync,
+    faPlus,
+    faSortAmountDown,
+    faSortAmountUp,
+    faEye,
+    faUsers,
+    faListAlt,
+    faCheckCircle,
+    faQuestionCircle
 } from "@fortawesome/free-solid-svg-icons";
 
 const Modal = ({ show, onClose, requirements = [], verificationBy = [] }) => {
@@ -48,7 +48,7 @@ const Modal = ({ show, onClose, requirements = [], verificationBy = [] }) => {
                 <div className="modal-body">
                     <div className="reviewer-section">
                         <h4>
-                            <FontAwesomeIcon icon={faUsers} className="section-icon" /> 
+                            <FontAwesomeIcon icon={faUsers} className="section-icon" />
                             Reviewers
                         </h4>
                         {parsedVerificationBy.length > 0 ? (
@@ -64,8 +64,8 @@ const Modal = ({ show, onClose, requirements = [], verificationBy = [] }) => {
                                                 {reviewer.value ? 'Verified' : 'Not verified'}
                                             </span>
                                         </div>
-                                        <FontAwesomeIcon 
-                                            icon={reviewer.value ? faCheckCircle : faTimes} 
+                                        <FontAwesomeIcon
+                                            icon={reviewer.value ? faCheckCircle : faTimes}
                                             className={`status-icon ${reviewer.value ? 'verified' : 'not-verified'}`}
                                         />
                                     </div>
@@ -77,7 +77,7 @@ const Modal = ({ show, onClose, requirements = [], verificationBy = [] }) => {
                     </div>
                     <div className="requirement-section">
                         <h4>
-                            <FontAwesomeIcon icon={faClipboardList} className="section-icon" /> 
+                            <FontAwesomeIcon icon={faClipboardList} className="section-icon" />
                             Requirements
                         </h4>
                         {requirements.length > 0 ? (
@@ -111,7 +111,7 @@ const VerificationList = () => {
     const [sortField, setSortField] = useState("id");
     const [sortDirection, setSortDirection] = useState("asc");
     const [isRefreshing, setIsRefreshing] = useState(false);
-    
+
     const navigate = useNavigate();
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
@@ -124,40 +124,41 @@ const VerificationList = () => {
             content: 'หน้านี้แสดงรายการ Verification ที่รอการตรวจสอบทั้งหมดในตารางนี้ (ID, ผู้สร้าง, วันที่, สถานะ)', // ปรับ content
             placement: 'bottom', // หรือ 'top' อาจจะเหมาะกว่าเมื่อ target คือตาราง
             disableBeacon: true,
-          },
-      {
-        // ชี้ไปที่ปุ่ม View Details (ตา) ของแถวแรก
-        target: '.verification-row:first-child .view-details-btn',
-        content: 'คลิกไอคอนรูปตาเพื่อดูรายละเอียด ว่าเกี่ยวข้องกับ Requirement ใดบ้าง และใครคือ Reviewers',
-        placement: 'bottom',
-      },
-      {
-        // ชี้ไปที่ปุ่ม Verify (เช็คถูก) ของแถวแรก
-        target: '.verification-row:first-child .verify-btn',
-        content: "เมื่อพร้อมตรวจสอบ Requirement เหล่านี้ คลิกปุ่ม 'Verify' เพื่อไปยังหน้าดำเนินการ",
-        placement: 'bottom',
-      },
+        },
+        {
+            // ชี้ไปที่ปุ่ม View Details (ตา) ของแถวแรก
+            target: '.verification-row:first-child .view-details-btn',
+            content: 'คลิกไอคอนรูปตาเพื่อดูรายละเอียด ว่าเกี่ยวข้องกับ Requirement ใดบ้าง และใครคือ Reviewers',
+            placement: 'bottom',
+        },
+        {
+            // ชี้ไปที่ปุ่ม Verify (เช็คถูก) ของแถวแรก
+            target: '.verification-row:first-child .verify-btn',
+            content: "เมื่อพร้อมตรวจสอบ Requirement เหล่านี้ คลิกปุ่ม 'Verify' เพื่อไปยังหน้าดำเนินการ",
+            placement: 'bottom',
+        },
     ]);
 
     useEffect(() => {
         // ตรวจสอบว่าเคยแสดง Tutorial หน้านี้หรือยัง
         const tutorialShown = localStorage.getItem('verifyListTutorialShown'); // ใช้ key ใหม่สำหรับหน้านี้
         if (!tutorialShown) {
-          // หน่วงเวลาเล็กน้อยเพื่อให้ตารางมีข้อมูล render ก่อน
-          const timer = setTimeout(() => {
-            setRunVerifyListTutorial(true);
-          }, 700); // อาจจะต้องปรับ delay นี้
-          return () => clearTimeout(timer);
+            // หน่วงเวลาเล็กน้อยเพื่อให้ตารางมีข้อมูล render ก่อน
+            const timer = setTimeout(() => {
+                setRunVerifyListTutorial(true);
+            }, 700); // อาจจะต้องปรับ delay นี้
+            return () => clearTimeout(timer);
         }
-      }, []);
+    }, []);
 
-      const handleRestartVerifyListTutorial = () => {
+    const handleRestartVerifyListTutorial = () => {
         setRunVerifyListTutorial(true);
-      };
+    };
 
     const fetchVerifications = useCallback(() => {
         setLoading(true);
-        axios
+        // --- เพิ่ม return ตรงนี้ ---
+        return axios
             .get(`http://localhost:3001/verifications?project_id=${projectId}`)
             .then((response) => {
                 const filteredVerifications = response.data
@@ -168,11 +169,14 @@ const VerificationList = () => {
                     }));
                 setVerifications(filteredVerifications);
                 setLoading(false);
+                // ไม่จำเป็นต้อง return อะไรจาก .then() นี้ ถ้า handleRefresh ไม่ได้ใช้ค่าต่อ
             })
             .catch((err) => {
                 console.error("Error fetching verifications:", err);
                 toast.error("Error fetching verifications.");
                 setLoading(false);
+                // ควร re-throw error หรือ return rejected promise เพื่อให้ .catch() ใน handleRefresh ทำงานได้
+                return Promise.reject(err);
             });
     }, [projectId]);
 
@@ -188,7 +192,7 @@ const VerificationList = () => {
         if (searchTerm) {
             const lowerSearchTerm = searchTerm.toLowerCase();
             result = result.filter(
-                item => 
+                item =>
                     `verif-${item.id}`.toLowerCase().includes(lowerSearchTerm) ||
                     (item.create_by && item.create_by.toLowerCase().includes(lowerSearchTerm))
             );
@@ -197,9 +201,9 @@ const VerificationList = () => {
         // Apply sorting
         result.sort((a, b) => {
             let compareA, compareB;
-            
+
             // Determine which field to sort by
-            switch(sortField) {
+            switch (sortField) {
                 case "id":
                     compareA = a.id;
                     compareB = b.id;
@@ -216,17 +220,17 @@ const VerificationList = () => {
                     compareA = a.id;
                     compareB = b.id;
             }
-            
+
             // Handle string comparison
             if (typeof compareA === 'string' && typeof compareB === 'string') {
-                return sortDirection === 'asc' 
-                    ? compareA.localeCompare(compareB) 
+                return sortDirection === 'asc'
+                    ? compareA.localeCompare(compareB)
                     : compareB.localeCompare(compareA);
             }
-            
+
             // Handle other types
-            return sortDirection === 'asc' 
-                ? compareA - compareB 
+            return sortDirection === 'asc'
+                ? compareA - compareB
                 : compareB - compareA;
         });
 
@@ -255,19 +259,22 @@ const VerificationList = () => {
             state: { selectedRequirements, project_id: projectId, verification_id: verificationId },
         });
     };
-    
+
     const handleBackToDashboard = () => {
         navigate(`/Dashboard?project_id=${projectId}`);
     };
 
     const handleRefresh = () => {
         setIsRefreshing(true);
-        fetchVerifications().then(() => {
-            setIsRefreshing(false);
-            toast.success("Verifications refreshed successfully");
-        }).catch(() => {
-            setIsRefreshing(false);
-        });
+        // ตอนนี้ fetchVerifications() จะคืนค่า Promise ออกมาแล้ว
+        fetchVerifications()
+            .then(() => {
+                setIsRefreshing(false);
+            })
+            .catch((err) => {
+                console.error("Refresh operation failed:", err); // เพิ่ม log ดูได้
+                setIsRefreshing(false);
+            });
     };
 
     const handleSortChange = (field) => {
@@ -282,7 +289,7 @@ const VerificationList = () => {
     };
 
     const closeModal = () => setShowModal(false);
-    
+
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'short', day: 'numeric' };
         return new Date(dateString).toLocaleDateString(undefined, options);
@@ -303,47 +310,47 @@ const VerificationList = () => {
     return (
         <div className="verificationlist-container">
             <Joyride
-        steps={verifyListTutorialSteps}
-        run={runVerifyListTutorial}
-        continuous
-        showProgress
-        showSkipButton
-        styles={{
-          options: {
-            zIndex: 10000, // ให้แสดงทับ Modal หรือ elements อื่นๆ
-          },
-        }}
-        callback={(data) => { // ลบ Type Annotation ออกสำหรับ JS
-          const { status } = data;
-          if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
-            setRunVerifyListTutorial(false);
-            localStorage.setItem('verifyListTutorialShown', 'true'); // ใช้ key ใหม่
-          }
-        }}
-      />
+                steps={verifyListTutorialSteps}
+                run={runVerifyListTutorial}
+                continuous
+                showProgress
+                showSkipButton
+                styles={{
+                    options: {
+                        zIndex: 10000, // ให้แสดงทับ Modal หรือ elements อื่นๆ
+                    },
+                }}
+                callback={(data) => { // ลบ Type Annotation ออกสำหรับ JS
+                    const { status } = data;
+                    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
+                        setRunVerifyListTutorial(false);
+                        localStorage.setItem('verifyListTutorialShown', 'true'); // ใช้ key ใหม่
+                    }
+                }}
+            />
 
-      <div className="verificationlist-header">
-         {/* ... ปุ่ม Back และ Title ... */}
-         {/* ปุ่ม ? สำหรับเรียก Tutorial */}
-         <button
-           onClick={handleRestartVerifyListTutorial}
-           className="tutorial-help-button tutorial-help-button-corner-vl" // ใช้ class ใหม่ หรือปรับ CSS เดิม
-           title="Show Tutorial"
-           style={{ /* อาจจะต้องปรับ Style เล็กน้อย */
-             position: 'absolute',
-             top: '15px',
-             right: '20px',
-             fontSize: '1.6rem',
-             background: 'none',
-             border: 'none',
-             color: '#333', // ปรับสีตาม theme header ของหน้านี้
-             cursor: 'pointer',
-             zIndex: 5 // ทำให้แสดงเหนือ Header แต่ต่ำกว่า Joyride/Modal
-           }}
-         >
-           <FontAwesomeIcon icon={faQuestionCircle} />
-         </button>
-      </div>
+            <div className="verificationlist-header">
+                {/* ... ปุ่ม Back และ Title ... */}
+                {/* ปุ่ม ? สำหรับเรียก Tutorial */}
+                <button
+                    onClick={handleRestartVerifyListTutorial}
+                    className="tutorial-help-button tutorial-help-button-corner-vl" // ใช้ class ใหม่ หรือปรับ CSS เดิม
+                    title="Show Tutorial"
+                    style={{ /* อาจจะต้องปรับ Style เล็กน้อย */
+                        position: 'absolute',
+                        top: '15px',
+                        right: '20px',
+                        fontSize: '1.6rem',
+                        background: 'none',
+                        border: 'none',
+                        color: '#333', // ปรับสีตาม theme header ของหน้านี้
+                        cursor: 'pointer',
+                        zIndex: 5 // ทำให้แสดงเหนือ Header แต่ต่ำกว่า Joyride/Modal
+                    }}
+                >
+                    <FontAwesomeIcon icon={faQuestionCircle} />
+                </button>
+            </div>
             <div className="verificationlist-header">
                 <button className="verificationlist-back-btn" onClick={handleBackToDashboard}>
                     <FontAwesomeIcon icon={faArrowLeft} /> Back
@@ -358,11 +365,11 @@ const VerificationList = () => {
                 <div className="verificationlist-panel">
                     <div className="verificationlist-panel-header">
                         <h2>
-                            <FontAwesomeIcon icon={faListAlt} /> 
+                            <FontAwesomeIcon icon={faListAlt} />
                             Verification Requests
                             <span className="verificationlist-count-badge">{filteredVerifications.length}</span>
                         </h2>
-                        
+
                         <div className="verificationlist-tools">
                             <div className="verificationlist-search">
                                 <FontAwesomeIcon icon={faSearch} className="verificationlist-search-icon" />
@@ -374,8 +381,8 @@ const VerificationList = () => {
                                     className="verificationlist-search-input"
                                 />
                                 {searchTerm && (
-                                    <button 
-                                        className="verificationlist-clear-search" 
+                                    <button
+                                        className="verificationlist-clear-search"
                                         onClick={() => setSearchTerm("")}
                                         title="Clear search"
                                     >
@@ -383,19 +390,19 @@ const VerificationList = () => {
                                     </button>
                                 )}
                             </div>
-                            
-                            
-                            <button 
-                                className={`verificationlist-refresh-btn ${isRefreshing ? 'refreshing' : ''}`} 
+
+
+                            <button
+                                className={`verificationlist-refresh-btn ${isRefreshing ? 'refreshing' : ''}`}
                                 onClick={handleRefresh}
                                 disabled={isRefreshing}
                             >
-                                <FontAwesomeIcon icon={faSync} spin={isRefreshing} /> 
+                                <FontAwesomeIcon icon={faSync} spin={isRefreshing} />
                                 {isRefreshing ? 'Refreshing...' : 'Refresh'}
                             </button>
                         </div>
                     </div>
-                    
+
                     <div className="verificationlist-table-container">
                         {filteredVerifications.length === 0 ? (
                             <div className="verificationlist-empty-state">
@@ -411,6 +418,7 @@ const VerificationList = () => {
                                         <th>Created By</th>
                                         <th>Date Assigned</th>
                                         <th>Status</th>
+                                        <th>Reviewer</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -432,39 +440,39 @@ const VerificationList = () => {
                                             </td>
                                             <td className="req-status-cell">
                                                 <span className={`req-status 
-                                                    ${verification.requirement_status === "VERIFIED" 
-                                                        ? 'status-verified' 
-                                                        : verification.requirement_status === "REJECTED" 
-                                                            ? 'status-rejected' 
+                                                    ${verification.requirement_status === "VERIFIED"
+                                                        ? 'status-verified'
+                                                        : verification.requirement_status === "REJECTED"
+                                                            ? 'status-rejected'
                                                             : 'status-waiting'}`}>
                                                     WAITING FOR VERIFICATION
                                                 </span>
                                             </td>
                                             <td className="actions-cell">
-                                                <div className="action-buttons">
-                                                    <button
-                                                        className="view-details-btn"
-                                                        title="View Details"
-                                                        onClick={() =>
-                                                            handleViewDetails(
-                                                                verification.requirements || [],
-                                                                verification.verification_by || []
-                                                            )
-                                                        }
-                                                    >
-                                                        <FontAwesomeIcon icon={faEye} />
-                                                    </button>
-                                                    <button
-                                                        className="verify-btn"
-                                                        onClick={() =>
-                                                            handleVerifyClick(verification.id, verification.requirements)
-                                                        }
-                                                        disabled={verification.requirement_status === "VERIFIED" || verification.requirement_status === "REJECTED"}
-                                                    >
-                                                        <FontAwesomeIcon icon={faCheck} className="button-icon" />
-                                                        Verify
-                                                    </button>
-                                                </div>
+                                                <button
+                                                    className="view-details-btn"
+                                                    title="View Details"
+                                                    onClick={() =>
+                                                        handleViewDetails(
+                                                            verification.requirements || [],
+                                                            verification.verification_by || []
+                                                        )
+                                                    }
+                                                >
+                                                    <FontAwesomeIcon icon={faEye} />
+                                                </button>
+                                            </td>
+                                            <td>
+                                                <button
+                                                    className="verify-btn"
+                                                    onClick={() =>
+                                                        handleVerifyClick(verification.id, verification.requirements)
+                                                    }
+                                                    disabled={verification.requirement_status === "VERIFIED" || verification.requirement_status === "REJECTED"}
+                                                >
+                                                    <FontAwesomeIcon icon={faCheck} className="button-icon" />
+                                                    Verify
+                                                </button>
                                             </td>
                                         </tr>
                                     ))}
