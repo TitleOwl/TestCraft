@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -24,40 +24,29 @@ const TestcaseVerifed = () => {
   const [newComment, setNewComment] = useState("");
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    if (!projectId || !veriTestcaseId) {
-      console.error("Project ID or Testcase ID is missing.");
-      navigate("/VeriTestcase");
-      return;
-    }
-
-    fetchCriteria();
-    fetchTestcaseDetails(selectedTestcase);
-    fetchVeriTestcaseBy();
-  }, [projectId, veriTestcaseId, selectedTestcase, navigate]);
-
-  useEffect(() => {
-    fetchComments();
-  }, [veriTestcaseId]);
 
   // ดึงข้อมูล veritestcase_by
-  const fetchVeriTestcaseBy = async () => {
+  const fetchVeriTestcaseBy = useCallback(async () => {
+    // เพิ่ม Guard Clause เช็ค ID ที่จำเป็นก่อน fetch
+    if (!projectId || !veriTestcaseId || !testcaseId) return;
     try {
       const response = await axios.get("http://localhost:3001/testcaseveri", {
         params: { project_id: projectId, veritestcase_id: veriTestcaseId, testcase_id: testcaseId },
       });
       const veritestcase = response.data.find(
-        (item) => item.id === veriTestcaseId
+        (item) => item.id === parseInt(veriTestcaseId) // ตรวจสอบ type ให้ตรงกัน
       );
       setVeritestcaseBy(veritestcase?.veritestcase_by || {});
     } catch (error) {
       console.error("Error fetching veritestcase_by:", error);
+      toast.error("Failed to load reviewer status."); // แจ้งผู้ใช้
     }
-  };
+  }, [projectId, veriTestcaseId, testcaseId]);
 
-  const fetchCriteria = async () => {
+
+  const fetchCriteria = useCallback(async () => {
+    if (!projectId) return;
     try {
-      setLoading(true);
       const response = await axios.get(`http://localhost:3001/testcasecriteria/${projectId}`);
       const initialCheckboxState = response.data.reduce((acc, criteria) => {
         acc[criteria.testcasecri_id] = false;
@@ -65,7 +54,7 @@ const TestcaseVerifed = () => {
       }, {});
       setTestcasecriList(response.data);
 
-      const storedUsername = localStorage.getItem("username");
+      // อ่านค่าจาก localStorage แค่ครั้งเดียวตอนโหลด (การย้าย setLoading ออกไปช่วยป้องกัน loop ตรงนี้ด้วย)
       if (storedUsername) {
         const storedCheckboxState = localStorage.getItem(
           `checkboxState_${storedUsername}_${projectId}_${veriTestcaseId}`
@@ -73,15 +62,17 @@ const TestcaseVerifed = () => {
         setCheckboxState(
           storedCheckboxState ? JSON.parse(storedCheckboxState) : initialCheckboxState
         );
+      } else {
+        setCheckboxState(initialCheckboxState); // ถ้าไม่มี username ก็ใช้ค่าเริ่มต้น
       }
     } catch (error) {
       console.error("Error fetching testcase criteria:", error);
-    } finally {
-      setLoading(false);
+      toast.error("Failed to load criteria checklist."); // แจ้งผู้ใช้
     }
-  };
+  }, [projectId, veriTestcaseId, storedUsername]); // Dependencies ของ fetchCriteria
 
-  const fetchTestcaseDetails = async () => {
+  const fetchTestcaseDetails = useCallback(async () => {
+    if (!testcaseId) return;
     try {
       const response = await axios.get("http://localhost:3001/verifytestcase", {
         params: { testcase_id: testcaseId },
@@ -89,19 +80,31 @@ const TestcaseVerifed = () => {
       setTestcaseDetails(response.data);
     } catch (error) {
       console.error("Error fetching testcase details:", error);
+      toast.error("Failed to load test case details."); // แจ้งผู้ใช้
     }
-  };
+  }, [testcaseId]); // Dependencies ของ fetchTestcaseDetails
 
-  const fetchComments = async () => {
+  const fetchComments = useCallback(async () => {
+    if (!veriTestcaseId) return;
     try {
+      // *** ตรวจสอบ URL Endpoint นี้ให้แน่ใจว่าถูกต้องใน Backend ***
       const response = await axios.get("http://localhost:3001/get-commentveritestcase", {
         params: { veritestcase_id: veriTestcaseId },
       });
       setComments(response.data);
     } catch (error) {
       console.error("Error fetching comments:", error);
+      if (error.response && error.response.status === 404) {
+        // ถ้า 404 อาจจะไม่ใช่ error ร้ายแรง แค่ไม่มีข้อมูล หรือ endpoint ผิด
+        console.warn("Comment endpoint not found (404). Check API route.");
+        // toast.warn("Could not fetch comments (endpoint not found)."); // แจ้งเตือนเบาๆ หรือไม่ต้องแจ้งก็ได้
+        setComments([]); // ให้เป็น array ว่าง
+      } else {
+        toast.error("Failed to fetch comments."); // แจ้ง Error อื่นๆ
+        setComments([]); // ให้เป็น array ว่าง
+      }
     }
-  };
+  }, [veriTestcaseId]); // Dependencies ของ fetchComments
 
   const handleCheckboxChange = (id) => {
     setCheckboxState((prevState) => {
@@ -115,6 +118,40 @@ const TestcaseVerifed = () => {
       return updatedState;
     });
   };
+  useEffect(() => {
+    // เพิ่มการตรวจสอบ ID ทั้งหมดก่อนเริ่ม fetch
+    if (!projectId || !veriTestcaseId || !testcaseId) {
+      console.error("Project ID, Verification ID, or Testcase ID is missing in URL.");
+      toast.error("Required information is missing. Please go back and try again.");
+      setLoading(false); // หยุด loading
+      // อาจจะ navigate กลับ หรือแสดงข้อความใหญ่ๆ
+      // navigate(`/VeriTestcase?project_id=${projectId || ''}`); // ลอง navigate กลับหน้า list
+      return;
+    }
+
+    setLoading(true); // เริ่ม loading ก่อน fetch
+    setError(null); // เคลียร์ error เก่า
+
+    // เรียก fetch ทั้งหมดพร้อมกัน
+    Promise.all([
+      fetchCriteria(),
+      fetchTestcaseDetails(),
+      fetchVeriTestcaseBy()
+      // fetchComments() อาจจะเรียกแยกต่างหาก หรือรวมไปด้วยก็ได้
+    ]).catch(err => {
+      console.error("Error during initial data fetch group:", err);
+      // อาจจะตั้งค่า error state รวมที่นี่
+      // setError("Failed to load initial page data.");
+    }).finally(() => {
+      setLoading(false); // หยุด loading เมื่อ fetch ทั้งหมดเสร็จ (หรือ error)
+    });
+
+    // *** เอา selectedTestcase ออก, เพิ่ม testcaseId และ functions ที่ใช้ useCallback ***
+  }, [projectId, veriTestcaseId, testcaseId, navigate, fetchCriteria, fetchTestcaseDetails, fetchVeriTestcaseBy]);
+
+  useEffect(() => {
+    fetchComments();
+  }, [fetchComments]);
 
   const handleSave = async () => {
     console.log("testcase_id:", testcaseId); // testcaseId จาก query params
@@ -403,7 +440,7 @@ const TestcaseVerifed = () => {
 
             {/* Display comments */}
             {comments.length === 0 ? (
-              <p className="commentveritestcase-no-comments">No comments available at the moment.</p>
+              <p className="commentveritestcase-no-comments"></p>
             ) : (
               comments.map((comment) => (
                 <div key={comment.comvertestcase_id} className="commentveritestcase-item">
