@@ -145,7 +145,7 @@ const Comment = ({ verificationId }) => {
           onChange={(e) => setNewComment(e.target.value)}
         />
         <button className="submit-button" onClick={handleSubmit}>
-          Submit
+          Add Comment
         </button>
       </div>
 
@@ -192,7 +192,7 @@ const Comment = ({ verificationId }) => {
                   value={replyComment}
                   onChange={(e) => setReplyComment(e.target.value)}
                 />
-                <button onClick={() => handleReplySubmit(comment.comment_id)}>Submit Reply</button>
+                <button onClick={() => handleReplySubmit(comment.comment_id)}>Comment Reply</button>
               </div>
             )}
 

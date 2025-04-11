@@ -1,77 +1,806 @@
-.createveritestcase-container {
-    padding: 20px;
-    font-family: Arial, sans-serif;
+/* ./testcase_css/CreateVeriTest.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    /* Base Colors */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fc;
+    /* Background color like the image */
+    --bg-tertiary: #eef1f8;
+    --bg-select-all: #f1f5f9;
+    /* Light grey for select all row */
+
+    /* Text Colors */
+    --text-primary: #1e293b;
+    /* Dark text */
+    --text-secondary: #64748b;
+    /* Medium grey text */
+    --text-light: #94a3b8;
+    /* Lighter gray text */
+    --texts-count: #475569;
+    /* Color for 'X of Y selected' */
+    --text-count: #64748b;
+    /* สีเทากลางๆ */
+    --bg-select-all: #f1f5f9;
+    /* สีพื้นหลังเทาอ่อน */
+    --primary-testcase: #10b981;
+    --primary-hover-testcase: #059669;
+    --primary-light: #a5b4fc;
+    --primary-dark: #4f46e5;
+
+    /* Status & Type Colors */
+    --status-working-bg: #FFFBEB;
+    /* Light yellow/beige */
+    --status-working-text: #D97706;
+    /* Amber/Orange text */
+
+
+
+
+    /* UI Elements */
+    --border: #e2e8f0;
+    --border-light: #f1f5f9;
+    --border-input: #cbd5e1;
+    /* Border for inputs/select */
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.03);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+    --shadow-colored: 0 4px 12px rgba(99, 102, 241, 0.1);
+    /* Lighter colored shadow */
+
+    /* Border Radius */
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 8px;
+
+    /* Transitions */
+    --transition: all 0.2s ease;
 }
 
-.createveritestcase-container h1 {
-    text-align: center;
-    margin-bottom: 20px;
+/* Global Reset & Body */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.createveritestcase-content {
+body {
+    background-color: var(--bg-secondary);
+    font-family: 'Inter', sans-serif;
+}
+
+/* --- Container & Header --- */
+
+/* --- เพิ่ม position: relative ให้ container หลัก --- */
+.create-tc-veri-container {
+    /* หรือ .createveritestcase-container ถ้ายังไม่ได้เปลี่ยน */
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 30px;
+    /* อาจจะต้องเพิ่ม padding-top ถ้า header ชิดขอบบนไป */
+    background-color: var(--bg-primary);
+    min-height: 100vh;
+    position: relative;
+    /* <<--- เพิ่มบรรทัดนี้ */
+    padding-top: 40px;
+    /* <<--- เพิ่ม padding ด้านบนเล็กน้อย กัน header ชิดแถบ gradient */
+}
+
+/* --- สร้างแถบ Gradient ด้านบนด้วย ::before --- */
+.create-tc-veri-container::before {
+    /* หรือ .createveritestcase-container::before */
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: rgb(16, 184, 128);
+    z-index: 10;
+
+}
+
+.create-tc-veri-header {
+    /* หรือ .createveritestcase-header */
     display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    /* margin-bottom: 30px; */
+    /* อาจจะไม่ต้องใช้ margin-bottom เยอะเท่าเดิม */
+    padding-bottom: 20px;
+    /* เพิ่ม padding ด้านล่าง header แทน */
+}
+
+/* ... (CSS ที่เหลือเหมือนเดิม) ... */
+
+.create-tc-veri-header h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    letter-spacing: -0.02em;
+}
+
+.create-tc-veri-title-icon {
+    color: var(--primary-testcase);
+}
+
+.create-tc-veri-back-btn,
+.create-tc-veri-help-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.create-tc-veri-back-btn {
+    left: 0;
+    color: var(--primary-testcase);
+}
+
+.create-tc-veri-back-btn:hover {
+    color: var(--primary-hover-testcase);
+}
+
+.create-tc-veri-help-btn {
+    right: 0;
+    color: var(--text-light);
+    font-size: 1.4rem;
+    /* Make icon larger */
+    padding: 5px;
+}
+
+.create-tc-veri-help-btn:hover {
+    color: var(--text-secondary);
+}
+
+/* --- Content Layout --- */
+.create-tc-veri-content {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 30px;
+}
+
+.create-tc-veri-left-panel .create-tc-veri-select-all {
     justify-content: space-between;
+    /* ดัน count ไปขวา */
+    background-color: var(--bg-select-all, #f1f5f9);
+    /* พื้นหลังเทาอ่อน */
 }
 
-.createveritestcase-left-panel,
-.createveritestcase-right-panel {
-    width: 48%;
-    background: #f9f9f9;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+/* --- Panels --- */
+.create-tc-veri-left-panel,
+.create-tc-veri-right-panel {
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    /* Important */
+    display: flex;
+    flex-direction: column;
+    /* Stack header, content, summary/footer */
 }
 
-.createveritestcase-testcase-table {
+.create-tc-veri-left-panel {
+    flex: 3;
+}
+
+.create-tc-veri-right-panel {
+    flex: 2;
+}
+
+/* --- Panel Header & Tools --- */
+.create-tc-veri-panel-header {
+    background-color: var(--bg-secondary);
+    /* Light grey background */
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px;
+}
+
+.create-tc-veri-panel-header h2 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    /* Space before tools */
+}
+
+.create-tc-veri-panel-header h2 svg {
+    color: var(--primary-testcase);
+}
+
+.create-tc-veri-count-badge {
+    background-color: var(--primary-testcase);
+    color: white;
+    font-size: 11px;
+    /* Smaller badge */
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 10px;
+    margin-left: 8px;
+    line-height: 1;
+    /* Adjust line height */
+}
+
+.create-tc-veri-tools {
+    display: flex;
+    gap: 12px;
+}
+
+.create-tc-veri-search,
+.create-tc-veri-filter {
+    display: flex;
+    align-items: center;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-input);
+    /* Input border color */
+    border-radius: var(--radius-md);
+    padding: 8px 12px;
+    flex: 1;
+}
+
+.create-tc-veri-search-icon,
+.create-tc-veri-filter-icon {
+    color: var(--text-secondary);
+    margin-right: 8px;
+}
+
+.create-tc-veri-search-input {
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    color: var(--text-primary);
+    width: 100%;
+    outline: none;
+    padding: 0;
+    /* Remove default padding */
+}
+
+.create-tc-veri-filter-select {
+    border: none;
+    padding: 1px;
+    background: transparent;
+    font-size: 14px;
+    color: var(--text-primary);
+    width: 100%;
+    outline: none;
+}
+
+
+.create-tc-veri-search {
+    position: relative;
+}
+
+.create-tc-veri-clear-search {
+    background: transparent;
+    border: none;
+    color: var(--text-light);
+    cursor: pointer;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0;
+}
+
+.create-tc-veri-clear-search:hover {
+    color: var(--text-primary);
+}
+
+.create-tc-veri-filter-select {
+    appearance: none;
+    background: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="5" viewBox="0 0 10 5"><path fill="%2364748b" d="M0 0l5 5 5-5z"/></svg>') no-repeat right 12px center;
+    background-size: 10px 5px;
+    padding-right: 30px;
+    cursor: pointer;
+}
+
+/* --- Base Style สำหรับแถบ Select All ทั่วไป --- */
+.create-tc-veri-select-all {
+    gap: 10px;
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border, #e2e8f0);
+    font-size: 14px;
+    background-color: #eef1f8;
+}
+
+/* --- เพิ่ม Rule สำหรับกลุ่มด้านซ้าย (Checkbox + Label) --- */
+.create-tc-veri-select-all-left {
+    display: flex;
+    /* จัด checkbox กับ label แนวนอน */
+    align-items: center;
+    /* จัดกึ่งกลางแนวตั้ง */
+    gap: 10px;
+    /* <<--- ระยะห่างระหว่าง checkbox กับ label (ปรับค่าได้) */
+}
+
+/* --- Label (อาจจะไม่ต้องแก้ ถ้าใช้ gap แทน margin) --- */
+.create-tc-veri-select-all label {
+    /* display: flex; */
+    /* ไม่จำเป็นแล้ว */
+    /* align-items: center; */
+    font-weight: 500;
+    color: var(--text-primary);
+    cursor: pointer;
+    /* margin-left: 10px; */
+    /* เอาออก ถ้าใช้ gap บน parent แล้ว */
+}
+
+/* --- Count Text (ตรวจสอบว่า style ถูกต้อง) --- */
+.create-tc-veri-select-all .create-tc-veri-selected-count {
+    display: inline;
+    color: var(--text-primary);
+    /* สีเดียวกับ label */
+    font-size: 14px;
+    /* ขนาดเดียวกับ label */
+    white-space: nowrap;
+    /* ป้องกันการตัดคำ */
+}
+
+/* --- Custom Checkbox (ตรวจสอบว่า style ยังอยู่) --- */
+.create-tc-veri-container input[type="checkbox"] {
+    /* ... custom checkbox styles ... */
+    margin: 0;
+    /* Reset margin */
+}
+
+
+.create-tc-veri-selected-count {
+    color: var(--text-count);
+    /* Specific color */
+    font-size: 13px;
+}
+
+/* --- Table Styling --- */
+.create-tc-veri-table-container {
+    overflow-y: auto;
+    /* Scroll for table content */
+    flex-grow: 1;
+    /* Allow table to take remaining space */
+}
+
+.create-tc-veri-testcase-table {
     width: 100%;
     border-collapse: collapse;
+    /* Use collapse for cleaner lines */
 }
 
-.createveritestcase-testcase-table th,
-.createveritestcase-testcase-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
+.create-tc-veri-testcase-table th {
+    position: sticky;
+    /* Sticky header */
+    top: 0;
+    background-color: var(--bg-select-all);
+    /* Match select all background */
+    text-align: left;
+    padding: 10px 16px;
+    /* Adjust padding */
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    z-index: 1;
+    /* Ensure header stays above scrolling content */
+}
+
+.create-tc-veri-testcase-table td {
+    padding: 12px 16px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--border-light);
+    /* Lighter border for rows */
+    color: var(--text-primary);
+    vertical-align: middle;
+}
+
+/* Remove bottom border for last row */
+.create-tc-veri-testcase-table tr:last-child td {
+    border-bottom: none;
+}
+
+.create-tc-veri-checkbox-column {
+    width: 60px;
+    text-align: center;
+}
+
+.create-tc-veri-testcase-table td:first-child {
+    text-align: center;
+}
+
+/* Selected row style */
+.create-tc-veri-testcase-table tr.selected-row {
+    background-color: rgba(99, 102, 241, 0.05);
+    /* Light primary color background */
+}
+
+.create-tc-veri-testcase-table tr:hover {
+    background-color: var(--bg-tertiary);
+    /* Hover effect */
+}
+
+/* Table cell content styling */
+.tc-id {
+    /* Class for Test Case ID */
+    font-family: monospace;
+    font-size: 13px;
+    color: var(--text-secondary);
+    /* Different color? */
+    font-weight: 500;
+}
+
+.tc-status-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.4;
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* Specific Type Badges */
+.type-user-interface {
+    background-color: var(--type-user-interface-bg);
+    color: var(--type-user-interface-text);
+}
+
+.type-functional {
+    background-color: var(--type-functional-bg);
+    color: var(--type-functional-text);
+}
+
+/* Add more .type-* classes as needed */
+.type-unknown,
+.tc-type-badge:not([class*="type-"]) {
+    /* Fallback style */
+    background-color: var(--bg-tertiary);
+    color: var(--text-secondary);
+}
+
+.tc-type-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 500;
+    color: white;
+    text-transform: capitalize;
+}
+
+/* Type-specific styles */
+.type-unit-test {
+    background-color: #42A5F5;
+    /* Bright Blue */
+}
+
+.type-integration-test {
+    background-color: #66BB6A;
+    /* Fresh Green */
+}
+
+.type-system-test {
+    background-color: #FFA726;
+    /* Orange */
+}
+
+.type-acceptance-test {
+    background-color: #AB47BC;
+    /* Purple */
+}
+
+.type-other {
+    background-color: #B0BEC5;
+    /* Gray-blue */
+}
+
+.type-unknown {
+    background-color: #9E9E9E;
+    /* Neutral Gray */
+}
+
+
+
+/* Specific Status Badges */
+.status-working {
+    background-color: var(--status-working-bg);
+    color: var(--status-working-text);
+}
+
+/* Add more .status-* classes as needed */
+.status-unknown,
+.tc-status-badge:not([class*="status-"]) {
+    /* Fallback style */
+    background-color: var(--bg-tertiary);
+    color: var(--text-secondary);
+}
+
+.create-tc-veri-no-results {
+    text-align: center;
+    padding: 30px;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+/* --- Reviewer Panel --- */
+.create-tc-veri-reviewers-container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    /* Allow list and summary to fill space */
+}
+
+.create-tc-veri-reviewers-list {
+    padding: 10px 20px 20px 20px;
+    /* Adjust padding */
+    overflow-y: auto;
+    flex-grow: 1;
+    /* Allow list to scroll */
+}
+
+/* Style for Select All button in reviewer panel */
+.reviewer-select-all .select-all-button {
+    background: none;
+    border: none;
+    color: var(--primary);
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 0;
+    /* Remove padding */
+    margin-bottom: 10px;
+    /* Add space below */
     text-align: left;
 }
 
-.createveritestcase-testcase-table th {
-    background: #f4f4f4;
+.reviewer-select-all .select-all-button:hover {
+    text-decoration: underline;
 }
 
-.createveritestcase-footer {
+.create-tc-veri-reviewer-item {
+    display: flex;
+    align-items: flex-start;
+    /* Align checkbox top */
+    padding: 10px 0;
+    /* Vertical padding */
+    border-bottom: 1px solid var(--border-light);
+    /* Separator line */
+}
+
+.create-tc-veri-reviewer-item:last-child {
+    border-bottom: none;
+}
+
+.create-tc-veri-reviewer-item input[type="checkbox"] {
+    margin-top: 3px;
+    /* Align checkbox slightly better */
+    margin-right: 12px;
+}
+
+.create-tc-veri-checkbox {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #c2ecde;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    transition: 0.2s;
+    background-color: white;
+}
+
+.create-tc-veri-checkbox:hover:not(:checked) {
+    border-color: #34d399;
+    /* สีเขียวอ่อนเวลา hover */
+}
+
+.create-tc-veri-checkbox:checked {
+    background-color: #10b981;
+    border-color: #10b981;
+}
+
+.create-tc-veri-checkbox:checked::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 5px;
+    width: 4px;
+    height: 8px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.create-tc-veri-checkbox:disabled {
+    background-color: #f0f0f0;
+    cursor: not-allowed;
+    border-color: #ccc;
+}
+
+.create-tc-veri-checkbox:disabled:checked {
+    background-color: #ccc;
+    border-color: #ccc;
+    opacity: 0.7;
+}
+
+
+
+.create-tc-veri-reviewer-label {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.create-tc-veri-reviewer-name {
+    font-weight: 600;
+    /* Bolder name */
+    color: var(--text-primary);
+    font-size: 14px;
+    margin-bottom: 2px;
+}
+
+.create-tc-veri-reviewer-role {
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+/* --- Summary Section --- */
+.create-tc-veri-summary {
+    background-color: #eef1f8;
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    margin-top: auto;
+    /* Push to bottom */
+}
+
+.create-tc-veri-summary h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+
+.create-tc-veri-summary-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.create-tc-veri-summary-count {
+    font-weight: 600;
+    color: var(--primary-testcase);
+}
+
+/* --- Footer Buttons --- */
+.create-tc-veri-action-buttons {
     display: flex;
     justify-content: flex-end;
-    margin-top: 20px;
+    gap: 12px;
+    /* Space between buttons */
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
 }
 
-.createveritestcase-button.create-button {
-    background: #4caf50;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
+.create-tc-veri-btn-cancel,
+.create-tc-veri-btn-create {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: var(--radius-md);
+    font-size: 15px;
+    font-weight: 500;
     cursor: pointer;
-    margin-left: 10px;
-    border-radius: 4px;
+    transition: var(--transition);
+    border: 1px solid transparent;
+    /* Base border */
 }
 
-.createveritestcase-button.cancel-button {
-    background: #f44336;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    border-radius: 4px;
+.create-tc-veri-btn-cancel {
+    background-color: var(--bg-primary);
+    /* White background */
+    color: var(--text-secondary);
+    border-color: var(--border);
+    /* Visible border */
 }
 
-.createveritestcase-button.create-button:hover {
-    background: #45a049;
+.create-tc-veri-btn-cancel:hover:not(:disabled) {
+    background-color: var(--bg-tertiary);
+    border-color: var(--border-input);
 }
 
-.createveritestcase-button.cancel-button:hover {
-    background: #e53935;
+.create-tc-veri-btn-create {
+    background-color: var(--primary-testcase);
+    color: white;
+    border-color: var(--primary-testcase);
+    box-shadow: var(--shadow-colored);
 }
 
-.createveritestcase-error-message {
-    color: #ff0000;
-    font-weight: bold;
+.create-tc-veri-btn-create:hover:not(:disabled) {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-1px);
+}
+
+.create-tc-veri-btn-cancel:disabled,
+.create-tc-veri-btn-create:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+/* --- Loading/Error/Empty States Shared --- */
+.create-tc-veri-loading,
+.create-tc-veri-error-message,
+.create-tc-veri-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--text-secondary);
+    flex-grow: 1;
+    /* Allow these states to fill panel space */
+}
+
+.create-tc-veri-loading svg,
+.create-tc-veri-error-message svg {
+    font-size: 24px;
+    margin-bottom: 12px;
+}
+
+.create-tc-veri-error-message {
+    color: var(--error);
+}
+
+.create-tc-veri-error-message svg {
+    color: var(--error);
+}
+
+
+
+
+
+/* --- Scrollbar (Optional) --- */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--border);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--text-light);
 }
