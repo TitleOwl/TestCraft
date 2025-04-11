@@ -26,6 +26,7 @@ const CreateTestcase = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [testType, setTestType] = useState("");
+  const [customTestType, setCustomTestType] = useState("");
   const [priority, setPriority] = useState("");
   const [completionDate, setCompletionDate] = useState("");
   const [loggedInUser, setLoggedInUser] = useState("");
@@ -34,7 +35,10 @@ const CreateTestcase = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-
+  // Alert state
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertType, setAlertType] = useState("success");
+  const [alertMessage, setAlertMessage] = useState("");
 
   // Fetch username
   useEffect(() => {
@@ -97,38 +101,31 @@ const CreateTestcase = () => {
     }, 3000);
   };
 
-  // Make sure toast is imported:
-  // import { toast } from 'react-toastify';
-
   const handleCreateTestCase = async () => {
-    // --- 1. การตรวจสอบฟิลด์พื้นฐาน ---
-    // ใช้ .trim() เพื่อตรวจสอบว่าไม่ได้กรอกแค่ช่องว่าง
+    // --- Form validation ---
     if (!title.trim() || !description.trim() || !testType || !priority || !completionDate) {
       toast.warning("Please fill in all required fields.");
       return;
     }
 
-    // --- (ลบการตรวจสอบฟิลด์ "Other" Test Type ออก) ---
-    // ไม่จำเป็นต้องเช็ค customTestType อีกต่อไป
-
-    // --- 2. การตรวจสอบ Implement ---
+    // --- Implement validation ---
     if (!selectedImplement || selectedImplement.length === 0) {
       toast.warning("Please select at least one implement.");
       return;
     }
 
-    // --- 3. เตรียมข้อมูล ---
+    // --- Extract implement IDs ---
     const selectedIds = selectedImplement.map(option => option.value);
     const implementIdJsonString = JSON.stringify(selectedIds);
 
-    // สร้าง Object ข้อมูล Test Case
-    // ใช้ค่าจาก testType state โดยตรง ไม่ว่าจะเป็นค่าอะไรก็ตาม (รวมถึง "Other")
+    // --- Prepare testcase data ---
+    // ใช้ค่าจาก testType state โดยตรง
     const testCaseData = {
       testcase_name: title.trim(),
       testcase_des: description.trim(),
       testcase_type: testType, // <--- ใช้ testType โดยตรง
       testcase_priority: priority,
-      testcase_by: loggedInUser, // ควรเช็คว่ามีค่า
+      testcase_by: loggedInUser,
       testcase_at: completionDate,
       testcase_status: "WORKING",
       project_id: projectId,
@@ -136,8 +133,8 @@ const CreateTestcase = () => {
     };
 
     setIsSubmitting(true);
+    // setError(""); // ล้าง error เก่า (ถ้าใช้)
 
-    // --- 4. ส่งข้อมูลไป Backend ---
     try {
       console.log("Sending Test Case Data:", testCaseData);
       const response = await axios.post("http://localhost:3001/testcases", testCaseData);
@@ -146,10 +143,15 @@ const CreateTestcase = () => {
         const { testcase_id } = response.data;
         console.log(`✅ Testcase ID Created: ${testcase_id}`);
 
-        // (Optional: เพิ่ม History ถ้า Backend ไม่ได้ทำ)
-        // await axios.post("http://localhost:3001/addHistoryTestcase", { ... });
+        // ***** ส่วนนี้ถูกคงไว้ตามที่ต้องการ *****
+        // Add history record
+        await axios.post("http://localhost:3001/addHistoryTestcase", {
+          testcase_id,
+          testcase_status: "WORKING",
+        });
+        // ***** สิ้นสุดส่วนที่คงไว้ *****
 
-        // Reset ฟอร์ม
+        // --- Reset form fields ---
         setTitle("");
         setDescription("");
         setTestType("");
@@ -158,19 +160,21 @@ const CreateTestcase = () => {
         setCompletionDate("");
         setSelectedImplement([]);
 
+        // --- Show success toast ---
         toast.success("Test Case created successfully!", {
-          // ... (toast options)
+          position: "top-right",
+          autoClose: 2000,
+          // ... other toast options ...
           onClose: () => {
             navigate(`/Dashboard?project_id=${projectId}`, {
               state: { selectedSection: "Testcase" },
             });
           }
         });
-
       } else {
+        // --- Handle unexpected success status ---
         console.warn("Test case creation responded with status:", response.status);
         toast.warning(`Test case created, but received unexpected status: ${response.status}`);
-        // Redirect หรือไม่ ขึ้นอยู่กับ logic
         navigate(`/Dashboard?project_id=${projectId}`, {
           state: { selectedSection: "Testcase" },
         });
@@ -178,8 +182,11 @@ const CreateTestcase = () => {
     } catch (error) {
       console.error("Error creating test case:", error.response || error);
       const errMsg = error.response?.data?.message || "Failed to create test case. Please try again.";
+      // setError(errMsg);
+
+      // --- Show error toast ---
       toast.error(`Failed to create test case: ${errMsg}`, {
-        // ... (toast error options)
+        // ... toast error options ...
         toastId: "create-error-toast"
       });
     } finally {
@@ -237,14 +244,14 @@ const CreateTestcase = () => {
         <select
           className="tc-create-select"
           value={testType}
-          onChange={(e) => setTestType(e.target.value)}
+          onChange={(e) => setTestType(e.target.value)} // อัปเดตแค่ testType state
         >
           <option value="">Select Test Type</option>
           <option value="Unit Test">Unit Test</option>
           <option value="Integration Test">Integration Test</option>
           <option value="System Test">System Test</option>
           <option value="Acceptance Test">Acceptance Test</option>
-          <option value="Other">Other</option>
+          <option value="Other">Other</option> {/* ค่า "Other" จะถูกใช้โดยตรง */}
         </select>
       </div>
 
