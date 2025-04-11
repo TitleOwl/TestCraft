@@ -129,9 +129,7 @@ const TestcaseVerifed = () => {
     if (!allChecked) {
       toast.success("Save Criteria Checklist", {
         onClose: () => {
-          navigate(`/Dashboard?project_id=${projectId}`, {
-            state: { selectedSection: "Testcase" }
-          });
+          navigate(`/VeriTestcase?project_id=${projectId}`);
         }
       });
       return;
