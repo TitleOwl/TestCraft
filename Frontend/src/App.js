@@ -16,7 +16,6 @@ import CreateProject from './Components/CreateProject';
 import UpdateProject from './Components/UpdateProject';
 import ProjectConfig from './Components/ProjectConfig';
 
-
 // Dashboard
 import Dashboard from './Components/Dashboard';
 
@@ -42,6 +41,8 @@ import Uploadfile from './Components/Uploadfile';
 import ViewFile from './Components/ViewFile';
 import VersionControl from './Components/VersionControl';
 import Comment from './Components/Comment';
+import VericriReqDetails from './Components/VericriReqDetails';
+import HistoryValidationReq from './Components/HistoryValidationReq';
 
 // Design
 import DesignPage from './Components/DesignPage';
@@ -55,6 +56,9 @@ import CreateDesignbaseline from './Components/CreateDesignbaseline';
 import UpdateDesign from './Components/UpdateDesign';
 import CreateDiagram from './Components/CreateDiagram';
 import ViewDiagram from './Components/viewDiagram';
+import UpdateDiagram from './Components/UpdateDiagram';
+import VersionDesign from './Components/VersionDesign';
+import VericriDesignDetails from './Components/VericriDesignDetails'
 
 //Implement
 import ImplementPage from './Components/Implement/implementPage';
@@ -74,6 +78,10 @@ import TestcaseVerifed from './Components/Testcase/TestcaseVerifed';
 import TestcaseBaseline from './Components/Testcase/TestcaseBaseline';
 import CreateTestcasebaseline from './Components/Testcase/CreateTestcasebaseline';
 
+//Alert Delete Testcase
+import ConfirmationModal from './Components/Testcase/ConfirmationModal';
+import ConfirmUpdateTestcase from './Components/Testcase/ConfirmUpdateTestcase';
+
 //Traceability
 import TraceabilityPage from './Components/Traceability/traceabilityPage';
 import ViewReqTrace from './Components/Traceability/viewReqTrace';
@@ -86,9 +94,13 @@ import ViewBaselineTrace from './Components/Traceability/viewBaselineTrace';
 import SetBaselineTrace from './Components/Traceability/setBaselineTrace';
 import CreateBaselineTrace from './Components/Traceability/createBaselineTrace';
 import ViewBaselineRound from './Components/Traceability/viewBaselineRound';
+import VersionVerTrace from './Components/Traceability/versionVerTrace'
+import ViewTraceVersion from './Components/Traceability/viewTraceVersion';
+import CommentVerTrace from './Components/Traceability/commentVerTrace';
+import CurrentBaselineTrace from './Components/Traceability/currentBaselineTrace';
+import ViewBaselineCurrent from './Components/Traceability/viewBaselineCurrent';
 
-// Notify
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
@@ -103,8 +115,19 @@ const App = () => {
       {/* แสดง Navbar และส่ง username ไปแสดง */}
       {shouldShowNavbar && <Navbar username={username} />}
 
-      {/* วาง ToastContainer นอก Routes */}
-      <ToastContainer position="top-center" />
+      <ToastContainer
+        position="top-right" // หรือตำแหน่งอื่นที่ต้องการ
+        autoClose={1500}     // เวลาปิดอัตโนมัติ
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"        // หรือ dark, colored
+      />
+
       <Routes>
         {/* Route สำหรับหน้า Home */}
         <Route path="/Home" element={<Home />} />
@@ -138,6 +161,8 @@ const App = () => {
         <Route path="/ReqValidation" element={<ReqValidation />} />
         <Route path="/ViewFile" element={<ViewFile />} />
         <Route path="/VeriVaView" element={<VeriVaView />} />
+        <Route path="/VericriReqDetails" element={<VericriReqDetails />} />
+        <Route path="/HistoryValidationReq" element={<HistoryValidationReq />} />
 
         {/* Routes สำหรับ Login */}
         <Route path="/" element={<Login setUsername={setUsername} />} />
@@ -169,6 +194,9 @@ const App = () => {
         <Route path="/CreateDesignbaseline" element={<CreateDesignbaseline />} />
         <Route path="/CreateDiagram" element={<CreateDiagram />} />
         <Route path="/viewDiagram" element={<ViewDiagram />} />
+        <Route path="/UpdateDiagram" element={<UpdateDiagram />} />
+        <Route path="/VersionDesign" element={<VersionDesign />} />
+        <Route path="/VericriDesignDetails" element={<VericriDesignDetails />} />
 
         {/* ทำ Testcase */}
         <Route path="/CreateTestcase" element={<CreateTestcase />} />
@@ -183,6 +211,10 @@ const App = () => {
         <Route path="/TestcaseVerifed" element={<TestcaseVerifed />} />
         <Route path="/TestcaseBaseline" element={<TestcaseBaseline />} />
         <Route path="/CreateTestcasebaseline" element={<CreateTestcasebaseline />} />
+
+        {/* Alert Delete Testcase */}
+        <Route path="/ConfirmationModal" element={<ConfirmationModal />} />
+        <Route path="/ConfirmUpdateTestcase" element={<ConfirmUpdateTestcase />} />
 
         {/* ทำ Implement */}
         <Route path="/implementPage" element={<ImplementPage />} />
@@ -199,6 +231,11 @@ const App = () => {
         <Route path="/setBaselineTrace" element={<SetBaselineTrace />} />
         <Route path="/createBaselineTrace" element={<CreateBaselineTrace />} />
         <Route path="/viewBaselineRound" element={<ViewBaselineRound />} />
+        <Route path="/versionVerTrace" element={<VersionVerTrace />} />
+        <Route path="/viewTraceVersion" element={<ViewTraceVersion />} />
+        <Route path="/commentVerTrace" element={<CommentVerTrace />} />
+        <Route path="/currentBaselineTrace" element={<CurrentBaselineTrace />} />
+        <Route path="/viewBaselineCurrent" element={<ViewBaselineCurrent />} />
       </Routes>
     </>
   );
