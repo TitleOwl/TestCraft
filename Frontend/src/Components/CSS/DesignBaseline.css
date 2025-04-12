@@ -1,0 +1,534 @@
+/* DesignBaseline.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* --- Prefixed Variables with db- --- */
+  /* --- New Theme Color --- */
+  --db-primary-color: #d76000;  /* Main Orange Theme */
+  --db-primary-hover: #c25800; /* Darker Orange for Hover */
+  --db-primary-light: #fbe5d1; /* Lighter Orange */
+  /* --- Other Variables (Prefixed) --- */
+  --db-secondary-color: #64748b;
+  --db-text-color: #1e293b;
+  --db-text-light: #64748b;
+  --db-text-lighter: #94a3b8;
+  --db-text-dark: #0f172a;
+  --db-bg-color: #f8fafc;
+  --db-bg-light: #ffffff;
+  --db-bg-dark: #f1f5f9;
+  --db-success-color: #10b981;
+  --db-success-light: #d1fae5;
+  --db-warning-color: #f59e0b;
+  --db-warning-light: #fef3c7;
+  --db-danger-color: #ef4444;
+  --db-danger-light: #fee2e2;
+  --db-info-color: #3b82f6;
+  --db-info-light: #dbeafe;
+  --db-border-color: #e2e8f0;
+  --db-border-radius: 8px;
+  --db-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --db-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --db-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --db-transition: all 0.2s ease-in-out;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--db-bg-color);
+  color: var(--db-text-color);
+  line-height: 1.5;
+}
+
+/* Main Container */
+.design-baseline-dashboard { /* Changed prefix */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: var(--db-bg-color); /* Used prefixed var */
+}
+
+/* Header Section */
+.design-baseline-header { /* Changed prefix */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--db-border-color); /* Used prefixed var */
+}
+
+.design-baseline-header-left, .design-baseline-header-right { /* Changed prefix */
+  flex: 1;
+}
+
+.design-baseline-header-title { /* Changed prefix */
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.design-baseline-header-title h1 { /* Changed prefix */
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--db-text-dark); /* Used prefixed var */
+  margin: 0;
+}
+
+.design-baseline-header-title svg { /* Changed prefix */
+  color: var(--db-primary-color); /* Used prefixed var */
+}
+
+.design-baseline-back-button, .design-baseline-refresh-button { /* Changed prefix */
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--db-bg-light); /* Used prefixed var */
+  color: var(--db-text-color); /* Used prefixed var */
+  border: 1px solid var(--db-border-color); /* Used prefixed var */
+  border-radius: var(--db-border-radius); /* Used prefixed var */
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--db-transition); /* Used prefixed var */
+  box-shadow: var(--db-shadow-sm); /* Used prefixed var */
+}
+
+.design-baseline-back-button:hover, .design-baseline-refresh-button:hover { /* Changed prefix */
+  background-color: var(--db-bg-dark); /* Used prefixed var */
+}
+
+.design-baseline-header-right { /* Changed prefix */
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Controls Section */
+.design-baseline-controls { /* Changed prefix */
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1.5rem;
+}
+
+.design-baseline-create-button { /* Changed prefix */
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--db-primary-color); /* Used prefixed var */
+  color: white;
+  border: none;
+  border-radius: var(--db-border-radius); /* Used prefixed var */
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--db-transition); /* Used prefixed var */
+  box-shadow: var(--db-shadow-sm); /* Used prefixed var */
+}
+
+.design-baseline-create-button:hover { /* Changed prefix */
+  background-color: var(--db-primary-hover); /* Used prefixed var */
+}
+
+/* Content Section */
+.design-baseline-content { /* Changed prefix */
+  flex: 1;
+  background-color: var(--db-bg-light); /* Used prefixed var */
+  border-radius: var(--db-border-radius); /* Used prefixed var */
+  box-shadow: var(--db-shadow-md); /* Used prefixed var */
+  overflow: hidden; /* Added overflow: hidden */
+  display: flex; /* Added display: flex for centering */
+  flex-direction: column; /* Added direction for centering */
+}
+
+/* Table Container */
+.design-baseline-table-container { /* Changed prefix */
+  width: 100%;
+  overflow-x: auto;
+}
+
+.design-baseline-table { /* Changed prefix */
+  width: 100%;
+  border-collapse: separate; /* Changed border-collapse */
+  border-spacing: 0; /* Added border-spacing */
+  min-width: 100%; /* Ensure table takes full width */
+}
+
+.design-baseline-table th { /* Changed prefix */
+  background-color: var(--db-bg-dark); /* Used prefixed var */
+  color: var(--db-text-color); /* Used prefixed var */
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-align: left;
+  padding: 1rem; /* Consistent padding */
+  position: sticky;
+  top: 0; /* Make header sticky */
+  z-index: 1; /* Ensure header is above body */
+  border-bottom: 1px solid var(--db-border-color); /* Used prefixed var */
+}
+
+.design-baseline-table th.col-baseline, /* Changed prefix */
+.design-baseline-table th.col-date { /* Changed prefix */
+  cursor: pointer;
+  user-select: none;
+  transition: var(--db-transition); /* Used prefixed var */
+}
+
+.design-baseline-table th.col-baseline:hover, /* Changed prefix */
+.design-baseline-table th.col-date:hover { /* Changed prefix */
+  background-color: #e9edf5; /* Slightly darker hover */
+}
+
+.design-baseline-table th svg { /* Changed prefix */
+  margin-left: 0.5rem;
+  opacity: 0;
+  transition: var(--db-transition); /* Used prefixed var */
+  vertical-align: middle; /* Align icon better */
+}
+
+.design-baseline-table th:hover svg { /* Changed prefix */
+  opacity: 0.5;
+}
+
+.design-baseline-table th.asc svg, .design-baseline-table th.desc svg { /* Changed prefix */
+  opacity: 1;
+}
+
+.design-baseline-table th.asc svg { /* Changed prefix */
+  transform: rotate(0deg);
+}
+
+.design-baseline-table th.desc svg { /* Changed prefix */
+  transform: rotate(180deg); /* Rotate for desc */
+}
+
+
+.design-baseline-table td { /* Changed prefix */
+  padding: 1rem; /* Consistent padding */
+  border-bottom: 1px solid var(--db-border-color); /* Used prefixed var */
+  font-size: 0.875rem;
+  vertical-align: middle; /* Align content vertically */
+}
+
+.design-baseline-row { /* Changed prefix */
+  transition: var(--db-transition); /* Used prefixed var */
+}
+
+.design-baseline-row:hover { /* Changed prefix */
+  background-color: var(--db-bg-dark); /* Used prefixed var */
+}
+
+.design-baseline-row:last-child td { /* Changed prefix */
+  border-bottom: none;
+}
+
+/* Table Columns */
+.col-baseline {
+  width: 25%;
+}
+
+.col-date {
+  width: 50%;
+}
+
+.col-actions {
+  width: 25%;
+  text-align: center; /* Center align actions */
+}
+
+.design-baseline-id { /* Changed prefix */
+  font-weight: 600;
+  color: var(--db-primary-color); /* Used prefixed var */
+}
+
+.date-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* View Designs Button */
+.view-designs-button { /* Renamed class */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center; /* Center content */
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--db-border-radius); /* Used prefixed var */
+  font-size: 0.75rem; /* Slightly smaller */
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--db-transition); /* Used prefixed var */
+  background-color: var(--db-primary-color); /* Use themed color */
+  color: white;
+  border: none;
+}
+
+.view-designs-button:hover { /* Renamed class */
+  background-color: var(--db-primary-hover); /* Use themed color */
+}
+
+.view-designs-button:disabled { /* Style for disabled */
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Modal */
+.design-baseline-modal-overlay { /* Changed prefix */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px); /* Added blur */
+  animation: fadeIn 0.2s ease-out;
+}
+
+.design-baseline-modal-content { /* Changed prefix */
+  background-color: var(--db-bg-light); /* Used prefixed var */
+  border-radius: var(--db-border-radius); /* Used prefixed var */
+  max-width: 500px;
+  width: 90%;
+  box-shadow: var(--db-shadow-lg); /* Used prefixed var */
+  display: flex;
+  flex-direction: column;
+  animation: scaleIn 0.2s ease-out;
+}
+
+.design-baseline-modal-header { /* Changed prefix */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem;
+  border-bottom: 1px solid var(--db-border-color); /* Used prefixed var */
+}
+
+.design-baseline-modal-header h2 { /* Changed prefix */
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--db-text-dark); /* Used prefixed var */
+  margin: 0;
+}
+
+.design-baseline-modal-close { /* Changed prefix */
+  background: none;
+  border: none;
+  color: var(--db-text-lighter); /* Used prefixed var */
+  cursor: pointer;
+  transition: var(--db-transition); /* Used prefixed var */
+}
+
+.design-baseline-modal-close:hover { /* Changed prefix */
+  color: var(--db-text-color); /* Used prefixed var */
+}
+
+.design-baseline-modal-body { /* Changed prefix */
+  padding: 1.25rem;
+  max-height: 400px; /* Limit height */
+  overflow-y: auto; /* Enable scroll */
+}
+
+.design-baseline-designs-list { /* Renamed class */
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.design-baseline-design-item { /* Renamed class */
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: var(--db-border-radius); /* Used prefixed var */
+  background-color: var(--db-bg-dark); /* Used prefixed var */
+  transition: var(--db-transition); /* Used prefixed var */
+}
+
+.design-baseline-design-item:hover { /* Renamed class */
+  background-color: var(--db-primary-light); /* Use themed color */
+}
+
+.design-baseline-design-item svg { /* Renamed class */
+  color: var(--db-primary-color); /* Use themed color */
+}
+
+.design-baseline-empty-designs { /* Renamed class */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 0;
+  text-align: center;
+  color: var(--db-text-lighter); /* Used prefixed var */
+}
+
+.design-baseline-modal-footer { /* Changed prefix */
+  padding: 1.25rem;
+  border-top: 1px solid var(--db-border-color); /* Used prefixed var */
+  display: flex;
+  justify-content: flex-end;
+}
+
+.design-baseline-modal-button { /* Changed prefix */
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--db-border-radius); /* Used prefixed var */
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--db-transition); /* Used prefixed var */
+  background-color: var(--db-primary-color); /* Use themed color */
+  border: none;
+  color: white;
+}
+
+.design-baseline-modal-button:hover { /* Changed prefix */
+  background-color: var(--db-primary-hover); /* Use themed color */
+}
+
+/* Empty State, Loading, Error States */
+.design-baseline-empty-state, .design-baseline-loading-state, .design-baseline-error-state { /* Changed prefix */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  flex-grow: 1; /* Fill space in content area */
+}
+
+.design-baseline-empty-icon { /* Changed prefix */
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.design-baseline-empty-state h3 { /* Changed prefix */
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--db-text-dark); /* Used prefixed var */
+  margin-bottom: 0.5rem;
+}
+
+.design-baseline-empty-state p { /* Changed prefix */
+  color: var(--db-text-lighter); /* Used prefixed var */
+  max-width: 400px;
+}
+
+/* Loading Spinner */
+.design-baseline-loading-spinner { /* Changed prefix */
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: var(--db-primary-color); /* Use themed color */
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+/* Error State */
+.design-baseline-error-icon { /* Changed prefix */
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--db-danger-color); /* Used prefixed var */
+}
+
+.design-baseline-error-state h3 { /* Changed prefix */
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--db-text-dark); /* Used prefixed var */
+  margin-bottom: 0.5rem;
+}
+
+.design-baseline-error-state p { /* Changed prefix */
+  color: var(--db-text-lighter); /* Used prefixed var */
+  max-width: 400px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .design-baseline-dashboard { /* Changed prefix */
+    padding: 1rem;
+  }
+
+  .design-baseline-header { /* Changed prefix */
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .design-baseline-header-title { /* Changed prefix */
+    order: -1;
+    margin-bottom: 1rem;
+  }
+
+  .design-baseline-header-left, .design-baseline-header-right { /* Changed prefix */
+    width: 100%;
+  }
+
+  .design-baseline-header-right { /* Changed prefix */
+    justify-content: flex-start;
+  }
+
+  .design-baseline-controls { /* Changed prefix */
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+
+  /* --- Adjusted for view-designs-button --- */
+  .view-designs-button span { /* Renamed class */
+    display: none; 
+  }
+
+  .view-designs-button { /* Rename class */
+    padding: 0.5rem; /* Make it square-ish */
+  }
+  /* --- End adjusted for view-designs-buttons --- */
+
+
+  .col-baseline, .col-date, .col-actions {
+    width: auto; /* Let columns adjust */
+  }
+
+  .design-baseline-table td, .design-baseline-table th { /* Changed prefix */
+    padding: 0.75rem 0.5rem; /* Reduce padding */
+    font-size: 0.8rem; /* Slightly smaller font */
+  }
+
+  .design-baseline-modal-content { /* Changed prefix */
+        width: 95%; /* Wider modal on small screens */
+  }
+}
