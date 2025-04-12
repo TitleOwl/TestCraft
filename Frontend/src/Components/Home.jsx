@@ -22,15 +22,15 @@ const Home = () => {
       <div className="home__promo-banner">
         <img src={logo} alt="TestCraft Logo" className="home__promo-image" />
         <div className="home__promo-content">
-          <h2>Welcome to TestCraft</h2>
-          <p>Your all-in-one project management and testing tool, ISO/IEC 29110 compliant.</p>
+          <h2>Welcome to TraceCraft</h2>
+          <p>Implementation Work Products and testing tool, ISO/IEC 29110 compliant.</p>
           <p>
             Streamline project, requirement, design, and test case management
             with seamless traceability and collaboration.
           </p>
           <p>
             Experience the future of project management and testing today!
-            Start your free trial now and elevate your workflow with TestCraft.
+            Start your free trial now and elevate your workflow with TraceCraft.
           </p>
         </div>
         <div className="home__try-now">

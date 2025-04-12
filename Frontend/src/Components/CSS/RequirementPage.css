@@ -489,6 +489,7 @@ button, input, select {
   color: var(--primary);
   font-weight: 600;
   width: 100px;
+  white-space: nowrap;
 }
 
 .REQreq-name-cell {

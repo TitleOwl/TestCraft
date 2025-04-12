@@ -190,22 +190,6 @@ const Dashboard = () => {
         </div>
         
         <div
-          className={`dashboard-nav-link ${selectedSection === 'Review' ? 'active' : ''}`}
-          onClick={() => setSelectedSection('Review')}
-        >
-          <FontAwesomeIcon icon={faClipboardCheck} />
-          {!sidebarCollapsed && <span>Review</span>}
-        </div>
-        
-        <div
-          className={`dashboard-nav-link ${selectedSection === 'Baseline' ? 'active' : ''}`}
-          onClick={() => setSelectedSection('Baseline')}
-        >
-          <FontAwesomeIcon icon={faCubes} />
-          {!sidebarCollapsed && <span>Baseline</span>}
-        </div>
-        
-        <div
           className={`dashboard-nav-link ${selectedSection === 'Traceability' ? 'active' : ''}`}
           onClick={() => setSelectedSection('Traceability')}
         >

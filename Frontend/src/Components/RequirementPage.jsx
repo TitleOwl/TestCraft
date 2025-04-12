@@ -115,20 +115,8 @@ const RequirementPage = () => {
       placement: 'bottom',
     },
     {
-      // ชี้ไปที่ Tab "Version Control" (แท็บที่ 6)
-      target: '.REQheader-tab-bar .REQheader-tab:nth-child(6)',
-      content: 'คลิกที่นี่เพื่อดูประวัติการเปลี่ยนแปลงทั้งหมดของ Requirements แต่ละรายการ',
-      placement: 'bottom',
-    },
-    {
-      // ชี้ไปที่ Tab "Version Control" (แท็บที่ 7)
-      target: '.REQheader-tab-bar .REQheader-tab:nth-child(7)',
-      content: 'แสดง statement  verification และ validation',
-      placement: 'bottom',
-    },
-    {
       // ชี้ไปที่ Tab "Baseline" (แท็บที่ 8)
-      target: '.REQheader-tab-bar .REQheader-tab:nth-child(8)',
+      target: '.REQheader-tab-bar .REQheader-tab:nth-child(6)',
       content: 'เมื่อ Requirement ผ่านการ Verify และ Validate แล้ว สามารถกำหนด Baseline (เวอร์ชันหลัก) ได้จากส่วนนี้',
       placement: 'bottom',
     },
@@ -420,20 +408,6 @@ const RequirementPage = () => {
           </div>
         
           <div 
-            className={`REQheader-tab ${activeTab === 'version' ? 'REQactive' : ''}`}
-            onClick={handleVerControl}
-          >
-            <FontAwesomeIcon icon={faCodeBranch} className="REQtab-icon" />
-            Version Control
-          </div>
-          <div 
-            className={`REQheader-tab ${activeTab === 'veriva' ? 'REQactive' : ''}`}
-            onClick={handleVeriVar}
-          >
-            <FontAwesomeIcon icon={faCodeBranch} className="REQtab-icon" />
-            Verification & Validation
-          </div>
-          <div 
             className={`REQheader-tab ${activeTab === 'baseline' ? 'REQactive' : ''}`}
             onClick={handleBaseline}
           >
@@ -548,8 +522,8 @@ const RequirementPage = () => {
                     <th className="REQid-column">ID</th>
                     <th className="REQname-column">NAME</th>
                     <th className="REQtype-column">TYPE</th>
-                    <th className="REQactions-column">ACTIONS</th>
                     <th className="REQstatus-column">STATUS</th>
+                    <th className="REQactions-column">ACTIONS</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -588,6 +562,23 @@ const RequirementPage = () => {
                         </span>
                       </td>
 
+                      {/* Status Badge */}
+                      <td className="REQreq-status-cell">
+                        <div
+                          className={`REQstatus-badge 
+                            ${data.requirement_status === 'VERIFIED' ? 'REQstatus-verified' : ''}
+                            ${data.requirement_status === 'VALIDATED' ? 'REQstatus-validated' : ''} 
+                            ${data.requirement_status === 'WORKING' ? 'REQstatus-working' : ''} 
+                            ${data.requirement_status === 'WAITING FOR VERIFICATION' ? 'REQstatus-waiting-ver' : ''}
+                            ${data.requirement_status === 'WAITING FOR VALIDATION' ? 'REQstatus-val-inprogress' : ''}
+                            ${data.requirement_status === 'BASELINE' ? 'REQstatus-baseline' : ''}
+                          `}
+                        >
+                          <span className="REQstatus-dot"></span>
+                          {data.requirement_status}
+                        </div>
+                      </td>
+                      
                       {/* Actions Buttons */}
                       <td className="REQreq-actions-cell">
                         <div className="REQaction-buttons-group">
@@ -622,23 +613,6 @@ const RequirementPage = () => {
                           >
                             <FontAwesomeIcon icon={faTrash} />
                           </button>
-                        </div>
-                      </td>
-
-                      {/* Status Badge */}
-                      <td className="REQreq-status-cell">
-                        <div
-                          className={`REQstatus-badge 
-                            ${data.requirement_status === 'VERIFIED' ? 'REQstatus-verified' : ''}
-                            ${data.requirement_status === 'VALIDATED' ? 'REQstatus-validated' : ''} 
-                            ${data.requirement_status === 'WORKING' ? 'REQstatus-working' : ''} 
-                            ${data.requirement_status === 'WAITING FOR VERIFICATION' ? 'REQstatus-waiting-ver' : ''}
-                            ${data.requirement_status === 'WAITING FOR VALIDATION' ? 'REQstatus-val-inprogress' : ''}
-                            ${data.requirement_status === 'BASELINE' ? 'REQstatus-baseline' : ''}
-                          `}
-                        >
-                          <span className="REQstatus-dot"></span>
-                          {data.requirement_status}
                         </div>
                       </td>
                     </tr>

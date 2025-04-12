@@ -80,7 +80,7 @@ const UpdateRequirement = () => {
     }
 };
 
-  
+
 const handleSubmit = async (e) => {
   e.preventDefault();
 
@@ -294,8 +294,8 @@ const handleSubmit = async (e) => {
             className="create-requirement-textarea"
           ></textarea>
         </div>
-        <div className="create-requirement-form-group">
-          <label htmlFor="fileSelect">Attach File</label>
+        <div>
+          <label htmlFor="fileSelect">Related File</label>
           <Select
             isMulti
             options={uploadedFiles.map((file) => ({
@@ -312,7 +312,7 @@ const handleSubmit = async (e) => {
                 setSelectedFileIds((selectedOptions || []).map(option => option.value))
               }
 
-            placeholder="Select files"
+            placeholder="Select Related File"
             className="select-files"
           />
 

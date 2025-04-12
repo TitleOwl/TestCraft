@@ -99,10 +99,10 @@ const UpdateProject = () => {
         setFormProject(formattedProject);
         
         // Fetch members list
-        const membersResponse = await axios.get('http://localhost:3001/member');
+        const membersResponse = await axios.get('http://localhost:3001/loginname');
         const memberOptions = membersResponse.data.map((member) => ({
-          value: member.member_name,
-          label: member.member_name,
+          value: member.user_name,
+          label: member.user_name,
         }));
         setMembers(memberOptions);
         

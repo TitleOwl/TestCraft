@@ -4,25 +4,8 @@ import axios from "axios";
 import Select from "react-select";
 import "./CSS/UpdateDesign.css"; // Make sure this CSS file exists and is styled appropriately
 import Swal from "sweetalert2";
-import CreateDiagram from "./CreateDiagram"; // Assume CreateDiagram can accept initial data and has necessary methods like saveDiagram and hasUnsavedChanges
 import UpdateDiagram from "./UpdateDiagram";
 
-// Helper function to format file size (Optional, but good practice)
-const formatFileSize = (bytes) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-};
-
-// Helper function to check if a filename likely represents an image (Optional)
-const isImageFile = (filename) => {
-    if (!filename) return false;
-    const imageExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.bmp', '.ico'];
-    const lowerCaseFilename = filename.toLowerCase();
-    return imageExtensions.some(ext => lowerCaseFilename.endsWith(ext));
-};
 
 
 const UpdateDesign = () => {
@@ -49,6 +32,7 @@ const UpdateDesign = () => {
     const [existingFiles, setExistingFiles] = useState([]);
     const [initialDesignData, setInitialDesignData] = useState(null);
     const [diagramElements, setDiagramElements] = useState(null);
+    const [initialExistingFiles, setInitialExistingFiles] = useState([]);
 
     const diagramRef = useRef(null); // Ref for CreateDiagram component
 
@@ -108,26 +92,32 @@ const UpdateDesign = () => {
                     setDesignData(currentData);
                     setInitialDesignData(JSON.parse(JSON.stringify(currentData))); // Deep copy
 
-                    // Process Files - Construct displayUrl assuming backend route exists
+                    // --- Process Files ---
+                    // Use a Map to collect unique files, as each row might duplicate design info but have different file info
                     const filesMap = new Map();
                     response.data.forEach(row => {
-                        if (row.file_design_id != null) {
+                        // Check if file data exists in the current row (it might be null due to LEFT JOIN)
+                        if (row.file_design_id !== null && row.file_design_id !== undefined) {
+                            // Add file to map only if it's not already there
                             if (!filesMap.has(row.file_design_id)) {
-                                const fileUrl = `http://localhost:3001/files/design/${row.file_design_id}`; // ADJUST ROUTE IF NEEDED
                                 filesMap.set(row.file_design_id, {
+                                    // Map backend fields to frontend state fields if names differ
                                     file_design_id: row.file_design_id,
-                                    file_url: fileUrl,
-                                    file_design_name: row.file_design_name || `File_${row.file_design_id}`,
-                                    create_at: row.file_created_at,
-                                    update_at: row.file_updated_at,
+                                    file_design_data: row.file_design_data, // This might be buffer data - handle appropriately for display (e.g., create URLs or use metadata)
+                                    file_design_name: row.file_design_name || `File_${row.file_design_id}`, // Attempt to get name or generate one
+                                    create_at: row.file_created_at, // Match backend alias
+                                    update_at: row.file_updated_at, // Match backend alias
+                                    // uploaded_at: row.uploaded_at // Include if needed
                                 });
                             }
                         }
                     });
+                    // Convert the map values back to an array for the state
                     const fetchedFiles = Array.from(filesMap.values());
-                    console.log("[fetchDesign] Setting existingFiles:", fetchedFiles);
+                    console.log("[fetchDesign] Setting existingFiles state with fetched files:", fetchedFiles);
                     setExistingFiles(fetchedFiles);
-                    return true;
+
+                    return true; // Indicate success
                 } else {
                     console.warn("No design data found for ID:", designId);
                     Swal.fire("ไม่พบข้อมูล", `ไม่พบข้อมูล Design สำหรับ ID: ${designId}`, "warning");
@@ -152,7 +142,16 @@ const UpdateDesign = () => {
                 console.error("Error fetching requirements:", error);
             }
         };
-
+        const fetchFiles = async () => {
+            if (!designId) return; // Guard clause
+            try {
+                const response = await axios.get(`http://localhost:3001/design/${designId}/files`);
+                setExistingFiles(response.data);
+            } catch (error) {
+                console.error("Error fetching files:", error);
+                // Maybe show a warning that files couldn't be loaded
+            }
+        };
         const fetchDiagramData = async () => {
             if (!designId) return;
             try {
@@ -202,7 +201,7 @@ const UpdateDesign = () => {
             try {
                 const designFetched = await fetchDesign();
                 if (designFetched) {
-                    await Promise.all([fetchRequirements(), fetchDiagramData()]);
+                    await Promise.all([fetchRequirements(),fetchFiles(), fetchDiagramData()]);
                 } else {
                     console.log("Skipping related data fetch because design fetch failed.");
                 }
@@ -213,7 +212,9 @@ const UpdateDesign = () => {
                 setLoading(false);
             }
         };
+        
         fetchAllData();
+        
     }, [designId, projectId, navigate]); // Dependencies
 
     // --- Check if Data is Unchanged ---
@@ -225,104 +226,241 @@ const UpdateDesign = () => {
         JSON.stringify([...(designData.requirement_id || [])].sort()) === JSON.stringify([...(initialDesignData.requirement_id || [])].sort())
     );
 
-    // --- Update Handler ---
     const handleUpdate = async (e) => {
         e.preventDefault();
-
-        if (!initialDesignData) { Swal.fire("Error", "ข้อมูลเริ่มต้นยังไม่ถูกโหลด", "error"); return; }
-
-        // Validate metadata fields...
-        const isDataFilled = designData.diagram_name.trim() && designData.design_type && designData.diagram_type && designData.design_description.trim() && (designData.requirement_id === null || (Array.isArray(designData.requirement_id) && designData.requirement_id.length >= 0));
-        if (!isDataFilled) { Swal.fire("ข้อมูลไม่ครบถ้วน", "กรุณากรอกข้อมูลในช่องที่มีเครื่องหมาย * ให้ครบ", "warning"); return; }
-
-        // --- 1. Check for Diagram Changes ---
+    
+        // 0. เช็คว่าข้อมูลเริ่มต้นโหลดครบหรือยัง
+        if (!initialDesignData || !initialExistingFiles) {
+            Swal.fire("Error", "ข้อมูลเริ่มต้นยังไม่ถูกโหลดสมบูรณ์", "error");
+            return;
+        }
+    
+        // --- 1. ตรวจสอบการเปลี่ยนแปลง *ทั้งหมด* ก่อน ---
         let diagramHasChanged = false;
         try {
+            // ตรวจสอบการเปลี่ยนแปลง Diagram (ต้องทำก่อนรวมผล)
             if (diagramRef.current && typeof diagramRef.current.hasUnsavedChanges === 'function') {
                 diagramHasChanged = diagramRef.current.hasUnsavedChanges();
                 console.log("UpdateDesign: Diagram has changes =", diagramHasChanged);
-            } else { console.warn("UpdateDesign: Cannot check diagram changes via ref."); }
-        } catch (err) { console.error("UpdateDesign: Error calling hasUnsavedChanges:", err); Swal.fire("Error", "เกิดข้อผิดพลาดในการตรวจสอบสถานะ Diagram", "error"); return; }
-
-        // Check for new files
+            } else {
+                console.warn("UpdateDesign: Cannot check diagram changes via ref.");
+                // อาจจะถือว่าไม่มีการเปลี่ยนแปลงถ้า ref ไม่มี หรือแจ้งเตือน/log เพิ่มเติม
+            }
+        } catch (err) {
+            console.error("UpdateDesign: Error calling hasUnsavedChanges:", err);
+            // หากการเช็ค diagram error อาจจะหยุดการทำงานไปเลย หรือแจ้งเตือน
+            Swal.fire("Error", "เกิดข้อผิดพลาดในการตรวจสอบสถานะ Diagram", "error");
+            return; // หยุดการทำงานถ้าเช็ค Diagram ไม่ได้
+        }
+    
+        // ตรวจสอบการเปลี่ยนแปลง Metadata และ Status
+        const metadataOrStatusChanged = !(
+            initialDesignData && // เช็คให้แน่ใจว่า initialDesignData ไม่ใช่ null
+            designData.diagram_name === initialDesignData.diagram_name &&
+            designData.design_type === initialDesignData.design_type &&
+            designData.diagram_type === initialDesignData.diagram_type &&
+            designData.design_description === initialDesignData.design_description &&
+            JSON.stringify([...(designData.requirement_id || [])].sort()) === JSON.stringify([...(initialDesignData.requirement_id || [])].sort()) &&
+            designData.design_status === initialDesignData.design_status
+        );
+    
+        // ตรวจสอบว่ามีไฟล์ใหม่เพิ่มหรือไม่
         const hasNewFiles = selectedFiles.length > 0;
-        // Check for status change
-        const statusChanged = initialDesignData && designData.design_status !== initialDesignData.design_status;
-
-        // --- 2. Check if *anything* changed ---
-        if (isMetadataUnchanged && !diagramHasChanged && !hasNewFiles && !statusChanged) {
-            Swal.fire({ text: "ไม่มีการแก้ไขข้อมูลใดๆ", icon: "info", timer: 1500, showConfirmButton: false });
-            return;
+    
+        // ตรวจสอบว่ามีการลบไฟล์เดิมหรือไม่
+        const filesDeleted = initialExistingFiles.length !== existingFiles.length ||
+                             !initialExistingFiles.every(initialFile =>
+                                 existingFiles.some(currentFile => currentFile.file_design_id === initialFile.file_design_id)
+                             );
+    
+        // --- รวมผลการตรวจสอบทั้งหมด ---
+        const hasAnyChange = metadataOrStatusChanged || diagramHasChanged || hasNewFiles || filesDeleted;
+    
+        // Log ผลการตรวจสอบ (เพื่อ Debug)
+        console.log(`[Change Detection Summary] Metadata/Status: ${metadataOrStatusChanged}, Diagram: ${diagramHasChanged}, New Files: ${hasNewFiles}, Files Deleted: ${filesDeleted} => Any Change: ${hasAnyChange}`);
+    
+        // --- *** จุดตรวจสอบหลัก: ถ้าไม่มีการเปลี่ยนแปลงใดๆ เลย *** ---
+        if (!hasAnyChange) {
+            Swal.fire({
+                title: "ไม่มีการเปลี่ยนแปลง", // หรือใช้ text แทน title ก็ได้
+                text: "ไม่พบการแก้ไขข้อมูลใดๆ ใน Design, Diagram หรือ Files",
+                icon: "info",
+                timer: 2000, // แสดงสัก 2 วินาที
+                showConfirmButton: false // ไม่ต้องมีปุ่ม OK
+            });
+            return; // *** ออกจากฟังก์ชันทันที ***
         }
-
-        // Determine new status
-        let newStatus = designData.design_status;
-        if (initialDesignData.design_status === "BASELINE" && (!isMetadataUnchanged || diagramHasChanged || hasNewFiles || statusChanged)) {
-            if (designData.design_status === "BASELINE") { newStatus = "WORKING"; console.log("Status forced to WORKING due to modifications."); }
+    
+        // --- ถ้ามีการเปลี่ยนแปลง ให้ดำเนินการต่อ ---
+    
+        // 2. ตรวจสอบว่ากรอกข้อมูล Metadata ครบถ้วนหรือไม่ (เฉพาะเมื่อมีการเปลี่ยนแปลง)
+        const isDataFilled = designData.diagram_name.trim() &&
+                             designData.design_type &&
+                             designData.diagram_type &&
+                             designData.design_description.trim() &&
+                             (designData.requirement_id === null || (Array.isArray(designData.requirement_id) && designData.requirement_id.length >= 0)); // Requirement อาจจะเป็น [] ได้
+    
+        if (!isDataFilled) {
+             Swal.fire("ข้อมูลไม่ครบถ้วน", "กรุณากรอกข้อมูลในช่องที่มีเครื่องหมาย * ให้ครบ", "warning");
+             return;
         }
+    
+    
+ // 3. กำหนด Status ใหม่
+ let newStatus = designData.design_status; // เริ่มต้นด้วยค่า status ปัจจุบันที่ผู้ใช้อาจเลือก
 
-        // --- 3. Confirmation ---
+ if (hasAnyChange && initialDesignData.design_status !== "WORKING") {
+
+     newStatus = "WORKING";
+     console.log(`Status forced to WORKING because changes were made to a design with initial status '${initialDesignData.design_status}'.`);
+ }
+
+ else if (hasAnyChange && initialDesignData.design_status === "WORKING") {
+      console.log(`Status remains '${newStatus}' (initial was WORKING, user might have changed it, but not forced).`);
+
+ }
+    
+        // 4. ยืนยันการบันทึก (แสดงเฉพาะเมื่อมีการเปลี่ยนแปลงและข้อมูลครบ)
         const confirmResult = await Swal.fire({
             title: "ยืนยันการอัปเดต",
-            text: "ต้องการบันทึกการเปลี่ยนแปลงทั้งหมด (รวมถึง Diagram ถ้ามีการแก้ไข)?",
-            icon: "warning", showCancelButton: true, confirmButtonText: "บันทึกทั้งหมด", cancelButtonText: "ยกเลิก",
+            text: "ต้องการบันทึกการเปลี่ยนแปลงทั้งหมด Status จะถูกเปลี่ยนเป็น WORKING ?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "บันทึกทั้งหมด",
+            cancelButtonText: "ยกเลิก",
         });
         if (!confirmResult.isConfirmed) return;
-
-        // --- 4. Start Saving Process ---
-        setIsSubmitting(true); // <--- เริ่มสถานะ กำลัง submit
+    
+        // 5. เริ่มกระบวนการบันทึก
+        setIsSubmitting(true);
         Swal.fire({ title: 'กำลังบันทึกข้อมูล...', text: 'กรุณารอสักครู่', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-
+    
         try {
             // --- STEP 1: Save Diagram (if changed) ---
             if (diagramHasChanged) {
                 console.log("UpdateDesign: Attempting to save diagram via ref...");
                 if (diagramRef.current && typeof diagramRef.current.saveDiagram === 'function') {
-                    // รอผลลัพธ์จากการบันทึก Diagram
                     await diagramRef.current.saveDiagram(); // await สำคัญมาก
                     console.log("UpdateDesign: Diagram save call completed.");
-                    // ไม่ต้องเช็ค success/failure ที่นี่ เพราะถ้าล้มเหลว มันจะ throw error มาแล้ว
                 } else { throw new Error("เกิดข้อผิดพลาด: ไม่สามารถเรียกฟังก์ชันบันทึก Diagram ได้"); }
             } else { console.log("UpdateDesign: Skipping diagram save (no changes)."); }
-
-            // --- STEP 2: Update Metadata (if changed) ---
-            const metadataChanged = !isMetadataUnchanged || statusChanged;
-            if (metadataChanged) {
+    
+            // --- STEP 2: Update Metadata (if changed or status forced changed) ---
+            const needsMetadataUpdate = metadataOrStatusChanged || (newStatus !== designData.design_status); // ใช้ค่าที่คำนวณไว้แล้ว + เช็ค status ที่อาจถูกบังคับเปลี่ยน
+            if (needsMetadataUpdate) {
                 console.log("UpdateDesign: Attempting to update metadata...");
-                const metadataPayload = { project_id: projectId, diagram_name: designData.diagram_name, design_type: designData.design_type, diagram_type: designData.diagram_type, design_description: designData.design_description, requirement_id: designData.requirement_id && designData.requirement_id.length > 0 ? designData.requirement_id : null, design_status: newStatus };
+                const metadataPayload = {
+                    project_id: projectId,
+                    diagram_name: designData.diagram_name,
+                    design_type: designData.design_type,
+                    diagram_type: designData.diagram_type,
+                    design_description: designData.design_description,
+                    requirement_id: designData.requirement_id && designData.requirement_id.length > 0 ? designData.requirement_id : null, // ส่ง null ถ้า array ว่าง
+                    design_status: newStatus // ใช้ status ใหม่ที่อาจถูกเปลี่ยน
+                };
                 if (!designId) throw new Error("Design ID invalid for metadata update.");
                 await axios.put(`http://localhost:3001/design/${designId}`, metadataPayload);
                 console.log("UpdateDesign: Metadata updated.");
-                setInitialDesignData(JSON.parse(JSON.stringify({ ...designData, design_status: newStatus }))); // Update baseline
+                // อัปเดต baseline state หลังจากบันทึกสำเร็จ
+                setInitialDesignData(JSON.parse(JSON.stringify({ ...designData, design_status: newStatus })));
             } else { console.log("UpdateDesign: Skipping metadata update."); }
+    
+// --- STEP 3: Upload New Files (if any were added) ---
+if (hasNewFiles) {
+    console.log("UpdateDesign: Attempting to upload new files...");
+    if (!designId || !projectId) throw new Error("Missing ID(s) for file upload.");
 
-            // --- STEP 3: Upload Files (if changed) ---
-            if (hasNewFiles) {
-                console.log("UpdateDesign: Attempting to upload files...");
-                if (!designId || !projectId) throw new Error("Missing ID for file upload.");
-                const formData = new FormData();
-                selectedFiles.forEach(file => formData.append("files", file));
-                formData.append("design_id", designId); formData.append("project_id", projectId);
-                try {
-                    await axios.post("http://localhost:3001/uploadDesignFiles", formData, { headers: { "Content-Type": "multipart/form-data" } });
-                    console.log("UpdateDesign: Files uploaded.");
-                    setSelectedFiles([]); setFilePreviews([]);
-                    await fetchDesign(); // Refresh file list
-                } catch (uploadError) { console.error("❌ File upload error:", uploadError); throw new Error(uploadError.response?.data?.message || "File upload failed."); }
-            } else { console.log("UpdateDesign: Skipping file upload."); }
+    const formData = new FormData();
+    selectedFiles.forEach(file => formData.append("files", file));
+    formData.append("design_id", designId);
+    formData.append("project_id", projectId);
 
+    try {
+        await axios.post("http://localhost:3001/uploadDesignFiles", formData, {
+            headers: { "Content-Type": "multipart/form-data" }
+        });
+        console.log("UpdateDesign: New files uploaded successfully.");
+
+        // Clear the selected files state AFTER successful upload
+        setSelectedFiles([]);
+        setFilePreviews([]);
+
+        console.log("Refreshing file list after upload...");
+        const response = await axios.get(`http://localhost:3001/designFiles/design/${designId}`);
+        // *** สำคัญ: ปรับแก้การประมวลผล response.data ให้ตรงกับโครงสร้างที่ Backend ส่งมา ***
+
+         const updatedFiles = response.data.map(file => ({
+             ...file,
+             // สร้าง file_url อีกครั้งเผื่อ Backend ไม่ได้ส่งมาให้ใน API นี้
+             file_url: file.file_url || `http://localhost:3001/files/design/${file.file_design_id}`
+         }));
+
+        setExistingFiles(updatedFiles); // Update displayed files
+        setInitialExistingFiles(JSON.parse(JSON.stringify(updatedFiles))); // อัปเดต Baseline สำหรับเช็คครั้งถัดไป
+        console.log("Manually updated existingFiles and initialExistingFiles after upload.");
+        // filesWereUploaded = true; // อาจจะไม่จำเป็นต้องใช้ตัวแปรนี้แล้ว ถ้า refresh ตรงนี้เลย
+
+    } catch (uploadError) { // บรรทัด ~379 (หรือใกล้เคียง)
+        // Error Log แรกจะมาจากตรงนี้ เพราะ uploadError คือ ReferenceError
+        console.error("❌ File upload error:", uploadError.response?.data || uploadError.message); // <= Log แรก
+        // บรรทัดถัดไป throw Error ใหม่ ทำให้เกิด Log ที่สอง
+        throw new Error(uploadError.response?.data?.message || "File upload failed."); // <= ทำให้เกิด Log ที่สอง
+    }
+} else {
+    console.log("UpdateDesign: Skipping new file upload (no new files selected).");
+}
+    
+            // --- STEP 4: Sync Deleted Files State (ถ้ามีการลบแต่ไม่มีการอัพโหลด) ---
+            if (filesDeleted && !hasNewFiles) {
+                 // การเรียก fetchDesign() ใน Step 3 ถ้ามี upload จะจัดการเรื่องนี้แล้ว
+                 // ถ้าไม่มี upload การ fetch ตอนท้าย หรือการ navigate จะทำให้ state ถูกต้องในครั้งถัดไป
+                 // หรือจะ update initialExistingFiles ตรงนี้ก็ได้ถ้าต้องการความแม่นยำทันทีหลังกด save
+                 console.log("UpdateDesign: File deletion detected without upload, state will sync on next load/navigation.");
+                 // Optional: Explicitly sync initialExistingFiles if needed immediately without fetchDesign
+                 // setInitialExistingFiles(JSON.parse(JSON.stringify(existingFiles)));
+            }
+        // --- *** STEP 5: Add Design History *** ---
+    // ตรรกะนี้ยังคงใช้ได้ดีเหมือนเดิม!
+    // เพราะมันทำงานเมื่อ hasAnyChange เป็น true และ newStatus (ซึ่งถูกบังคับเป็น WORKING ในกรณีที่ต้องการแล้ว) เป็น 'WORKING'
+    if (hasAnyChange && newStatus === "WORKING") {
+        console.log("UpdateDesign: Attempting to add design history (status is WORKING)...");
+        try {
+            const historyPayload = {
+                design_id: designId,
+                requirement_id: designData.requirement_id && designData.requirement_id.length > 0 ? designData.requirement_id : null,
+                design_type: designData.design_type,
+                diagram_name: designData.diagram_name,
+                diagram_type: designData.diagram_type,
+                design_description: designData.design_description,
+                design_status: newStatus // ใช้ newStatus ที่เป็น 'WORKING'
+            };
+            if (!designId) {
+                 console.error("❌ Cannot save history: Design ID is missing.");
+            } else {
+                await axios.post("http://localhost:3001/addHistoryDesign", historyPayload);
+                console.log("📜 Design History added successfully for Design ID:", designId);
+            }
+        } catch (historyError) {
+            console.error("❌ Failed to add design history:", historyError.response?.data || historyError.message);
+        }
+    } else {
+         if (!hasAnyChange) {
+            console.log("UpdateDesign: Skipping design history add (no changes detected).");
+         } else { // hasAnyChange is true but newStatus is not 'WORKING'
+            console.log(`UpdateDesign: Skipping design history add (final status is ${newStatus}, not WORKING).`);
+         }
+    }
             // --- Final Success ---
-            Swal.close();
+            Swal.close(); // ปิด loading dialog
             Swal.fire({ title: "บันทึกสำเร็จ!", text: "ข้อมูลทั้งหมดถูกบันทึกเรียบร้อยแล้ว", icon: "success", timer: 2000, showConfirmButton: false })
                 .then(() => navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } }));
-
+    
         } catch (error) { // Catch errors from ANY step
-            Swal.close();
+            Swal.close(); // ปิด loading dialog ถ้ามี error
             console.error("❌ UpdateDesign Error in handleUpdate:", error);
-            // แสดง error message ที่ throw มาจากขั้นตอนต่างๆ
             Swal.fire("บันทึกล้มเหลว", error.message || "เกิดข้อผิดพลาดไม่ทราบสาเหตุ", "error");
         } finally {
-            setIsSubmitting(false); // <--- สิ้นสุดสถานะ กำลัง submit
+            setIsSubmitting(false); // สิ้นสุดสถานะ กำลัง submit ไม่ว่าจะสำเร็จหรือล้มเหลว
         }
     }; // End handleUpdate
 
@@ -424,66 +562,143 @@ const UpdateDesign = () => {
     );
 
 
+    // --- Render ---
     return (
-        <div className="update-design-container">
-            <h1 className="update-design-title">Update Design (ID: {designId || 'N/A'})</h1>
+        <div className="UpdateDesign-container"> {/* Prefixed */}
+            <h1 className="UpdateDesign-title">Update Design (ID: {designId || 'N/A'})</h1> {/* Prefixed */}
 
             {loading ? (
-                <div className="loading-indicator">Loading...</div>
+                <div className="UpdateDesign-loadingIndicator">Loading...</div> /* Prefixed */
             ) : !initialDesignData ? (
-                <div className="error-container">
+                <div className="UpdateDesign-errorContainer"> {/* Prefixed */}
                     <p>ไม่สามารถโหลดข้อมูล Design ได้ หรือ Design ID ไม่ถูกต้อง</p>
                     <button onClick={() => navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } })}>
                         กลับหน้า Dashboard
                     </button>
                 </div>
             ) : (
-                // ใช้ div ครอบ form และ fieldset ของ diagram เพื่อจัด layout (ถ้าต้องการ)
+                // Main content wrapper
                 <div>
-                    <form className="update-design-form" onSubmit={handleUpdate} noValidate>
+                    <form className="UpdateDesign-form" onSubmit={handleUpdate} noValidate> {/* Prefixed */}
                         {/* ----- Metadata Fields ----- */}
-                        <fieldset disabled={isSubmitting}> {/* <-- ใช้ isSubmitting ที่ประกาศแล้ว */}
+                        <fieldset disabled={isSubmitting}>
                             <legend>Design Details</legend>
-                            {/* ... Input, Select, Textarea ... */}
-                            <label className="update-design-label"> Diagram Name: <span className="required-star">*</span> <input className="update-design-input" type="text" name="diagram_name" value={designData.diagram_name} onChange={handleChange} required /></label>
-                            <label className="update-design-label"> Design Type: <span className="required-star">*</span> <select className="update-design-select" name="design_type" value={designData.design_type} onChange={handleChange} required><option value="" disabled>Select...</option><option value="High-Level Design">High-Level Design</option><option value="Low-Level Design">Low-Level Design</option></select></label>
-                            <label className="update-design-label"> Diagram Type: <span className="required-star">*</span> <select className="update-design-select" name="diagram_type" value={designData.diagram_type} onChange={handleChange} required ><option value="" disabled>Select...</option><option value="Prototype">Prototype</option><option value="Flow Chart">Flow Chart</option><option value="ER Diagram">ER Diagram</option><option value="Pseudo Code">Pseudo Code</option><option value="Use Case Diagram">Use Case Diagram</option><option value="Sequence Diagram">Sequence Diagram</option><option value="Other">Other</option></select></label>
-                            <label className="update-design-label"> Requirements: <span className="required-star">*</span> <Select isMulti options={requirementOptions} value={selectedRequirementValues} onChange={handleRequirementChange} className="react-select-container" classNamePrefix="react-select" placeholder="Select linked requirements..." noOptionsMessage={() => 'No baseline requirements found'} /></label>
-                            <label className="update-design-label"> Design Description: <span className="required-star">*</span> <textarea className="update-design-textarea" name="design_description" value={designData.design_description} onChange={handleChange} required rows={5} /> </label>
+                            <label className="UpdateDesign-label"> {/* Prefixed */}
+                                Diagram Name: <span className="UpdateDesign-requiredStar">*</span> {/* Prefixed */}
+                                <span><input className="UpdateDesign-input" type="text" name="diagram_name" value={designData.diagram_name} onChange={handleChange} required /></span> {/* Prefixed */}
+                            </label>
+                            <label className="UpdateDesign-label"> {/* Prefixed */}
+                                Design Type: <span className="UpdateDesign-requiredStar">*</span> {/* Prefixed */}
+                                <span>
+                                    <select className="UpdateDesign-select" name="design_type" value={designData.design_type} onChange={handleChange} required> {/* Prefixed */}
+                                        <option value="" disabled>Select...</option>
+                                        <option value="High-Level Design">High-Level Design</option>
+                                        <option value="Low-Level Design">Low-Level Design</option>
+                                    </select>
+                                </span>
+                            </label>
+                            <label className="UpdateDesign-label"> {/* Prefixed */}
+                                Diagram Type: <span className="UpdateDesign-requiredStar">*</span> {/* Prefixed */}
+                                <span>
+                                    <select className="UpdateDesign-select" name="diagram_type" value={designData.diagram_type} onChange={handleChange} required > {/* Prefixed */}
+                                        <option value="" disabled>Select...</option>
+                                        <option value="Prototype">Prototype</option>
+                                        <option value="Flow Chart">Flow Chart</option>
+                                        <option value="ER Diagram">ER Diagram</option>
+                                        <option value="Pseudo Code">Pseudo Code</option>
+                                        <option value="Use Case Diagram">Use Case Diagram</option>
+                                        <option value="Sequence Diagram">Sequence Diagram</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </span>
+                            </label>
+                            <label className="UpdateDesign-label"> {/* Prefixed */}
+                                Requirements: <span className="UpdateDesign-requiredStar">*</span> {/* Prefixed */}
+                                <span>
+                                    <Select
+                                        isMulti
+                                        options={requirementOptions}
+                                        value={selectedRequirementValues}
+                                        onChange={handleRequirementChange}
+                                        className="UpdateDesign-selectContainer" /* Prefixed Wrapper */
+                                        classNamePrefix="UpdateDesign-select"   /* Prefixed for internal elements */
+                                        placeholder="Select linked requirements..."
+                                        noOptionsMessage={() => 'No baseline requirements found'}
+                                    />
+                                </span>
+                            </label>
+                            <label className="UpdateDesign-label"> {/* Prefixed */}
+                                Design Description: <span className="UpdateDesign-requiredStar">*</span> {/* Prefixed */}
+                                <span><textarea className="UpdateDesign-textarea" name="design_description" value={designData.design_description} onChange={handleChange} required rows={5} /></span> {/* Prefixed */}
+                            </label>
                         </fieldset>
 
                         {/* ----- File Management Section ----- */}
-                        <fieldset disabled={isSubmitting}> {/* <-- ใช้ isSubmitting ที่ประกาศแล้ว */}
-                            <legend>Attached Files</legend>
-                            {/* ... Existing files list ... */}
-                            {/* ... Upload new files input ... */}
-                            {/* ... Preview new files ... */}
-                            <div className="existing-files-section"><h3>Existing Files:</h3>{existingFiles.length > 0 ? (<ul className="file-list existing-files-list">{existingFiles.map((file) => { const isImage = isImageFile(file.file_design_name); const fileUrl = file.file_url; return (<li key={file.file_design_id} className="file-item existing-file-item">{isImage ? (<img src={fileUrl} alt={file.file_design_name} className="file-thumbnail" onError={(e) => { e.target.style.display = 'none'; }} />) : (<span className="file-icon" title={file.file_design_name}>📄</span>)} <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="file-name-link" title={`View/Download ${file.file_design_name}`}><span className="file-name">{file.file_design_name || `File ID: ${file.file_design_id}`}</span></a><button type="button" className="delete-file-btn" onClick={() => handleDeleteFile(file.file_design_id)} title="Delete this file">❌</button></li>); })}</ul>) : <p>No existing files attached.</p>}</div>
-                            <label className="update-design-label update-design-label-file"> Add New Files:<input className="update-design-input-file" type="file" multiple onChange={handleFileChange} accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.ppt,.pptx,.zip,.rar" /></label>
-                            {selectedFiles.length > 0 && (<div className="selected-files-section"><h4>Files Queued for Upload:</h4><ul className="file-list selected-files-list">{filePreviews.map((preview, index) => (<li key={index} className="file-item">{preview.type === 'image' && preview.url ? <img src={preview.url} alt={`Preview ${preview.name}`} className="file-thumbnail" /> : <span className="file-icon" title={preview.name}>📄</span>} <span className="file-name">{preview.name} ({formatFileSize(preview.size)})</span><button type="button" className="remove-selected-btn" onClick={() => handleRemoveSelectedFile(index)} title="Remove from upload queue">❌</button></li>))}</ul></div>)}
+                        <fieldset disabled={isSubmitting}>
+                        <legend>Attached Files</legend>
+                        {/* Existing Files */}
+                        <div className="UpdateDesign-existingFilesSection">
+                            <h3>Existing Files:</h3>
+                            {existingFiles.length > 0 ? (
+                                <ul className="UpdateDesign-fileList UpdateDesign-existingFilesList">
+                                    {existingFiles.map((file) => (
+                                        <li key={file.file_design_id} className="UpdateDesign-fileItem">
+                                            <img src={file.file_design_data} alt={file.file_design_name || `File ${file.file_design_id}`} className="UpdateDesign-fileThumbnail" onError={(e) => e.target.style.display = 'none'} /* Hide broken img */ />
+                                            <span className="UpdateDesign-fileName">{file.file_design_name || `File ID: ${file.file_design_id}`}</span>
+                                            <button type="button" className="UpdateDesign-deleteFileBtn" onClick={() => handleDeleteFile(file.file_design_id)} title="Delete this file">❌</button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : <p>No existing files.</p>}
+                        </div>
+                            {/* Upload New Files Label & Input */}
+                            <label className="UpdateDesign-label UpdateDesign-labelFile"> {/* Prefixed */}
+                                Add New Files (Click or Drop)
+                                <input className="UpdateDesign-inputFile" type="file" multiple onChange={handleFileChange} accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt" /> {/* Prefixed */}
+                            </label>
+                            {/* Preview New Files */}
+                            {selectedFiles.length > 0 && (
+                                <div className="UpdateDesign-selectedFilesSection"> {/* Prefixed */}
+                                    <h4>Files Queued for Upload:</h4>
+                                    <ul className="UpdateDesign-fileList UpdateDesign-selectedFilesList"> {/* Prefixed */}
+                                        {filePreviews.map((preview, index) => (
+                                            <li key={index} className="UpdateDesign-fileItem"> {/* Prefixed */}
+                                                {preview.type === 'image' && preview.url ?
+                                                 <img src={preview.url} alt={`Preview ${preview.name}`} className="UpdateDesign-fileThumbnail" /> /* Prefixed */
+                                                 : <span className="UpdateDesign-fileIcon">📄</span> /* Prefixed */}
+                                                <span className="UpdateDesign-fileName">{preview.name} ({(preview.size / 1024).toFixed(1)} KB)</span> {/* Prefixed */}
+                                                <button type="button" className="UpdateDesign-removeSelectedBtn" onClick={() => handleRemoveSelectedFile(index)} title="Remove from upload queue">❌</button> {/* Prefixed */}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
                         </fieldset>
 
-                        {/* ----- Action Buttons (อยู่ภายใน Form) ----- */}
-                        <div className="update-design-buttons">
-                            <button type="button" className="update-design-btn-cancel" onClick={() => navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } })} disabled={isSubmitting}> Cancel </button>
-                            <button type="submit" className="update-design-btn" disabled={isSubmitting || loading}>
-                                {isSubmitting ? 'กำลังบันทึก...' : 'บันทึกการเปลี่ยนแปลงทั้งหมด'}
+                        {/* ----- Action Buttons (Inside Form) ----- */}
+                        <div className="UpdateDesign-buttons"> {/* Prefixed */}
+                            <button type="button" className="UpdateDesign-btnCancel" onClick={() => navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } })} disabled={isSubmitting}> Cancel </button> {/* Prefixed */}
+                            <button type="submit" className="UpdateDesign-btn" disabled={isSubmitting || loading}> {/* Prefixed */}
+                                {isSubmitting ? 'กำลังบันทึก...' : 'Save'}
                             </button>
                         </div>
 
-                    </form> {/* <--- **** ปิด Form ตรงนี้ **** --- */}
+                    </form> {/* <--- End Form --- */}
 
-                    {/* ----- Diagram Editor Section (ย้ายมาอยู่นอก Form) ----- */}
-                    <fieldset className="diagram-fieldset" disabled={isSubmitting}> {/* <-- ใช้ isSubmitting ที่ประกาศแล้ว */}
+                    {/* ----- Diagram Editor Section (Outside Form) ----- */}
+                    <fieldset className="UpdateDesign-diagramFieldset" disabled={isSubmitting}> {/* Prefixed */}
                         <legend>Diagram Editor</legend>
                         <UpdateDiagram
-                            ref={diagramRef} // ส่ง ref สำหรับ Integrated Saving
+                            ref={diagramRef}
                             designId={parseInt(designId, 10)}
-                        // ไม่ต้องส่ง props อื่นๆ ถ้า UpdateDiagram จัดการเอง
+                            // Pass initialDiagramElements fetched in this component
+                            initialDiagramElements={diagramElements}
+                            // Add onSave prop if UpdateDiagram needs to notify parent on internal save completion (though integrated save handles it now)
+                            // onSave={() => console.log("Diagram saved internally")}
                         />
                     </fieldset>
 
-                </div> // ปิด div ครอบ
+                </div> // End main content wrapper div
             )}
         </div>
     );

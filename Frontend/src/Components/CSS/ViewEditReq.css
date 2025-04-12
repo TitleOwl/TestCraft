@@ -1,258 +1,582 @@
-.view-requirement-container {
-    max-width: 60%;
-    margin: 20px auto;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #fff;
-    /* ปรับพื้นหลังให้เป็นสีขาวเพื่อความสะอาดตา */
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    font-family: Arial, sans-serif;
-    transition: box-shadow 0.3s ease;
-    /* เพิ่มเอฟเฟ็กต์เมื่อ hover */
+/* ViewEditReq.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary-color: #4f46e5;
+  --primary-hover: #4338ca;
+  --primary-light: #e0e7ff;
+  --secondary-color: #64748b;
+  --text-color: #1e293b;
+  --text-light: #64748b;
+  --text-lighter: #94a3b8;
+  --text-dark: #0f172a;
+  --bg-color: #f8fafc;
+  --bg-light: #ffffff;
+  --bg-dark: #f1f5f9;
+  --success-color: #10b981;
+  --success-light: #d1fae5;
+  --warning-color: #f59e0b;
+  --warning-light: #fef3c7;
+  --danger-color: #ef4444;
+  --danger-light: #fee2e2;
+  --info-color: #3b82f6;
+  --info-light: #dbeafe;
+  --border-color: #e2e8f0;
+  --border-radius: 8px;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --transition: all 0.2s ease-in-out;
 }
 
-.view-requirement-container:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    /* เอฟเฟ็กต์เมื่อ hover */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.view-requirement-title {
-    margin-right: 50%;
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    margin-top: 20px;
-    color: #333;
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  line-height: 1.5;
 }
 
-.view-requirement-text {
-    font-size: 16px;
-    line-height: 1.5;
-    color: #555;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    background-color: #f9f9f9;
+/* Main Container */
+.req-view-dashboard {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: var(--bg-color);
 }
 
-.view-requirement-description {
-    color: #222;
-    font-weight: 600;
-    margin-right: 80%;
+/* Header Section */
+.req-view-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
 }
 
-
-.view-requirement-paragraph {
-    text-indent: 30px;
-    margin: 10px 65% 10px 0;
-    font-size: 16px;
-    line-height: 1.6;
-    color: #444;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    max-width: 100%;
+.req-view-header-left, .req-view-header-right {
+  flex: 1;
 }
 
-.view-requirement-header {
-    display: flex;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-    gap: 80px;
-    /* ปรับช่องว่างระหว่างคอลัมน์ */
-    padding: 10px 20px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    /* สีพื้นหลังที่อ่อนนุ่ม */
+.req-view-header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
-.view-requirement-header p {
-    margin: 0;
-    padding: 5px 0;
+.req-view-header-title h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0;
 }
 
-.view-requirement-label {
-    color: #222;
-    font-weight: 600;
-    margin-right: 8px;
+.req-view-header-title svg {
+  color: var(--primary-color);
 }
 
-.view-requirement-header span {
-    font-size: 14px;
-    color: #555;
-    margin-left: 10px;
+.req-back-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--bg-light);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
 }
 
-.view-requirement-header ul {
-    padding: 0;
-    list-style-type: none;
-    margin: 5px;
-    display: flex;
-    flex-wrap: wrap;
-    /* ให้รายการแสดงในหลายแถวได้ */
-    gap: 10px;
+.req-back-button:hover {
+  background-color: var(--bg-dark);
 }
 
-.view-requirement-header li {
-    background-color: #e0e0e0;
-    border-radius: 20px;
-    padding: 5px 10px;
-    font-size: 14px;
-    color: #333;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+/* Content Section */
+.req-view-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
 }
 
-.view-requirement-header li:hover {
-    background-color: #ccc;
-    /* เปลี่ยนสีเมื่อ hover */
-    cursor: pointer;
+/* Requirement Card */
+.req-view-card, .req-history-card {
+  background-color: var(--bg-light);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
 }
 
-
-
-
-.backreq-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
+.req-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
 }
 
-.backtoreq {
-    width: 26px;
-    height: auto;
+.req-card-header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin: 0;
 }
 
-.edit-requirement-button {
-    padding: 8px 20px;
-    font-size: 16px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
+/* Requirement Info Grid */
+.req-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
 }
 
-.edit-requirement-button:hover {
-    background-color: #0056b3;
-    /* เพิ่มสีเมื่อ hover */
+.req-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-.edit-buttons {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    margin-top: 20px;
+.req-info-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-lighter);
 }
 
-.save-button,
-.cancel-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    /* เพิ่ม transition เมื่อ hover */
+.req-info-value {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-dark);
 }
 
-.save-button {
-    background-color: #007bff;
-    color: white;
+/* Description Section */
+.req-description-section {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
 }
 
-.save-button:hover {
-    background-color: #0056b3;
-    /* สีเมื่อ hover */
+.req-description-section h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 1rem;
 }
 
-.cancel-button {
-    background-color: #f44336;
-    color: white;
+.req-description-content {
+  font-size: 0.938rem;
+  color: var(--text-color);
+  line-height: 1.6;
+  white-space: pre-line;
+  border-radius: var(--border-radius);
+  background-color: var(--bg-dark);
+  padding: 1rem;
 }
 
-.cancel-button:hover {
-    background-color: #d32f2f;
-    /* สีเมื่อ hover */
+/* Files Section */
+.req-files-section {
+  padding: 1.5rem;
 }
 
-/* ส่วนของตาราง Requirement History */
-.requirement-history-table {
+.req-files-section h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+}
+
+.req-files-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.req-file-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: var(--bg-dark);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.req-file-item:hover {
+  background-color: var(--primary-light);
+  color: var(--primary-color);
+}
+
+/* History Section */
+.req-history-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.req-history-table-container {
+  padding: 1.5rem;
+  overflow-x: auto;
+}
+
+.req-history-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 100%;
+}
+
+.req-history-table th {
+  background-color: var(--bg-dark);
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-align: left;
+  padding: 1rem;
+  position: sticky;
+  top: 0;
+}
+
+.table-header-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.req-history-table td {
+  padding: 1rem;
+  border-top: 1px solid var(--border-color);
+  font-size: 0.875rem;
+}
+
+.req-history-row {
+  transition: var(--transition);
+}
+
+.req-history-row:hover {
+  background-color: var(--bg-dark);
+}
+
+/* Status Badge */
+.req-status-badge {
+  display: inline-block;
+  padding: 0.375rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.req-status-badge.working {
+  background-color: #FFF8E1;
+  color: #B7791F;
+}
+
+.req-status-badge.waiting-for-verification {
+  background-color: #E1F5FE;
+  color:#0C5460;
+}
+
+.req-status-badge.verified {
+  background-color: #E3F9E5;
+  color: #22543D;
+}
+
+.req-status-badge.waiting-for-validation {
+  background-color: #FFF3E0;
+  color: #E65100;
+}
+
+.req-status-badge.baseline {
+  background-color: #E8F5E9;
+  color: #1B5E20;
+}
+
+.req-status-badge.validated {
+  background-color:#F3E8FF;
+  color: #553C9A;
+}
+
+.req-status-badge.rejected {
+  background-color: var(--danger-light);
+  color: var(--danger-color);
+}
+
+.req-status-badge.default {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+/* Loading Spinner */
+.loading-spinner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.loading-spinner, .req-loading-spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: var(--primary-color);
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+.req-history-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  color: var(--text-lighter);
+}
+
+/* Error Message */
+.error-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  color: var(--danger-color);
+  text-align: center;
+  padding: 0 1rem;
+}
+
+/* Empty History */
+.req-empty-history {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  color: var(--text-lighter);
+  text-align: center;
+}
+
+.req-empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+/* Animations */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .req-view-dashboard {
+    padding: 1rem;
+  }
+
+  .req-view-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .req-view-header-title {
+    order: -1;
+    margin-bottom: 1rem;
+  }
+
+  .req-view-header-left, .req-view-header-right {
     width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    overflow: hidden;
+  }
+
+  .req-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .req-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
 }
 
-/* ส่วนของแถวหัวตาราง */
-.requirement-history-table th {
-    background-color: #2c3e50;
-    color: white;
-    padding: 12px 20px;
-    font-weight: bold;
-    text-align: left;
+@media (min-width: 1024px) {
+  .req-view-content {
+    grid-template-columns: 3fr 2fr;
+  }
 }
 
-/* กำหนดขนาดและรูปแบบของเซลล์ภายในตาราง */
-.requirement-history-table td {
-    background-color: #fff;
-    padding: 12px 20px;
-    border-bottom: 1px solid #ddd;
-    text-align: center;
+/* History Tabs */
+.req-history-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-dark);
 }
 
-/* เมื่อ hover แถวตาราง */
-.requirement-history-table tr:hover {
-    background-color: #f1f1f1;
+.req-tab {
+  padding: 1rem 1.5rem;
+  flex: 1;
+  text-align: center;
+  background: none;
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
-/* ขอบล่างของแถวตาราง */
-.requirement-history-table td,
-.requirement-history-table th {
-    border-bottom: 1px solid #ddd;
+.req-tab:not(:last-child) {
+  border-right: 1px solid var(--border-color);
 }
 
-/* กำหนดลักษณะการแสดงผลสำหรับข้อความ "Loading history..." */
-.requirement-history-table td[colspan="3"] {
-    text-align: center;
-    padding: 20px;
-    font-size: 1.2em;
-    color: #888;
+.req-tab.active {
+  color: var(--primary-color);
+  background-color: var(--bg-light);
+  font-weight: 600;
 }
 
-/* ปรับขนาดคอลัมน์ให้เหมาะสม */
-.requirement-history-table th,
-.requirement-history-table td {
-    min-width: 150px;
-    /* ปรับให้คอลัมน์มีขนาดพอดี */
+.req-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--primary-color);
 }
 
-/* เพิ่มกรอบให้กับตาราง */
-.requirement-history-table {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    overflow: hidden;
+.req-tab:hover:not(.active) {
+  background-color: rgba(79, 70, 229, 0.05);
 }
 
-/* เพิ่มความนุ่มนวลให้กับการ hover */
-.requirement-history-table tr:hover {
-    background-color: #e8f5e9;
-    cursor: pointer;
+.req-tab svg {
+  color: currentColor;
+  width: 16px;
+  height: 16px;
 }
 
-/* การจัดการภายในตารางให้ดูเป็นระเบียบ */
-.requirement-history-table td {
-    font-size: 14px;
-    line-height: 1.6;
-    color: #555;
+/* Tab Content Container */
+.req-history-tab-content {
+  overflow: hidden;
 }
 
-/* จัดให้ข้อความในตารางแสดงผลเป็นกลาง */
-.requirement-history-table th,
-.requirement-history-table td {
-    text-align: center;
+/* Action Buttons for Tables */
+.req-action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: var(--info-light);
+  color: var(--info-color);
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
 }
 
+.req-action-button:hover {
+  background-color: var(--info-color);
+  color: white;
+}
+
+.req-action-button.validation {
+  background-color: #F3E8FF;
+  color: #8B5CF6;
+}
+
+.req-action-button.validation:hover {
+  background-color: #8B5CF6;
+  color: white;
+}
+
+.req-action-button svg {
+  width: 14px;
+  height: 14px;
+}
+
+.button-text {
+  display: inline-block;
+}
+
+/* Responsive Tab Adjustments */
+@media (max-width: 768px) {
+  .req-history-tabs {
+    flex-direction: column;
+  }
+  
+  .req-tab:not(:last-child) {
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .req-tab.active::after {
+    width: 3px;
+    height: 100%;
+    top: 0;
+    left: 0;
+    bottom: auto;
+  }
+  
+  .req-action-button {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.7rem;
+  }
+  
+  .req-history-table th,
+  .req-history-table td {
+    padding: 0.75rem;
+  }
+}
+
+/* Tab Content Animation */
+.req-history-tab-content > div {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Improve Empty State in Tab Content */
+.req-empty-history {
+  margin: 1rem;
+  padding: 2.5rem;
+  background-color: var(--bg-dark);
+  border-radius: var(--border-radius);
+}
+
+.req-id-badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background-color: var(--bg-light);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-light);
+  margin-left: auto;
+  box-shadow: var(--shadow-sm);
+}

@@ -246,9 +246,9 @@ const Project = () => {
         <div className="enterprise-title-section">
           <h1 className="enterprise-page-title">
             <FontAwesomeIcon icon={faClipboardList} className="enterprise-page-icon" />
-            Project Management
+            Project Dashboard
           </h1>
-          <p className="enterprise-page-subtitle">Manage and monitor all project activities</p>
+          <p className="enterprise-page-subtitle">Manage Implementation Work Products</p>
         </div>
         
         <div className="enterprise-actions">

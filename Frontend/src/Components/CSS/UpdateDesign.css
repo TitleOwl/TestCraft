@@ -1,166 +1,498 @@
-/* UpdateDesign container styling */
-.update-design-container {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+/* UpdateDesign.css - Premium Colorful Luxury Design (Orange Theme #d76000 with ude- Prefix) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Re-declare variables for standalone use or import if possible */
+:root {
+  /* Base Colors */
+  --ude-bg-primary: #ffffff;
+  --ude-bg-secondary: #f8f9fc;
+  --ude-bg-tertiary: #eef1f8;
+
+  /* Text Colors */
+  --ude-text-primary: #1e293b;
+  --ude-text-secondary: #64748b;
+  --ude-text-light: #94a3b8;
+
+  /* Primary Brand Colors (Indigo - kept for contrast/other elements) */
+  --ude-primary: #4f46e5;
+  --ude-primary-light: #818cf8;
+  --ude-primary-dark: #3730a3;
+
+  /* Accent Colors (Orange Theme #d76000) */
+  --ude-accent: #d76000;        /* Base Orange */
+  --ude-accent-light: #ffa54d;  /* Lighter Orange */
+  --ude-accent-dark: #b55200;   /* Darker Orange */
+
+  /* Status Colors */
+  --ude-success: #10b981;
+  --ude-success-dark: #059669;
+  --ude-warning: #f59e0b;
+  --ude-warning-dark: #b45309;
+  --ude-error: #ef4444;
+  --ude-error-dark: #b91c1c;
+  --ude-info: #6366f1;
+  --ude-working: #8b5cf6;
+
+  /* UI Elements */
+  --ude-border: #e2e8f0;
+  --ude-border-light: #f1f5f9;
+  --ude-border-colored: #c7d2fe; /* Related to primary */
+
+  /* Shadows */
+  --ude-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.03);
+  --ude-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --ude-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+  --ude-shadow-accent: 0 4px 12px rgba(215, 96, 0, 0.15); /* RGB for #d76000 */
+
+  /* Border Radius */
+  --ude-radius-sm: 4px;
+  --ude-radius-md: 6px;
+  --ude-radius-lg: 8px;
+
+  /* Transitions */
+  --ude-transition: all 0.2s ease;
 }
 
-/* Header styling */
-.update-design-title {
-    font-size: 2rem;
-    margin-bottom: 20px;
-    text-align: center;
-    color: #333;
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* Form styling */
-.update-design-form {
+body {
+  background-color: var(--ude-bg-secondary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* --- Main Container & Title --- */
+.UpdateDesign-container {
+  max-width: 1200px;
+  margin: 30px auto;
+  padding: 30px 40px;
+  background-color: var(--ude-bg-primary);
+  border-radius: var(--ude-radius-lg);
+  box-shadow: var(--ude-shadow-lg);
+  border-top: 5px solid var(--ude-accent); /* Use ude-accent */
+}
+
+.UpdateDesign-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--ude-text-primary);
+  text-align: center;
+  margin-bottom: 30px;
+  letter-spacing: -0.03em;
+}
+
+/* --- Form Layout & Fieldsets --- */
+.UpdateDesign-form {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+fieldset {
+  border: 1px solid var(--ude-border);
+  border-radius: var(--ude-radius-md);
+  padding: 20px 25px;
+  margin: 0;
+  transition: var(--ude-transition);
+}
+
+fieldset:disabled {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+legend {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ude-accent-dark); /* Use ude-accent-dark */
+  padding: 0 10px;
+  margin-left: -10px;
+}
+
+/* --- Labels & Inputs --- */
+.UpdateDesign-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ude-text-secondary);
+  margin-bottom: 15px;
+}
+
+.UpdateDesign-label span:not(.UpdateDesign-requiredStar) {
+  display: block;
+  margin-top: 6px;
+}
+
+.UpdateDesign-requiredStar {
+  color: var(--ude-error);
+  margin-left: 3px;
+  font-weight: bold;
+}
+
+.UpdateDesign-input,
+.UpdateDesign-select,
+.UpdateDesign-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--ude-text-primary);
+  background-color: var(--ude-bg-primary);
+  border: 1px solid var(--ude-border);
+  border-radius: var(--ude-radius-md);
+  transition: var(--ude-transition);
+  box-shadow: var(--ude-shadow-sm);
+}
+
+.UpdateDesign-input:focus,
+.UpdateDesign-select:focus,
+.UpdateDesign-textarea:focus {
+  outline: none;
+  border-color: var(--ude-accent); /* Use ude-accent */
+  box-shadow: 0 0 0 3px rgba(215, 96, 0, 0.1); /* Use accent RGB */
+}
+
+.UpdateDesign-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* --- React Select Styling --- */
+/* IMPORTANT: Add classNamePrefix="UpdateDesign-select" to your <Select> component in JSX */
+.UpdateDesign-selectContainer {
+  font-size: 14px;
+}
+
+.UpdateDesign-select__control {
+  border-color: var(--ude-border) !important;
+  border-radius: var(--ude-radius-md) !important;
+  padding: 2px 4px !important;
+  box-shadow: var(--ude-shadow-sm) !important;
+  transition: var(--ude-transition) !important;
+}
+.UpdateDesign-select__control:hover {
+  border-color: var(--ude-text-light) !important;
+}
+.UpdateDesign-select__control--is-focused {
+  border-color: var(--ude-accent) !important; /* Use ude-accent */
+  box-shadow: 0 0 0 3px rgba(215, 96, 0, 0.1) !important; /* Use accent RGB */
+}
+
+.UpdateDesign-select__value-container {
+  padding: 0 4px !important;
+}
+.UpdateDesign-select__placeholder {
+  color: var(--ude-text-light) !important;
+}
+.UpdateDesign-select__input-container {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.UpdateDesign-select__menu {
+  border-radius: var(--ude-radius-md) !important;
+  box-shadow: var(--ude-shadow-md) !important;
+  margin-top: 4px !important;
+  z-index: 100;
+}
+.UpdateDesign-select__option {
+  transition: var(--ude-transition) !important;
+  cursor: pointer;
+}
+.UpdateDesign-select__option--is-focused {
+  background-color: var(--ude-bg-tertiary) !important;
+  color: var(--ude-text-primary) !important;
+}
+.UpdateDesign-select__option--is-selected {
+  background-color: var(--ude-accent) !important; /* Use ude-accent */
+  color: white !important;
+}
+.UpdateDesign-select__option--is-selected:hover {
+   background-color: var(--ude-accent-dark) !important; /* Use ude-accent-dark */
+}
+.UpdateDesign-select__multi-value {
+  border-radius: var(--ude-radius-sm) !important;
+}
+.UpdateDesign-select__multi-value__label {
+  font-weight: 500 !important;
+  padding-left: 6px !important;
+  padding-right: 2px !important;
+}
+.UpdateDesign-select__multi-value__remove {
+  color: var(--ude-accent-dark) !important; /* Use ude-accent-dark */
+  border-radius: 0 var(--ude-radius-sm) var(--ude-radius-sm) 0 !important;
+}
+.UpdateDesign-select__multi-value__remove:hover {
+  background-color: var(--ude-accent) !important; /* Use ude-accent */
+  color: white !important;
+}
+.UpdateDesign-select__indicator-separator {
+    background-color: var(--ude-border) !important;
+}
+.UpdateDesign-select__clear-indicator {
+    color: var(--ude-text-light) !important;
+}
+.UpdateDesign-select__clear-indicator:hover {
+    color: var(--ude-error) !important;
+}
+.UpdateDesign-select__dropdown-indicator {
+    color: var(--ude-text-light) !important;
+}
+.UpdateDesign-select__dropdown-indicator:hover {
+    color: var(--ude-text-secondary) !important;
+}
+
+
+/* --- File Management --- */
+.UpdateDesign-existingFilesSection h3,
+.UpdateDesign-selectedFilesSection h4 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ude-text-secondary);
+    margin-bottom: 12px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--ude-border-light);
+}
+
+.UpdateDesign-fileList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.UpdateDesign-fileItem {
     display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-/* Input, textarea, and select styling */
-.update-design-input,
-.update-design-select,
-.update-design-textarea {
-    padding: 10px;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    outline: none;
-    transition: border 0.3s;
-    width: 100%;
-}
-
-.update-design-input:focus,
-.update-design-select:focus,
-.update-design-textarea:focus {
-    border-color: #007bff;
-}
-
-/* File preview section */
-.file-preview {
-    display: flex;
-    flex-direction: column;
-}
-
-.update-design-buttons {
-    display: flex;
-    justify-content: space-between;
-    /* จัดตำแหน่งให้ปุ่มอยู่ซ้ายสุดและขวาสุด */
-    gap: 10px;
-}
-
-.update-design-btn,
-.update-design-btn-cancel {
-    padding: 10px 20px;
-    font-size: 1rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.update-design-btn-cancel {
-    background-color: #cf4848;
-    color: white;
-}
-
-.update-design-btn-cancel:hover {
-    background-color: #cf2626;
-}
-
-.update-design-btn {
-    background-color: #007bff;
-    color: white;
-}
-
-.update-design-btn:hover {
-    background-color: #0056b3;
-    transform: scale(1.05);
-}
-
-/* Mobile responsiveness */
-@media (max-width: 768px) {
-    .update-design-container {
-        padding: 15px;
-    }
-
-    .update-design-header {
-        font-size: 1.75rem;
-    }
-
-    .update-design-form {
-        gap: 15px;
-    }
-
-    .form-buttons {
-        flex-direction: column;
-        gap: 15px;
-    }
-}
-
-.update-design-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
     align-items: center;
-    z-index: 1000;
+    gap: 10px;
+    padding: 10px;
+    background-color: var(--ude-bg-secondary);
+    border: 1px solid var(--ude-border-light);
+    border-radius: var(--ude-radius-md);
+    transition: var(--ude-transition);
+}
+.UpdateDesign-fileItem:hover {
+    background-color: var(--ude-bg-tertiary);
+    box-shadow: var(--ude-shadow-sm);
 }
 
-.update-design-modal-content {
+.UpdateDesign-fileThumbnail {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: var(--ude-radius-sm);
+    border: 1px solid var(--ude-border);
     background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    max-width: 400px;
-    width: 100%;
+}
+.UpdateDesign-fileIcon {
+    font-size: 24px;
+    width: 40px;
     text-align: center;
+    color: var(--ude-text-secondary);
 }
 
-.update-design-modal-buttons {
-    display: flex;
-    justify-content: space-around;
+.UpdateDesign-fileName {
+    flex-grow: 1;
+    font-size: 13px;
+    color: var(--ude-text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.UpdateDesign-deleteFileBtn,
+.UpdateDesign-removeSelectedBtn {
+    background: none;
+    border: none;
+    color: var(--ude-text-light);
+    font-size: 16px;
+    cursor: pointer;
+    transition: var(--ude-transition);
+    padding: 5px;
+    line-height: 1;
+}
+
+.UpdateDesign-deleteFileBtn:hover,
+.UpdateDesign-removeSelectedBtn:hover {
+    color: var(--ude-error);
+    transform: scale(1.1);
+}
+
+.UpdateDesign-labelFile {
+    margin-top: 20px;
+    border: 2px dashed var(--ude-border);
+    padding: 20px;
+    text-align: center;
+    border-radius: var(--ude-radius-md);
+    cursor: pointer;
+    transition: var(--ude-transition);
+    display: block;
+    color: var(--ude-text-secondary);
+    font-weight: 500;
+}
+.UpdateDesign-labelFile:hover {
+    border-color: var(--ude-accent); /* Use ude-accent */
+    background-color: var(--ude-bg-secondary);
+    color: var(--ude-accent-dark); /* Use ude-accent-dark */
+}
+
+.UpdateDesign-inputFile {
+    display: none;
+}
+
+.UpdateDesign-selectedFilesSection {
     margin-top: 20px;
 }
 
-.update-design-modal-buttons button {
-    padding: 10px 20px;
+/* --- Diagram Editor --- */
+.UpdateDesign-diagramFieldset {
+  margin-top: 30px;
+}
+
+.UpdateDesign-diagramFieldset > div {
+    min-height: 500px;
+    border: 1px solid var(--ude-border-light);
+    border-radius: var(--ude-radius-sm);
+    overflow: hidden;
+}
+
+
+/* --- Action Buttons --- */
+.UpdateDesign-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--ude-border-light);
+}
+
+.UpdateDesign-btn,
+.UpdateDesign-btnCancel {
+  padding: 10px 25px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--ude-radius-md);
+  cursor: pointer;
+  transition: var(--ude-transition);
+}
+
+/* Main Save Button */
+.UpdateDesign-btn {
+  background-color: var(--ude-accent); /* Use ude-accent */
+  color: white;
+  box-shadow: var(--ude-shadow-accent); /* Use ude-shadow-accent */
+}
+.UpdateDesign-btn:hover:not(:disabled) {
+  background-color: var(--ude-accent-dark); /* Use ude-accent-dark */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(215, 96, 0, 0.25); /* Use accent RGB */
+}
+.UpdateDesign-btn:disabled {
+  background-color: var(--ude-text-light);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Cancel Button */
+.UpdateDesign-btnCancel {
+  background-color: var(--ude-bg-tertiary);
+  color: var(--ude-text-secondary);
+  border: 1px solid var(--ude-border);
+}
+.UpdateDesign-btnCancel:hover:not(:disabled) {
+  background-color: var(--ude-border);
+  color: var(--ude-text-primary);
+}
+.UpdateDesign-btnCancel:disabled {
+   opacity: 0.6;
+   cursor: not-allowed;
+}
+
+/* --- Loading/Error States --- */
+.UpdateDesign-loadingIndicator {
+  text-align: center;
+  padding: 40px;
+  font-size: 18px;
+  color: var(--ude-text-secondary);
+  font-weight: 500;
+}
+
+.UpdateDesign-errorContainer {
+  text-align: center;
+  padding: 40px;
+  background-color: rgba(239, 68, 68, 0.05);
+  border: 1px solid var(--ude-error-dark);
+  border-radius: var(--ude-radius-md);
+  color: var(--ude-error-dark);
+}
+.UpdateDesign-errorContainer p {
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+.UpdateDesign-errorContainer button {
+    padding: 8px 16px;
+    background-color: var(--ude-error);
+    color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: var(--ude-radius-sm);
     cursor: pointer;
+    transition: var(--ude-transition);
 }
-
-.update-design-modal-buttons button:hover {
-    background-color: #f0f0f0;
-}
-
-.update-design-label.update-design-label-file {
-    display: block !important;        /* ทำให้เป็น block */
-    overflow: visible !important;     /* ไม่ซ่อนเนื้อหาที่ล้น */
-    min-height: 50px !important;      /* กำหนดความสูงขั้นต่ำ */
-    padding: 10px !important;         /* ใส่ padding */
-    margin-bottom: 10px !important;   /* ใส่ margin */
+.UpdateDesign-errorContainer button:hover {
+    background-color: var(--ude-error-dark);
 }
 
 
-/* -- ส่วนที่ 2: บังคับตัว Input ให้แสดงผล -- */
-.update-design-input-file {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    width: auto !important;
-    height: auto !important;
-    position: static !important;
-    padding: 10px !important;
-    margin-top: 5px !important;
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .UpdateDesign-container {
+    padding: 20px;
+  }
+  .UpdateDesign-title {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+  .UpdateDesign-form {
+    gap: 20px;
+  }
+  fieldset {
+    padding: 15px;
+  }
+  legend {
+    font-size: 16px;
+  }
+  .UpdateDesign-fileList {
+    grid-template-columns: 1fr; /* Stack files */
+  }
+  .UpdateDesign-buttons {
+    flex-direction: column-reverse; /* Stack buttons */
+    gap: 10px;
+  }
+  .UpdateDesign-btn,
+  .UpdateDesign-btnCancel {
+    width: 100%;
+    padding: 12px;
+  }
+   .UpdateDesign-diagramFieldset > div {
+       min-height: 400px;
+   }
 }
+
+/* --- Toast notification styles (Keep library classes, use ude- variables) --- */
+.Toastify__toast { border-radius: var(--ude-radius-md) !important; box-shadow: var(--ude-shadow-lg) !important; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important; }
+.Toastify__toast-body { font-weight: 500 !important; font-size: 14px !important; }
+.Toastify__toast--success { background: var(--ude-success) !important; color: white !important; }
+.Toastify__toast--error { background: var(--ude-error) !important; color: white !important; }
+.Toastify__toast--warning { background: var(--ude-warning) !important; color: var(--ude-text-primary) !important; }
+.Toastify__toast--info { background: var(--ude-info) !important; color: white !important; }
+.Toastify__progress-bar { height: 4px !important; background: rgba(255, 255, 255, 0.6) !important; }
+.Toastify__close-button { color: inherit !important; opacity: 0.7 !important; }
+.Toastify__close-button:hover { opacity: 1 !important; }

@@ -1,440 +1,675 @@
-/* === CreateDesign.css (Premium Aesthetic Focus) === */
+/* CreateDesign.css - Enterprise Dark Orange Theme (#d76000) */
+/* Includes side-by-side layout for Form and Diagram Editor */
 
-/* --- Variables (อาจจะปรับโทนสีหลัก/รองเล็กน้อย) --- */
+/* Variables for consistent design system */
 :root {
-  /* Primary */
-  --primary-color: #005abc; /* Slightly adjusted premium blue */
-  --primary-hover-color: #004a9c;
-  --primary-light-color: #e0eefe; /* Lighter focus ring */
-  --primary-gradient: linear-gradient(180deg, var(--primary-color) 0%, var(--primary-hover-color) 100%);
-  --primary-hover-gradient: linear-gradient(180deg, var(--primary-hover-color) 0%, #003a7a 100%);
-
-  /* Neutrals */
-  --text-color: #1a202c; /* Even darker main text */
-  --text-color-secondary: #4a5568; 
-  --text-color-muted: #718096;  
-  --border-color: #cbd5e1;     /* Slightly softer border */
-  --border-color-light: #e2e8f0; /* Lighter border for subtle lines */
-  --border-color-focus: var(--primary-color);
-  --background-color: #ffffff;
-  --background-off-white: #f8fafc; /* Very light off-white */
-  --background-input: #ffffff; 
-  --background-hover: #f1f5f9;   /* Cooler hover */
-  --background-disabled: #f1f5f9;
-
-  /* Functional Colors */
-  --error-color: #c53030; 
-  --error-border-color: #fed7d7;
-  --error-background: #fff5f5; 
-  --success-color: #2f855a; 
-
-  /* Shadows & Borders */
-  --box-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.03); /* Even softer subtle */
-  --box-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04); /* Softer medium */
-  --box-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.04); /* Softer large */
-  --box-shadow-focus: 0 0 0 3px var(--primary-light-color); 
-  --border-radius: 8px; /* Slightly larger, softer radius */
-  --border-radius-sm: 4px;
-
-  /* Typography */
-  --font-family-base: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
-  --font-size-base: 1rem; 
-  --font-size-sm: 0.875rem; 
-  --font-size-lg: 1.125rem;  
-  --font-size-xl: 1.5rem; 
-  --line-height-base: 1.65; 
-  --line-height-tight: 1.5;
-
-  /* Transitions */
-  --transition-base: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); /* Slightly smoother */
+  /* === Dark Orange Theme Colors (#d76000) === */
+  --de-primary: #d76000;      /* Dark Orange หลัก */
+  --de-primary-light: #e58033; /* Dark Orange อ่อน */
+  --de-primary-dark: #a84c00;  /* Dark Orange เข้ม */
+  /* ========================================== */
+  --de-success: #10b981;
+  --de-danger: #ef4444;
+  --de-warning: #f59e0b;
+  --de-gray-50: #f9fafb;
+  --de-gray-100: #f3f4f6;
+  --de-gray-200: #e5e7eb;
+  --de-gray-300: #d1d5db;
+  --de-gray-400: #9ca3af;
+  --de-gray-500: #6b7280;
+  --de-gray-600: #4b5563;
+  --de-gray-700: #374151;
+  --de-gray-800: #1f2937;
+  --de-gray-900: #111827;
+  --de-radius-sm: 0.125rem;
+  --de-radius: 0.375rem;
+  --de-radius-md: 0.5rem;
+  --de-radius-lg: 0.75rem;
+  --de-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --de-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --de-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --de-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --de-animation-standard: all 0.2s ease-in-out;
 }
 
-/* --- Base Body Styles --- */
-body {
-  font-family: var(--font-family-base);
-  color: var(--text-color);
-  background-color: var(--background-off-white);
-  margin: 0;
-  line-height: var(--line-height-base);
-  -webkit-font-smoothing: antialiased; 
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* --- Container --- */
+/* Page layout */
 .create-design-container {
-  max-width: 800px; /* Focused width */
-  margin: 3rem auto; /* Increased margin */
-  padding: 3rem; /* Increased padding */
-  background-color: var(--background-color);
-  border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow-lg); /* Use large shadow for prominence */
-  /* border: 1px solid var(--border-color-light); /* Optional very light border */
+  /* Increased max-width for side-by-side */
+  max-width: 1400px; /* ADJUST IF NEEDED based on content */
+  margin: 2rem auto;
+  padding: 2.5rem;
+  background-color: white;
+  border-radius: var(--de-radius-lg);
+  box-shadow: var(--de-shadow-lg);
+  overflow: visible; /* Change from hidden if dropdowns overflow */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
-/* --- Header --- */
+/* Header styling */
 .create-design-header {
-  font-size: var(--font-size-xl); 
-  font-weight: 600; 
-  color: var(--text-color);
-  text-align: center;
-  margin: 0 0 2.5rem 0; 
-  padding-bottom: 1.5rem; /* Increased padding */
-  border-bottom: 1px solid var(--border-color-light); /* Use light border */
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--de-gray-800);
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--de-gray-200);
+  position: relative;
 }
 
-/* --- Loading & Error Messages --- */
-.loading-message,
+.create-design-header::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background-color: var(--de-primary);
+  border-radius: var(--de-radius);
+}
+
+/* Error message */
 .create-design-error {
-  text-align: center;
-  padding: 0.8rem 1.2rem; /* Increased padding */
-  margin: 0 0 1.75rem 0; /* Increased margin */
-  border-radius: var(--border-radius-sm); /* Smaller radius for alerts */
-  font-size: var(--font-size-sm);
-}
-.loading-message {
-  color: var(--text-color-muted);
-}
-.create-design-error {
-  color: var(--error-color);
-  background-color: var(--error-background);
-  border: 1px solid var(--error-border-color);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--de-danger);
+  background-color: rgba(239, 68, 68, 0.1);
+  padding: 0.75rem 1rem;
+  border-radius: var(--de-radius);
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
-/* --- Form Styling --- */
-.create-design-form { }
-
-.create-design-form-group {
-  margin-bottom: 1.75rem; /* Increased spacing */
+.create-design-error::before {
+  content: "⚠️";
 }
 
-.create-design-form-group label {
+/* --- NEW: Wrapper for Side-by-Side Layout --- */
+/* Replaced .form-diagram-wrapper */
+.create-design-layout {
+  display: flex;
+  flex-direction: row; /* Default: side-by-side */
+  gap: 2rem; /* Space between form and diagram containers */
+  align-items: flex-start; /* Align tops */
+  margin-top: 1.5rem; /* Space above the layout */
+  margin-bottom: 2rem; /* Space below the layout */
+}
+
+/* --- NEW: Form Container --- */
+/* Takes the layout role previously on .form-diagram-wrapper .create-design-form */
+.create-design-form-container {
+  flex: 0 0 60%; /* Form container takes 60% width, doesn't grow/shrink */
+  min-width: 350px; /* Prevent excessive shrinking */
+}
+
+/* The actual form inside the container */
+.create-design-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* Internal gap between form groups */
+}
+
+.create-design-form-group,
+.create-design-form-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Form labels */
+.create-design-form-group label,
+.create-design-form-groups label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--de-gray-700);
   display: block;
-  margin-bottom: 0.6rem; /* Increased space */
-  font-size: var(--font-size-sm);
-  font-weight: 500; 
-  color: var(--text-color-secondary);
+  margin-bottom: 0.25rem;
 }
 
-/* --- Input, Select, Textarea Base Styles --- */
+/* Input elements */
 .create-design-input,
-.create-design-select,
-.create-design-textarea {
-  display: block;
-  width: 100%;
-  padding: 0.75rem 1rem; /* Increased padding */
-  font-size: var(--font-size-sm);
-  font-family: inherit;
-  line-height: var(--line-height-tight);
-  color: var(--text-color);
-  background-color: var(--background-input);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-sm); /* Use smaller radius for inputs */
-  box-shadow: var(--box-shadow-sm); /* Use small subtle shadow */
-  transition: var(--transition-base);
-  transition-property: border-color, box-shadow; 
-}
-
-/* Enhanced Focus State */
-.create-design-input:focus,
-.create-design-select:focus,
-.create-design-textarea:focus {
-  outline: none;
-  border-color: var(--border-color-focus);
-  box-shadow: var(--box-shadow-focus), 0 0 0 1px var(--border-color-focus); /* Ring + Inner Glow */
-}
-
-/* Native Select Styling */
+.create-design-textarea,
 .create-design-select {
-  appearance: none; 
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); 
-  background-position: right 1rem center;
-  background-repeat: no-repeat;
-  background-size: 1.1em 1.1em; /* Slightly smaller arrow */
-  padding-right: 3rem; 
+  padding: 0.75rem 1rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--de-gray-800);
+  background-color: white;
+  border: 1px solid var(--de-gray-300);
+  border-radius: var(--de-radius);
+  transition: var(--de-animation-standard);
+  width: 100%;
+  box-shadow: var(--de-shadow-sm);
 }
 
-/* Textarea Specific */
+.create-design-input:hover,
+.create-design-textarea:hover,
+.create-design-select:hover {
+  border-color: var(--de-gray-400);
+}
+
+.create-design-input:focus,
+.create-design-textarea:focus,
+.create-design-select:focus {
+  outline: none;
+  border-color: var(--de-primary);
+  box-shadow: 0 0 0 3px rgba(215, 96, 0, 0.1);
+}
+
 .create-design-textarea {
   min-height: 120px;
-  resize: vertical; 
+  resize: vertical;
 }
 
-/* --- React Select Styling (Polished) --- */
-.create-design-react-select .react-select__control {
-  min-height: calc(1.4em + 0.75rem * 2 + 2px); 
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-sm);
-  background-color: var(--background-input);
-  box-shadow: var(--box-shadow-sm);
-  transition: var(--transition-base);
-  transition-property: border-color, box-shadow; 
-  font-size: var(--font-size-sm);
-  padding: 0.1rem 0.1rem; 
+/* Enhanced select field */
+.create-design-select {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+  padding-right: 2.5rem;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
-.create-design-react-select .react-select__control:hover {
-  border-color: #a0aec0; /* Adjusted hover border */
+
+/* React-Select custom styling */
+.create-design-select-files {
+  font-size: 0.9375rem;
+  z-index: 10; /* Ensure dropdown is above other elements */
+  position: relative; /* Needed for z-index */
 }
-.create-design-react-select .react-select__control--is-focused {
-  border-color: var(--border-color-focus);
-  box-shadow: var(--box-shadow-focus), 0 0 0 1px var(--border-color-focus);
+
+.create-design-select-files .react-select__control {
+  border-color: var(--de-gray-300);
+  border-radius: var(--de-radius);
+  min-height: calc(1.5em + 1.5rem + 2px); /* Match height of other inputs */
+  box-shadow: var(--de-shadow-sm);
+  background-color: white; /* Explicit background */
 }
-.create-design-react-select .react-select__value-container {
-  padding: 0 0.75rem; /* Adjusted padding */
+
+.create-design-select-files .react-select__control:hover {
+  border-color: var(--de-gray-400);
 }
-.create-design-react-select .react-select__placeholder {
-  color: var(--text-color-muted);
+
+.create-design-select-files .react-select__control--is-focused {
+  border-color: var(--de-primary);
+  box-shadow: 0 0 0 1px var(--de-primary); /* Match focus style */
 }
-.create-design-react-select .react-select__indicator-separator {
-  display: none; 
+
+.create-design-select-files .react-select__menu {
+  border-radius: var(--de-radius);
+  box-shadow: var(--de-shadow-lg);
+  z-index: 11; /* Ensure menu is above control */
+  background-color: white;
 }
-.create-design-react-select .react-select__dropdown-indicator {
-  padding: 0.6rem;
-  color: var(--text-color-muted);
+
+.create-design-select-files .react-select__option {
+  padding: 0.6rem 0.75rem; /* Adjusted padding */
+}
+.create-design-select-files .react-select__option--is-focused {
+  background-color: #fff8f0; /* Light orange background */
+  color: var(--de-primary-dark);
+}
+.create-design-select-files .react-select__option--is-selected {
+  background-color: var(--de-primary);
+  color: white;
+}
+.create-design-select-files .react-select__option--is-selected:hover {
+  background-color: var(--de-primary-dark); /* Darker on hover when selected */
+}
+
+
+.create-design-select-files .react-select__multi-value {
+  background-color: #fff8f0; /* Light orange background */
+  border: 1px solid var(--de-primary-light);
+  border-radius: var(--de-radius-sm);
+  margin: 2px; /* Slightly more space */
+}
+
+.create-design-select-files .react-select__multi-value__label {
+  color: var(--de-primary-dark);
+  font-size: 0.8125rem;
+  padding: 0.2rem 0.4rem; /* Adjusted padding */
+}
+
+.create-design-select-files .react-select__multi-value__remove {
+  color: var(--de-primary-dark);
+  border-radius: 0 var(--de-radius-sm) var(--de-radius-sm) 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.create-design-select-files .react-select__multi-value__remove:hover {
+  background-color: var(--de-primary);
+  color: white;
+}
+
+
+/* File Input specific styling */
+.create-design-file-input {
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+  white-space: nowrap;
+}
+
+/* Container for inline action buttons (Attach/Draw) */
+.create-design-action-buttons-inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Style the label and buttons similarly */
+.create-design-btn-attach,
+.create-design-btn-draw {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6875rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--de-gray-700);
+  background-color: white;
+  border: 1px solid var(--de-gray-300);
+  border-radius: var(--de-radius);
+  cursor: pointer;
+  transition: var(--de-animation-standard);
+  box-shadow: var(--de-shadow-sm);
+  width: fit-content;
+}
+
+/* Added disabled style for attach label */
+.create-design-btn-attach.disabled {
+  background-color: var(--de-gray-100);
+  border-color: var(--de-gray-200);
+  color: var(--de-gray-400);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+.create-design-btn-attach.disabled:hover {
+  background-color: var(--de-gray-100); /* Prevent hover effect */
+  border-color: var(--de-gray-200);
+}
+
+
+.create-design-btn-attach:not(.disabled):hover,
+.create-design-btn-draw:not(:disabled):hover {
+  background-color: var(--de-gray-50);
+  border-color: var(--de-gray-400);
+  transform: translateY(-1px);
+}
+
+
+.create-design-btn-draw:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  background-color: var(--de-gray-100);
+}
+
+/* Styling for the file preview list */
+.file-preview-list {
+  margin-top: 1rem; /* More space */
+  padding-top: 1rem;
+  border-top: 1px dashed var(--de-gray-200);
+  max-height: 150px; /* Limit height */
+  overflow-y: auto; /* Add scroll if needed */
+}
+
+.file-preview-item {
+  display: flex;
+  align-items: center;
+  padding: 5px 8px; /* Add some padding */
+  font-size: 0.875rem;
+  color: var(--de-gray-600);
+  margin-bottom: 0.4rem; /* More space */
+  border-radius: var(--de-radius-sm);
+  background-color: var(--de-gray-50); /* Light background for items */
+  white-space: nowrap; /* Prevent wrapping inside item */
+}
+
+.file-preview-icon {
+  margin-right: 0.5rem;
+  color: var(--de-gray-400);
+  flex-shrink: 0;
+}
+
+.file-preview-name {
+  flex-grow: 1; /* Allow name to take space */
+  overflow: hidden; /* Hide overflow */
+  text-overflow: ellipsis; /* Add ellipsis */
+  margin-right: 0.5rem; /* Space before type */
+}
+
+.file-preview-type {
+  flex-shrink: 0; /* Prevent type from shrinking */
+  margin-left: auto; /* Push type and button to the right */
+  margin-right: 0.75rem; /* Space before remove button */
+  font-size: 0.8rem;
+  color: var(--de-gray-500);
+  background-color: var(--de-gray-200); /* Badge-like background */
+  padding: 0.1rem 0.4rem;
+  border-radius: var(--de-radius-sm);
+}
+
+.file-preview-remove-btn {
+  background: none;
+  border: none;
+  color: var(--de-danger); /* Use danger color */
+  cursor: pointer;
+  padding: 0 4px; /* Small padding */
+  font-size: 1em; /* Match surrounding text size */
+  line-height: 1;
+  flex-shrink: 0; /* Prevent shrinking */
   transition: color 0.2s ease;
 }
-.create-design-react-select .react-select__dropdown-indicator:hover {
-  color: var(--text-color-secondary);
-}
-.create-design-react-select .react-select__menu {
-  border-radius: var(--border-radius-sm);
-  border: 1px solid var(--border-color-light); /* Lighter border for menu */
-  box-shadow: var(--box-shadow-md); /* Use medium shadow for menu */
-  background-color: var(--background-input);
-  margin-top: 6px; 
-  font-size: var(--font-size-sm);
-  z-index: 20; /* Higher z-index */
-}
-.create-design-react-select .react-select__option {
-  padding: 0.75rem 1.25rem; /* More padding */
-  cursor: pointer;
-  transition: background-color 0.15s ease-out, color 0.15s ease-out;
-}
-.create-design-react-select .react-select__option--is-focused {
-  background-color: var(--primary-light-color);
-  color: var(--primary-hover-color);
-}
-.create-design-react-select .react-select__option--is-selected {
-  background-color: var(--primary-color);
-  color: white;
-}
-/* Multi-value tags */
-.create-design-react-select .react-select__multi-value {
-  background-color: #eef2ff; /* Lighter blue */
-  border-radius: var(--border-radius-sm);
-  margin: 3px;
-}
-.create-design-react-select .react-select__multi-value__label {
-  color: #4338ca; /* Indigo text */
-  font-size: 0.75rem;
-  padding: 3px 6px;
-  font-weight: 500;
-}
-.create-design-react-select .react-select__multi-value__remove {
-  color: #4338ca;
-}
-.create-design-react-select .react-select__multi-value__remove:hover {
-  background-color: #c7d2fe; /* Indigo Light on Remove Hover */
-  color: #3730a3;
+
+.file-preview-remove-btn:hover {
+  color: var(--de-primary-dark); /* Darker red on hover */
 }
 
-
-/* --- File Upload Section (Improved Styling) --- */
-.uploaded-files-container { }
-.uploaded-files-container h3 {
-  font-size: var(--font-size-lg); /* Larger heading */
-  font-weight: 500;
-  color: var(--text-color);
-  margin: 0 0 1rem 0;
-}
-
-/* Recommendation: Hide the real input and style a label instead for full control */
-/* Example assuming input is styled directly (limited): */
-.create-design-file-input {
-    font-size: var(--font-size-sm);
-    color: var(--text-color-secondary); /* Show text like 'No file selected' */
-    margin-bottom: 1rem;
-}
-.create-design-file-input::file-selector-button {
-  background-color: var(--background-input);
-  color: var(--primary-color); /* Make button text primary */
-  border: 1px solid var(--primary-color);
-  padding: 0.6rem 1.2rem;
-  border-radius: var(--border-radius-sm);
-  cursor: pointer;
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  transition: var(--transition-base);
-  margin-right: 1rem;
-}
-.create-design-file-input::file-selector-button:hover {
-  background-color: var(--primary-light-color);
-  border-color: var(--primary-hover-color);
-  color: var(--primary-hover-color);
-}
-
-/* --- File Preview List (More Polished) --- */
-.file-preview-list {
-  margin-top: 1rem;
-  border: 1px solid var(--border-color-light); /* Lighter border */
-  border-radius: var(--border-radius); /* Use main radius */
-  padding: 0.75rem; /* Reduced padding */
-  background-color: var(--background-off-white); 
-  /* Removed min-height */
-}
-.file-preview-item {
-  font-size: var(--font-size-sm);
-  color: var(--text-color-secondary);
-  margin: 0 0 0.5rem 0;
-  padding: 0.6rem 1rem;
-  background-color: var(--background-color); /* White background */
-  border: 1px solid var(--border-color-light); /* Light border */
-  border-radius: var(--border-radius-sm);
-  display: flex; 
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: var(--box-shadow-sm);
-}
-.file-preview-item:last-child {
-  margin-bottom: 0;
-}
-/* Add placeholder for potential remove button */
-.file-preview-item::after {
-    content: '✕'; /* Example remove icon */
-    color: var(--text-color-muted);
-    font-size: 1rem;
-    cursor: pointer;
-    padding-left: 0.75rem;
-    opacity: 0.5;
-    transition: opacity 0.2s ease;
-}
-.file-preview-item:hover::after {
-    opacity: 1;
-    color: var(--error-color);
-}
-
-/* --- Action Buttons (Premium Feel) --- */
-.create-design-buttons {
-  display: flex;
-  justify-content: flex-end; 
-  gap: 1rem; /* Increased gap */
-  margin-top: 2.5rem;
-  padding-top: 1.75rem;
-  border-top: 1px solid var(--border-color-light); 
-}
-
-.create-design-btn-cancel,
-.create-design-btn-next {
-  padding: 0.75rem 1.75rem; /* Increased padding */
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  border-radius: var(--border-radius-sm);
-  cursor: pointer;
-  transition: var(--transition-base);
-  border: 1px solid transparent; 
-  box-shadow: var(--box-shadow-sm);
-}
-
-/* Cancel Button (Softer Secondary) */
-.create-design-btn-cancel {
-  background-color: var(--background-input);
-  color: var(--text-color-secondary);
-  border-color: var(--border-color);
-}
-.create-design-btn-cancel:hover {
-  background-color: var(--background-hover);
-  border-color: #a0aec0;
-  color: var(--text-color);
-}
-
-/* Next/Create Button (Primary with Subtle Gradient) */
-.create-design-btn-next {
-  background: var(--primary-gradient); /* Use gradient */
-  color: white;
-  border-color: var(--primary-hover-color); /* Border matches darker gradient */
-}
-.create-design-btn-next:hover {
-  background: var(--primary-hover-gradient);
-  box-shadow: var(--box-shadow-md); /* Slightly stronger shadow on hover */
-  transform: translateY(-1px); /* Subtle lift */
-}
-
-/* Disabled State */
-.create-design-btn-next:disabled {
-  background: var(--background-disabled); /* Use background color */
-  color: var(--text-color-muted);
+.file-preview-remove-btn:disabled {
+  color: var(--de-gray-400); /* Gray out when disabled */
   cursor: not-allowed;
+}
+
+
+/* Action buttons (Submit/Back) - Placed inside the form */
+.create-design-form-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1rem; /* Space above buttons */
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--de-gray-200);
+}
+
+.create-design-btn-back,
+.create-design-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.6875rem 1.25rem;
+  border-radius: var(--de-radius);
+  border: none;
+  cursor: pointer;
+  transition: var(--de-animation-standard);
+  box-shadow: var(--de-shadow-sm);
+  min-width: 7rem; /* Slightly wider */
+}
+
+.create-design-btn-back {
+  background-color: white;
+  color: var(--de-gray-700);
+  border: 1px solid var(--de-gray-300);
+}
+.create-design-btn-back:hover,
+.create-design-btn-back:focus {
+  background-color: var(--de-gray-50);
+  border-color: var(--de-gray-400);
+  transform: translateY(-1px);
+}
+.create-design-btn-back:active {
+  background-color: var(--de-gray-100);
+  transform: translateY(0);
+}
+
+.create-design-btn-primary {
+  background-color: var(--de-primary);
+  color: white;
+  font-weight: 500;
+  gap: 8px; /* Space for spinner */
+}
+.create-design-btn-primary:hover:not(:disabled),
+.create-design-btn-primary:focus:not(:disabled) {
+  background-color: var(--de-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--de-shadow-md);
+}
+.create-design-btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: var(--de-shadow-sm);
+}
+.create-design-btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  background-color: var(--de-primary-light); /* Lighter orange when disabled */
   box-shadow: none;
-  border-color: var(--border-color);
   transform: none;
 }
 
-/* Active (Pressed) State */
-.create-design-btn-cancel:active,
-.create-design-btn-next:active {
-    transform: translateY(1px);
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+/* Style the FontAwesome spinner */
+.create-design-btn-primary svg {
+  /* Adjust size if needed, e.g., font-size: 1em; */
 }
 
-/* --- Diagram Editor Section --- */
-.diagram-editor-section {
-  margin-top: 3rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--border-color-light); /* Lighter separator */
-}
-.diagram-editor-section h2 {
-  font-size: var(--font-size-lg);
-  font-weight: 500; /* Lighter weight */
-  margin: 0 0 1.5rem 0;
-  color: var(--text-color);
+/* --- NEW: Diagram Editor Container (for Side-by-Side) --- */
+/* This container now handles the flex sizing */
+.create-design-diagram-container {
+  flex: 1; /* Takes up remaining space */
+  min-width: 350px; /* Ensure decent minimum width */
+  display: flex; /* Use flex to manage internal structure (title + editor) */
+  flex-direction: column; /* Stack title above editor content */
+  /* Add styling directly here for the outer container */
+  background-color: var(--de-gray-50);
+  border: 1px solid var(--de-gray-200);
+  border-radius: var(--de-radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--de-shadow-sm);
+  min-height: 600px; /* Example minimum height for the whole block */
 }
 
-/* --- Responsive Adjustments --- */
+.create-design-diagram-container h2 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--de-gray-700);
+  margin: 0 0 1rem 0; /* Adjusted margins */
+  padding-bottom: 0.75rem; /* Consistent padding */
+  border-bottom: 1px solid var(--de-gray-200);
+  flex-shrink: 0; /* Prevent H2 from shrinking */
+}
+
+/* Notice text below H2 */
+.diagram-editor-notice {
+  font-size: 0.85em;
+  color: var(--de-gray-500);
+  margin: -0.5rem 0 1rem 0; /* Adjust spacing around notice */
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* --- UPDATED: Diagram Editor Content Wrapper --- */
+/* This holds the actual diagram component */
+.diagram-editor-content {
+  flex-grow: 1; /* Allow the diagram area to fill remaining space */
+  /* border: 1px dashed #ddd; */ /* Example border for visual debugging */
+  overflow: auto; /* Add scrollbars if diagram is larger than container */
+  min-height: 400px; /* Ensure a minimum drawing area inside */
+  position: relative; /* For positioning within diagram tool */
+  background-color: white; /* White background for drawing canvas */
+  border-radius: var(--de-radius); /* Optional: slightly rounded corners inside */
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); /* Subtle inner shadow */
+}
+
+
+/* Responsive adjustments - UPDATED */
+@media (max-width: 1200px) {
+  /* Adjust flex basis on medium-large screens if needed */
+  .create-design-form-container {
+      flex-basis: 55%; /* Give diagram more space */
+  }
+}
+
+@media (max-width: 992px) {
+  .create-design-container {
+      max-width: 95%;
+      padding: 2rem;
+  }
+  /* --- Stack form and diagram --- */
+  .create-design-layout { /* Target the main layout container */
+      flex-direction: column; /* Stack vertically */
+      gap: 2rem;
+  }
+  .create-design-form-container, /* Target the form container */
+  .create-design-diagram-container { /* Target the diagram container */
+      flex-basis: auto; /* Reset basis */
+      width: 100%; /* Full width */
+      min-width: unset; /* Reset min-width */
+  }
+  /* Adjust diagram container height when stacked */
+  .create-design-diagram-container {
+      min-height: 500px; /* Slightly less min-height when stacked */
+  }
+}
+
 @media (max-width: 768px) {
   .create-design-container {
-    margin: 1.5rem auto;
-    padding: 1.5rem;
+      margin: 1rem auto;
+      padding: 1.5rem;
   }
-   .create-design-header {
-     font-size: 1.25rem;
-   }
-  .create-design-form-group {
-     margin-bottom: 1.5rem;
+  .create-design-header {
+      font-size: 1.5rem;
   }
-   .create-design-buttons {
-     flex-direction: column-reverse; 
-     gap: 0.75rem;
+    /* Adjust layout gap if needed */
+    .create-design-layout {
+      gap: 1.5rem;
   }
-   .create-design-btn-cancel,
-   .create-design-btn-next {
-      width: 100%; 
-      text-align: center;
-   }
 }
 
-
-/* -- ส่วนที่ 1: บังคับ Container แม่ -- */
-/* ใช้ selector ที่เจาะจง div ที่ครอบ input */
-.uploaded-files-container.create-design-form-group {
-  display: block !important;        /* ทำให้เป็น block */
-  overflow: visible !important;     /* สำคัญมาก: บังคับไม่ให้ซ่อนเนื้อหาที่ล้น */
-  height: auto !important;          /* ให้ความสูงปรับตามเนื้อหา */
-  min-height: 50px !important;      /* กำหนดความสูงขั้นต่ำ เผื่อไว้ให้เห็น */
-  width: auto !important;           /* ให้ความกว้างอัตโนมัติ */
-  opacity: 1 !important;            /* บังคับไม่ให้โปร่งใส */
-  visibility: visible !important;   /* บังคับให้มองเห็น */
-  position: static !important;      /* ล้างค่า position แปลกๆ */
-  padding: 10px !important;         /* ใส่ padding ให้เห็นขอบเขต */
-  margin-bottom: 20px !important;   /* ใส่ margin ข้างล่าง เผื่อระยะ */
+@media (max-width: 576px) {
+  .create-design-container {
+      padding: 1.25rem;
+      margin: 0.5rem;
+      border-radius: var(--de-radius);
+  }
+  .create-design-layout {
+      gap: 1.5rem; /* Adjust gap for smaller screens */
+  }
+  .create-design-form-buttons {
+      flex-direction: column-reverse;
+      gap: 0.75rem;
+  }
+  .create-design-btn-back,
+  .create-design-btn-primary {
+      width: 100%;
+      padding: 0.75rem;
+  }
+  .create-design-header {
+      font-size: 1.35rem;
+      text-align: left;
+  }
+  .create-design-action-buttons-inline {
+      flex-direction: column;
+      align-items: stretch;
+  }
+  .create-design-btn-attach,
+  .create-design-btn-draw {
+      width: 100%;
+      justify-content: center;
+  }
 }
 
-/* -- ส่วนที่ 2: ยังคงบังคับตัว Input ด้วย เผื่อไว้ -- */
-.create-design-file-input {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  width: auto !important;
-  height: auto !important;
-  position: static !important;
-  padding: 10px !important;
-  margin-top: 5px !important;
+/* Alert Styles (Keep as is) */
+.create-design-alert {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1050; /* Ensure it's above other elements */
+  max-width: 400px;
+  width: calc(100% - 40px); /* Max width with padding */
+  transform: translateX(120%);
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smoother transition */
+  box-shadow: var(--de-shadow-lg); /* Use theme shadow */
+  border-radius: var(--de-radius-md); /* Use theme radius */
+  overflow: hidden;
+  background-color: white; /* Base background */
+}
+.create-design-alert.show {
+  transform: translateX(0);
+}
+
+/* Specific alert types styling */
+.create-design-alert > div:first-child { /* Target the colored alert box */
+  border-left-width: 4px;
+  border-left-style: solid;
+  /* Backgrounds set below */
+}
+
+.create-design-alert-success { border-left-color: var(--de-success); background-color: #f0fdf4; } /* Lighter success bg */
+.create-design-alert-error   { border-left-color: var(--de-danger);  background-color: #fef2f2; } /* Lighter danger bg */
+.create-design-alert-warning { border-left-color: var(--de-warning); background-color: #fffbeb; } /* Lighter warning bg */
+
+.create-design-alert-content {
+  display: flex;
+  align-items: flex-start; /* Align icon top */
+  padding: 1rem; /* Consistent padding */
+}
+
+.create-design-alert-icon {
+  margin-right: 0.75rem; /* Space next to icon */
+  font-size: 1.25rem; /* Slightly larger icon */
+  flex-shrink: 0;
+  margin-top: 0.125rem; /* Align icon better with text */
+}
+.create-design-alert-success .create-design-alert-icon { color: var(--de-success); }
+.create-design-alert-error   .create-design-alert-icon { color: var(--de-danger);  }
+.create-design-alert-warning .create-design-alert-icon { color: var(--de-warning); }
+
+.create-design-alert-message {
+  font-size: 0.875rem; /* Consistent font size */
+  line-height: 1.4;
+  color: var(--de-gray-700); /* Darker text for readability */
+  flex-grow: 1;
+}
+.create-design-alert-success .create-design-alert-message { color: #14532d; } /* Specific text color */
+.create-design-alert-error   .create-design-alert-message { color: #991b1b; } /* Specific text color */
+.create-design-alert-warning .create-design-alert-message { color: #92400e; } /* Specific text color */
+
+
+.create-design-alert-close {
+  position: absolute;
+  top: 0.5rem; /* Adjust position */
+  right: 0.5rem;
+  background: none;
+  border: none;
+  color: var(--de-gray-400); /* Lighter close button */
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.25rem;
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+.create-design-alert-close:hover {
+  color: var(--de-gray-600); /* Darker on hover */
+}
+
+.create-design-alert-progress {
+  height: 4px; /* Thicker progress bar */
+  width: 100%;
+  animation: progress-bar 3s linear forwards; /* Use 'forwards' */
+  position: absolute; /* Position relative to the colored box */
+  bottom: 0;
+  left: 0;
+}
+.create-design-alert-success .create-design-alert-progress { background-color: var(--de-success); }
+.create-design-alert-error   .create-design-alert-progress { background-color: var(--de-danger);  }
+.create-design-alert-warning .create-design-alert-progress { background-color: var(--de-warning); }
+
+/* Keyframes */
+@keyframes progress-bar {
+  from { width: 100%; }
+  to { width: 0%; }
 }

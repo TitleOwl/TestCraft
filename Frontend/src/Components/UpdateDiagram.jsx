@@ -218,7 +218,7 @@ const UpdateDiagram = forwardRef(({ designId }, ref) => { // <--- ใช้ forw
 
     return (
         <div>
-            {/* ส่วนแสดงผล Excalidraw */}
+            {/* ส่วนแสดงผล Excalidraws */}
             <div style={{ height: "600px", border: '1px solid #ccc', position: 'relative', borderRadius: '4px', overflow: 'hidden' }}>
                 {/* แสดงสถานะ Saving ภายใน */}
                 {isSaving && <div style={{ position: 'absolute', top: '5px', right: '5px', zIndex: 10, background: 'rgba(255, 230, 150, 0.8)', padding: '3px 8px', borderRadius: '3px', fontSize: '0.8em', border: '1px solid #ccc' }}>Saving Diagram...</div>}

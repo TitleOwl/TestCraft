@@ -1,79 +1,684 @@
-.createveridesign-container {
-    padding: 20px;
-    font-family: Arial, sans-serif;
+/* CreateVeriDesign.css - Premium Dark Orange Luxury Design */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* === Dark Orange Theme Colors (#d76000) === */
+  --de-primary: #d76000;        /* Dark Orange หลัก */
+  --de-primary-light: #e58033;   /* Dark Orange อ่อน */
+  --de-primary-dark: #a84c00;    /* Dark Orange เข้ม */
+  --de-secondary: #4E342E;      /* Deep Brown (complementary) */
+  --de-accent: #ff8a1a;        /* Brighter Orange Accent */
+  /* ========================================== */
+
+  /* Base Colors */
+  --de-bg-primary: #ffffff;
+  --de-bg-secondary: #f8f9fc; /* Slightly off-white */
+  --de-bg-tertiary: #fff8f0; /* Very light orange tint */
+
+  /* Text Colors */
+  --de-text-primary: #1e293b; /* Dark Slate Gray */
+  --de-text-secondary: #64748b; /* Medium Slate Gray */
+  --de-text-light: #94a3b8;    /* Light Slate Gray */
+
+  /* Status Colors (Kept standard for clarity, adjust if needed) */
+  --de-success: #10b981;        /* Emerald */
+  --de-success-dark: #059669;
+  --de-warning: #f59e0b;        /* Amber */
+  --de-warning-dark: #b45309;
+  --de-error: #ef4444;         /* Red */
+  --de-error-dark: #b91c1c;
+  --de-info: #17A2B8;           /* Cyan */
+  --de-working: #8b5cf6;        /* Purple (Keep distinct or change) */
+
+  /* UI Elements */
+  --de-border: #e2e8f0;        /* Light Gray Border */
+  --de-border-light: #f1f5f9;   /* Very Light Gray Border */
+  --de-border-colored: #ffcc99; /* Light Orange Border */
+
+  /* Shadows */
+  --de-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.03);
+  --de-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --de-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+  --de-shadow-colored: 0 4px 12px rgba(215, 96, 0, 0.15); /* Shadow based on new primary */
+
+  /* Border Radius */
+  --de-radius-sm: 4px;
+  --de-radius-md: 6px;
+  --de-radius-lg: 8px;
+
+  /* Transitions */
+  --de-transition: all 0.2s ease;
+}
+
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--de-bg-secondary); /* Updated */
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Main container */
+.createveri-design-container { /* Renamed */
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: var(--de-bg-primary); /* Updated */
+  min-height: 100vh;
+  position: relative;
+}
+
+.createveri-design-container::before { /* Renamed */
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  /* Updated gradient to use new theme vars */
+  background: linear-gradient(to right, var(--de-primary), var(--de-accent)); /* Updated */
+  z-index: 1;
+}
+
+/* Header */
+.createveri-design-header { /* Renamed */
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.createveri-design-header h1 { /* Renamed */
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--de-text-primary); /* Updated */
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  letter-spacing: -0.02em;
+}
+
+.createveri-design-title-icon { /* Renamed */
+  color: var(--de-primary); /* Updated */
+}
+
+/* Back button */
+.createveri-design-back-btn { /* Renamed */
+  background-color: transparent;
+  color: var(--de-primary); /* Updated */
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: var(--de-transition); /* Updated */
+  position: absolute;
+  left: 0;
+}
+
+.createveri-design-back-btn:hover { /* Renamed */
+  color: var(--de-primary-dark); /* Updated */
+  transform: translateX(-3px);
+}
+
+/* Content layout */
+.createveri-design-content { /* Renamed */
+  display: flex;
+  gap: 24px;
+  margin-bottom: 30px;
+}
+
+.createveri-design-left-panel, /* Renamed */
+.createveri-design-right-panel { /* Renamed */
+  background: var(--de-bg-primary); /* Updated */
+  border-radius: var(--de-radius-lg); /* Updated */
+  border: 1px solid var(--de-border); /* Updated */
+  box-shadow: var(--de-shadow-md); /* Updated */
+  overflow: hidden;
+}
+
+.createveri-design-left-panel { /* Renamed */
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+}
+
+.createveri-design-right-panel { /* Renamed */
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Panel headers */
+.createveri-design-panel-header { /* Renamed */
+  background-color: var(--de-bg-secondary); /* Updated */
+  border-bottom: 1px solid var(--de-border); /* Updated */
+  padding: 16px 20px;
+}
+
+.createveri-design-panel-header h2 { /* Renamed */
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--de-text-primary); /* Updated */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.createveri-design-panel-header h2 svg { /* Renamed */
+  color: var(--de-primary); /* Updated */
+}
+
+.createveri-design-count-badge { /* Renamed */
+  background-color: var(--de-primary-light); /* Updated */
+  color: var(--de-primary-dark); /* Use darker text on light orange */
+  font-size: 12px;
+  font-weight: 600; /* Make it bolder */
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-left: 8px;
+}
+
+/* Search and filter tools */
+.createveri-design-tools { /* Renamed */
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.createveri-design-search, /* Renamed */
+.createveri-design-filter { /* Renamed */
+  display: flex;
+  align-items: center;
+  background-color: var(--de-bg-primary); /* Updated */
+  border: 1px solid var(--de-border); /* Updated */
+  border-radius: var(--de-radius-md); /* Updated */
+  padding: 8px 12px;
+  flex: 1;
+}
+
+.createveri-design-search-icon, /* Renamed */
+.createveri-design-filter-icon { /* Renamed */
+  color: var(--de-text-secondary); /* Updated */
+  margin-right: 8px;
+}
+
+.createveri-design-search-input, /* Renamed */
+.createveri-design-filter-select { /* Renamed */
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  color: var(--de-text-primary); /* Updated */
+  width: 100%;
+  outline: none;
+}
+
+.createveri-design-clear-search { /* Renamed */
+  background: transparent;
+  border: none;
+  color: var(--de-text-secondary); /* Updated */
+  cursor: pointer;
+  transition: var(--de-transition); /* Updated */
+}
+
+.createveri-design-clear-search:hover { /* Renamed */
+  color: var(--de-primary); /* Updated */
+}
+
+/* Select all row */
+.createveri-design-select-all { /* Renamed */
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  background-color: var(--de-bg-tertiary); /* Updated */
+  border-bottom: 1px solid var(--de-border); /* Updated */
+}
+
+.createveri-design-select-all input[type="checkbox"] { /* Renamed */
+  margin-right: 8px;
+}
+
+.createveri-design-select-all label { /* Renamed */
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--de-text-primary); /* Updated */
+}
+
+.createveri-design-selected-count { /* Renamed */
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--de-text-secondary); /* Updated */
+}
+
+/* Designs table */ /* Renamed relevant classes */
+.createveri-design-table-container {
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Using -requirements-table name as requested, consider renaming if confusing */
+.createveri-design-requirements-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.createveri-design-requirements-table th {
+  position: sticky;
+  top: 0;
+  background-color: var(--de-bg-secondary); /* Updated */
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--de-text-secondary); /* Updated */
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-bottom: 1px solid var(--de-border); /* Updated */
+}
+
+.createveri-design-requirements-table td {
+  padding: 12px 16px;
+  font-size: 14px;
+  border-bottom: 1px solid var(--de-border-light); /* Updated */
+  color: var(--de-text-primary); /* Updated */
+}
+
+.createveri-design-requirements-table tr:last-child td {
+  border-bottom: none;
+}
+
+.createveri-design-requirements-table .selected-row {
+  background-color: rgba(215, 96, 0, 0.05); /* Light orange selection */
+}
+
+.createveri-design-requirements-table tr:hover:not(.selected-row) {
+  background-color: var(--de-bg-tertiary); /* Updated */
+}
+
+.createveri-design-checkbox-column { /* Renamed */
+  width: 60px;
+}
+
+
+
+/* Removed specific type badges like .type-functional */
+
+/* Custom checkbox styling */
+/* ----- เปลี่ยนตรงนี้ ----- */
+/* Custom checkbox styling for design selection */
+input.checkbox-design { /* <<< เปลี่ยนจาก input[type="checkbox"] */
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--de-border);
+  border-radius: var(--de-radius-sm);
+  background-color: white;
+  cursor: pointer;
+  position: relative;
+  vertical-align: middle;
+  transition: var(--de-transition);
+}
+
+/* ----- เปลี่ยนตรงนี้ ----- */
+input.checkbox-design:checked { /* <<< เปลี่ยนจาก input[type="checkbox"]:checked */
+  background-color: var(--de-primary);
+  border-color: var(--de-primary);
+}
+
+/* ----- เปลี่ยนตรงนี้ ----- */
+input.checkbox-design:checked::after { /* <<< เปลี่ยนจาก input[type="checkbox"]:checked::after */
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  width: 5px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* ----- เปลี่ยนตรงนี้ ----- */
+input.checkbox-design:hover:not(:checked) { /* <<< เปลี่ยนจาก input[type="checkbox"]:hover:not(:checked) */
+  border-color: var(--de-primary-light);
+}
+
+/* Empty states, loading, and error messages */ /* Renamed classes */
+.createveri-design-loading,
+.createveri-design-error-message,
+.createveri-design-empty-state,
+.createveri-design-no-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+  color: var(--de-text-secondary); /* Updated */
+  gap: 12px;
+}
+
+.createveri-design-loading svg,
+.createveri-design-error-message svg {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.createveri-design-error-message { /* Renamed */
+  color: var(--de-error); /* Updated */
+}
+
+.createveri-design-no-results { /* Renamed */
+  padding: 30px;
+  font-style: italic;
+}
+
+/* Reviewers section */ /* Renamed classes */
+.createveri-design-reviewers-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.createveri-design-reviewers-list {
+  padding: 16px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.createveri-design-reviewer-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-radius: var(--de-radius-md); /* Updated */
+  transition: var(--de-transition); /* Updated */
+  margin-bottom: 8px;
+}
+
+.createveri-design-reviewer-item:hover {
+  background-color: var(--de-bg-tertiary); /* Updated */
+}
+
+.createveri-design-reviewer-label {
+  display: flex;
+  flex-direction: column;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.createveri-design-reviewer-name {
+  font-weight: 500;
+  color: var(--de-text-primary); /* Updated */
+  font-size: 14px;
+}
+
+.createveri-design-reviewer-role {
+  color: var(--de-text-secondary); /* Updated */
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+/* Summary section */ /* Renamed classes */
+.createveri-design-summary {
+  background-color: var(--de-bg-tertiary); /* Updated */
+  padding: 16px;
+  border-top: 1px solid var(--de-border); /* Updated */
+}
+
+.createveri-design-summary h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--de-text-primary); /* Updated */
+  margin-bottom: 12px;
+}
+
+.createveri-design-summary-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: var(--de-text-secondary); /* Updated */
+}
+
+.createveri-design-summary-count {
+  font-weight: 600;
+  color: var(--de-primary); /* Updated */
+}
+
+/* Action buttons */ /* Renamed classes */
+.createveri-design-action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.createveri-design-btn-create,
+.createveri-design-btn-cancel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: var(--de-radius-md); /* Updated */
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--de-transition); /* Updated */
+}
+
+.createveri-design-btn-create {
+  background-color: var(--de-primary); /* Updated */
+  color: white;
+  border: none;
+  box-shadow: var(--de-shadow-colored); /* Updated */
+}
+
+.createveri-design-btn-create:hover:not(:disabled) {
+  background-color: var(--de-primary-dark); /* Updated */
+  transform: translateY(-2px);
+  /* Updated shadow color */
+  box-shadow: 0 6px 15px rgba(215, 96, 0, 0.2);
+}
+
+.createveri-design-btn-create:disabled {
+  background-color: var(--de-text-light); /* Updated */
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.createveri-design-btn-cancel {
+  background-color: transparent;
+  color: var(--de-text-secondary); /* Updated */
+  border: 1px solid var(--de-border); /* Updated */
+}
+
+.createveri-design-btn-cancel:hover {
+  background-color: var(--de-bg-tertiary); /* Updated */
+  color: var(--de-text-primary); /* Updated */
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--de-bg-secondary); /* Updated */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--de-border); /* Updated */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--de-text-light); /* Updated */
+}
+
+/* ========== Alert Styles ========== */ /* Renamed classes */
+.createveri-design-alert {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 500px;
+  z-index: 9999;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border-radius: 0 0 var(--de-radius-lg) var(--de-radius-lg); /* Updated */
+  opacity: 0;
+  pointer-events: none;
+}
+
+.createveri-design-alert.show {
+  animation: slideDown 0.5s ease forwards, fadeOut 0.5s ease 5s forwards;
+  pointer-events: auto;
+}
+
+/* Keyframes unchanged */
+@keyframes slideDown {
+  from { transform: translate(-50%, -100%); opacity: 0; }
+  to { transform: translate(-50%, 0); opacity: 1; }
+}
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; pointer-events: none; }
+}
+
+/* Alert boxes for different types */ /* Renamed classes */
+.createveri-design-alert-success,
+.createveri-design-alert-error,
+.createveri-design-alert-warning {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+}
+
+.createveri-design-alert-success {
+  background: linear-gradient(135deg, var(--de-success), var(--de-success-dark)); /* Updated */
+}
+
+.createveri-design-alert-error {
+  background: linear-gradient(135deg, var(--de-error), var(--de-error-dark)); /* Updated */
+}
+
+.createveri-design-alert-warning {
+  background: linear-gradient(135deg, var(--de-warning), var(--de-warning-dark)); /* Updated */
+}
+
+.createveri-design-alert-content { /* Renamed */
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.createveri-design-alert-icon { /* Renamed */
+  background-color: rgba(255, 255, 255, 0.2);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+}
+
+.createveri-design-alert-message { /* Renamed */
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.createveri-design-alert-close { /* Renamed */
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  font-size: 18px;
+  transition: var(--de-transition); /* Updated */
+}
+
+.createveri-design-alert-close:hover {
+  color: white;
+}
+
+/* Progress bar for alert timeout */ /* Renamed class */
+.createveri-design-alert-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background-color: rgba(255, 255, 255, 0.7);
+  width: 100%;
+  transform-origin: left;
+  animation: progress 5s linear;
+}
+
+/* Keyframes unchanged */
+@keyframes progress {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .createveri-design-content { /* Renamed */
+    flex-direction: column;
   }
-  
-  .createveridesign-container h1 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  .createveridesign-content {
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .createveridesign-left-panel,
-  .createveridesign-right-panel {
-    width: 48%;
-    background: #f9f9f9;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-  }
-  
-  .createveridesign-designs-table {
+
+  .createveri-design-left-panel, /* Renamed */
+  .createveri-design-right-panel { /* Renamed */
     width: 100%;
-    border-collapse: collapse;
   }
-  
-  .createveridesign-designs-table th,
-  .createveridesign-designs-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-  }
-  
-  .createveridesign-designs-table th {
-    background: #f4f4f4;
-  }
-  
-  .createveridesign-footer {
+
+  .createveri-design-right-panel { /* Renamed */
     display: flex;
-    justify-content: flex-end;
-    margin-top: 20px;
+    flex-direction: column;
   }
-  
-  .createveridesign-button.create-button {
-    background: #4caf50;
-    color: #fff;
-    align-items: end;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    margin-left: 10px;
-    border-radius: 4px;
+
+  .createveri-design-reviewers-list { /* Renamed */
+    max-height: 300px;
   }
-  
-  .createveridesign-button.cancel-button {
-    background: #f44336;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+  .createveri-design-container { /* Renamed */
+    padding: 20px 15px;
   }
-  
-  .createveridesign-button.create-button:hover {
-    background: #45a049;
+
+  .createveri-design-header h1 { /* Renamed */
+    font-size: 20px;
   }
-  
-  .createveridesign-button.cancel-button:hover {
-    background: #e53935;
+
+  .createveri-design-tools { /* Renamed */
+    flex-direction: column;
   }
-  
-  .createveridesign-error-message {
-    color: #ff0000;
-    font-weight: bold;
+
+  .createveri-design-action-buttons { /* Renamed */
+    flex-direction: column;
   }
-  
+
+  .createveri-design-btn-create, /* Renamed */
+  .createveri-design-btn-cancel { /* Renamed */
+    width: 100%;
+    justify-content: center;
+  }
+
+  .createveri-design-alert { /* Renamed */
+    max-width: 95%;
+  }
+}

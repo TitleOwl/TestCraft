@@ -225,8 +225,8 @@ const CreateRequirement = () => {
             className="create-requirement-textarea"
           ></textarea>
         </div>
-        <div className="create-requirement-form-group">
-          <label htmlFor="fileSelect">Attach File(s)</label>
+        <div className="create-requirement-form-groups">
+          <label htmlFor="fileSelect">Related File</label>
           <Select
             isMulti
             options={uploadedFiles.map((file) => ({
@@ -238,9 +238,8 @@ const CreateRequirement = () => {
               label: `${file.filereq_id} - ${file.filereq_name}`,
             }))}
             onChange={handleFileChange}
-            placeholder="Select files"
+            placeholder="Select Related File"
             className="select-files"
-            required
           />
         </div>
         <div className="create-requirement-form-buttons">

@@ -1,182 +1,329 @@
-/* Dashboard.css */
+/* ==============================================
+   Dashboard Overview CSS with Updated Color Palette
+   ============================================== */
+
+/* --- CSS Variables for easy theming --- */
+:root {
+  /* Layout & Base Styles */
+  --primary-font: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  --background-color: #f4f7fc; /* Light bluish gray background */
+  --card-background: #ffffff;
+  --text-color: #333;
+  --text-muted: #6c757d;
+  --border-color: #dfe1e6;
+  --shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  --border-radius: 8px;
+  --card-padding: 1.5rem;
+  --grid-gap: 1.5rem;
+  --placeholder-color: #e9ecef; /* Kept for chart placeholder */
+
+  /* --- NEW Work Product Color Palette --- */
+
+  /* Shared Contrast Color */
+  --color-text-contrast-dark: #2E3440;
+
+  /* Requirement Colors (Blue Tones) */
+  --req-color-primary: #0056B3;
+  --req-color-secondary: #2A75C8;
+  --req-color-dark: #003B7A;
+  --req-color-accent: #00A3FF;
+
+  /* Design Colors (Orange/Amber Tones) */
+  --des-color-primary: #d76000;
+  --des-color-secondary: #e58033;
+  --des-color-dark: #a84c00;
+  --des-color-accent: #ff8a1a;
+  --des-color-contrast-dark: #4E342E;
+
+  /* Implementation Colors (Purple Tones) */
+  --impl-color-primary: #6200EE;
+  --impl-color-secondary: #5000c7;
+  --impl-color-light: #BB86FC;
+  --impl-color-background: #F0EBFF;
+
+  /* Test Case Colors (Green/Teal Tones) */
+  --test-color-primary: #10b981;
+  --test-color-secondary: #34d399;
+  --test-color-dark: #059669;
+  --test-color-accent: #06b6d4;
+
+  /* --- Old Chart Colors (Removed/Replaced by above) --- */
+  /*
+  --req-baseline-color: #28a745;
+  --req-non-baseline-color: #84d8a0;
+  --des-baseline-color: #ffc107;
+  --des-non-baseline-color: #ffe08a;
+  --test-baseline-color: #17a2b8;
+  --test-non-baseline-color: #7fcce0;
+  */
+}
+
+/* --- Base Styles --- */
+body {
+  font-family: var(--primary-font);
+  background-color: var(--background-color);
+  color: var(--text-color);
+  margin: 0;
+  line-height: 1.5;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* --- Container --- */
 .dashboard-overview-container {
-    font-family: 'Arial', sans-serif;
-    margin: 20px;
-    padding: 20px;
-    background-color: #f9f9f9;
-  }
-  
-  .overview-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .overview-header h1 {
-    font-size: 24px;
-    color: #333;
-  }
-  
-  .overview-profile {
-    display: flex;
-    align-items: center;
-  }
-  
-  .overview-profile-img {
-    border-radius: 50%;
-    margin-right: 10px;
-  }
-  
-  .overview-cards {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 30px;
-  }
-  
-  .overview-card {
-    background-color: #fff;
-    border-radius: 8px;
-    padding: 20px;
-    width: 30%;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    text-align: center;
-  }
-  
-  .overview-card h2 {
-    font-size: 18px;
-    color: #555;
-  }
-  
-  .overview-card p {
-    font-size: 24px;
-    font-weight: bold;
-    color: #2e7d32;
-  }
-  
-  .overview-recent-activity {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .overview-recent-activity h2 {
-    font-size: 18px;
-    color: #555;
-  }
-  
-  .overview-recent-activity ul {
-    list-style-type: none;
-    padding-left: 0;
-  }
-  
-  .overview-recent-activity ul li {
-    font-size: 14px;
-    color: #777;
-    margin: 8px 0;
-  }
-  
-  .dashboard-overview-container {
-    padding: 20px;
-    font-family: Arial, sans-serif;
-  }
-  
-  .overview-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .overview-profile {
-    display: flex;
-    align-items: center;
-  }
-  
-  .overview-profile-img {
-    border-radius: 50%;
-    margin-right: 10px;
-  }
-  
-  .overview-charts {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-  }
-  
-  .chart-card {
-    flex: 1;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  /* แก้ไข Modal ให้แสดงตรงกลางจอในหน้า Enterprise Project */
+  padding: 2rem;
+  max-width: 1600px; /* Adjust max width as needed */
+  margin: 0 auto;
+}
 
-/* กำหนดให้ Modal อยู่ตรงกลาง */
-.modal {
-  display: flex !important;
+/* --- Header --- */
+.overview-header {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
 }
 
-/* แก้ไข Modal Dialog ให้อยู่ตรงกลาง */
-.modal-dialog-centered {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  min-height: calc(100% - 3.5rem) !important;
-  margin: 1.75rem auto !important;
+.overview-header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--color-text-contrast-dark); /* Using the darker contrast color for header */
 }
 
-/* แก้ไข Enterprise Modal */
-.enterprise-modal .modal-dialog {
-  margin: 1.75rem auto !important;
-  max-width: 600px !important;
+.overview-profile {
   display: flex;
   align-items: center;
-  width: calc(100% - 3rem);
+  gap: 0.75rem;
 }
 
-.enterprise-modal-lg .modal-dialog {
-  max-width: 800px !important;
+.overview-profile-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border-color);
 }
 
-/* ทำให้ Modal Content มีขนาดเต็ม container */
-.enterprise-modal-content {
-  width: 100% !important;
+.overview-profile span {
+  font-weight: 500;
+  color: var(--text-muted);
 }
 
-/* แก้ไขสำหรับ Bootstrap 4+ */
-.modal-dialog-centered.enterprise-modal-dialog {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+/* --- Cards Grid Layout --- */
+.overview-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--grid-gap);
 }
 
-/* แก้ไขสำหรับ Modal ที่มี scrollable content */
-.modal-dialog-scrollable {
-  max-height: calc(100% - 3.5rem) !important;
+/* --- Chart Card Styling --- */
+.chart-card {
+  background-color: var(--card-background);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  padding: var(--card-padding);
+  display: flex;
+  flex-direction: column; /* Stack content vertically */
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  /* Optional: Add left border for color coding */
+  border-left: 5px solid transparent;
+  /* Adjust padding to account for border */
+  padding-left: calc(var(--card-padding) - 5px + 1rem); /* Add slightly more padding */
 }
 
-/* แก้ไขสำหรับหน้าจอขนาดเล็ก */
+/* Optional: Apply specific border colors */
+.chart-card:nth-child(1) { border-left-color: var(--req-color-primary); }
+.chart-card:nth-child(2) { border-left-color: var(--des-color-primary); }
+.chart-card:nth-child(3) { border-left-color: var(--impl-color-primary); }
+.chart-card:nth-child(4) { border-left-color: var(--test-color-primary); }
+
+
+.chart-card:hover {
+  transform: translateY(-4px); /* Subtle lift effect on hover */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+}
+
+.chart-card h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-color);
+  text-align: center;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.75rem;
+  /* Optional: Match heading color to border color (can be too much) */
+  /* Example for Requirement card:
+     .chart-card:nth-child(1) h3 { color: var(--req-color-dark); }
+  */
+}
+
+/* --- Inline Summary Stats (for cards with 2 values) --- */
+.card-summary-inline {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 1.5rem; /* Space before chart */
+  text-align: center;
+}
+
+.inline-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.inline-stat .label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.inline-stat .value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-color); /* Default total color */
+  line-height: 1.2;
+}
+
+/* Specific coloring for baseline values using NEW palette */
+/* Assuming the second .inline-stat is the Baseline value */
+.chart-card:nth-child(1) .inline-stat:nth-child(2) .value { color: var(--req-color-primary); } /* Requirement Baseline */
+.chart-card:nth-child(2) .inline-stat:nth-child(2) .value { color: var(--des-color-primary); } /* Design Baseline */
+/* Implementation card (index 3) uses card-summary-single */
+.chart-card:nth-child(4) .inline-stat:nth-child(2) .value { color: var(--test-color-primary); } /* Test Case Baseline */
+
+
+/* --- Single Summary Stat (for Implementation card) --- */
+.implementation-summary-card {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.card-summary-single {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+}
+
+.card-summary-single .label {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.card-summary-single .value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--impl-color-primary); /* UPDATED: Use Implementation primary color */
+  margin-bottom: 1rem;
+}
+
+.implementation-icon {
+  font-size: 2rem;
+  color: var(--impl-color-primary); /* UPDATED: Match the value color */
+  opacity: 0.7;
+}
+
+/* --- Chart Wrapper & Recharts Styling --- */
+.chart-wrapper {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  padding-left: 1rem; /* Add some padding if left border is used */
+}
+
+.recharts-legend-wrapper {
+  padding-top: 10px !important;
+}
+.recharts-legend-item {
+  margin-right: 15px !important;
+}
+.recharts-surface {
+  overflow: visible;
+}
+
+/* --- Status Containers (Loading/Error) --- */
+.status-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  padding: 2rem;
+}
+
+.loading-container {
+  /* Add spinner later if desired */
+}
+
+.error-container {
+  color: #721c24;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: var(--border-radius);
+  text-align: center;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 992px) {
+  .overview-cards-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+   .dashboard-overview-container {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .overview-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .overview-header h1 {
+    font-size: 1.6rem;
+  }
+  .inline-stat .value {
+    font-size: 1.8rem;
+  }
+   .card-summary-single .value {
+    font-size: 2.2rem;
+   }
+   .chart-card {
+     /* Adjust padding if needed for smaller screens */
+     padding-left: calc(var(--card-padding) - 5px + 0.5rem);
+   }
+}
+
 @media (max-width: 576px) {
-  .enterprise-modal .modal-dialog {
-    margin: 1rem auto !important;
-    width: calc(100% - 2rem);
+  .dashboard-overview-container {
+    padding: 1rem;
   }
-  
-  .modal-dialog-centered {
-    min-height: calc(100% - 2rem) !important;
+   .overview-cards-grid {
+    grid-template-columns: 1fr; /* Stack cards vertically */
   }
-}
-
-/* แก้ไขการซ้อนทับของ Modal กับ Backdrop */
-.modal-backdrop {
-  z-index: 1040 !important;
-}
-
-.modal {
-  z-index: 1050 !important;
+   .chart-card {
+    padding: 1rem; /* Reduce padding */
+    /* Reset left border padding adjustment if needed */
+    padding-left: calc(1rem - 5px + 0.5rem);
+  }
+  .inline-stat .value {
+    font-size: 1.6rem;
+  }
+  .card-summary-single .value {
+    font-size: 2rem;
+   }
 }

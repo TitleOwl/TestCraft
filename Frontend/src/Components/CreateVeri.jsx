@@ -7,11 +7,11 @@ import Joyride, { STATUS, CallBackProps } from 'react-joyride';
 
 // Import icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faClipboardCheck, 
-  faUsers, 
-  faCheckCircle, 
-  faTimes, 
+import {
+  faClipboardCheck,
+  faUsers,
+  faCheckCircle,
+  faTimes,
   faArrowLeft,
   faSearch,
   faFilter,
@@ -33,12 +33,12 @@ const CreateVeri = () => {
   const [toastId, setToastId] = useState(null);
   const [searchQuery, setSearchQuery] = useState(""); // สำหรับการค้นหา requirements
   const [filterType, setFilterType] = useState(""); // สำหรับกรองประเภท requirement
-  
+
   // เพิ่ม state สำหรับ alert
   const [showAlert, setShowAlert] = useState(false);
   const [alertType, setAlertType] = useState("success");
   const [alertMessage, setAlertMessage] = useState("");
-  
+
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const projectId = queryParams.get("project_id");
@@ -77,7 +77,7 @@ const CreateVeri = () => {
       const timer = setTimeout(() => {
         setRunCreateVeriTutorial(true);
       }, 500); // ปรับ delay ได้ตามความเหมาะสม
-  
+
       return () => clearTimeout(timer); // Clear timeout ถ้า component unmount ก่อนทำงาน
     }
   }, []); // ใส่ dependency array ว่างเพื่อให้ทำงานครั้งเดียวตอน mount
@@ -91,7 +91,7 @@ const CreateVeri = () => {
     setAlertType(type);
     setAlertMessage(message);
     setShowAlert(true);
-  
+
   };
 
   // Fetch working requirements
@@ -159,12 +159,12 @@ const CreateVeri = () => {
 
   // ฟังก์ชันสำหรับกรอง requirements ตามการค้นหาและประเภท
   const filteredRequirements = workingRequirements.filter(req => {
-    const matchesSearch = 
+    const matchesSearch =
       req.requirement_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       `REQ-0${req.requirement_id}`.toLowerCase().includes(searchQuery.toLowerCase());
-    
+
     const matchesType = filterType ? req.requirement_type === filterType : true;
-    
+
     return matchesSearch && matchesType;
   });
 
@@ -175,29 +175,29 @@ const CreateVeri = () => {
     const selectedReviewerNames = Object.keys(selectedReviewers).filter(
       (name) => selectedReviewers[name]
     );
-  
+
     // --- การตรวจสอบ Input (เหมือนเดิม) ---
     if (!projectId) {
       toast.error("Invalid project ID.");
       showAlertMessage("error", "Invalid project ID.");
       return;
     }
-  
+
     if (selectedRequirements.length === 0 || selectedReviewerNames.length === 0) {
       toast.warning("Please select at least one requirement and one reviewer.");
       showAlertMessage("warning", "Please select at least one requirement and one reviewer.");
       return;
     }
-  
+
     const storedUsername = localStorage.getItem("username");
     const createBy = storedUsername;
-  
+
     if (!createBy) {
       toast.error("No user found. Please login again.");
       showAlertMessage("error", "No user found. Please login again.");
       return;
     }
-  
+
     // --- สร้าง Payload สำหรับ /createveri (เหมือนเดิม) ---
     const payload = {
       requirements: [...new Set(selectedRequirements)], // Remove duplicates
@@ -205,29 +205,27 @@ const CreateVeri = () => {
       project_id: projectId,
       create_by: createBy,
     };
-  
+
     console.log("Payload for /createveri:", payload);
-  
+
     try {
       setIsSubmitting(true); // Disable submit button
-  
+
       // --- เรียก API /createveri ---
       const response = await axios.post("http://localhost:3001/createveri", payload);
-  
+
       if (response.status === 201) {
         const toastId = "create-verification-toast";
         if (!toast.isActive(toastId)) {
-          toast.success("Verification created successfully!", { toastId, position: "top-center" });
+          toast.success("Verification created successfully!");
         }
-        showAlertMessage("success", `Verification created successfully! (${selectedRequirements.length} requirements processed)`);
-  
         // --- อัปเดต State ฝั่ง Frontend (เหมือนเดิม) ---
         setWorkingRequirements((prev) =>
           prev.filter((req) => !selectedRequirements.includes(req.requirement_id))
         );
         setSelectedRequirements([]);
         setSelectedReviewers({});
-  
+
         // --- *** จุดที่แก้ไข: Loop เพื่อสร้าง History *** ---
         console.log("Starting history creation loop...");
         for (const requirementId of selectedRequirements) {
@@ -235,46 +233,46 @@ const CreateVeri = () => {
           const requirementDetails = workingRequirements.find(
             (req) => req.requirement_id === requirementId
           );
-  
+
           if (!requirementDetails) {
             console.error(`Could not find details for requirement ID: ${requirementId} in workingRequirements state. Skipping history creation.`);
             // อาจจะแจ้งเตือนผู้ใช้ หรือ log ไว้ แต่ไม่ควรหยุด process ทั้งหมด
             continue; // ข้ามไปทำ requirement ID ถัดไป
           }
-  
+
           // 2. สร้าง historyReqData โดยใช้ข้อมูลที่พบ
           const historyReqData = {
             requirement_id: requirementId,
-            requirement_name: requirementDetails.requirement_name, 
+            requirement_name: requirementDetails.requirement_name,
             requirement_description: requirementDetails.requirement_description,
-            requirement_type: requirementDetails.requirement_type,   
-            requirement_status: "WAITING FOR VERIFICATION",      
+            requirement_type: requirementDetails.requirement_type,
+            requirement_status: "WAITING FOR VERIFICATION",
           };
-  
+
           console.log(`Sending history data for Req ID ${requirementId}:`, historyReqData);
-  
+
           try {
             // 3. ส่งข้อมูลไปที่ historyReqWorking
             const historyResponse = await axios.post(
               "http://localhost:3001/historyReqWorking",
               historyReqData
             );
-  
+
             if (historyResponse.status !== 200) {
               // Log หรือแจ้งเตือนเฉพาะส่วนถ้าการสร้าง history ของรายการนี้ล้มเหลว
               console.error(`Failed to add history for requirement ID: ${requirementId}. Status: ${historyResponse.status}`, historyResponse.data);
               // อาจจะเก็บ ID ที่มีปัญหาไว้แจ้งผู้ใช้ตอนท้าย
             } else {
-               console.log(`History added successfully for Req ID ${requirementId}`);
+              console.log(`History added successfully for Req ID ${requirementId}`);
             }
           } catch (historyError) {
-              console.error(`Error sending history for requirement ID: ${requirementId}`, historyError.response?.data || historyError.message);
-              // จัดการ error ของ history item นี้
+            console.error(`Error sending history for requirement ID: ${requirementId}`, historyError.response?.data || historyError.message);
+            // จัดการ error ของ history item นี้
           }
         }
         console.log("Finished history creation loop.");
         // --- จบส่วนแก้ไข ---
-  
+
         // --- อัปเดตสถานะ Requirement ใน Backend ---
         console.log("Starting status update requests...");
         const updateResults = await Promise.allSettled(
@@ -286,22 +284,20 @@ const CreateVeri = () => {
         );
         console.log("Finished status update requests:", updateResults);
         // (อาจเพิ่มการตรวจสอบ updateResults เพื่อดูว่ามีรายการไหนอัปเดตไม่สำเร็จหรือไม่)
-  
+
       } else {
         // กรณี /createveri ไม่สำเร็จ
         toast.error(response.data.message || "Failed to create verification(s).");
-        showAlertMessage("error", response.data.message || "Failed to create verification(s).");
       }
     } catch (error) {
       // จัดการ Error ทั่วไป
       console.error("Error creating verification process:", error);
       toast.error(error.response?.data?.message || "An error occurred during the verification process.");
-      showAlertMessage("error", error.response?.data?.message || "An error occurred. Please try again.");
     } finally {
       setIsSubmitting(false); // Re-enable submit button
     }
   };
-  
+
   // Handle cancel
   const handleCancel = () => {
     // Dismiss any active toast message with the specific toastId
@@ -334,7 +330,7 @@ const CreateVeri = () => {
 
     // ตรวจสอบว่าได้เลือกทุกคนแล้วหรือไม่
     const allSelected = Object.keys(allReviewers).every(name => selectedReviewers[name]);
-    
+
     if (allSelected) {
       // ถ้าเลือกทั้งหมดแล้ว ให้ยกเลิกการเลือกทั้งหมด
       setSelectedReviewers({});
@@ -346,7 +342,7 @@ const CreateVeri = () => {
 
   return (
     <div className="createveri-container">
-            <Joyride
+      <Joyride
         steps={createVeriTutorialSteps}
         run={runCreateVeriTutorial}
         continuous
@@ -373,8 +369,8 @@ const CreateVeri = () => {
           <FontAwesomeIcon icon={faClipboardCheck} className="createveri-title-icon" />
           Create Verification
         </h1>
-                {/* ปุ่ม ? สำหรับเรียก Tutorial */}
-                <button
+        {/* ปุ่ม ? สำหรับเรียก Tutorial */}
+        <button
           onClick={handleRestartCreateVeriTutorial}
           className="tutorial-help-button tutorial-help-button-corner" // ใช้ class เดิมหรือสร้างใหม่
           title="Show Tutorial"
@@ -387,7 +383,7 @@ const CreateVeri = () => {
             border: 'none',
             color: 'gray', // ปรับสีตาม theme header
             cursor: 'pointer'
-            
+
           }}
         >
           <FontAwesomeIcon icon={faQuestionCircle} />
@@ -418,8 +414,8 @@ const CreateVeri = () => {
                   className="createveri-search-input"
                 />
                 {searchQuery && (
-                  <button 
-                    className="createveri-clear-search" 
+                  <button
+                    className="createveri-clear-search"
                     onClick={() => setSearchQuery("")}
                   >
                     <FontAwesomeIcon icon={faTimes} />
@@ -429,8 +425,8 @@ const CreateVeri = () => {
 
               <div className="createveri-filter">
                 <FontAwesomeIcon icon={faFilter} className="createveri-filter-icon" />
-                <select 
-                  value={filterType} 
+                <select
+                  value={filterType}
                   onChange={(e) => setFilterType(e.target.value)}
                   className="createveri-filter-select"
                 >
@@ -622,9 +618,9 @@ const CreateVeri = () => {
 
       {/* Action Buttons */}
       <div className="createveri-action-buttons">
-  
+
         <button className="createveri-btn-cancel" onClick={handleCancel}>
-          <FontAwesomeIcon icon={faTimes} /> Cancel
+          <FontAwesomeIcon icon={faArrowLeft} /> Back to Requirements
         </button>
         <button
           className="createveri-btn-create"

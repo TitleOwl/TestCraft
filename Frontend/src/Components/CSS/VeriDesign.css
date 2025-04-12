@@ -1,179 +1,738 @@
-.design-list {
-  font-size: 36px;
-  font-weight: 500;
-  color: #333;
-  text-align: center;
-  padding: 10px;
-  letter-spacing: 1px;
+/* VeriDesign.css - Premium Colorful Luxury Design (Orange Theme with vde- Prefix) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* Base Colors */
+  --vde-bg-primary: #ffffff;
+  --vde-bg-secondary: #f8f9fc;
+  --vde-bg-tertiary: #eef1f8;
+
+  /* Text Colors */
+  --vde-text-primary: #1e293b;
+  --vde-text-secondary: #64748b;
+  --vde-text-light: #94a3b8;
+
+  /* Primary Brand Colors (Indigo - kept for contrast) */
+  --vde-primary: #d76000;
+  --vde-primary-light: #d76000;
+  --vde-primary-dark: #d76000;
+
+  /* Accent Colors (Orange Theme #d76000) */
+  --vde-accent: #d76000;        /* Base Orange */
+  --vde-accent-light: #ffa54d;  /* Lighter Orange */
+  --vde-accent-dark: #b55200;   /* Darker Orange */
+
+  /* Status Colors */
+  --vde-success: #10b981;      /* Emerald */
+  --vde-success-dark: #059669;
+  --vde-warning: #f59e0b;      /* Amber */
+  --vde-warning-dark: #b45309;
+  --vde-error: #ef4444;        /* Red */
+  --vde-error-dark: #b91c1c;
+  --vde-info: #6366f1;        /* Indigo */
+  --vde-working: #8b5cf6;      /* Purple */
+
+  /* UI Elements */
+  --vde-border: #e2e8f0;
+  --vde-border-light: #f1f5f9;
+  --vde-border-colored: #c7d2fe; /* Related to primary */
+
+  /* Shadows */
+  --vde-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.03);
+  --vde-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --vde-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+  /* Updated Accent Shadow (RGB for #d76000 is approx 215, 96, 0) */
+  --vde-shadow-accent: 0 4px 12px rgba(215, 96, 0, 0.15);
+
+  /* Border Radius */
+  --vde-radius-sm: 4px;
+  --vde-radius-md: 6px;
+  --vde-radius-lg: 8px;
+
+  /* Transitions */
+  --vde-transition: all 0.2s ease;
+}
+
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--vde-bg-secondary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Main container */
+.veridesign-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: var(--vde-bg-primary);
+  min-height: 100vh;
   position: relative;
-  transition: color 0.3s ease;
 }
 
-.design-list-container {
-  padding: 20px;
-  font-family: Arial, sans-serif;
-}
-
-.design-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-.design-table th,
-.design-table td {
-  padding: 12px 16px;
-  text-align: center;
-  border-bottom: 1px solid #ddd;
-}
-
-.design-table th {
-  background-color: #f4f4f4;
-  color: #333;
-  font-weight: 600;
-}
-
-.design-table td {
-  color: #555;
-  font-size: 16px;
-}
-
-.search-icon-button {
-  background: none;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
-  color: #007bff;
-  transition: color 0.3s ease;
-}
-.search-icon-button:hover {
-  color: #0056b3;
-}
-
-/* Modal Overlay */
-.modal-overlay-design {
-  position: fixed;
+.veridesign-container::before {
+  content: '';
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  height: 5px;
+  /* Gradient using vde-primary and vde-accent */
+  background: linear-gradient(to right, var(--vde-primary), var(--vde-accent));
+  z-index: 1;
+}
+
+/* Header */
+.veridesign-header {
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 1000;
-}
-
-/* Modal Content */
-.modal-content-design {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  width: 35%;
-  max-width: 800px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  font-family: Arial, sans-serif;
+  margin-bottom: 30px;
   position: relative;
-  /* Needed for absolute positioning of the close button */
 }
 
-/* Title Styling */
-.modal-content-design h3 {
-  font-size: 1.2em;
-  font-weight: bold;
+.veridesign-header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--vde-text-primary);
+  margin: 0 auto; /* Center title */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  letter-spacing: -0.02em;
+}
+
+.veridesign-title-icon {
+  color: var(--vde-accent); /* Use vde-accent color */
+}
+
+/* Back button */
+.veridesign-back-btn {
+  background-color: transparent;
+  color: var(--vde-primary);
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: var(--vde-transition);
+  position: absolute; /* Position back button to the left */
+  left: 0;
+}
+
+.veridesign-back-btn:hover {
+  color: var(--vde-primary-dark);
+  transform: translateX(-3px);
+}
+
+/* Tutorial button positioning */
+.veridesign-tutorial-button-corner {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    /* Style inherited from React component */
+}
+
+/* Content layout */
+.veridesign-content {
+  display: flex;
+  gap: 24px;
   margin-bottom: 30px;
 }
 
-/* Text and List Styling */
-.modal-content-design p,
-.modal-content-design pre {
-  font-size: 1em;
-  text-align: center;
+.veridesign-panel {
+  background: var(--vde-bg-primary);
+  border-radius: var(--vde-radius-lg);
+  border: 1px solid var(--vde-border);
+  box-shadow: var(--vde-shadow-md);
+  overflow: hidden;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Design Details List */
-.modal-content-design ul {
-  padding-left: 20px;
+/* Panel headers */
+.veridesign-panel-header {
+  background-color: var(--vde-bg-secondary);
+  border-bottom: 1px solid var(--vde-border);
+  padding: 16px 20px;
 }
 
-.modal-content-design li {
-  font-size: 1em;
-  text-align: center;
-}
-
-.req-design {
-  font-size: 1em;
-  text-align: center;
-}
-
-/* Close Button */
-.close-modal-design-button {
-  position: absolute;
-  /* Position it absolutely within the modal content */
-  top: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  /* Remove any padding */
-  z-index: 1010;
-  /* Ensure it stays on top of other content */
-}
-
-.close-modal-design-button img {
-  width: 20px;
-  /* Adjust the size of the close icon */
-  height: 20px;
-  /* Adjust the size of the close icon */
-}
-
-/* Hover effect for the close button */
-.close-modal-design-button:hover {
-  opacity: 0.7;
-  /* Add opacity on hover for visual feedback */
-}
-
-/* ให้ div ของ reviewer แสดงเป็น flex เพื่อจัดเรียงชื่อและไอคอน */
-.list-reviewer {
+.veridesign-panel-header h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--vde-text-primary);
   display: flex;
   align-items: center;
-  /* จัดตำแหน่งไอคอนและชื่อให้ตรงกลาง */
-  justify-content: center;
-  /* จัดกลางทั้งแนวตั้งและแนวนอน */
-  margin-bottom: 20px;
-  /* ระยะห่างระหว่าง reviewer แต่ละคน */
+  gap: 8px;
+  margin: 0;
 }
 
-.list-reviewer span {
-  font-size: 16px;
-  /* ขนาดตัวอักษรของชื่อ reviewer */
-  font-weight: bold;
-  /* ทำให้ตัวอักษรหนา */
+.veridesign-panel-header h2 svg {
+  color: var(--vde-accent); /* Use vde-accent */
+}
+
+.veridesign-count-badge {
+  background-color: var(--vde-accent-light); /* Use vde-accent light */
+  color: var(--vde-accent-dark); /* Use vde-accent dark for contrast */
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 12px;
+  margin-left: 8px;
+}
+
+/* Search and filter tools */
+.veridesign-tools {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.veridesign-search,
+.veridesign-filter {
+  display: flex;
+  align-items: center;
+  background-color: var(--vde-bg-primary);
+  border: 1px solid var(--vde-border);
+  border-radius: var(--vde-radius-md);
+  padding: 8px 12px;
+  flex: 1;
+  min-width: 220px;
+}
+
+.veridesign-search-icon,
+.veridesign-filter-icon {
+  color: var(--vde-text-secondary);
   margin-right: 8px;
-  /* ระยะห่างระหว่างชื่อกับไอคอน */
 }
 
-.list-reviewer img {
-  width: 30px;
-  /* กำหนดขนาดของไอคอน */
-  height: 30px;
-  /* กำหนดขนาดของไอคอน */
-  object-fit: cover;
-  /* ทำให้ไอคอนไม่เสียสัดส่วน */
+.veridesign-search-input,
+.veridesign-filter-select {
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  color: var(--vde-text-primary);
+  width: 100%;
+  outline: none;
 }
 
-/* เพิ่มเส้นคั่นระหว่าง Reviewer และ Requirements */
-.modal-content-design>div:first-child {
-  padding-bottom: 20px;
-  /* เพิ่มระยะห่างด้านล่างในส่วน Reviewer */
-  border-bottom: 1px solid #ddd;
-  /* เส้นคั่นสีเทาอ่อน */
-  margin-bottom: 20px;
-  /* เพิ่มระยะห่างระหว่าง Reviewer และ Requirements */
+.veridesign-clear-search {
+  background: transparent;
+  border: none;
+  color: var(--vde-text-secondary);
+  cursor: pointer;
+  transition: var(--vde-transition);
+  padding: 0 4px;
 }
 
-.modal-content-design>div:last-child {
-  margin-top: 20px;
-  /* เพิ่มระยะห่างด้านบนในส่วน Requirements */
+.veridesign-clear-search:hover {
+  color: var(--vde-accent); /* Use vde-accent color on hover */
+}
+
+.veridesign-refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: var(--vde-bg-tertiary);
+  color: var(--vde-text-secondary);
+  border: 1px solid var(--vde-border);
+  border-radius: var(--vde-radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--vde-transition);
+  white-space: nowrap;
+}
+
+.veridesign-refresh-btn:hover:not(:disabled) {
+  background-color: var(--vde-accent-light); /* Use vde-accent light */
+  color: var(--vde-accent-dark); /* Use vde-accent dark */
+  border-color: var(--vde-accent-light);
+}
+
+.veridesign-refresh-btn.refreshing {
+  background-color: var(--vde-accent-light); /* Use vde-accent light */
+  color: var(--vde-accent-dark); /* Use vde-accent dark */
+  border-color: var(--vde-accent-light);
+}
+
+.veridesign-refresh-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Table container */
+.veridesign-table-container {
+  overflow-x: auto;
+  width: 100%;
+  flex-grow: 1;
+}
+
+/* Design table */
+.veridesign-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.veridesign-table th {
+  background-color: var(--vde-bg-secondary);
+  text-align: left;
+  padding: 15px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--vde-text-secondary);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--vde-border);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+
+.veridesign-table th:hover {
+    background-color: var(--vde-bg-tertiary);
+}
+
+.veridesign-sort-icon {
+    margin-left: 8px;
+    color: var(--vde-text-light);
+    font-size: 12px;
+}
+
+/* Style sort icon when active */
+.veridesign-table th .veridesign-sort-icon {
+    color: var(--vde-primary); /* Use vde-primary color for active sort */
+}
+
+
+.veridesign-table td {
+  padding: 15px 20px;
+  font-size: 14px;
+  border-bottom: 1px solid var(--vde-border-light);
+  color: var(--vde-text-primary);
+  vertical-align: middle;
+}
+
+.veridesign-table tr:last-child td {
+  border-bottom: none;
+}
+
+.veridesign-row:hover {
+  background-color: var(--vde-bg-secondary);
+}
+
+/* Table cell styling */
+.veridesign-round-cell {
+  font-family: "SF Mono", "Roboto Mono", monospace;
+  font-size: 14px;
+  color: var(--vde-accent-dark); /* Use vde-accent dark for Round */
+  font-weight: 600;
+}
+
+.veridesign-creator-info, .veridesign-date-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.veridesign-cell-icon {
+  color: var(--vde-text-secondary);
+}
+
+/* Status badges */
+.veridesign-status {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: var(--vde-radius-sm);
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+/* Status colors (generic) */
+.status-verified {
+  background-color: rgba(16, 185, 129, 0.1); /* success */
+  color: var(--vde-success-dark);
+}
+.status-rejected {
+  background-color: rgba(239, 68, 68, 0.1); /* error */
+  color: var(--vde-error-dark);
+}
+.status-waiting {
+  background-color: rgba(245, 158, 11, 0.1); /* warning */
+  color: var(--vde-warning-dark);
+}
+
+/* Action buttons in table */
+.veridesign-actions-cell {
+  /* No extra style needed */
+}
+.veridesign-action-buttons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.veridesign-view-details-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background-color: rgba(99, 102, 241, 0.1); /* vde-primary light */
+  color: var(--vde-primary);
+  border: none;
+  border-radius: var(--vde-radius-sm);
+  cursor: pointer;
+  transition: var(--vde-transition);
+}
+.veridesign-view-details-btn:hover {
+  background-color: rgba(99, 102, 241, 0.2);
+  transform: scale(1.1);
+}
+
+.veridesign-verify-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background-color: var(--vde-success);
+  color: white;
+  border: none;
+  border-radius: var(--vde-radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--vde-transition);
+  min-width: 85px;
+  box-shadow: var(--vde-shadow-sm);
+}
+.veridesign-verify-btn:hover:not(:disabled) {
+  background-color: var(--vde-success-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--vde-shadow-md);
+}
+.veridesign-verify-btn:disabled {
+  background-color: var(--vde-text-light);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.veridesign-button-icon {
+  font-size: 11px;
+  margin-right: 2px;
+}
+
+/* Empty state */
+.veridesign-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 40px;
+  text-align: center;
+  color: var(--vde-text-secondary);
+  gap: 15px;
+  flex-grow: 1;
+}
+
+.veridesign-empty-icon {
+  font-size: 48px;
+  color: var(--vde-text-light);
+  margin-bottom: 10px;
+  opacity: 0.7;
+}
+
+.veridesign-empty-subtitle {
+  color: var(--vde-text-light);
+  font-size: 14px;
+}
+
+/* Loading state */
+.veridesign-loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  text-align: center;
+  flex-grow: 1;
+}
+
+.veridesign-loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--vde-bg-tertiary);
+  border-radius: 50%;
+  border-top-color: var(--vde-accent); /* Use vde-accent color */
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Page-level action buttons */
+.veridesign-page-action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.veridesign-btn-create {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: var(--vde-radius-md);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--vde-transition);
+  background-color: var(--vde-accent); /* Use vde-accent */
+  color: white; /* White text on orange */
+  border: none;
+  box-shadow: var(--vde-shadow-accent); /* Use vde-accent shadow */
+}
+.veridesign-btn-create:hover {
+  background-color: var(--vde-accent-dark); /* Use vde-accent dark */
+  transform: translateY(-2px);
+  /* Use updated accent shadow RGB */
+  box-shadow: 0 6px 15px rgba(215, 96, 0, 0.2);
+}
+
+/* Modal Styles */
+.veridesign-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(15, 23, 42, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  backdrop-filter: blur(4px);
+}
+
+.veridesign-modal-content {
+  background-color: var(--vde-bg-primary);
+  border-radius: var(--vde-radius-lg);
+  width: 90%;
+  max-width: 650px;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: var(--vde-shadow-lg);
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.veridesign-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--vde-border);
+  background-color: var(--vde-bg-secondary);
+}
+.veridesign-modal-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--vde-text-primary);
+}
+.veridesign-modal-close-button {
+  background-color: transparent;
+  border: none;
+  color: var(--vde-text-secondary);
+  font-size: 20px;
+  cursor: pointer;
+  transition: var(--vde-transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+}
+.veridesign-modal-close-button:hover {
+  background-color: var(--vde-bg-tertiary);
+  color: var(--vde-error);
+}
+
+.veridesign-modal-body {
+  padding: 0;
+  flex-grow: 1;
+}
+
+.veridesign-reviewer-section,
+.veridesign-info-section {
+  padding: 24px;
+  border-bottom: 1px solid var(--vde-border-light);
+}
+.veridesign-modal-body > div:last-child {
+    border-bottom: none;
+}
+
+.veridesign-reviewer-section h4,
+.veridesign-info-section h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--vde-text-primary);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.veridesign-section-icon {
+  color: var(--vde-accent); /* Use vde-accent */
+  font-size: 18px;
+}
+
+.veridesign-reviewers-list,
+.veridesign-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.veridesign-reviewer-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: var(--vde-bg-secondary);
+  border: 1px solid var(--vde-border-light);
+  border-radius: var(--vde-radius-md);
+  gap: 16px;
+}
+.veridesign-reviewer-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--vde-primary-light); /* Keep vde-primary for avatar */
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+.veridesign-reviewer-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.veridesign-reviewer-name {
+  font-weight: 500;
+  color: var(--vde-text-primary);
+}
+.veridesign-reviewer-status {
+  font-size: 13px;
+}
+.veridesign-reviewer-status.verified { color: var(--vde-success); }
+.veridesign-reviewer-status.not-verified { color: var(--vde-error); }
+
+.veridesign-status-icon { font-size: 18px; }
+.veridesign-status-icon.verified { color: var(--vde-success); }
+.veridesign-status-icon.not-verified { color: var(--vde-error); }
+
+.veridesign-info-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background-color: var(--vde-bg-secondary);
+  border: 1px solid var(--vde-border-light);
+  border-radius: var(--vde-radius-md);
+}
+.veridesign-info-icon {
+  color: var(--vde-accent); /* Use vde-accent */
+  width: 20px;
+  text-align: center;
+}
+.veridesign-info-text {
+    font-weight: 500;
+    color: var(--vde-text-primary);
+    font-family: "SF Mono", "Roboto Mono", monospace;
+    word-break: break-all;
+}
+/* Style specific info item spans if needed */
+.veridesign-info-item span:not(.veridesign-info-text) {
+   color: var(--vde-text-secondary);
+   font-family: 'Inter', sans-serif;
+}
+
+.veridesign-empty-message {
+  padding: 15px 20px;
+  color: var(--vde-text-secondary);
+  text-align: center;
+  font-style: italic;
+  background-color: var(--vde-bg-tertiary);
+  border-radius: var(--vde-radius-md);
+  margin: 10px 0;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--vde-bg-tertiary); border-radius: 10px; }
+::-webkit-scrollbar-thumb { background-color: var(--vde-border); border-radius: 10px; border: 2px solid var(--vde-bg-tertiary); }
+::-webkit-scrollbar-thumb:hover { background-color: var(--vde-text-light); }
+
+/* Toast notification styles */
+.Toastify__toast { border-radius: var(--vde-radius-md) !important; box-shadow: var(--vde-shadow-lg) !important; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important; }
+.Toastify__toast-body { font-weight: 500 !important; font-size: 14px !important; }
+.Toastify__toast--success { background: var(--vde-success) !important; color: white !important; }
+.Toastify__toast--error { background: var(--vde-error) !important; color: white !important; }
+.Toastify__toast--warning { background: var(--vde-warning) !important; color: var(--vde-text-primary) !important; }
+.Toastify__toast--info { background: var(--vde-info) !important; color: white !important; }
+.Toastify__progress-bar { height: 4px !important; background: rgba(255, 255, 255, 0.6) !important; }
+.Toastify__close-button { color: inherit !important; opacity: 0.7 !important; }
+.Toastify__close-button:hover { opacity: 1 !important; }
+
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .veridesign-tools { flex-direction: column; align-items: stretch; }
+  .veridesign-search, .veridesign-filter { width: 100%; }
+  .veridesign-refresh-btn { width: 100%; justify-content: center; }
+}
+
+@media (max-width: 768px) {
+  .veridesign-container { padding: 20px 15px; }
+  .veridesign-header { flex-direction: column; align-items: flex-start; gap: 15px; }
+  .veridesign-header h1 { order: 1; margin: 0; align-self: center; margin-top: 10px; }
+  .veridesign-back-btn { position: static; order: 0; }
+  .veridesign-tutorial-button-corner { position: absolute; top: 5px; right: 5px; order: 0; }
+  .veridesign-page-action-buttons { flex-direction: column; }
+  .veridesign-btn-create { width: 100%; justify-content: center; }
+  .veridesign-modal-content { width: 95%; max-width: 95%; }
+  .veridesign-table th, .veridesign-table td { padding: 12px 15px; }
+  .veridesign-action-buttons { flex-wrap: wrap; }
 }

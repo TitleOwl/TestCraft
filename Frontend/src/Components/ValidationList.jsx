@@ -372,7 +372,7 @@ const ValidationList = () => {
     <div className="validation-dashboard">
       <div className="dashboard-header">
         <div className="header-left">
-          <button className="back-button" onClick={goBack}>
+          <button className="createvar-back-btn" onClick={goBack}>
             <BackIcon />
             <span>Back</span>
           </button>

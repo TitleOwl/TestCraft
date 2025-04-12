@@ -1,301 +1,871 @@
-/* === ViewDesign.css (Enhanced Beauty Focus) === */
+/* ViewDesign.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* --- Variables (ใช้ชุดเดิม หรือปรับโทนตามชอบ) --- */
 :root {
-    /* Primary (Slightly Desaturated Blue) */
-    --primary-color: #005fcc; /* Adjusted */
-    --primary-hover-color: #004c8a; /* Adjusted */
-    --primary-light-color: #e7f0ff; /* Adjusted */
-  
-    /* Neutrals */
-    --text-color: #2d3748; /* Slightly softer black */
-    --text-color-secondary: #4a5568; /* Lighter gray */
-    --text-color-muted: #718096;  /* Muted text (placeholders, etc.) */
-    --border-color: #e2e8f0;     /* Soft border */
-    --background-color: #ffffff;
-    --background-off-white: #f7fafc; /* Use a common off-white */
-    --background-hover: #edf2f7;   /* Subtle hover */
-    --background-header: transparent; /* Make table headers transparent */
-  
-    /* Functional Colors */
-    --error-color: #c53030; /* Slightly adjusted red */
-    --error-border-color: #fed7d7;
-    --error-background: #fff5f5;
-    --success-color: #2f855a; /* Slightly adjusted green */
-  
-    /* Shadows & Borders */
-    --box-shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* Softer */
-    --box-shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Tailwind's Medium */
-    --box-shadow-modal: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Tailwind's Large */
-    --border-radius: 6px; /* Softer radius */
-  
-    /* Typography */
-    --font-family-base: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif; /* Specify 'Inter' or similar first */
-    --font-size-base: 1rem; 
-    --font-size-sm: 0.875rem; 
-    --font-size-lg: 1.125rem;  /* Adjusted large size */
-    --font-size-xl: 1.5rem; /* Adjusted XL size */
-    --line-height-base: 1.65; /* Slightly more line height */
-    --line-height-tight: 1.5;
-  
-    /* Transitions */
-    --transition-base: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); /* Smooth cubic-bezier */
+  /* Updated Primary Theme Color */
+  --viewde-primary-color: #d76000; /* Main Orange */
+  --viewde-primary-hover: #c25600; /* Darker Orange for hover */
+  --viewde-primary-light: #fde7d0; /* Light Orange for backgrounds/highlights */
+
+  /* Other Colors (prefixed) */
+  --viewde-secondary-color: #64748b;
+  --viewde-text-color: #1e293b;
+  --viewde-text-light: #64748b;
+  --viewde-text-lighter: #94a3b8;
+  --viewde-text-dark: #0f172a;
+  --viewde-bg-color: #f8fafc;
+  --viewde-bg-light: #ffffff;
+  --viewde-bg-dark: #f1f5f9;
+  --viewde-success-color: #10b981;
+  --viewde-success-light: #d1fae5;
+  --viewde-warning-color: #f59e0b; /* This is already an orange/yellow */
+  --viewde-warning-light: #fef3c7;
+  --viewde-danger-color: #ef4444;
+  --viewde-danger-light: #fee2e2;
+  --viewde-info-color: #3b82f6; /* Keeping blue for info, adjust if needed */
+  --viewde-info-light: #dbeafe;
+  --viewde-border-color: #e2e8f0;
+  --viewde-border-radius: 8px;
+  --viewde-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --viewde-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --viewde-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --viewde-transition: all 0.2s ease-in-out;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--viewde-bg-color);
+  color: var(--viewde-text-color);
+  line-height: 1.5;
+}
+
+/* Main Container */
+.view-design-container { /* Changed from .design-dashboard to match React component */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.design-view-dashboard {
+    display: flex;
+    flex-direction: column;
+    /* Removed min-height from here, handled by container */
+    max-width: 1300px;
+    width: 100%; /* Ensure it takes width */
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: var(--viewde-bg-color); /* Use variable */
   }
-  
-  /* --- Base Body Styles --- */
-  body {
-    font-family: var(--font-family-base);
-    color: var(--text-color);
-    background-color: var(--background-off-white);
-    margin: 0;
-    line-height: var(--line-height-base);
-    -webkit-font-smoothing: antialiased; 
-    -moz-osx-font-smoothing: grayscale;
-  }
-  
-  /* --- Main Container Sections --- */
-  .view-design-container {
-    max-width: 900px; /* Adjusted width */
-    margin: 2.5rem auto; /* Consistent margin */
-    padding: 2.5rem 3rem; /* Increased padding */
-    background-color: var(--background-color);
-    border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow-medium); /* Use medium shadow */
-    /* Removed outer border for a cleaner look */
-  }
-  
-  /* Add margin between the two containers */
-  .view-design-container + .view-design-container {
-    margin-top: 2.5rem;
-  }
-  
-  /* --- Back Button --- */
-  .backtodesign-button {
-    display: inline-flex; 
-    align-items: center;
-    gap: 0.4rem;
-    background-color: transparent;
-    border: none; 
-    color: var(--text-color-secondary); 
-    padding: 0.25rem 0; /* Reduced padding */
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    font-size: var(--font-size-sm);
-    transition: var(--transition-base);
-    margin-bottom: 1.5rem; /* Add space below button */
-  }
-  
-  .backtodesign-button:hover {
-    color: var(--primary-color); 
-  }
-  
-  .backtodesign { 
-    width: 15px;
-    height: 15px;
-    opacity: 0.8; 
-  }
-  
-  /* --- Titles --- */
-  .view-design-title,
-  .history-design-topic {
-    font-size: var(--font-size-xl); 
-    font-weight: 600; 
-    color: var(--text-color);
-    margin: 0 0 1.5rem 0; 
-    padding-bottom: 0.75rem;
-    /* Removed border, rely on spacing */
-    text-align: left; /* Left align all titles */
-  }
-  
-  .history-design-topic {
-    font-size: var(--font-size-lg); /* Use large size */
+
+/* Header Section */
+.design-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--viewde-border-color);
+}
+
+.design-header-left, .design-header-right {
+  flex: 1;
+  display: flex;
+}
+.design-header-right {
+    justify-content: flex-end;
+}
+
+.design-header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  /* Allow title section to shrink if needed, but prioritize it */
+  flex: 2;
+  justify-content: center;
+}
+
+.design-header-title h1.view-design-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--viewde-text-dark);
+  margin: 0;
+  text-align: center; /* Center title text */
+}
+
+.design-header-title svg {
+  color: var(--viewde-primary-color);
+  flex-shrink: 0; /* Prevent icon shrinking */
+}
+
+.backtodesign-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--viewde-bg-light);
+  color: var(--viewde-text-color);
+  border: 1px solid var(--viewde-border-color);
+  border-radius: var(--viewde-border-radius);
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--viewde-transition);
+  box-shadow: var(--viewde-shadow-sm);
+  text-decoration: none;
+  white-space: nowrap; /* Prevent wrapping */
+}
+
+.backtodesign-button:hover {
+  background-color: var(--viewde-bg-dark);
+}
+.backtodesign-button img,
+.backtodesign-button svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+
+/* Content Section */
+.design-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  width: 100%; /* Ensure content area uses available width */
+}
+
+/* Design Details Card & History Card */
+.design-details-card, .design-history-card {
+  background-color: var(--viewde-bg-light);
+  border-radius: var(--viewde-border-radius);
+  box-shadow: var(--viewde-shadow-md);
+  overflow: hidden; /* Important for border radius on children */
+}
+
+.design-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--viewde-border-color);
+  flex-wrap: wrap; /* Allow wrapping on small screens */
+  gap: 0.5rem; /* Space between items when wrapped */
+}
+
+.design-card-header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--viewde-text-dark);
+  margin: 0;
+  flex-grow: 1; /* Allow title to take space */
+}
+
+/* Design Info Grid */
+.design-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--viewde-border-color);
+}
+
+.design-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.design-info-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--viewde-text-lighter);
+}
+.design-info-label svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+.design-info-value {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--viewde-text-dark);
+  word-break: break-word; /* Prevent long values overflowing */
+}
+
+/* Description Section */
+.design-description-section {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--viewde-border-color);
+}
+
+.design-description-section h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--viewde-text-dark);
+  margin-bottom: 1rem;
+}
+
+.design-description-content {
+  font-size: 0.938rem;
+  color: var(--viewde-text-color);
+  line-height: 1.6;
+  white-space: pre-line; /* Preserves line breaks */
+  border-radius: var(--viewde-border-radius);
+  background-color: var(--viewde-bg-dark);
+  padding: 1rem;
+}
+
+/* Linked Requirements Section */
+.design-requirements-section {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--viewde-border-color); /* Add border consistency */
+}
+
+.design-requirements-section h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--viewde-text-dark);
     margin-bottom: 1rem;
-    padding-bottom: 0;
-  }
-  
-  /* --- Loading State --- */
-  .loading-text {
-    text-align: center;
-    color: var(--text-color-muted); /* Use muted color */
-    font-size: var(--font-size-base);
-    padding: 4rem 0;
-  }
-  
-  /* --- Design Details Section (Using CSS Grid) --- */
-  .view-design-details {
-    margin-top: 1rem; 
-    border-top: 1px solid var(--border-color); /* Add top border */
-    padding-top: 1.5rem; /* Space above first item */
-  }
-  
-  .view-design-item {
-    display: grid; /* Use Grid for layout */
-    grid-template-columns: minmax(150px, max-content) 1fr; /* Label column (adjust width) + Value column */
-    gap: 0.5rem 1.5rem; /* Row gap, Column gap */
-    margin-bottom: 1rem; /* Space between items */
-    align-items: start; /* Align items top */
-  }
-  
-  .view-design-item strong {
-    grid-column: 1 / 2; /* Place in first column */
-    font-weight: 500; /* Medium weight */
-    color: var(--text-color-secondary); /* Lighter color for label */
-    text-align: right; /* Align label text to the right */
-    padding-top: 0.1em; /* Fine-tune vertical alignment */
-    line-height: var(--line-height-tight);
-  }
-  
-  /* Style the value part (text or list) */
-  .view-design-item > *:not(strong) { 
-    grid-column: 2 / 3; /* Place in second column */
-    line-height: var(--line-height-base);
-    margin: 0; /* Reset default margins */
-    word-break: break-word; /* Prevent long words from overflowing */
-  }
-  
-  /* --- Requirements List Styling --- */
-  .view-design-item ul {
-    list-style: none; 
-    padding: 0; /* Remove padding */
+}
+.design-requirements-list ul {
+    list-style: none;
+    padding-left: 0;
     margin: 0;
+}
+.design-requirements-list li {
+    padding: 0.5rem 1rem;
+    background-color: var(--viewde-bg-dark);
+    margin-bottom: 0.5rem;
+    border-radius: var(--viewde-border-radius);
+    font-size: 0.875rem;
+    color: var(--viewde-text-color); /* Slightly darker than light */
+}
+.design-requirements-list li:last-child {
+    margin-bottom: 0;
+}
+.design-requirements-list p {
+    font-size: 0.875rem;
+    color: var(--viewde-text-light);
+    margin-top: 0.5rem; /* Space if list is empty */
+}
+
+/* ---------- Related Files Section ---------- */
+.design-related-files-section {
+    padding: 1.5rem;
+    /* No border needed if it's the last item in the card */
+}
+
+/* Modify the container for heading and button */
+.design-section-header-action {
+  display: flex;
+  /* justify-content: space-between; */ /* REMOVE this */
+  justify-content: flex-start; /* Align items to the start (left) */
+  align-items: center; /* Vertically align heading and button */
+  gap: 0.75rem; /* Add space BETWEEN the heading and the button */
+  margin-bottom: 0; /* Remove default margin if h3 has it */
+}
+
+/* Ensure heading has no extra margin pushing the button away */
+.design-related-files-section h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--viewde-text-dark);
+  margin: 0; /* Remove margin */
+  line-height: 1.2; /* Adjust line-height if needed for alignment */
+}
+
+/* Style for the MORE PROMINENT Eye Icon Button */
+.view-files-button {
+  background-color: var(--viewde-primary-light); /* Use light primary bg for prominence */
+  border: 1px solid transparent; /* Optional: transparent border */
+  /* margin-left: 0.5rem; */ /* REMOVE margin, using gap now */
+  padding: 8px; /* Increase padding to make it larger */
+  cursor: pointer;
+  color: var(--viewde-primary-color); /* Use primary color for the icon */
+  display: flex; /* Keep flex for centering icon */
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%; /* Keep it round */
+  transition: var(--viewde-transition);
+  box-shadow: var(--viewde-shadow-sm); /* Add a subtle shadow */
+}
+.view-files-button:hover {
+  color: var(--viewde-bg-light); /* White icon on hover */
+  background-color: var(--viewde-primary-hover); /* Use darker primary for hover */
+  box-shadow: var(--viewde-shadow-md); /* Increase shadow slightly on hover */
+}
+.view-files-button svg {
+  width: 18px; /* Adjust size as needed */
+  height: 18px;
+}
+
+/* History Section */
+.design-history-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.design-history-title h1.history-design-topic {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--viewde-text-dark);
+    margin: 0;
+}
+.design-history-title svg {
+    color: var(--viewde-primary-color);
+    flex-shrink: 0;
+}
+
+.design-history-table-container {
+  padding: 0; /* Padding handled by cells */
+  overflow-x: auto;
+}
+
+/* History Table */
+.history-table-design {
+  width: 100%;
+  border-collapse: collapse; /* Use collapse for cleaner lines */
+  min-width: 500px; /* Prevent excessive squishing */
+}
+
+.history-table-design th {
+  background-color: var(--viewde-bg-dark);
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-align: left;
+  padding: 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  border-bottom: 2px solid var(--viewde-border-color); /* Stronger header underline */
+}
+
+.history-table-design th svg {
+    width: 16px;
+    height: 16px;
+    margin-right: 0.5rem;
+    vertical-align: text-bottom;
+    flex-shrink: 0;
+}
+
+.history-table-design td {
+  padding: 1rem;
+  border-top: 1px solid var(--viewde-border-color);
+  font-size: 0.875rem;
+  vertical-align: middle;
+  color: var(--viewde-text-color);
+}
+
+.history-table-design tbody tr {
+  transition: var(--viewde-transition);
+}
+
+.history-table-design tbody tr:hover {
+  background-color: var(--viewde-bg-dark);
+}
+
+/* Status Badge */
+.design-status-badge {
+  display: inline-block;
+  padding: 0.375rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  text-transform: uppercase; /* Make status uppercase */
+}
+
+/* Specific Status Styles */
+.design-status-badge.working { background-color: var(--viewde-warning-light); color: var(--viewde-warning-color); }
+.design-status-badge.under-review { background-color: #E1F5FE; color: #0C5460; } /* Custom */
+.design-status-badge.verified { background-color: var(--viewde-success-light); color: var(--viewde-success-color); }
+.design-status-badge.submitted { background-color: var(--viewde-primary-light); color: var(--viewde-primary-color); }
+.design-status-badge.baseline { background-color: #E8F5E9; color: #1B5E20; } /* Custom */
+.design-status-badge.approved { background-color: #F3E8FF; color: #553C9A; } /* Custom */
+.design-status-badge.implemented { background-color: var(--viewde-info-light); color: var(--viewde-info-color); }
+.design-status-badge.rejected { background-color: var(--viewde-danger-light); color: var(--viewde-danger-color); }
+.design-status-badge.draft { background-color: var(--viewde-bg-dark); color: var(--viewde-text-light); }
+.design-status-badge.default-status { background-color: var(--viewde-secondary-color); color: white; }
+
+/* Loading Spinner */
+.design-loading-spinner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px; /* Reduced height */
+  padding: 2rem;
+  width: 100%; /* Ensure it takes width */
+}
+
+.design-loading-spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: var(--viewde-primary-color);
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+.loading-text {
+    font-size: 1rem;
+    color: var(--viewde-text-light);
+}
+
+/* Error Message */
+.design-error-message, .design-not-found-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px; /* Reduced height */
+  text-align: center;
+  padding: 2rem 1rem;
+  border-radius: var(--viewde-border-radius);
+  margin: 1rem 0;
+}
+.design-error-message {
+  color: var(--viewde-danger-color);
+  background-color: var(--viewde-danger-light);
+  border: 1px solid var(--viewde-danger-color);
+}
+.design-not-found-message {
+    color: var(--viewde-text-light);
+    background-color: var(--viewde-bg-dark); /* Light background for not found */
+    border: 1px solid var(--viewde-border-color);
+}
+
+/* Empty History Placeholder */
+.design-history-table-container p {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    color: var(--viewde-text-lighter);
+    background-color: var(--viewde-bg-dark);
+    border-radius: var(--viewde-border-radius);
+    margin: 0; /* Remove default margin */
+}
+
+/* Animations */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); } /* Slight fade-in effect */
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* History Tabs */
+.design-history-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--viewde-border-color);
+  background-color: var(--viewde-bg-dark);
+}
+
+.design-tab {
+  padding: 1rem 1.5rem;
+  flex-grow: 1;
+  flex-basis: 0;
+  text-align: center;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -1px; /* Overlap border */
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--viewde-text-light);
+  cursor: pointer;
+  transition: var(--viewde-transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.design-tab:not(:last-child) {
+  border-right: 1px solid var(--viewde-border-color);
+}
+
+.design-tab.active {
+  color: var(--viewde-primary-color);
+  background-color: var(--viewde-bg-light);
+  font-weight: 600;
+  border-bottom-color: var(--viewde-primary-color);
+}
+
+.design-tab:hover:not(.active) {
+  background-color: rgba(215, 96, 0, 0.05);
+  color: var(--viewde-text-dark);
+}
+
+.design-tab svg {
+  color: currentColor;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* Tab Content Container */
+.design-history-tab-content {
+  overflow: hidden; /* Needed for animations */
+}
+.design-history-tab-content > div { /* Target the direct child div */
+    animation: fadeIn 0.3s ease-out; /* Use ease-out */
+}
+
+
+/* Action Buttons */
+.view-details-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: var(--viewde-info-light);
+  color: var(--viewde-info-color);
+  border: none;
+  border-radius: var(--viewde-border-radius);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--viewde-transition);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.view-details-button:hover {
+  background-color: var(--viewde-info-color);
+  color: white;
+  box-shadow: var(--viewde-shadow-sm);
+}
+
+.view-details-button svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+
+/* Design ID Badge in Header */
+.design-id-badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background-color: var(--viewde-bg-light);
+  border: 1px solid var(--viewde-border-color);
+  border-radius: var(--viewde-border-radius);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--viewde-text-light);
+  box-shadow: var(--viewde-shadow-sm);
+  white-space: nowrap;
+}
+
+/* Diagram Container */
+.design-diagram-container {
+    margin-top: 2rem;
+    background-color: var(--viewde-bg-light);
+    border-radius: var(--viewde-border-radius);
+    box-shadow: var(--viewde-shadow-md);
+    padding: 1.5rem;
+    overflow: hidden; /* Prevent content overflow */
+}
+/* Target potential inner div from ViewDiagram or the img/svg directly */
+.design-diagram-container > div,
+.design-diagram-container img,
+.design-diagram-container svg {
+    max-width: 100%;
+    height: auto;
+    display: block; /* Remove extra space below image */
+    margin: 0 auto; /* Center diagram if it's smaller than container */
+}
+
+/* ---------- Modal Styles ---------- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 1rem; /* Add padding for smaller screens */
+  animation: fadeIn 0.2s ease-out; /* Fade in overlay */
+}
+
+.modal-content {
+  background: var(--viewde-bg-light);
+  padding: 1.5rem; /* Adjust padding */
+  border-radius: var(--viewde-border-radius);
+  min-width: 300px; /* Min width */
+  width: auto; /* Allow shrinking */
+  max-width: 600px; /* Max width */
+  box-shadow: var(--viewde-shadow-lg); /* Use larger shadow */
+  position: relative;
+  max-height: 90vh; /* Prevent modal being too tall */
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.3s ease-out 0.1s; /* Delay content fade-in slightly */
+  animation-fill-mode: backwards; /* Apply start state immediately */
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--viewde-border-color);
+  padding-bottom: 1rem;
+  margin-bottom: 1rem; /* Space between header and body */
+  flex-shrink: 0; /* Prevent header shrinking */
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.25rem; /* Slightly smaller */
+  font-weight: 600;
+  color: var(--viewde-text-dark);
+}
+
+.modal-close-button {
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: var(--viewde-text-lighter); /* Lighter close button */
+  line-height: 1;
+  padding: 0 5px;
+  transition: var(--viewde-transition);
+}
+ .modal-close-button:hover {
+     color: var(--viewde-text-dark); /* Darker on hover */
+ }
+
+.modal-body {
+  overflow-y: auto; /* Allow body content to scroll */
+  flex-grow: 1; /* Allow body to take available space */
+}
+
+.modal-body p {
+    margin-bottom: 0.75rem; /* Slightly less margin */
+    line-height: 1.6;
+    color: var(--viewde-text-color); /* Use standard text color */
+}
+ .modal-body strong {
+    color: var(--viewde-text-dark); /* Darker labels */
+    font-weight: 600; /* Bolder labels */
+    margin-right: 8px;
+    min-width: 80px;
+    display: inline-block;
+ }
+ .modal-body .design-status-badge {
+    vertical-align: middle;
+    margin-left: 5px; /* Space before badge */
+ }
+ .modal-body em { /* Style the placeholder text */
+    color: var(--viewde-text-light);
+ }
+
+
+/* Style for the file list inside the modal */
+.related-files-modal-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.related-files-modal-list li {
+    display: flex;
+    align-items: center;
+    padding: 10px 5px; /* Adjust padding */
+    border-bottom: 1px solid var(--viewde-border-color);
+}
+.related-files-modal-list li:last-child {
+    border-bottom: none;
+}
+
+.related-files-modal-list svg {
+    width: 16px;
+    height: 16px;
+    margin-right: 12px; /* More space for icon */
+    color: var(--viewde-secondary-color); /* Use secondary color */
+    flex-shrink: 0;
+}
+
+.related-files-modal-list a {
+    color: var(--viewde-primary-color); /* Use primary color for links */
+    text-decoration: none;
+    font-weight: 500; /* Slightly bolder links */
+    word-break: break-all;
+    transition: var(--viewde-transition);
+}
+.related-files-modal-list a:hover {
+    text-decoration: underline;
+    color: var(--viewde-primary-hover); /* Darker on hover */
+}
+
+/* Style for error text in modal */
+.error-text {
+    color: var(--viewde-danger-color);
+    font-weight: 500; /* Less aggressive than bold */
+    padding: 10px;
+    background-color: var(--viewde-danger-light);
+    border-radius: var(--viewde-border-radius);
+    text-align: center;
+}
+
+/* Style for inline loading spinner in modal */
+.design-loading-spinner-container.inline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem 0; /* More padding */
+    min-height: 80px; /* Ensure space */
+}
+
+.design-loading-spinner.small {
+    width: 24px; /* Slightly larger small spinner */
+    height: 24px;
+    border-width: 3px;
+    margin: 0; /* Remove margin if used inline */
+}
+
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .design-view-dashboard {
+    padding: 1rem;
   }
-  
-  .view-design-item li {
-    margin-bottom: 0.4rem;
-    color: var(--text-color); /* Use main text color for list items */
-    font-size: var(--font-size-sm); 
-    position: relative;
-    padding-left: 1.25rem; /* Indentation for icon/bullet */
+
+  .design-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center; /* Center items in column */
   }
-  .view-design-item li:last-child {
+
+  .design-header-left, .design-header-right {
+      flex: none; /* Reset flex */
+      width: 100%;
+      justify-content: center;
+  }
+  .design-header-title {
+      order: -1; /* Title first */
+      margin-bottom: 1rem;
+      flex: none;
+      width: 100%;
+  }
+  .design-header-title h1.view-design-title {
+      font-size: 1.5rem;
+  }
+  .backtodesign-button {
+       width: auto; /* Fit content */
+       padding: 0.4rem 0.8rem;
+  }
+   .design-id-badge {
+       padding: 0.4rem 0.8rem;
+   }
+
+
+  .design-info-grid {
+    grid-template-columns: 1fr; /* Stack info items */
+    gap: 1rem; /* Reduced gap */
+  }
+
+  .design-card-header {
+    padding: 1rem; /* Less padding */
+    /* Keep flex-start alignment */
+  }
+   .design-card-header h2 {
+      font-size: 1.1rem;
+   }
+
+  .design-history-tabs {
+    flex-direction: column;
+  }
+  .design-tab {
+      border-bottom: 1px solid var(--viewde-border-color);
+      border-right: none;
       margin-bottom: 0;
+      border-left: 3px solid transparent;
+      border-bottom-color: transparent !important; /* Override bottom border */
+      justify-content: flex-start;
+      padding: 0.8rem 1rem; /* Adjust padding */
   }
-  
-  /* Custom list marker (e.g., a dash or icon) */
-  .view-design-item li::before {
-    content: "—"; /* Use mdash */
-    color: var(--text-color-muted); /* Muted color */
-    position: absolute;
-    left: 0;
-    top: 0;
+   .design-tab:last-child {
+       border-bottom: none;
+   }
+   .design-tab.active {
+       border-left-color: var(--viewde-primary-color);
+       border-bottom-color: transparent !important; /* Ensure no bottom border */
+   }
+
+  .view-details-button {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.7rem;
   }
-  
-  
-  /* --- History Table (.history-table-design) (Minimalist) --- */
+
   .history-table-design {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 2rem;
-    /* No outer border */
+      display: block; /* Allow horizontal scrolling */
+      overflow-x: auto;
+      white-space: nowrap; /* Prevent wrapping within table */
+      -webkit-overflow-scrolling: touch; /* Smoother scrolling on iOS */
   }
-  
+  .history-table-design thead, .history-table-design tbody, .history-table-design tr {
+      display: block;
+  }
   .history-table-design th,
   .history-table-design td {
-    padding: 0.75rem 1rem;
-    text-align: left;
-    vertical-align: middle;
-    border-bottom: 1px solid var(--border-color); /* Only bottom border */
-    font-size: var(--font-size-sm);
-    transition: var(--transition-base); /* Add transition for hover */
+    padding: 0.75rem;
+    display: inline-block; /* Treat cells like inline blocks */
+    width: 150px; /* Example fixed width, adjust as needed */
+    white-space: normal; /* Allow text wrapping within cells */
+    vertical-align: top;
   }
-  
-  /* History Table Header (Transparent) */
-  .history-table-design thead th {
-    background-color: var(--background-header); /* Transparent */
-    font-weight: 600; 
-    color: var(--text-color-secondary); 
-    border-bottom-width: 2px; /* Keep thicker border */
+  .history-table-design th {
+      position: static; /* Remove sticky header */
+      border-bottom: 2px solid var(--viewde-border-color);
   }
-  
-  .history-table-design tbody tr:last-child td {
-    border-bottom: none;
+   .history-table-design td {
+      border-top: none; /* Remove top border */
+      border-left: 1px solid var(--viewde-border-color); /* Vertical borders instead */
   }
-  
-  .history-table-design tbody tr:hover td { /* Apply hover to cells */
-    background-color: var(--background-hover); 
+  .history-table-design tr {
+     border-bottom: 1px solid var(--viewde-border-color);
+     padding-bottom: 5px; /* Spacing between rows */
   }
-  
-  /* --- No History Message --- */
-  .view-design-container > p { 
-    text-align: center;
-    color: var(--text-color-muted);
-    font-style: normal; /* Remove italic */
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-    font-size: var(--font-size-sm);
+   .history-table-design td:first-child {
+      border-left: none;
+   }
+
+
+  .modal-content {
+      width: 95%; /* More width on small screens */
+      padding: 1rem;
   }
-  
-  /* --- Diagram Component Wrapper --- */
-  .view-design-container + div { 
-    max-width: 900px; /* Match container width */
-    margin: -1rem auto 2.5rem auto; /* Adjust top margin to overlap slightly or reduce gap */
-    padding: 0 1.5rem; /* Add horizontal padding */
-    /* Consider adding a background or border if ViewDiagram needs separation */
+  .modal-header h2 {
+      font-size: 1.1rem;
   }
-  
-  
-  /* --- Responsive Adjustments --- */
-  @media (max-width: 768px) {
-    .view-design-container {
-      margin: 1.5rem auto;
-      padding: 1.5rem; 
-    }
-    .view-design-container + .view-design-container {
-      margin-top: 1.5rem;
-    }
-  
-    .backtodesign-button {
-       margin-bottom: 1rem; 
-    }
-  
-    .view-design-title,
-    .history-design-topic {
-      font-size: var(--font-size-lg); /* Adjust title sizes */
-      margin-bottom: 1.25rem;
-    }
-    .history-design-topic {
-       font-size: 1.05rem; /* Smaller history title */
-    }
-  
-    /* Adjust grid for details on smaller screens */
-    .view-design-item {
-      grid-template-columns: 1fr; /* Stack label and value */
-      gap: 0.1rem 0; /* Reduce gap */
-      margin-bottom: 1.25rem;
-    }
-    .view-design-item strong {
-       grid-column: 1 / -1; /* Span full width */
-       text-align: left; /* Left align label */
-       margin-bottom: 0.25rem;
-    }
-     .view-design-item > *:not(strong) { 
-       grid-column: 1 / -1; /* Span full width */
-    }
-    .view-design-item ul {
-       padding-left: 0; /* Remove indentation if label is above */
-    }
-     .view-design-item li {
-       padding-left: 0; /* Remove indentation */
-     }
-     .view-design-item li::before {
-       display: none; /* Hide custom bullet */
-     }
-  
-  
-    /* Horizontal scroll for tables */
-     .table-responsive-wrapper { 
-       overflow-x: auto;
-       margin-left: -1.5rem; 
-       margin-right: -1.5rem;
-       padding-left: 1.5rem;
-       padding-right: 1.5rem;
-     }
-     .history-table-design {
-        min-width: 450px; /* Adjust minimum width */
-     }
-  
-    .view-design-container + div {
-       margin-top: 1.5rem;
-       padding: 0; 
-    }
+}
+
+@media (min-width: 1024px) {
+  /* 2-column layout for details and history on larger screens */
+  .design-content {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
   }
+  .design-diagram-container {
+       grid-column: 1 / -1; /* Diagram spans full width below columns */
+   }
+}

@@ -1,43 +1,402 @@
-.create-baseline-container {
-    padding: 20px;
-    background-color: #f8f9fa;
-  }
-  
-  .create-baseline-title {
-    font-size: 24px;
-    font-weight: bold;
-  }
-  
-  .create-baseline-designs-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .create-baseline-designs-table th,
-  .create-baseline-designs-table td {
-    padding: 10px;
-    border: 1px solid #ddd;
-  }
-  
-  .create-baseline-action-buttons {
-    margin-top: 20px;
+/* Example Structure for CreateDesignBaseline.css */
+/* Import fonts and define variables (use db- prefix if consistent across app) */
+/* Or define specific variables for this page if needed */
+:root {
+  /* Re-use variables from Baseline.css or define new ones */
+  --cdb-primary-color: #d76000; /* Example using the orange theme */
+  --cdb-primary-hover: #c25800;
+  --cdb-primary-light: #fbe5d1;
+  --cdb-secondary-color: #64748b;
+  --cdb-text-color: #1e293b;
+  --cdb-text-light: #64748b;
+  --cdb-text-lighter: #94a3b8;
+  --cdb-text-dark: #0f172a;
+  --cdb-bg-color: #f8fafc;
+  --cdb-bg-light: #ffffff;
+  --cdb-bg-dark: #f1f5f9;
+  --cdb-success-color: #10b981;
+  --cdb-success-light: #d1fae5;
+  --cdb-danger-color: #ef4444;
+  --cdb-danger-light: #fee2e2;
+  --cdb-border-color: #e2e8f0;
+  --cdb-border-radius: 8px;
+  --cdb-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --cdb-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --cdb-transition: all 0.2s ease-in-out;
+}
+
+/* --- General Layout --- */
+.create-design-baseline-dashboard { /* Prefixed class */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: var(--cdb-bg-color);
+  font-family: 'Inter', sans-serif;
+}
+
+/* --- Header --- */
+.create-design-baseline-header { /* Prefixed class */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--cdb-border-color);
+}
+
+.create-design-baseline-header-left,
+.create-design-baseline-header-right { /* Prefixed class */
+  flex: 1;
+}
+
+.create-design-baseline-header-title { /* Prefixed class */
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--cdb-text-dark);
+}
+.create-design-baseline-header-title h1 { /* Prefixed class */
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0;
+}
+.create-design-baseline-header-title svg { /* Prefixed class */
+  color: var(--cdb-primary-color);
+}
+
+.create-design-baseline-header-right { /* Prefixed class */
+    /* Empty div for alignment, no specific styles needed unless content added */
+    min-width: 100px; /* Example to help balance */
+}
+
+/* --- Back Button --- */
+.create-design-baseline-back-button { /* Prefixed class */
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--cdb-bg-light);
+  color: var(--cdb-text-color);
+  border: 1px solid var(--cdb-border-color);
+  border-radius: var(--cdb-border-radius);
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--cdb-transition);
+  box-shadow: var(--cdb-shadow-sm);
+}
+
+.create-design-baseline-back-button:hover { /* Prefixed class */
+  background-color: var(--cdb-bg-dark);
+}
+
+/* --- Content Area --- */
+.create-design-baseline-content { /* Prefixed class */
+  flex: 1;
+  /* Remove card styles from here if using internal card */
+  display: flex; /* Center loading/error/empty states */
+  justify-content: center;
+  align-items: flex-start; /* Align card to top */
+}
+
+/* --- Loading, Error, Empty States --- */
+.create-design-baseline-loading-state,
+.create-design-baseline-error-state,
+.create-design-baseline-empty-state { /* Prefixed class */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--cdb-text-light);
+  background-color: var(--cdb-bg-light);
+  border-radius: var(--cdb-border-radius);
+  box-shadow: var(--cdb-shadow-md);
+  width: 100%; /* Take full width if no card */
+}
+
+.create-design-baseline-loading-spinner { /* Prefixed class */
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: var(--cdb-primary-color);
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  animation: cdb-spin 1s linear infinite; /* Unique animation name */
+  margin-bottom: 1rem;
+}
+
+.create-design-baseline-error-icon,
+.create-design-baseline-empty-icon { /* Prefixed class */
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--cdb-text-lighter);
+}
+.create-design-baseline-error-icon { /* Prefixed class */
+    color: var(--cdb-danger-color);
+}
+.create-design-baseline-error-state h3,
+.create-design-baseline-empty-state h3 { /* Prefixed class */
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--cdb-text-dark);
+  margin-bottom: 0.5rem;
+}
+.create-design-baseline-error-state p,
+.create-design-baseline-empty-state p { /* Prefixed class */
+  color: var(--cdb-text-light);
+  max-width: 400px;
+}
+
+
+/* --- Card Container --- */
+.create-design-baseline-card { /* Prefixed class */
+    background-color: var(--cdb-bg-light);
+    border-radius: var(--cdb-border-radius);
+    box-shadow: var(--cdb-shadow-md);
+    overflow: hidden;
+    width: 100%; /* Take full width */
     display: flex;
-    gap: 10px;
-  }
-  
-  .create-baseline-create-button {
-    background-color: #007bff;
-    color: white;
-    padding: 10px 15px;
-    border: none;
+    flex-direction: column;
+}
+
+.create-design-baseline-card-header { /* Prefixed class */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--cdb-border-color);
+    background-color: var(--cdb-bg-dark); /* Light header background */
+}
+
+.create-design-baseline-title-section { /* Prefixed class */
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.create-design-baseline-title-section h2 { /* Prefixed class */
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--cdb-text-dark);
+    margin: 0;
+}
+.create-design-baseline-title-section svg { /* Prefixed class */
+    color: var(--cdb-primary-color);
+}
+
+.create-design-baseline-selection-info { /* Prefixed class */
+    font-size: 0.875rem;
+    color: var(--cdb-text-light);
+}
+
+/* --- Table Styles --- */
+.create-design-baseline-table-container { /* Prefixed class */
+    overflow-x: auto;
+    padding: 0; /* Remove padding if card has it */
+}
+
+.create-design-baseline-table { /* Prefixed class */
+    width: 100%;
+    border-collapse: collapse; /* Use collapse */
+}
+
+.create-design-baseline-table th,
+.create-design-baseline-table td { /* Prefixed class */
+    padding: 1rem 1.5rem; /* Adjust padding */
+    text-align: left;
+    border-bottom: 1px solid var(--cdb-border-color);
+    font-size: 0.875rem;
+    vertical-align: middle;
+}
+
+.create-design-baseline-table th { /* Prefixed class */
+    background-color: #f9fafb; /* Slightly different from card header */
+    color: var(--cdb-text-color);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.create-design-baseline-row { /* Prefixed class */
+    transition: var(--cdb-transition);
+}
+
+.create-design-baseline-row.is-baseline { /* Style for already baseline rows */
+    background-color: #f0f0f0; /* Example: grey out */
+    opacity: 0.7;
+}
+
+.create-design-baseline-row:not(.is-baseline):hover { /* Prefixed class */
+    background-color: var(--cdb-primary-light); /* Highlight on hover */
+}
+
+.create-design-baseline-row.selected { /* Prefixed class */
+    background-color: var(--cdb-primary-light) !important; /* Ensure selected style overrides hover */
+    /* border-left: 3px solid var(--cdb-primary-color); */ /* Optional indicator */
+}
+
+.create-design-baseline-row:last-child td { /* Prefixed class */
+    border-bottom: none;
+}
+
+/* Table Columns */
+.col-checkbox { width: 5%; text-align: center; }
+.col-id { width: 15%; }
+.col-name { width: 40%; }
+.col-type { width: 20%; }
+.col-status { width: 20%; }
+
+.design-id { /* Style for design ID */
+    font-weight: 500;
+    color: var(--cdb-secondary-color); /* Example color */
+}
+
+/* Custom Checkbox Styles */
+.checkbox-container {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center; /* Center checkbox */
+    position: relative;
+    height: 20px; /* Adjust size */
+    width: 20px; /* Adjust size */
+}
+
+.styled-checkbox {
+    opacity: 0; /* Hide default */
+    position: absolute;
     cursor: pointer;
-  }
-  
-  .create-baseline-btn-cancel {
-    background-color: #dc3545;
-    color: white;
-    padding: 10px 15px;
-    border: none;
+}
+
+.styled-checkbox + label {
+    position: relative;
+    display: inline-block;
+    width: 20px; /* Match container */
+    height: 20px; /* Match container */
+    background-color: var(--cdb-bg-light);
+    border: 2px solid var(--cdb-border-color);
+    border-radius: 4px;
     cursor: pointer;
-  }
-  
+    transition: var(--cdb-transition);
+}
+
+.styled-checkbox:checked + label {
+    background-color: var(--cdb-primary-color);
+    border-color: var(--cdb-primary-color);
+}
+
+.styled-checkbox:disabled + label {
+    background-color: #e0e0e0;
+    border-color: #c0c0c0;
+    cursor: not-allowed;
+}
+
+
+.styled-checkbox:checked + label::after {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* --- Status Badge Styles --- */
+.create-design-baseline-status-badge { /* Prefixed class */
+  padding: 0.25em 0.6em;
+  border-radius: 1em; /* Pill shape */
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-block; /* Ensure it behaves like a block for padding */
+  border: 1px solid transparent;
+}
+
+.create-design-baseline-status-badge.verified { /* Prefixed class */
+  background-color: var(--cdb-success-light);
+  color: var(--cdb-success-color);
+  border-color: var(--cdb-success-color);
+}
+
+.create-design-baseline-status-badge.baseline { /* Prefixed class */
+  background-color: var(--cdb-info-light);
+  color: var(--cdb-info-color);
+  border-color: var(--cdb-info-color);
+}
+
+.create-design-baseline-status-badge.default { /* Prefixed class */
+  background-color: var(--cdb-bg-dark);
+  color: var(--cdb-text-light);
+}
+
+
+/* --- Action Buttons --- */
+.create-design-baseline-actions { /* Prefixed class */
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid var(--cdb-border-color);
+    background-color: var(--cdb-bg-light); /* Match card bg */
+}
+
+.create-design-baseline-cancel-button,
+.create-design-baseline-submit-button { /* Prefixed class */
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    border-radius: var(--cdb-border-radius);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--cdb-transition);
+    border: 1px solid transparent;
+}
+
+.create-design-baseline-cancel-button { /* Prefixed class */
+    background-color: var(--cdb-bg-light);
+    color: var(--cdb-text-color);
+    border-color: var(--cdb-border-color);
+}
+.create-design-baseline-cancel-button:hover { /* Prefixed class */
+    background-color: var(--cdb-bg-dark);
+}
+
+.create-design-baseline-submit-button { /* Prefixed class */
+    background-color: var(--cdb-primary-color);
+    color: white;
+}
+.create-design-baseline-submit-button:hover { /* Prefixed class */
+    background-color: var(--cdb-primary-hover);
+}
+.create-design-baseline-submit-button:disabled { /* Prefixed class */
+    background-color: var(--cdb-secondary-color);
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+
+/* Unique Spin Animation */
+@keyframes cdb-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Add Responsive styles if needed, similar to CreateBaseline.css */
+@media (max-width: 768px) {
+  .create-design-baseline-dashboard { padding: 1rem; }
+  .create-design-baseline-header { flex-direction: column; align-items: flex-start; gap: 1rem;}
+  .create-design-baseline-header-title { order: -1; margin-bottom: 1rem; }
+  .create-design-baseline-header-left, .create-design-baseline-header-right { width: 100%; }
+  .create-design-baseline-header-right { justify-content: flex-start; }
+  .create-design-baseline-card-header { flex-direction: column; align-items: flex-start; gap: 0.5rem;}
+  .create-design-baseline-actions { justify-content: center; }
+  .create-design-baseline-table td, .create-design-baseline-table th { padding: 0.75rem 0.5rem; font-size: 0.8rem;}
+  .col-name { width: auto; } /* Allow name to wrap */
+}

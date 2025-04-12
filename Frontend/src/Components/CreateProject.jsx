@@ -77,10 +77,10 @@ const CreateProject = () => {
 
   const fetchMembers = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/member');
+      const response = await axios.get('http://localhost:3001/login');
       const memberOptions = response.data.map((member) => ({
-        value: member.member_name,
-        label: member.member_name,
+        value: member.user_name,
+        label: member.user_name,
       }));
       setMembers(memberOptions);
     } catch (error) {
