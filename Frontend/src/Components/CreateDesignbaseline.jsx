@@ -18,7 +18,7 @@ const ListIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="20" heig
 // --- Custom Status Badge Component for Design ---
 const DesignStatusBadge = ({ status }) => {
     let statusClass = "";
-    // Adapt based on actual design statuses used
+    // Adapt based on actual design status used
     switch (status?.toUpperCase()) {
         case "VERIFIED": statusClass = "verified"; break;
         case "BASELINE": statusClass = "baseline"; break;

@@ -13,7 +13,7 @@ function downloadBlob(blob, filename) {
 }
 
 const CreateDiagram = forwardRef((props, ref) => {
-    const { initialElements, designId } = props; // รับ initialElements และ designId จาก props
+    const { initialElements, designId } = props; // รับ initialElements และ designId จาก prop
     const [excalidrawAPI, setExcalidrawAPI] = useState(null);
     const [elements, setElements] = useState(initialElements || []); // ใช้ initialElements เป็นข้อมูลเริ่มต้น
 
