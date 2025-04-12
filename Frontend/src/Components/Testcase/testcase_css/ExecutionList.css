@@ -1,61 +1,138 @@
-.test-execution-container {
-  max-width: 900px;
-  margin: 20px auto;
-  padding: 20px;
-  background: #fff;
+/* testcase_css/ExecutionList.css */
+
+/* --- General Styles & Container --- */
+/* Selector นี้ลงท้ายด้วย execution-list อยู่แล้ว ไม่ต้องเปลี่ยน */
+.execution-list {
+  max-width: 1100px;
+  margin: 30px auto;
+  padding: 25px 30px;
+  background-color: #ffffff;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-h2 {
-  text-align: center;
-  color: #333;
+/* --- Back Button (ยังคงใช้ selector เดิม เพราะขึ้นกับ .execution-list) --- */
+.execution-list>button:first-of-type {
+  background-color: transparent;
+  color: #10b981;
+  /* สีเขียวเดิม */
+  border: none;
+  padding: 0;
+  margin-bottom: 20px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  display: inline-block;
+  transition: color 0.2s ease;
+  /* เพิ่ม transition เพื่อความนุ่มนวล */
 }
 
-.search-bar {
-  margin-bottom: 15px;
-  text-align: center;
+.execution-list>button:first-of-type:hover {
+  color: #0f8a61;
+  transform: translateX(-3px);
 }
 
-.search-bar input {
-  width: 80%;
-  padding: 8px;
-  border: 1px solid #ccc;
+.execution-list>button:first-of-type::before {
+  content: '← ';
+  font-weight: bold;
+}
+
+/* --- Heading (ยังคงใช้ selector เดิม) --- */
+.execution-list h2 {
+  color: #343a40;
+  margin-bottom: 25px;
+  font-size: 1.6rem;
+  font-weight: 600;
+  border-bottom: 1px solid #dee2e6;
+  padding-bottom: 15px;
+}
+
+/* --- Search Bar (เปลี่ยน Selector) --- */
+.search-bar-execution-list {
+  /* << เปลี่ยน */
+  margin-bottom: 25px;
+  max-width: 350px;
+}
+
+/* Selector สำหรับ input ภายใน search bar ก็ต้องเปลี่ยนตาม */
+.search-bar-execution-list input[type="text"] {
+  /* << เปลี่ยน */
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #ced4da;
   border-radius: 4px;
+  font-size: 0.95rem;
+  box-sizing: border-box;
 }
 
-table {
+.search-bar-execution-list input[type="text"]::placeholder {
+  /* << เปลี่ยน */
+  color: #6c757d;
+}
+
+/* --- Table Styles (ยังคงใช้ selector เดิม เพราะขึ้นกับ .execution-list) --- */
+.execution-list table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 10px;
+  margin-top: 20px;
+  font-size: 0.9rem;
 }
 
-th, td {
-  padding: 10px;
+.execution-list th,
+.execution-list td {
+  padding: 12px 15px;
   text-align: left;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #e9ecef;
+  vertical-align: middle;
+  color: #495057;
 }
 
-th {
-  background: #007bff;
+/* --- Table Header (ยังคงใช้ selector เดิม) --- */
+.execution-list thead th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #343a40;
+  border-top: 1px solid #dee2e6;
+  border-bottom-width: 2px;
+  white-space: nowrap;
 }
 
-tr:hover {
-  background: #f5f5f5;
+/* --- Table Body (ยังคงใช้ selector เดิม) --- */
+.execution-list tbody tr:hover {
+  background-color: #f1f3f5;
 }
 
-.no-data {
-  text-align: center;
+/* --- Execute Button (เปลี่ยน Selector) --- */
+.execute-btn-execution-list {
+  /* << เปลี่ยน */
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 7px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.85rem;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.execute-btn-execution-list:hover {
+  /* << เปลี่ยน */
+  background-color: #218838;
+}
+
+/* --- No Data Row (เปลี่ยน Selector) --- */
+/* เนื่องจาก className 'no-data-execution-list' อยู่บน td โดยตรง */
+.no-data-execution-list {
+  /* << เปลี่ยน */
+  text-align: center !important;
+  /* ใช้ !important หาก style อื่นมา override */
+  color: #6c757d;
+  padding: 25px;
   font-style: italic;
-  color: #888;
 }
 
-a {
-  color: #007bff;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
+/* --- SweetAlert2 Customization (Optional) --- */
+/* ไม่มีการเปลี่ยนแปลงในส่วนนี้ */

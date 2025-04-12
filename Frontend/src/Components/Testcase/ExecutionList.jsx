@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import Swal from "sweetalert2"; // เพิ่มตรงนี้
+import Swal from "sweetalert2";
+// ตรวจสอบว่า path ถูกต้อง หากไฟล์ CSS อยู่ที่เดียวกับ Component อาจใช้แค่ './ExecutionList.css'
 import "./testcase_css/ExecutionList.css";
 
 const ExecutionList = () => {
@@ -31,7 +32,6 @@ const ExecutionList = () => {
     execution.testcase_id.toString().includes(searchTerm)
   );
 
-
   const handleNavigate = (execution) => {
     if (execution.testcase_status !== "BASELINE") {
       Swal.fire({
@@ -46,12 +46,14 @@ const ExecutionList = () => {
   };
 
   return (
+    // className หลักยังคงเดิม เพราะมันลงท้ายด้วย 'execution-list' อยู่แล้ว
     <div className="execution-list">
       <button onClick={() => navigate(`/Dashboard?project_id=${project_id}`, { state: { selectedSection: "Testcase" } })}>
         Back
       </button>
       <h2>Test Execution</h2>
-      <div className="search-bar">
+      {/* เปลี่ยน className ของ search bar */}
+      <div className="search-bar-execution-list">
         <input
           type="text"
           placeholder="Search by Test Case ID"
@@ -78,8 +80,9 @@ const ExecutionList = () => {
                 <td>{execution.test_execution_status}</td>
                 <td>{formatDate(execution.testcase_at)}</td>
                 <td>
+                  {/* เปลี่ยน className ของปุ่ม Execute */}
                   <button
-                    className="execute-btn"
+                    className="execute-btn-execution-list"
                     onClick={() => handleNavigate(execution)}
                   >
                     Execute
@@ -89,7 +92,10 @@ const ExecutionList = () => {
             ))
           ) : (
             <tr>
-              <td colSpan="5" className="no-data">No test executions found</td>
+              {/* เปลี่ยน className ของ cell แสดงข้อความ 'No data' */}
+              <td colSpan="5" className="no-data-execution-list">
+                No test executions found
+              </td>
             </tr>
           )}
         </tbody>
