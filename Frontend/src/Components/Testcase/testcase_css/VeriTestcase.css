@@ -1,355 +1,931 @@
-/* ./testcase_css/VeriTestcase.css */
+/* VeriTestcase.css - Adapted from VerificationList.css with tcl- prefix */
+/* Theme: Premium Colorful Luxury Design (Emerald Green Primary: #10b981) */
 
-/* --- CSS Variables --- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 :root {
-    --theme-color-veritestcase: #10b981; /* Theme color */
-    --light-grey-bg-veritestcase: #f8f9fa;
-    --border-color-veritestcase: #e9ecef;
-    --text-color-primary-veritestcase: #212529;
-    --text-color-secondary-veritestcase: #495057;
-    --text-color-muted-veritestcase: #6c757d;
-    --status-badge-bg-veritestcase: #fff9db; /* Light yellow for WAITING FOR VERIFICATION */
-    --status-badge-text-veritestcase: #e67700; /* Dark yellow/orange text */
-    --card-bg-veritestcase: #ffffff;
-    --table-header-bg-veritestcase: #f8f9fa;
+  /* Base Colors */
+  --tcl-bg-primary: #ffffff;
+  --tcl-bg-secondary: #f8f9fc;
+  /* Kept for contrast */
+  --tcl-bg-tertiary: #eef1f8;
+  /* Kept for contrast */
+
+  /* Text Colors */
+  --tcl-text-primary: #1e293b;
+  /* Kept */
+  --tcl-text-secondary: #64748b;
+  /* Kept */
+  --tcl-text-light: #94a3b8;
+  /* Kept */
+
+  /* --- Primary Brand Colors (THEMED) --- */
+  --tcl-primary: #10b981;
+  /* Emerald Green - NEW PRIMARY */
+  --tcl-primary-light: #34d399;
+  /* Lighter Emerald */
+  --tcl-primary-dark: #059669;
+  /* Darker Emerald (Original --success-dark) */
+
+  /* Accent Colors (Kept original for contrast, can be changed if needed) */
+  --tcl-accent: #0ea5e9;
+  /* Sky blue */
+  --tcl-accent-light: #7dd3fc;
+  --tcl-accent-dark: #0369a1;
+
+  /* Status Colors (Success is now same as Primary, others kept) */
+  --tcl-success: #10b981;
+  /* Emerald (Same as Primary) */
+  --tcl-success-dark: #059669;
+  /* Darker Emerald */
+  --tcl-warning: #f59e0b;
+  /* Amber */
+  --tcl-warning-dark: #b45309;
+  --tcl-error: #ef4444;
+  /* Red */
+  --tcl-error-dark: #b91c1c;
+  --tcl-info: #6366f1;
+  /* Indigo (Kept, distinct from new primary) */
+  --tcl-working: #8b5cf6;
+  /* Purple (Kept) */
+
+  /* UI Elements */
+  --tcl-border: #e2e8f0;
+  /* Kept */
+  --tcl-border-light: #f1f5f9;
+  /* Kept */
+  --tcl-border-colored: #a7f3d0;
+  /* Adjusted border color based on new primary */
+
+  /* Shadows */
+  --tcl-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.03);
+  /* Kept */
+  --tcl-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  /* Kept */
+  --tcl-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+  /* Kept */
+  --tcl-shadow-colored: 0 4px 12px rgba(16, 185, 129, 0.15);
+  /* THEMED SHADOW */
+
+  /* Border Radius */
+  --tcl-radius-sm: 4px;
+  /* Kept */
+  --tcl-radius-md: 6px;
+  /* Kept */
+  --tcl-radius-lg: 8px;
+  /* Kept */
+
+  /* Transitions */
+  --tcl-transition: all 0.2s ease;
+  /* Kept */
+}
+
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--tcl-bg-secondary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Main container - Renamed */
+.container-veritestcase {
+  /* RENAMED */
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: var(--tcl-bg-primary);
+  min-height: 100vh;
+  position: relative;
+}
+
+.container-veritestcase::before {
+  /* RENAMED */
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  /* Gradient uses new primary and original accent */
+  background: linear-gradient(to right, var(--tcl-primary));
+  z-index: 1;
+}
+
+/* Header - Renamed */
+.header-veritestcase {
+  /* RENAMED */
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.header-veritestcase h1 {
+  /* RENAMED */
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--tcl-text-primary);
+  margin: 0 auto;
+  /* Center title */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  letter-spacing: -0.02em;
+}
+
+.title-icon-veritestcase {
+  /* RENAMED */
+  color: var(--tcl-primary);
+  /* Uses new primary color */
+}
+
+/* Back button - Renamed */
+.back-button-veritestcase {
+  /* RENAMED */
+  background-color: transparent;
+  color: var(--tcl-primary);
+  /* Uses new primary color */
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: var(--tcl-transition);
+  position: absolute;
+  /* Position it left */
+  left: 0;
+}
+
+.back-button-veritestcase:hover {
+  /* RENAMED */
+  color: var(--tcl-primary-dark);
+  /* Uses new primary dark color */
+  transform: translateX(-3px);
+}
+
+/* Content layout - Renamed */
+.content-veritestcase {
+  /* RENAMED */
+  display: flex;
+  gap: 24px;
+  margin-bottom: 30px;
+}
+
+.panel-veritestcase {
+  /* RENAMED */
+  background: var(--tcl-bg-primary);
+  border-radius: var(--tcl-radius-lg);
+  border: 1px solid var(--tcl-border);
+  box-shadow: var(--tcl-shadow-md);
+  overflow: hidden;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Panel headers - Renamed */
+.panel-header-veritestcase {
+  /* RENAMED */
+  background-color: var(--tcl-bg-secondary);
+  border-bottom: 1px solid var(--tcl-border);
+  padding: 16px 20px;
+  /* Adjusted to match structure with tools inside header */
+  display: flex;
+  flex-direction: column;
+  /* Stack title/badge and tools */
+  gap: 12px;
+}
+
+/* Container for title and badge */
+.panel-title-area-veritestcase {
+  /* ADDED for grouping */
+  display: flex;
+  justify-content: space-between;
+  /* Align title left, tools right */
+  align-items: center;
+  width: 100%;
+}
+
+
+.panel-header-veritestcase h2 {
+  /* RENAMED */
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--tcl-text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  /* Remove default margin */
+}
+
+.panel-header-veritestcase h2 svg {
+  /* RENAMED */
+  color: var(--tcl-primary);
+  /* Uses new primary color */
+}
+
+.count-badge-veritestcase {
+  /* RENAMED */
+  background-color: var(--tcl-primary-light);
+  /* Uses new primary light */
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-left: 8px;
+}
+
+/* Search and filter tools - Renamed */
+.tools-veritestcase {
+  /* RENAMED */
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  width: 100%;
+  /* Ensure tools take full width */
+}
+
+.search-veritestcase {
+  /* RENAMED */
+  /* Removed filter class as it wasn't in the VeriTestcase JS */
+  display: flex;
+  align-items: center;
+  background-color: var(--tcl-bg-primary);
+  border: 1px solid var(--tcl-border);
+  border-radius: var(--tcl-radius-md);
+  padding: 8px 12px;
+  flex: 1;
+  /* Allow search to grow */
+  min-width: 220px;
+}
+
+.search-icon-veritestcase {
+  /* RENAMED */
+  color: var(--tcl-text-secondary);
+  margin-right: 8px;
+}
+
+.search-input-veritestcase {
+  /* RENAMED */
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  color: var(--tcl-text-primary);
+  width: 100%;
+  outline: none;
+}
+
+.clear-search-veritestcase {
+  /* RENAMED */
+  background: transparent;
+  border: none;
+  color: var(--tcl-text-secondary);
+  cursor: pointer;
+  transition: var(--tcl-transition);
+  margin-left: 5px;
+  /* Space from input */
+}
+
+.clear-search-veritestcase:hover {
+  /* RENAMED */
+  color: var(--tcl-primary);
+  /* Uses new primary color */
+}
+
+.refresh-button-veritestcase {
+  /* RENAMED */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: var(--tcl-bg-tertiary);
+  color: var(--tcl-text-secondary);
+  border: 1px solid var(--tcl-border);
+  border-radius: var(--tcl-radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--tcl-transition);
+  white-space: nowrap;
+}
+
+.refresh-button-veritestcase:hover:not(:disabled) {
+  /* RENAMED */
+  background-color: var(--tcl-primary-light);
+  /* Uses new primary light */
+  color: white;
+  border-color: var(--tcl-primary-light);
+  /* Match border */
+}
+
+.refresh-button-veritestcase.refreshing {
+  /* RENAMED */
+  background-color: var(--tcl-primary-light);
+  /* Uses new primary light */
+  color: white;
+  border-color: var(--tcl-primary-light);
+  /* Match border */
+}
+
+.refresh-button-veritestcase:disabled {
+  /* RENAMED */
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Table container - Renamed */
+.table-container-veritestcase {
+  /* RENAMED */
+  overflow-x: auto;
+  width: 100%;
+  /* Removed radius and margin, handled by panel */
+}
+
+/* Verification table - Renamed */
+.table-veritestcase {
+  /* RENAMED */
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.table-veritestcase th {
+  /* RENAMED */
+  background-color: #f8fafc;
+  /* Lightest grey header */
+  text-align: left;
+  padding: 15px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  /* text-secondary */
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--tcl-border);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.table-veritestcase td {
+  /* RENAMED */
+  padding: 15px 20px;
+  font-size: 14px;
+  border-bottom: 1px solid var(--tcl-border);
+  vertical-align: middle;
+}
+
+.table-veritestcase tr:last-child td {
+  text-align: left;
+  border-bottom: none;
+}
+
+.row-veritestcase:hover {
+  /* RENAMED */
+  background-color: #f8fafc;
+  /* Slight hover */
+}
+
+/* Table cell styling - Renamed & Specific Classes */
+.cell-verif-round-veritestcase {
+  /* RENAMED */
+  font-family: "SF Mono", "Roboto Mono", monospace;
+  font-size: 14px;
+  color: var(--tcl-primary);
+  /* Uses new primary color */
+  font-weight: 500;
+}
+
+.creator-info-veritestcase,
+.date-info-veritestcase {
+  /* RENAMED */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cell-icon-veritestcase {
+  /* RENAMED */
+  color: var(--tcl-text-secondary);
+}
+
+/* Status badges - Renamed */
+.status-badge-veritestcase {
+  /* RENAMED */
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: var(--tcl-radius-sm);
+  /* Match Verify Button Radius */
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Status: Waiting (Example using Warning Colors) */
+.status-waiting-veritestcase {
+  /* RENAMED */
+  background-color: rgba(245, 158, 11, 0.1);
+  /* warning bg */
+  color: var(--tcl-warning-dark);
+  /* warning text */
+  /* border: 1px solid rgba(237, 108, 2, 0.2); No border needed */
+}
+
+/* Add other status styles if they exist (e.g., verified, rejected) */
+/* .status-verified-veritestcase { ... } */
+/* .status-rejected-veritestcase { ... } */
+
+
+/* Action buttons - Renamed */
+.actions-cell {
+  /* This class wasn't used in JS, but keep for structure if needed */
+  display: flex;
+  gap: 8px;
+}
+
+.cell-details-veritestcase,
+.cell-actions-veritestcase {
+  white-space: nowrap;
+}
+
+.cell-iconeye-veritestcase {
+  color: #10b981;
+}
+
+.view-details-btn-veritestcase {
+  /* RENAMED */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  /* Match size */
+  height: 32px;
+  /* Use Accent color for view button */
+  background-color: rgba(14, 165, 233, 0.1);
+  /* accent light bg */
+  color: var(--tcl-accent-dark);
+  /* accent dark text */
+  border: none;
+  border-radius: var(--tcl-radius-sm);
+  /* Consistent radius */
+  cursor: pointer;
+  transition: var(--tcl-transition);
+}
+
+.view-details-btn-veritestcase:hover {
+  /* RENAMED */
+  background-color: rgba(14, 165, 233, 0.2);
+  /* Darker accent bg */
+}
+
+.verify-button-veritestcase {
+  /* RENAMED */
+  display: inline-flex;
+  /* Use inline-flex */
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  /* Use Primary (Success) color */
+  background-color: var(--tcl-primary);
+  /* Uses new primary color */
+  color: white;
+  border: none;
+  border-radius: var(--tcl-radius-sm);
+  /* Consistent radius */
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--tcl-transition);
+}
+
+.verify-button-veritestcase:hover:not(:disabled) {
+  /* RENAMED */
+  background-color: var(--tcl-primary-dark);
+  /* Uses new primary dark */
+  transform: translateY(-1px);
+  /* Subtle lift */
+}
+
+.verify-button-veritestcase:disabled {
+  /* RENAMED */
+  background-color: var(--tcl-text-light);
+  /* Consistent disabled look */
+  cursor: not-allowed;
+  transform: none;
+  /* No lift when disabled */
+}
+
+.button-icon-veritestcase {
+  /* RENAMED */
+  font-size: 11px;
+  /* Keep small icon */
+}
+
+/* Empty state - Renamed */
+.empty-state-veritestcase {
+  /* RENAMED */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+  color: var(--tcl-text-secondary);
+  gap: 12px;
+}
+
+.empty-icon-veritestcase {
+  /* RENAMED */
+  font-size: 40px;
+  color: var(--tcl-text-light);
+  margin-bottom: 8px;
+}
+
+.empty-subtitle-veritestcase {
+  /* RENAMED */
+  color: var(--tcl-text-light);
+  font-size: 14px;
+}
+
+/* Loading state - Renamed */
+.loading-state-veritestcase {
+  /* RENAMED */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  text-align: center;
+  min-height: 200px;
+  /* Give it some height */
+}
+
+.loading-spinner-veritestcase {
+  /* RENAMED */
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--tcl-bg-tertiary);
+  border-radius: 50%;
+  border-top-color: var(--tcl-primary);
+  /* Uses new primary color */
+  animation: spin-veritestcase 1s linear infinite;
+  /* Renamed animation */
+  margin-bottom: 16px;
+}
+
+@keyframes spin-veritestcase {
+
+  /* Renamed animation */
+  to {
+    transform: rotate(360deg);
   }
-  
-  /* --- Page Container --- */
-  /* หมายเหตุ: รูปภาพมี header สีม่วง/น้ำเงิน ซึ่งอาจจะอยู่นอก component นี้ */
-  /* สไตล์นี้จะเริ่มตั้งแต่ใต้ header นั้น */
-  .container-veritestcase { /* <<< เพิ่ม Div นี้ครอบทั้งหมดใน return ของ VeriTestcase */
-    padding: 20px 30px;
-    background-color: var(--light-grey-bg-veritestcase); /* สีพื้นหลังอ่อนๆ */
-    min-height: calc(100vh - 60px); /* ปรับ 60px ตามความสูงของ header หลัก (ถ้ามี) */
+}
+
+/* Modal Styles - Renamed (Assuming ModalVeriTestcase uses similar structure) */
+/* If ModalVeriTestcase has different classes, adjust these selectors */
+.modal-overlay-veritestcase {
+  /* RENAMED - Apply this class to your modal overlay */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(15, 23, 42, 0.7);
+  /* Dark overlay */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(3px);
+}
+
+.modal-content-veritestcase {
+  /* RENAMED - Apply this class to your modal content */
+  background-color: var(--tcl-bg-primary);
+  border-radius: var(--tcl-radius-lg);
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: var(--tcl-shadow-lg);
+  animation: modalFadeIn-veritestcase 0.3s ease-out;
+  /* Renamed animation */
+}
+
+@keyframes modalFadeIn-veritestcase {
+
+  /* Renamed animation */
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
-  
-  /* --- Back Button --- */
-  .back-button-veritestcase { /* <<< ใช้ class นี้กับปุ่ม Back */
-    display: inline-flex;
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header-veritestcase {
+  /* RENAMED */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--tcl-border);
+  background-color: var(--tcl-bg-secondary);
+  /* Light header */
+}
+
+.modal-header-veritestcase h3 {
+  /* RENAMED */
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--tcl-text-primary);
+}
+
+.close-modal-button-veritestcase {
+  /* RENAMED */
+  background-color: transparent;
+  border: none;
+  color: var(--tcl-text-secondary);
+  font-size: 18px;
+  cursor: pointer;
+  transition: var(--tcl-transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+.close-modal-button-veritestcase:hover {
+  /* RENAMED */
+  background-color: var(--tcl-bg-tertiary);
+  color: var(--tcl-text-primary);
+}
+
+.modal-body-veritestcase {
+  /* RENAMED */
+  padding: 0;
+  /* Let sections handle padding */
+}
+
+/* Assuming sections inside modal use these classes */
+.reviewer-section-veritestcase,
+.testcase-section-veritestcase {
+  /* RENAMED (testcase instead of requirement) */
+  padding: 20px;
+  border-bottom: 1px solid var(--tcl-border-light);
+}
+
+/* Remove border from last section */
+.modal-body-veritestcase>div:last-child {
+  border-bottom: none;
+}
+
+
+.reviewer-section-veritestcase h4,
+.testcase-section-veritestcase h4 {
+  /* RENAMED */
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--tcl-text-primary);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-icon-veritestcase {
+  /* RENAMED */
+  color: var(--tcl-primary);
+  /* Uses new primary color */
+}
+
+.reviewers-list-veritestcase,
+.testcases-list-veritestcase {
+  /* RENAMED */
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.reviewer-item-veritestcase {
+  /* RENAMED */
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  background-color: var(--tcl-bg-secondary);
+  border-radius: var(--tcl-radius-md);
+  gap: 12px;
+}
+
+.reviewer-avatar-veritestcase {
+  /* RENAMED */
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--tcl-primary-light);
+  /* Uses new primary light */
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  /* Make icon slightly smaller */
+}
+
+.reviewer-info-veritestcase {
+  /* RENAMED */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.reviewer-name-veritestcase {
+  /* RENAMED */
+  font-weight: 500;
+  color: var(--tcl-text-primary);
+}
+
+.reviewer-status-veritestcase {
+  /* RENAMED */
+  font-size: 12px;
+}
+
+.reviewer-status-veritestcase.verified {
+  /* RENAMED */
+  color: var(--tcl-success);
+  /* Uses success color */
+}
+
+.reviewer-status-veritestcase.not-verified {
+  /* RENAMED */
+  color: var(--tcl-error);
+  /* Uses error color */
+}
+
+.status-icon-veritestcase {
+  /* RENAMED */
+  font-size: 16px;
+}
+
+.status-icon-veritestcase.verified {
+  /* RENAMED */
+  color: var(--tcl-success);
+  /* Uses success color */
+}
+
+.status-icon-veritestcase.not-verified {
+  /* RENAMED */
+  color: var(--tcl-error);
+  /* Uses error color */
+}
+
+.testcase-item-veritestcase {
+  /* RENAMED (testcase instead of requirement) */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background-color: var(--tcl-bg-secondary);
+  border-radius: var(--tcl-radius-md);
+}
+
+.tc-icon-veritestcase {
+  /* RENAMED */
+  color: var(--tcl-primary);
+  /* Uses new primary color */
+}
+
+.tc-id-veritestcase {
+  /* ADDED for styling test case IDs */
+  font-family: "SF Mono", "Roboto Mono", monospace;
+  font-size: 13px;
+  color: var(--tcl-text-primary);
+  font-weight: 500;
+  background-color: #e0e7ff;
+  /* Light indigo background for contrast */
+  color: #4338ca;
+  /* Indigo text */
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+
+.empty-message-veritestcase {
+  /* RENAMED */
+  padding: 15px;
+  color: var(--tcl-text-secondary);
+  text-align: center;
+  font-style: italic;
+  background-color: var(--tcl-bg-tertiary);
+  border-radius: var(--tcl-radius-md);
+}
+
+/* Custom scrollbar - Kept */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--tcl-bg-secondary);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--tcl-border);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--tcl-text-light);
+}
+
+/* Toast notification styles - Kept */
+/* Ensure your ToastContainer uses these classes or adjust selectors */
+.Toastify__toast {
+  border-radius: var(--tcl-radius-md) !important;
+  box-shadow: var(--tcl-shadow-md) !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+.Toastify__toast-body {
+  font-weight: 500 !important;
+}
+
+.Toastify__progress-bar {
+  height: 3px !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Responsive adjustments - Renamed */
+@media (max-width: 1024px) {
+  .tools-veritestcase {
+    /* RENAMED */
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-veritestcase {
+    /* RENAMED */
+    width: 100%;
+  }
+
+  .refresh-button-veritestcase {
+    /* RENAMED */
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .container-veritestcase {
+    /* RENAMED */
+    padding: 20px 15px;
+  }
+
+  .header-veritestcase {
+    /* RENAMED */
+    flex-direction: column;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 20px;
-    padding: 6px 12px;
-    background-color: var(--card-bg-veritestcase);
-    border: 1px solid var(--border-color-veritestcase);
-    border-radius: 4px;
-    color: var(--text-color-secondary-veritestcase);
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: background-color 0.2s, border-color 0.2s;
+    /* Center title on small screens */
+    gap: 15px;
   }
-  .back-button-veritestcase:hover {
-    background-color: #f1f3f5;
-    border-color: #ced4da;
-  }
-  /* อาจจะต้องเพิ่ม Icon ลูกศรซ้ายใน JSX */
-  
-  
-  /* --- Page Title --- */
-  .page-title-container-veritestcase { /* <<< เพิ่ม Div นี้ครอบ Title */
-      text-align: center;
-      margin-bottom: 25px;
-      position: relative; /* สำหรับไอคอน ? */
-  }
-  .page-title-veritestcase { /* <<< ใช้ class นี้กับ h1 */
-    font-size: 1.8rem;
-    font-weight: 600;
-    color: var(--text-color-primary-veritestcase);
-    display: inline-flex; /* จัดไอคอนกับข้อความ */
-    align-items: center;
-    gap: 10px;
+
+  .header-veritestcase h1 {
+    /* RENAMED */
+    order: 1;
+    /* Title below button */
     margin: 0;
   }
-  /* ควรเพิ่ม Icon ใน JSX เช่น <FontAwesomeIcon icon={faCheckSquare} /> ก่อนข้อความ */
-  .page-title-veritestcase .title-icon-veritestcase { /* <<< Class สำหรับ Icon หน้า Title */
-      color: var(--theme-color-veritestcase); /* หรือสีอื่นตามต้องการ */
+
+  .back-button-veritestcase {
+    /* RENAMED */
+    position: static;
+    /* Button becomes static */
+    order: 2;
+    /* Button below title */
+    align-self: flex-start;
+    /* Align left */
   }
-  
-  .help-icon-veritestcase { /* <<< Icon ? ด้านขวา (ถ้ามี) */
-      position: absolute;
-      top: 50%;
-      right: 10px;
-      transform: translateY(-50%);
-      font-size: 1.5rem;
-      color: var(--text-color-muted-veritestcase);
-      cursor: pointer;
+
+  /* Adjust modal width for smaller screens */
+  .modal-content-veritestcase {
+    /* RENAMED */
+    width: 95%;
   }
-  
-  
-  /* --- Content Card --- */
-  .content-card-veritestcase { /* <<< เพิ่ม Div นี้ครอบตั้งแต่ Header ของ Card ถึง Table */
-    background-color: var(--card-bg-veritestcase);
-    border-radius: 8px;
-    border: 1px solid var(--border-color-veritestcase);
-    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); */ /* ลดเงา */
-    overflow: hidden; /* สำหรับกรณีที่ table ล้น */
-  }
-  
-  /* --- Card Header --- */
-  .card-header-veritestcase { /* <<< Div ส่วนหัวของ Card (Verification Requests) */
-    padding: 15px 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    border-bottom: 1px solid var(--border-color-veritestcase);
-  }
-  .card-title-veritestcase { /* <<< h2 หรือ h3 สำหรับ Title "Verification Requests" */
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--text-color-primary-veritestcase);
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .request-count-badge-veritestcase { /* <<< Span สำหรับ Badge นับจำนวน */
-    background-color: #e9ecef; /* สีเทาอ่อน */
-    color: var(--text-color-secondary-veritestcase);
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-size: 0.8rem;
-    font-weight: 500;
-  }
-  
-  /* --- Toolbar (Search/Refresh) --- */
-  .toolbar-veritestcase { /* <<< Div ครอบ Search และ Refresh */
-    background-color: var(--table-header-bg-veritestcase); /* สีเทาอ่อนเหมือน Header ตาราง */
-    padding: 12px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--border-color-veritestcase);
-  }
-  
-  .search-input-container-veritestcase { /* <<< Div ครอบ input search และ icon */
-      position: relative;
-      display: flex;
-      align-items: center;
-      flex-grow: 1; /* ให้ช่องค้นหายืดได้ */
-      margin-right: 20px; /* ระยะห่างจากปุ่ม Refresh */
-      max-width: 400px; /* จำกัดความกว้างสูงสุด */
-  }
-  
-  .search-input-icon-veritestcase { /* <<< Icon แว่นขยายในช่องค้นหา */
-      position: absolute;
-      left: 12px;
-      color: var(--text-color-muted-veritestcase);
-      font-size: 0.9rem;
-  }
-  
-  .search-input-veritestcase { /* <<< Input สำหรับค้นหา */
-    padding: 8px 12px 8px 35px; /* เว้นที่ให้ไอคอนซ้าย */
-    border: 1px solid #ced4da;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    width: 100%;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-  .search-input-veritestcase:focus {
-      outline: none;
-      border-color: var(--theme-color-veritestcase);
-      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2); /* เงาเมื่อ focus สีเขียวอ่อน */
-  }
-  
-  .refresh-button-veritestcase { /* <<< ปุ่ม Refresh */
-    padding: 8px 15px;
-    background-color: var(--card-bg-veritestcase);
-    border: 1px solid #ced4da;
-    border-radius: 6px;
-    color: var(--text-color-secondary-veritestcase);
-    font-size: 0.9rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    transition: background-color 0.2s, border-color 0.2s;
-  }
-  .refresh-button-veritestcase:hover {
-    background-color: #f1f3f5;
-    border-color: #adb5bd;
-  }
-  /* ควรเพิ่ม Icon ใน JSX เช่น <FontAwesomeIcon icon={faSyncAlt} /> */
-  
-  /* --- Table Styling --- */
-  .testcase-table-container-veritestcase { /* <<< Div ครอบ Table (ถ้าต้องการ scroll) */
-      overflow-x: auto; /* ทำให้ scroll แนวนอนได้ถ้าตารางล้น */
-  }
-  
-  .testcase-table-veritestcase { /* <<< ใช้ class นี้กับ Table */
-    width: 100%;
-    border-collapse: collapse; /* รวมเส้นขอบ */
-    font-size: 0.875rem; /* 14px */
-  }
-  
-  .testcase-table-veritestcase thead th {
-    background-color: var(--table-header-bg-veritestcase);
-    padding: 12px 15px;
-    text-align: left; /* จัดชิดซ้ายเป็นหลัก */
-    font-weight: 600; /* ตัวหนา */
-    color: var(--text-color-secondary-veritestcase);
-    border-bottom: 2px solid var(--border-color-veritestcase); /* เส้นหนาขึ้นเล็กน้อย */
-    white-space: nowrap; /* ไม่ให้ขึ้นบรรทัดใหม่ */
-  }
-  
-  .testcase-table-veritestcase thead th.text-center-veritestcase { /* Class เพิ่มเติมสำหรับจัดกลาง */
-      text-align: center;
-  }
-  
-  .testcase-table-veritestcase tbody tr {
-    border-bottom: 1px solid var(--border-color-veritestcase);
-    transition: background-color 0.15s ease-in-out;
-  }
-  .testcase-table-veritestcase tbody tr:last-child {
-    border-bottom: none; /* แถวสุดท้ายไม่มีเส้น */
-  }
-  .testcase-table-veritestcase tbody tr:hover {
-    background-color: #f1f3f5; /* สีพื้นหลังเมื่อ hover */
-  }
-  
-  .testcase-table-veritestcase tbody td {
-    padding: 12px 15px;
-    vertical-align: middle; /* จัดเนื้อหาตรงกลางแนวตั้ง */
-    color: var(--text-color-primary-veritestcase);
-  }
-  
-  /* จัดรูปแบบเฉพาะคอลัมน์ */
-  .testcase-table-veritestcase td .created-by-veritestcase,
-  .testcase-table-veritestcase td .date-assigned-veritestcase { /* <<< ใช้ span/div ครอบ icon+text ใน Created By, Date */
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--text-color-secondary-veritestcase);
-  }
-  .testcase-table-veritestcase td .icon-veritestcase { /* <<< class สำหรับ icon ในเซลล์ */
-      color: var(--text-color-muted-veritestcase);
-  }
-  
-  
-  /* Status Badge */
-  .status-badge-veritestcase { /* <<< ใช้ class นี้กับ td หรือ span ที่แสดง Status */
-    display: inline-block; /* ทำให้ padding, border-radius ทำงาน */
-    padding: 4px 10px;
-    border-radius: 12px; /* ทรงแคปซูล */
-    font-size: 0.75rem; /* 12px */
-    font-weight: 500;
-    text-transform: uppercase;
-    background-color: var(--status-badge-bg-veritestcase);
-    color: var(--status-badge-text-veritestcase);
-    border: 1px solid #ffd8a8; /* เส้นขอบสีเหลืองอ่อน */
-  }
-  
-  /* Reviewer Button */
-  .search-icon-button-veritestcase { /* <<< ใช้ class นี้กับปุ่มแว่นขยาย */
-    background: none;
-    border: none;
-    padding: 5px;
-    cursor: pointer;
-    color: #0d6efd; /* สีน้ำเงิน */
-    font-size: 1.1rem; /* ปรับขนาดไอคอน */
-    line-height: 1;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%; /* ทำให้กลม */
-    width: 30px;
-    height: 30px;
-  }
-  .search-icon-button-veritestcase:hover {
-    background-color: rgba(13, 110, 253, 0.1); /* พื้นหลังฟ้าอ่อนๆ เมื่อ hover */
-  }
-  
-  /* Verify Button */
-  .verify-button-veritestcase { /* <<< ใช้ class นี้กับปุ่ม Verify */
-    background-color: var(--theme-color-veritestcase);
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 5px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: background-color 0.2s;
-  }
-  .verify-button-veritestcase:hover {
-    background-color: #059669; /* สีเขียวเข้มขึ้น */
-  }
-  /* ควรเพิ่ม Icon ใน JSX เช่น <FontAwesomeIcon icon={faCheck} /> */
-  
-  /* --- Modal Styles (จาก Component Modal) --- */
-  .modal-overlay-review-veritestcase { /* <<< ควรแก้ชื่อ class ใน Modal component ให้ลงท้ายด้วย */
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1050;
-  }
-  
-  .modal-content-review-veritestcase { /* <<< ควรแก้ชื่อ class ใน Modal component ให้ลงท้ายด้วย */
-    background: white;
-    padding: 25px;
-    border-radius: 8px;
-    max-width: 500px;
-    width: 90%;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  }
-  
-  .modal-content-review-veritestcase h3 {
-    margin-top: 0;
-    margin-bottom: 15px;
-    color: var(--text-color-primary-veritestcase);
-    border-bottom: 1px solid var(--border-color-veritestcase);
-    padding-bottom: 10px;
-  }
-  .modal-content-review-veritestcase p {
-      margin-bottom: 8px;
-      color: var(--text-color-secondary-veritestcase);
-  }
-  .modal-content-review-veritestcase p strong {
-      color: var(--text-color-primary-veritestcase);
-  }
-  
-  .list-reviewer-veritestcase { /* <<< ควรแก้ชื่อ class ใน Modal component ให้ลงท้ายด้วย */
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 0;
-    border-bottom: 1px dashed var(--border-color-veritestcase);
-  }
-  .list-reviewer-veritestcase:last-child {
-      border-bottom: none;
-  }
-  
-  .verification-status-icon-veritestcase { /* <<< ควรแก้ชื่อ class ใน Modal component ให้ลงท้ายด้วย */
-    width: 20px;
-    height: 20px;
-  }
-  
-  .close-modal-review-button-veritestcase { /* <<< ควรแก้ชื่อ class ใน Modal component ให้ลงท้ายด้วย */
-    margin-top: 20px;
-    padding: 8px 16px;
-    background-color: var(--text-color-muted-veritestcase);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    float: right; /* จัดไปทางขวา */
-  }
-  .close-modal-review-button-veritestcase:hover {
-      background-color: var(--text-color-secondary-veritestcase);
-  }
-  
-  /* --- Empty State --- */
-  .no-testcase-message-veritestcase { /* <<< Class สำหรับ <p>No testcase available.</p> */
-      text-align: center;
-      padding: 40px;
-      color: var(--text-color-muted-veritestcase);
-      font-style: italic;
-  }
+}

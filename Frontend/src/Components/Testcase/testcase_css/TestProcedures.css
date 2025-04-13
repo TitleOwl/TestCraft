@@ -1,163 +1,441 @@
-.test-procedures-container {
-    width: 100%;
-    padding: 20px;
-    background: linear-gradient(135deg, #f9f9f9, #ffffff);
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .test-procedures-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-  }
-  
-  .test-procedures-header h3 {
-    font-size: 1.5rem;
-    color: #333;
-  }
-  
-  .add-test-step-btn {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    font-size: 14px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-  
-  .add-test-step-btn:hover {
-    background-color: #0056b3;
-  }
-  
-  /* ปรับดีไซน์ตาราง */
-  .test-procedures-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .test-procedures-table th,
-  .test-procedures-table td {
-    padding: 14px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .test-procedures-table th {
-    background-color: #f0f2f5;
-    color: black;
-    font-weight: bold;
-  }
-  
-  .test-procedures-table tr:hover {
-    background-color: #f1f1f1;
-  }
-  
-  /* ปรับสไตล์ Input */
-  .test-procedures-input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-  }
-  
-  /* ปุ่ม Save & Delete */
-  .save-btn,
-  .delete-btn {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    font-size: 14px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: 0.3s;
-    margin-right: 5px;
-  }
-  
-  .save-btn:hover {
-    background-color: #218838;
-  }
-  
-  .delete-btn {
-    background-color: #dc3545;
-  }
-  
-  .delete-btn:hover {
-    background-color: #c82333;
-  }
-  
+/* ./testcase_css/TestProcedures.css - Scoped Variables */
 
-  /* Modal Styles */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+/* --- CSS Variables (Scoped to TestProcedures) --- */
+:root {
+  /* Theme & Basic Colors */
+  --theme-color-testprocedures: #10b981;
+  /* Green theme */
+  --theme-color-darker-testprocedures: #059669;
+  /* Darker green for hover/text */
+  --border-color-testprocedures: #e9ecef;
+  --table-header-bg-testprocedures: #f8f9fa;
+  --text-color-primary-testprocedures: #212529;
+  --text-color-secondary-testprocedures: #495057;
+  --text-color-muted-testprocedures: #6c757d;
+  --card-bg-testprocedures: #ffffff;
+  /* Background for modal, etc. */
+
+  /* Button Specific Colors */
+  --button-add-bg-testprocedures: #10b981;
+  /* Blue for Add Step button */
+  --button-add-hover-bg-testprocedures: #059669;
+  --button-save-bg-testprocedures: var(--theme-color-testprocedures);
+  /* Green for Save/Update in modal */
+  --button-save-hover-bg-testprocedures: var(--theme-color-darker-testprocedures);
+  --button-danger-color-testprocedures: #dc3545;
+  /* Red for Delete icon hover */
+  --button-danger-hover-bg-testprocedures: rgba(220, 53, 69, 0.1);
+  /* Light red background hover */
+  --button-edit-color-testprocedures: #0d6efd;
+  /* Blue for Edit icon hover */
+  --button-edit-hover-bg-testprocedures: rgba(13, 110, 253, 0.1);
+  /* Light blue background hover */
+  --button-icon-color-testprocedures: var(--text-color-muted-testprocedures);
+  /* Default icon button color */
+
+  /* Modal Specific */
+  --modal-overlay-bg-testprocedures: rgba(0, 0, 0, 0.6);
+  --modal-border-color-testprocedures: #ced4da;
+  /* Slightly darker border for modal inputs */
+  --modal-focus-shadow-testprocedures: rgba(16, 185, 129, 0.15);
+  /* Light green focus shadow */
+}
+
+/* --- Main Container --- */
+.test-procedures-container {
+  width: 100%;
+  margin-top: 20px;
+  /* Add margin if needed to space from elements above */
+  /* No background, border, padding - inherits from parent card */
+}
+
+/* --- Header --- */
+.test-procedures-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color-testprocedures);
+}
+
+.test-procedures-header h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-color-primary-testprocedures);
+  margin: 0;
+  /* Add icon styling if icon is added in JSX */
+}
+
+.add-test-step-btn {
+  background-color: #10b981;
+  /* Use scoped variable */
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.add-test-step-btn:hover {
+  background-color: var(--button-add-hover-bg-testprocedures);
+  /* Use scoped variable */
+}
+
+.add-test-step-btn svg {
+  font-size: 0.9em;
+}
+
+
+/* --- Table Styling --- */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.test-procedures-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: none;
+  border-radius: 0;
+  overflow: visible;
+  box-shadow: none;
+  font-size: 0.875rem;
+}
+
+.test-procedures-table th,
+.test-procedures-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color-testprocedures);
+  /* Use scoped variable */
+  vertical-align: middle;
+}
+
+.test-procedures-table tr:last-child td {
+  border-bottom: none;
+}
+
+.test-procedures-table th {
+  background-color: var(--table-header-bg-testprocedures);
+  /* Use scoped variable */
+  color: var(--text-color-secondary-testprocedures);
+  /* Use scoped variable */
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.test-procedures-table tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.test-procedures-table tbody tr:hover {
+  background-color: #f8f9fa;
+  /* Keep simple hover or use a variable */
+}
+
+.test-procedures-table tbody td {
+  color: var(--text-color-primary-testprocedures);
+  /* Use scoped variable */
+  /* Add for better text wrapping */
+  white-space: pre-wrap;
+  /* Allow wrapping within cell */
+  word-break: break-word;
+  /* Break long words */
+}
+
+
+/* --- Action Buttons (Edit/Delete in Table) --- */
+.test-procedures-table td button {
+  background: none;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+  color: var(--button-icon-color-testprocedures);
+  /* Use scoped variable */
+  font-size: 1rem;
+  line-height: 1;
+  border-radius: 4px;
+  margin-right: 5px;
+  transition: color 0.2s, background-color 0.2s;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.test-procedures-header-actions-testprocedures {
+  padding-bottom: 10px;
+  text-align: end;
+}
+
+.test-procedures-table td button:last-child {
+  margin-right: 0;
+}
+
+.test-procedures-table td button.edit-btn:hover {
+  color: var(--button-edit-color-testprocedures);
+  /* Use scoped variable */
+  background-color: var(--button-edit-hover-bg-testprocedures);
+  /* Use scoped variable */
+}
+
+.test-procedures-table td button.delete-btn:hover {
+  color: var(--button-danger-color-testprocedures);
+  /* Use scoped variable */
+  background-color: var(--button-danger-hover-bg-testprocedures);
+  /* Use scoped variable */
+}
+
+.modal-overlay-testprocedures {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--modal-overlay-bg-testprocedures, rgba(0, 0, 0, 0.6));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1100;
+  backdrop-filter: blur(3px);
+  padding: 15px;
+  /* รองรับจอเล็ก */
+  animation: vtModalFadeIn 0.3s ease-out;
+}
+
+.modal-content-testprocedures {
+  background: var(--card-bg-testprocedures, white);
+  border-radius: 8px;
+  width: 90%;
+  max-width: 700px;
+  /* หรือขนาดที่คุณต้องการ */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  animation: vtModalSlideDown 0.3s ease-out;
+}
+
+/* --- Modal Header --- */
+.modal-header-testprocedures {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border-color-testprocedures, #e9ecef);
+  flex-shrink: 0;
+  /* ไม่ให้ Header หด */
+  background-color: #f8f9fa;
+  /* <<< เพิ่มพื้นหลังเทาอ่อนให้ Header */
+  border-top-left-radius: 8px;
+  /* ทำให้มุมบนโค้งมน */
+  border-top-right-radius: 8px;
+  flex-shrink: 0;
+}
+
+.modal-title-testprocedures {
+  /* <<< ใช้ Class นี้กับ h3 */
+  margin: 0;
+  font-size: 1.2rem;
+  /* ปรับขนาด */
+  font-weight: 600;
+  color: var(--text-color-primary-testprocedures, #212529);
+}
+
+.modal-close-btn-testprocedures {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  color: var(--text-color-muted-testprocedures, #6c757d);
+  cursor: pointer;
+  padding: 0.25rem;
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+
+.modal-close-btn-testprocedures:hover {
+  color: var(--text-color-primary-testprocedures, #212529);
+}
+
+/* --- Modal Body --- */
+.modal-body-testprocedures {
+  padding: 1.5rem;
+  overflow-y: auto;
+  /* <<< ให้ Scroll ที่ Body แทน */
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* --- Form Group ใน Modal --- */
+.modal-form-group-testprocedures {
+  margin-bottom: 1.25rem;
+  /* ระยะห่างระหว่าง Group */
+}
+
+.modal-content-testprocedures label {
+  display: block;
+  margin-bottom: 0.5rem;
+  /* ระยะห่างใต้ Label */
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--text-color-secondary-testprocedures, #495057);
+  text-align: left;
+}
+
+/* --- ReactQuill Editor Styling --- */
+.modal-rte-testprocedures .ql-toolbar.ql-snow {
+  border-bottom: none;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  background-color: #f8f9fa;
+  /* สีพื้นหลัง Toolbar */
+  padding: 8px 10px;
+  position: sticky;
+  /* ทำให้ Toolbar ค้างด้านบนเมื่อ Scroll */
+  top: -1px;
+  /* ชดเชยตำแหน่งเล็กน้อย */
+  background-color: #f8f9fa;
+  /* ต้องมี Background ไม่งั้นโปร่งใส */
+  z-index: 2;
+  /* ให้ Toolbar อยู่เหนือ Content */
+  box-sizing: border-box;
+}
+
+.ql-picker-options {
+  z-index: 3 !important;
+  /* ให้ Picker แสดงผลทับ Toolbar และ Editor */
+}
+
+.modal-rte-testprocedures .ql-container.ql-snow {
+  border: 1px solid var(--modal-border-color-testprocedures, #ced4da);
+  border-bottom-left-radius: 6px;
+  border-top: none;
+  border-bottom-right-radius: 6px;
+  background-color: #fff;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  font-family: inherit;
+  min-height: 120px;
+  /* <<< เพิ่มความสูงขั้นต่ำให้ Editor */
+  transition: border-color 0.2s, box-shadow 0.2s;
+  /* ทำให้ Quill สูงขึ้นตามเนื้อหาได้ */
+  /* overflow-y: auto; */
+  /* อาจจะไม่ต้องใช้ ถ้า modal-body scroll แล้ว */
+}
+
+/* Editor area */
+.modal-rte-testprocedures .ql-editor {
+  min-height: 120px;
+  /* <<< ทำให้พื้นที่พิมพ์มีขนาดเท่า container */
+  padding: 10px 12px;
+  line-height: 1.5;
+}
+
+.modal-rte-testprocedures .ql-editor.ql-blank::before {
+  color: #adb5bd;
+  font-style: normal;
+  left: 12px;
+}
+
+/* Focus state */
+.modal-rte-testprocedures .ql-container.ql-snow:focus-within,
+.modal-rte-testprocedures .ql-toolbar.ql-snow:focus-within+.ql-container.ql-snow {
+  border-color: var(--theme-color-testprocedures, #10b981);
+  box-shadow: 0 0 0 2px var(--modal-focus-shadow-testprocedures, rgba(16, 185, 129, 0.15));
+  z-index: 1;
+}
+
+.modal-rte-testprocedures .ql-toolbar.ql-snow:focus-within {
+  border-bottom: 1px solid var(--theme-color-testprocedures, #10b981);
+  z-index: 2;
+}
+
+.modal-rte-testprocedures .ql-toolbar.ql-snow:focus-within+.ql-container.ql-snow {
+  border-top-color: transparent;
+}
+
+/* --- Modal Footer --- */
+.modal-footer-testprocedures {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border-color-testprocedures, #e9ecef);
+  background-color: #f8f9fa;
+  /* พื้นหลังเทาอ่อน */
+  text-align: right;
+  /* จัดปุ่มไปทางขวา */
+  flex-shrink: 0;
+  /* ไม่ให้ Footer หด */
+  border-bottom-left-radius: 8px;
+  /* ทำให้มุมล่างโค้งมน */
+  border-bottom-right-radius: 8px;
+}
+
+/* <<< แก้ไข Selector >>> */
+.save-btn-testprocedures {
+  /* ย้าย Style ปุ่ม Save มานี่ */
+  background-color: var(--button-save-bg-testprocedures, #10b981);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: inline-flex;
+  /* เปลี่ยนเป็น inline-flex */
+  align-items: center;
+  /* justify-content: center; */
+  /* ไม่ต้อง center แล้ว */
+  gap: 8px;
+  /* width: 100%; */
+  /* ไม่ต้องเต็มความกว้าง */
+  /* margin-top: 10px; */
+  /* ไม่ต้องมี margin top */
+}
+
+/* <<< แก้ไข Selector >>> */
+.save-btn-testprocedures:hover {
+  background-color: var(--button-save-hover-bg-testprocedures, #059669);
+}
+
+/* <<< แก้ไข Selector >>> */
+.save-btn-testprocedures svg {
+  margin-right: 5px;
+}
+
+
+/* --- Keyframes (คงเดิม) --- */
+@keyframes vtModalFadeIn {
+  from {
+    opacity: 0;
   }
-  
-  .modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    width: 400px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    text-align: center;
+
+  to {
+    opacity: 1;
   }
-  
-  .modal-content h3 {
-    margin-bottom: 15px;
+}
+
+@keyframes vtModalSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
   }
-  
-  .modal-content label {
-    display: block;
-    margin: 8px 0 4px;
-    font-weight: bold;
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  .modal-content input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-bottom: 12px;
-  }
-  
-  .modal-close-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-  }
-  
-  .save-btn {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    font-size: 14px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-  
-  .save-btn:hover {
-    background-color: #218838;
-  }
-  
+}

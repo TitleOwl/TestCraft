@@ -1,0 +1,182 @@
+/* ./testcase_css/ConfirmUpdateTestcase.css */
+
+.modal-backdrop-confirm-update {
+    position: fixed;
+    /* อยู่กับที่ ไม่เลื่อนตาม scroll */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    /* พื้นหลังสีดำโปร่งแสง */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050;
+    /* ให้แสดงอยู่หน้าสุด (สูงกว่า element อื่นๆ) */
+    padding: 15px;
+    /* ระยะห่างรอบๆ เผื่อจอเล็ก */
+    animation: backdropFadeIn 0.3s ease-out;
+    /* Animation พื้นหลัง */
+}
+
+@keyframes backdropFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-content-confirm-update {
+    background-color: #ffffff;
+    padding: 25px 35px;
+    /* ปรับ padding */
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    /* ปรับความกว้างสูงสุด */
+    text-align: center;
+    animation: modalSlideDown 0.3s ease-out;
+    /* Animation ตัว Modal */
+}
+
+@keyframes modalSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-close-btn-confirm-update {
+    position: absolute;
+    top: 10px;
+    /* ชิดขอบบน */
+    right: 10px;
+    /* ชิดขอบขวา */
+    background: none;
+    border: none;
+    font-size: 1.6rem;
+    /* ขนาดไอคอน */
+    color: #adb5bd;
+    /* สีเทาอ่อน */
+    cursor: pointer;
+    padding: 8px;
+    /* เพิ่มพื้นที่คลิก */
+    line-height: 1;
+    transition: color 0.2s ease;
+}
+
+.modal-close-btn-confirm-update:hover {
+    color: #495057;
+    /* สีเข้มขึ้น */
+}
+
+.modal-icon-container-confirm-update {
+    margin-bottom: 15px;
+    /* ระยะห่างใต้ไอคอน */
+}
+
+.modal-warning-icon-confirm-update {
+    font-size: 3.5rem;
+    /* ขนาดไอคอน */
+    color: #ffc107;
+    /* สีเหลือง (ปรับได้ตามต้องการ) */
+    /* หรือใช้สีจากรูปเป๊ะๆ: #f8bb86 */
+}
+
+.modal-title-confirm-update {
+    font-size: 1.4rem;
+    /* ปรับขนาด */
+    font-weight: 600;
+    /* หนาขึ้นเล็กน้อย */
+    margin-top: 0;
+    margin-bottom: 12px;
+    color: #343a40;
+}
+
+.modal-message-confirm-update {
+    font-size: 0.95rem;
+    /* ปรับขนาด */
+    color: #495057;
+    margin-bottom: 25px;
+    line-height: 1.6;
+    /* ไม่ต้องใส่ white-space: pre-wrap ที่นี่ เพราะ dangerouslySetInnerHTML จะจัดการ <br/> เอง */
+}
+
+.modal-message-confirm-update strong {
+    color: #212529;
+    /* ทำให้ตัวหนาเข้มขึ้นเล็กน้อย */
+}
+
+
+.modal-actions-confirm-update {
+    display: flex;
+    justify-content: center;
+    /* จัดปุ่มตรงกลาง */
+    gap: 12px;
+    /* ระยะห่างระหว่างปุ่ม */
+    margin-top: 10px;
+    /* เพิ่มระยะห่างจาก message */
+}
+
+.modal-actions-confirm-update button {
+    padding: 9px 22px;
+    /* ปรับขนาดปุ่ม */
+    border: 1px solid transparent;
+    /* เพิ่มเส้นขอบพื้นฐาน */
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    /* ปรับขนาดตัวอักษร */
+    font-weight: 500;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+/* ปุ่ม Confirm (Update) - สีฟ้า */
+.modal-confirm-button-confirm-update {
+    background-color: #0d6efd;
+    /* สีฟ้า Bootstrap */
+    color: white;
+    border-color: #0d6efd;
+}
+
+.modal-confirm-button-confirm-update:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+.modal-confirm-button-confirm-update:disabled {
+    background-color: #6ea8fe;
+    border-color: #6ea8fe;
+    cursor: not-allowed;
+}
+
+/* ปุ่ม Cancel - สีเทา */
+.modal-cancel-button-confirm-update {
+    background-color: #f8f9fa;
+    /* สีเทาอ่อนมาก */
+    color: #495057;
+    border-color: #ced4da;
+    /* เส้นขอบเทา */
+}
+
+.modal-cancel-button-confirm-update:hover {
+    background-color: #e9ecef;
+    /* เข้มขึ้น */
+    border-color: #adb5bd;
+}
+
+.modal-cancel-button-confirm-update:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}

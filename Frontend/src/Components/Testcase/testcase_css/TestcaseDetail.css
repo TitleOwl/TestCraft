@@ -1,111 +1,841 @@
-/* Container หลัก */
-.testcase-detail-container {
-  width: 90%;
-  max-width: 1200px;
-  margin: 30px auto;
-  font-family: "Arial", sans-serif;
-  color: #222; /* เปลี่ยนจาก #333 เป็น #222 ให้สีเข้มขึ้น */
-  line-height: 1.6; /* เพิ่มความโปร่งของตัวหนังสือ */
+/* ./testcase_css/TestcaseDetail.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* Updated Primary Theme Color (Green/Teal) */
+  --testview-primary-color: #10b981;
+  /* Main Green/Teal */
+  --testview-primary-hover: #0e8e62;
+  /* Darker Green/Teal for hover */
+  --testview-primary-light: #d1fae5;
+  /* Light Green/Teal for backgrounds (matches success-light) */
+
+  /* Other Colors (prefixed with testview-) */
+  --testview-secondary-color: #64748b;
+  --testview-text-color: #1e293b;
+  --testview-text-light: #64748b;
+  --testview-text-lighter: #94a3b8;
+  --testview-text-dark: #0f172a;
+  --testview-bg-color: #f8fafc;
+  --testview-bg-light: #ffffff;
+  --testview-bg-dark: #f1f5f9;
+  --testview-success-color: #10b981;
+  /* Same as primary */
+  --testview-success-light: #d1fae5;
+  /* Same as primary-light */
+  --testview-warning-color: #f59e0b;
+  --testview-warning-light: #fef3c7;
+  --testview-danger-color: #ef4444;
+  --testview-danger-light: #fee2e2;
+  --testview-info-color: #3b82f6;
+  --testview-info-light: #dbeafe;
+  --testview-border-color: #e2e8f0;
+  --testview-border-radius: 8px;
+  --testview-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --testview-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --testview-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --testview-transition: all 0.2s ease-in-out;
 }
 
-/* กล่องข้อมูลแต่ละส่วน */
-.testcase-detail-section {
-  background: linear-gradient(135deg, #ffffff, #f1f3f5);
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* Hover Effect ให้กล่องดูมีมิติ */
-.testcase-detail-section:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--testview-bg-color);
+  color: var(--testview-text-color);
+  line-height: 1.5;
 }
 
-/* หัวข้อหลัก */
+/* Main Container */
+.testcase-detail-dashboard {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: var(--testview-bg-color);
+}
+
+/* Header Section */
 .testcase-detail-header {
-  text-align: center;
-  font-size: 26px; /* เพิ่มขนาด */
-  font-weight: bold;
-  color: #007bff;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--testview-border-color);
 }
 
-/* Grid Layout สำหรับข้อมูล Test Case */
+.testcase-detail-header-left,
+.testcase-detail-header-right {
+  flex: 1;
+  display: flex;
+}
+
+.testcase-detail-header-right {
+  justify-content: flex-end;
+}
+
+.testcase-detail-header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  justify-content: center;
+  flex: 2;
+}
+
+.testcase-detail-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--testview-text-dark);
+  margin: 0;
+}
+
+.testcase-detail-header-title svg {
+  color: var(--testview-primary-color);
+  /* Use new primary color */
+}
+
+.testcase-detail-back-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--testview-bg-light);
+  color: var(--testview-text-color);
+  border: 1px solid var(--testview-border-color);
+  border-radius: var(--testview-border-radius);
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--testview-transition);
+  box-shadow: var(--testview-shadow-sm);
+  text-decoration: none;
+}
+
+.testcase-detail-back-button:hover {
+  background-color: var(--testview-bg-dark);
+}
+
+.testcase-detail-back-button svg {
+  width: 16px;
+  height: 16px;
+}
+
+.testcase-detail-id-badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background-color: var(--testview-bg-light);
+  border: 1px solid var(--testview-border-color);
+  border-radius: var(--testview-border-radius);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--testview-text-light);
+  box-shadow: var(--testview-shadow-sm);
+  white-space: nowrap;
+}
+
+
+/* Content Section */
+.testcase-detail-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+/* Details & History Cards */
+.testcase-detail-card,
+.testcase-history-card {
+  background-color: var(--testview-bg-light);
+  border-radius: var(--testview-border-radius);
+  box-shadow: var(--testview-shadow-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.testcase-detail-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--testview-border-color);
+  flex-shrink: 0;
+}
+
+.testcase-detail-card-header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--testview-text-dark);
+  margin: 0;
+  margin-right: 1rem;
+}
+
+/* Info Grid */
 .testcase-detail-info-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  margin-top: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--testview-border-color);
+  flex-shrink: 0;
 }
 
-.testcase-detail-info-grid div {
-  padding: 12px;
-  border-bottom: 1px solid #ddd;
-  font-size: 16px; /* เพิ่มขนาดฟอนต์ */
-  font-weight: 500; /* ทำให้หนาขึ้นเล็กน้อย */
+.testcase-detail-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-/* ปรับสีให้กับ Status */
-.testcase-detail-status {
-  font-weight: bold;
-  font-size: 15px;
-  padding: 6px 12px;
-  border-radius: 5px;
+.testcase-detail-info-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--testview-text-lighter);
 }
 
-.testcase-detail-status-passed {
-  color: #155724;
-  background-color: #d4edda;
-  border: 1px solid #c3e6cb;
+.testcase-detail-info-label svg {
+  width: 16px;
+  height: 16px;
 }
 
-.testcase-detail-status-failed {
-  color: #721c24;
-  background-color: #f8d7da;
-  border: 1px solid #f5c6cb;
+.testcase-detail-info-value {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--testview-text-dark);
+  word-break: break-word;
+  white-space: nowrap;
 }
 
-.testcase-detail-status-working {
-  color: #856404;
-  background-color: #fff3cd;
-  border: 1px solid #ffeeba;
+.testcase-detail-info-item .testcase-detail-status-badge {
+  align-self: flex-start;
 }
 
-/* Attachments */
-.testcase-detail-attachments {
+/* Description Section */
+.testcase-detail-description-section {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--testview-border-color);
+  flex-shrink: 0;
+}
+
+.testcase-detail-description-section h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--testview-text-dark);
+  margin-bottom: 1rem;
+}
+
+.testcase-detail-description-content {
+  font-size: 0.938rem;
+  color: var(--testview-text-color);
+  line-height: 1.6;
+  white-space: pre-line;
+  border-radius: var(--testview-border-radius);
+  background-color: var(--testview-bg-dark);
+  padding: 1rem;
+}
+
+/* Linked IDs Section */
+.testcase-detail-linked-ids-section {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--testview-border-color);
+  flex-shrink: 0;
+}
+
+.testcase-detail-linked-ids-section h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--testview-text-dark);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.testcase-detail-linked-ids-list ul {
   list-style: none;
   padding-left: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
-.testcase-detail-attachments li {
+.testcase-detail-linked-ids-list li {
+  padding: 0.25rem 0.75rem;
+  background-color: var(--testview-bg-dark);
+  margin-bottom: 0;
+  border-radius: var(--testview-border-radius);
+  font-size: 0.875rem;
+}
+
+.testcase-detail-linked-ids-list p {
+  font-size: 0.875rem;
+  color: var(--testview-text-light);
+}
+
+/* Test Procedures Section */
+.testcase-detail-procedures-section {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--testview-border-color);
+  flex-shrink: 0;
+}
+
+.testcase-detail-procedures-section h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--testview-text-dark);
+  margin-bottom: 1rem;
+}
+
+.test-procedures-wrapper {
+  /* Add specific styles if needed */
+}
+
+/* Verification Section */
+.testcase-detail-verification-section {
+  padding: 1.5rem;
+  flex-shrink: 0;
+}
+
+.testcase-detail-verification-section h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--testview-text-dark);
+  margin-bottom: 1rem;
   display: flex;
   align-items: center;
-  font-size: 18px; /* เพิ่มขนาด */
-  font-weight: 500; /* ทำให้หนาขึ้น */
-  padding: 10px 0;
+  gap: 0.5rem;
 }
 
-.testcase-detail-attachments li svg {
-  margin-right: 10px;
-  color: #007bff;
+.testcase-detail-verification-content {
+  padding: 1rem;
+  border-radius: var(--testview-border-radius);
 }
 
-.back-button {
+.testcase-detail-verification-details p {
+  margin-bottom: 1rem;
+}
+
+.testcase-detail-reviewer-list,
+.testcase-detail-checklist-list {
+  list-style: none;
+  padding-left: 1.5rem;
+}
+
+.testcase-detail-reviewer-list li,
+.testcase-detail-checklist-list li {
+  padding: 0.25rem 0;
+  font-size: 0.9rem;
+}
+
+/* History Section */
+.testcase-detail-history-title {
   display: flex;
   align-items: center;
-  background-color: red;
+  gap: 0.75rem;
+}
+
+.testcase-detail-history-topic {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--testview-text-dark);
+  margin: 0;
+}
+
+.testcase-detail-history-title svg {
+  color: var(--testview-primary-color);
+  /* Use new primary color */
+}
+
+.testcase-detail-history-table-container {
+  padding: 0;
+  overflow-x: auto;
+  flex-grow: 1;
+}
+
+/* History Table */
+.testcase-detail-history-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 100%;
+}
+
+.testcase-detail-history-table th {
+  background-color: var(--testview-bg-dark);
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-align: left;
+  padding: 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.testcase-detail-history-table th svg {
+  width: 16px;
+  height: 16px;
+  margin-right: 0.5rem;
+  vertical-align: text-bottom;
+}
+
+.testcase-detail-history-table td {
+  padding: 1rem;
+  border-top: 1px solid var(--testview-border-color);
+  font-size: 0.875rem;
+  vertical-align: middle;
+}
+
+.testcase-detail-history-table tbody tr {
+  transition: var(--testview-transition);
+}
+
+.testcase-detail-history-table tbody tr:hover {
+  background-color: var(--testview-bg-dark);
+}
+
+/* Status Badge */
+.testcase-detail-status-badge {
+  display: inline-block;
+  padding: 0.375rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Specific Status Styles (Updated for Green Theme) */
+.testcase-detail-status-badge.working {
+  background-color: var(--testview-warning-light);
+  color: var(--testview-warning-color);
+}
+
+/* Keep warning */
+.testcase-detail-status-badge.ready-for-review {
+  background-color: var(--testview-info-light);
+  color: var(--testview-info-color);
+}
+
+/* Use info blue */
+.testcase-detail-status-badge.verified {
+  background-color: var(--testview-primary-light);
+  color: var(--testview-primary-color);
+}
+
+/* Use primary green */
+.testcase-detail-status-badge.submitted {
+  background-color: var(--testview-info-light);
+  color: var(--testview-info-color);
+}
+
+/* Use info blue */
+.testcase-detail-status-badge.baseline {
+  background-color: #E8F5E9;
+  color: #1B5E20;
+}
+
+/* Use info blue */
+.testcase-detail-status-badge.waiting-for-verification {
+  background-color: #E1F5FE;
+  color: #0C5460;
+}
+
+/* Keep specific green */
+.testcase-detail-status-badge.approved {
+  background-color: #F3E8FF;
+  color: #553C9A;
+}
+
+/* Keep purple */
+.testcase-detail-status-badge.implemented {
+  background-color: var(--testview-info-light);
+  color: var(--testview-info-color);
+}
+
+/* Keep info blue */
+.testcase-detail-status-badge.rejected {
+  background-color: var(--testview-danger-light);
+  color: var(--testview-danger-color);
+}
+
+/* Keep danger red */
+.testcase-detail-status-badge.rework {
+  background-color: var(--testview-warning-light);
+  color: var(--testview-warning-color);
+}
+
+/* Use warning */
+.testcase-detail-status-badge.obsolete {
+  background-color: var(--testview-secondary-color);
   color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
-  margin-bottom: 15px;
 }
 
-.back-icon {
-  margin-right: 8px;
+/* Keep secondary grey */
+.testcase-detail-status-badge.default-status {
+  background-color: var(--testview-secondary-color);
+  color: white;
+}
+
+
+/* Loading Spinner */
+.testcase-detail-loading-spinner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  padding: 2rem;
+}
+
+.testcase-detail-loading-spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: var(--testview-primary-color);
+  /* Use new primary color */
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+.loading-text {
+  font-size: 1rem;
+  color: var(--testview-text-light);
+}
+
+/* Error Message */
+.testcase-detail-error-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100px;
+  color: var(--testview-danger-color);
+  text-align: center;
+  padding: 1rem;
+  background-color: var(--testview-danger-light);
+  border: 1px solid var(--testview-danger-color);
+  border-radius: var(--testview-border-radius);
+  margin: 1rem 0;
+}
+
+.testcase-detail-not-found-message {
+  text-align: center;
+  padding: 2rem;
+  color: var(--testview-text-light);
+}
+
+/* Empty History */
+.testcase-detail-history-table-container>p {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  color: var(--testview-text-lighter);
+  background-color: var(--testview-bg-dark);
+  border-radius: var(--testview-border-radius);
+  margin: 1.5rem;
+}
+
+/* Animations */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* History Tabs */
+.testcase-detail-history-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--testview-border-color);
+  background-color: var(--testview-bg-dark);
+  flex-shrink: 0;
+}
+
+.testcase-detail-tab {
+  padding: 1rem 1.5rem;
+  flex-grow: 1;
+  flex-basis: 0;
+  text-align: center;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -1px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--testview-text-light);
+  cursor: pointer;
+  transition: var(--testview-transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.testcase-detail-tab:not(:last-child) {
+  border-right: 1px solid var(--testview-border-color);
+}
+
+.testcase-detail-tab.active {
+  color: var(--testview-primary-color);
+  /* Use new primary color */
+  background-color: var(--testview-bg-light);
+  font-weight: 600;
+  border-bottom-color: var(--testview-primary-color);
+  /* Use new primary color */
+}
+
+.testcase-detail-tab:hover:not(.active) {
+  /* Use primary color with low opacity for hover */
+  background-color: rgba(16, 185, 129, 0.05);
+  /* Use RGB of #10b981 */
+  color: var(--testview-text-dark);
+}
+
+.testcase-detail-tab svg {
+  color: currentColor;
+  width: 16px;
+  height: 16px;
+}
+
+/* Tab Content Container */
+.testcase-detail-history-tab-content {
+  overflow: hidden;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.testcase-detail-history-tab-content>div {
+  animation: fadeIn 0.3s ease-in;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.testcase-detail-history-table-container {
+  padding: 1.5rem;
+  flex-grow: 1;
+}
+
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+  .testcase-detail-dashboard {
+    padding: 1rem;
+  }
+
+  .testcase-detail-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .testcase-detail-header-title {
+    order: -1;
+    margin-bottom: 1rem;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .testcase-detail-header-title .testcase-detail-title {
+    font-size: 1.5rem;
+  }
+
+  .testcase-detail-header-left,
+  .testcase-detail-header-right {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .testcase-detail-back-button {
+    width: auto;
+  }
+
+  .testcase-detail-id-badge {
+    margin-left: 0;
+  }
+
+  .testcase-detail-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .testcase-detail-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .testcase-detail-card-header .testcase-detail-status-badge {
+    align-self: flex-start;
+  }
+
+  .testcase-detail-history-tabs {
+    flex-direction: column;
+  }
+
+  .testcase-detail-tab {
+    border-bottom: 1px solid var(--testview-border-color);
+    border-right: none;
+    margin-bottom: 0;
+    border-left: 3px solid transparent;
+    border-bottom-color: transparent;
+    justify-content: flex-start;
+    padding: 1rem;
+  }
+
+  .testcase-detail-tab:last-child {
+    border-bottom: none;
+  }
+
+  .testcase-detail-tab.active {
+    border-left-color: var(--testview-primary-color);
+    border-bottom-color: transparent;
+  }
+
+  .testcase-detail-history-table th,
+  .testcase-detail-history-table td {
+    padding: 0.75rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .testcase-detail-content {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  }
+
+  .testcase-history-card {
+    height: fit-content;
+    max-height: calc(100vh - 10rem);
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+/* In TestcaseDetail.css */
+
+/* --- Verification Tab Content Styling --- */
+
+/* Container for the whole verification tab section */
+.testcase-detail-verification-tab-container {
+  padding-top: 20px;
+  /* Space above the verification content */
+  padding-left: 15px;
+  /* Match potential padding of history table container */
+  padding-right: 15px;
+  padding-bottom: 15px;
+  /* Add padding at the bottom */
+}
+
+/* Optional inner content wrapper if needed */
+.testcase-detail-verification-content {
+  /* Add styles if needed */
+}
+
+/* Main details container */
+.testcase-detail-verification-details {
+  font-size: 0.9rem;
+  /* Default text color */
+}
+
+/* Verified At line */
+.testcase-detail-verification-details>p:first-child {
+  /* Target the 'Verified At' paragraph */
+  margin-bottom: 1.25rem;
+  /* Space below Verified At */
+  color: var(--text-color-primary-veritestcase);
+  /* Make date/time text darker */
+}
+
+.testcase-detail-verification-details>p:first-child strong {
+  color: var(--text-color-secondary-veritestcase);
+  /* Keep label slightly lighter */
+  font-weight: 600;
+  /* Make label bold */
+}
+
+
+/* Sub-items (Verified By, Checklist Used) */
+.testcase-detail-verification-sub-item {
+  margin-bottom: 1.25rem;
+  /* Space between sub-items */
+}
+
+.testcase-detail-verification-sub-item:last-child {
+  margin-bottom: 0;
+  /* No margin on the last item */
+}
+
+/* Label styling (Icon + Text) */
+.testcase-detail-verification-sub-item strong {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  /* Space between icon and text */
+  font-weight: 600;
+  /* Bold label */
+  color: var(--text-color-primary-veritestcase);
+  /* Darker label */
+  margin-bottom: 0.5rem;
+  /* Space below label before list */
+  font-size: 0.95rem;
+  /* Slightly larger label */
+}
+
+.testcase-detail-verification-sub-item strong svg {
+  width: 16px;
+  height: 16px;
+  margin-right: 0.2rem;
+  vertical-align: text-bottom;
+}
+
+/* List styling (Reviewers, Checklist) */
+.testcase-detail-reviewer-list,
+.testcase-detail-checklist-list {
+  list-style: none;
+  padding-left: 24px;
+  /* Indent the list (adjust based on icon size + gap) */
+  margin: 0;
+}
+
+.testcase-detail-reviewer-list li,
+.testcase-detail-checklist-list li {
+  margin-bottom: 4px;
+  /* Space between list items */
+  color: var(--text-color-secondary-veritestcase);
+  /* Standard text color */
+  line-height: 1.5;
+}
+
+.testcase-detail-reviewer-list li:last-child,
+.testcase-detail-checklist-list li:last-child {
+  margin-bottom: 0;
+}
+
+
+/* Specific style for empty state messages within verification */
+.no-verification-message {
+  /* Applied to the <p> tag */
+  color: var(--text-color-muted-veritestcase);
+  font-style: italic;
+  padding: 10px 0;
 }

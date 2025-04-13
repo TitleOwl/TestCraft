@@ -179,7 +179,7 @@ body {
 .create-tc-veri-left-panel .create-tc-veri-select-all {
     justify-content: space-between;
     /* ดัน count ไปขวา */
-    background-color: var(--bg-select-all, #f1f5f9);
+    background-color: #f0fdf4;
     /* พื้นหลังเทาอ่อน */
 }
 
@@ -322,7 +322,7 @@ body {
     padding: 12px 20px;
     border-bottom: 1px solid var(--border, #e2e8f0);
     font-size: 14px;
-    background-color: #eef1f8;
+    background-color: #f0fdf4;
 }
 
 /* --- เพิ่ม Rule สำหรับกลุ่มด้านซ้าย (Checkbox + Label) --- */
@@ -360,9 +360,7 @@ body {
 
 /* --- Custom Checkbox (ตรวจสอบว่า style ยังอยู่) --- */
 .create-tc-veri-container input[type="checkbox"] {
-    /* ... custom checkbox styles ... */
     margin: 0;
-    /* Reset margin */
 }
 
 
@@ -440,12 +438,9 @@ body {
 
 /* Table cell content styling */
 .tc-id {
-    /* Class for Test Case ID */
-    font-family: monospace;
+    font-family: "SF Mono", "Roboto Mono", monospace;
     font-size: 13px;
-    color: var(--text-secondary);
-    /* Different color? */
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .tc-status-badge {
@@ -665,7 +660,7 @@ body {
 
 /* --- Summary Section --- */
 .create-tc-veri-summary {
-    background-color: #eef1f8;
+    background-color: #f0fdf4;
     padding: 16px 20px;
     border-top: 1px solid var(--border);
     margin-top: auto;

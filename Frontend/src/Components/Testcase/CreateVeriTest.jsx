@@ -336,7 +336,6 @@ const CreateVeriTest = () => {
                   <input
                     type="checkbox"
                     className="create-tc-veri-checkbox"
-                    // className="create-tc-veri-checkbox" // Class นี้อาจจะไม่จำเป็นถ้า CSS เจาะจงจาก container ได้
                     id="select-all-testcases"
                     checked={filteredTestCases.length > 0 && selectedTestCase.length === filteredTestCases.length}
                     onChange={handleSelectAllTestCases}

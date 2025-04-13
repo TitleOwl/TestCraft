@@ -8,7 +8,7 @@
   --viewde-primary-light: #fde7d0; /* Light Orange for backgrounds/highlights */
 
   /* Other Colors (prefixed) */
-  --viewde-secondary-color: #64748b;
+  --viewde-secondary-color: #E1F5FE;
   --viewde-text-color: #1e293b;
   --viewde-text-light: #64748b;
   --viewde-text-lighter: #94a3b8;
@@ -387,7 +387,7 @@ body {
 .design-status-badge.implemented { background-color: var(--viewde-info-light); color: var(--viewde-info-color); }
 .design-status-badge.rejected { background-color: var(--viewde-danger-light); color: var(--viewde-danger-color); }
 .design-status-badge.draft { background-color: var(--viewde-bg-dark); color: var(--viewde-text-light); }
-.design-status-badge.default-status { background-color: var(--viewde-secondary-color); color: white; }
+.design-status-badge.default-status { background-color: var(--viewde-secondary-color); color: #0C5460; }
 
 /* Loading Spinner */
 .design-loading-spinner-container {

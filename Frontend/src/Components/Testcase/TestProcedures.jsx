@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faSave, faTrash, faTimes, faEdit } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faSave, faTrash, faTimes, faEdit, faChevronUp, faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import axios from "axios";
 import "./testcase_css/TestProcedures.css";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css'; // or quill.bubble.css
 
 const TestProcedures = () => {
   const [procedures, setProcedures] = useState([]);
@@ -14,23 +16,20 @@ const TestProcedures = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const testcaseId = queryParams.get("testcase_id");
+  const [isTableExpanded, setIsTableExpanded] = useState(true);
 
   useEffect(() => {
     fetchTestProcedures();
   }, [testcaseId]);
 
-  const fetchTestProcedures = () => {
-    if (!testcaseId) return;
-
+  const fetchTestProcedures = useCallback(() => {
+    if (!testcaseId) { setProcedures([]); return; };
     axios.get(`http://localhost:3001/api/test-procedures?testcase_id=${testcaseId}`)
-        .then((response) => {
-            console.log("Fetched Data:", response.data);  // ✅ Debug Response Data
-            setProcedures(response.data);
-        })
-        .catch((error) => {
-            console.error("Error fetching data:", error.response?.status, error.response?.data);
-        });
-};
+      .then((response) => { setProcedures(response.data || []); })
+      .catch((error) => { console.error("Error fetching data:", error); setProcedures([]); });
+  }, [testcaseId]);
+
+  useEffect(() => { fetchTestProcedures(); }, [fetchTestProcedures]);
 
   const handleOpenModal = (step = null) => {
     setEditingStep(step);
@@ -44,120 +43,155 @@ const TestProcedures = () => {
     setNewStep({ required_action: "", expected_result: "", prerequisite: "" });
   };
 
-  const handleChange = (e) => {
-    setNewStep({ ...newStep, [e.target.name]: e.target.value });
+  const handleQuillChange = (content, fieldName) => {
+    setNewStep(prev => ({ ...prev, [fieldName]: content }));
   };
 
-  const handleSaveStep = () => {
+  const handleSaveStep = useCallback(() => {
     if (!testcaseId) return;
+    // newStep ตอนนี้เป็น object ที่มี HTML string
+    const apiCall = editingStep
+      ? axios.put(`http://localhost:3001/api/test-procedures/${editingStep.test_procedures_id}`, newStep)
+      : axios.post("http://localhost:3001/api/test-procedures", { testcase_id: testcaseId, ...newStep });
+    apiCall
+      .then(() => { fetchTestProcedures(); handleCloseModal(); })
+      .catch((error) => console.error(`Error ${editingStep ? 'updating' : 'saving'} data:`, error));
+  }, [editingStep, newStep, testcaseId, fetchTestProcedures]);
 
-    if (editingStep) {
-      axios.put(`http://localhost:3001/api/test-procedures/${editingStep.test_procedures_id}`, newStep)
-        .then(() => {
-          fetchTestProcedures();
-          handleCloseModal();
-        })
-        .catch((error) => console.error("Error updating data:", error));
-    } else {
-      axios.post("http://localhost:3001/api/test-procedures", {
-        testcase_id: testcaseId,
-        ...newStep
-      })
-      .then(() => {
-        fetchTestProcedures();
-        handleCloseModal();
-      })
-      .catch((error) => console.error("Error saving data:", error));
-    }
-  };
-
-  const handleDeleteStep = (id) => {
+  const handleDeleteStep = useCallback((id) => {
     if (window.confirm("Are you sure you want to delete this test procedure?")) {
       axios.delete(`http://localhost:3001/api/test-procedures/${id}`)
         .then(() => fetchTestProcedures())
         .catch((error) => console.error("Error deleting data:", error));
     }
-  };
+  });
 
-  const handleDragEnd = (result) => {
+  const handleDragEnd = useCallback((result) => {
     if (!result.destination) return;
     const reorderedProcedures = Array.from(procedures);
     const [movedStep] = reorderedProcedures.splice(result.source.index, 1);
     reorderedProcedures.splice(result.destination.index, 0, movedStep);
     setProcedures(reorderedProcedures);
+  });
+
+  const quillModules = {
+    toolbar: [
+      [{ 'header': [1, 2, 3, false] }],
+      ['bold', 'italic', 'underline'], // เพิ่ม italic, underline
+      [{ 'color': [] }],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }], // เพิ่ม list
+      ['clean']
+    ],
   };
+  const quillFormats = [
+    'header',
+    'bold', 'italic', 'underline', 'color',
+    'list', 'bullet'
+  ];
 
   return (
-    <div className="test-procedures-container">
-      <div className="test-procedures-header">
-        <h3>Test Procedures</h3>
-        <button className="add-test-step-btn" onClick={() => handleOpenModal()}>
-          <FontAwesomeIcon icon={faPlus} /> Add Test Step
-        </button>
+    <div className={`test-procedures-container-testprocedures ${isTableExpanded ? 'expanded' : 'collapsed'}`}>
+      <div className="test-procedures-header-testprocedures">
+        <div className="test-procedures-header-actions-testprocedures">
+          <h3>Test Procedures</h3>
+          <button className="add-test-step-btn" onClick={() => handleOpenModal()}>
+            <FontAwesomeIcon icon={faPlus} /> Add Test Step
+          </button>
+        </div>
       </div>
 
-      <DragDropContext onDragEnd={handleDragEnd}>
-        <Droppable droppableId="test-steps">
-          {(provided) => (
-            <div className="table-wrapper" {...provided.droppableProps} ref={provided.innerRef}>
-              <table className="test-procedures-table">
-                <thead>
-                  <tr>
-                    <th>Step No</th>
-                    <th>Required Action</th>
-                    <th>Expected Result</th>
-                    <th>Prerequisite</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {procedures.map((proc, index) => (
-                    <Draggable key={proc.test_procedures_id} draggableId={proc.test_procedures_id.toString()} index={index}>
-                      {(provided) => (
-                        <tr ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-                          <td>{index + 1}</td>
-                          <td>{proc.required_action}</td>
-                          <td>{proc.expected_result}</td>
-                          <td>{proc.prerequisite}</td>
-                          <td>
-                            <button className="edit-btn" onClick={() => handleOpenModal(proc)}>
-                              <FontAwesomeIcon icon={faEdit} />
-                            </button>
-                            <button className="delete-btn" onClick={() => handleDeleteStep(proc.test_procedures_id)}>
-                              <FontAwesomeIcon icon={faTrash} />
-                            </button>
-                          </td>
-                        </tr>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
+      <div className={`table-wrapper-testprocedures ${isTableExpanded ? '' : 'collapsed'}`}>
+        <table className="test-procedures-table">
+          <thead>
+            <tr>
+              <th>Step No</th>
+              <th>Required Action</th>
+              <th>Expected Result</th>
+              <th>Prerequisite</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {procedures.map((proc, index) => (
+              <tr key={proc.test_procedures_id}>
+                <td>{index + 1}</td>
+                <td><div className="procedure-content-display-testprocedures" dangerouslySetInnerHTML={{ __html: proc.required_action || '' }} /></td>
+                <td><div className="procedure-content-display-testprocedures" dangerouslySetInnerHTML={{ __html: proc.expected_result || '' }} /></td>
+                <td><div className="procedure-content-display-testprocedures" dangerouslySetInnerHTML={{ __html: proc.prerequisite || '' }} /></td>
+                <td>
+                  <button className="edit-btn-testprocedures" onClick={() => handleOpenModal(proc)}> <FontAwesomeIcon icon={faEdit} /> </button>
+                  <button className="delete-btn-testprocedures" onClick={() => handleDeleteStep(proc.test_procedures_id)}> <FontAwesomeIcon icon={faTrash} /> </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
+      {/* --- Modal --- */}
       {isModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <button className="modal-close-btn" onClick={handleCloseModal}>
-              <FontAwesomeIcon icon={faTimes} />
-            </button>
-            <h3>{editingStep ? "Edit Test Step" : "Create Test Step"}</h3>
-            <label>Required Action</label>
-            <input type="text" name="required_action" value={newStep.required_action} onChange={handleChange} />
+        <div className="modal-overlay-testprocedures">
+          <div className="modal-content-testprocedures">
+            {/* เพิ่ม Modal Header เพื่อให้มี Title และปุ่มปิดแยกส่วน */}
+            <div className="modal-header-testprocedures">
+              <h3 className="modal-title-testprocedures">{editingStep ? "Edit Test Step" : "Add Test Step"}</h3>
+              <button className="modal-close-btn-testprocedures" onClick={handleCloseModal}>
+                <FontAwesomeIcon icon={faTimes} />
+              </button>
+            </div>
 
-            <label>Expected Result</label>
-            <input type="text" name="expected_result" value={newStep.expected_result} onChange={handleChange} />
+            {/* เพิ่ม Modal Body เพื่อครอบ content */}
+            <div className="modal-body-testprocedures">
+              {/* ใช้ div ครอบ label และ editor แต่ละชุด */}
+              <div className="modal-form-group-testprocedures">
+                <label htmlFor="required_action_modal">Required Action</label>
+                <ReactQuill
+                  id="required_action_modal"
+                  theme="snow"
+                  value={newStep.required_action}
+                  onChange={(content) => handleQuillChange(content, 'required_action')}
+                  modules={quillModules}
+                  formats={quillFormats}
+                  className="modal-rte-testprocedures"
+                  placeholder="Describe the action required..."
+                />
+              </div>
 
-            <label>Prerequisite</label>
-            <input type="text" name="prerequisite" value={newStep.prerequisite} onChange={handleChange} />
+              <div className="modal-form-group-testprocedures">
+                <label htmlFor="expected_result_modal">Expected Result</label>
+                <ReactQuill
+                  id="expected_result_modal"
+                  theme="snow"
+                  value={newStep.expected_result}
+                  onChange={(content) => handleQuillChange(content, 'expected_result')}
+                  modules={quillModules}
+                  formats={quillFormats}
+                  className="modal-rte-testprocedures"
+                  placeholder="Describe the expected outcome..."
+                />
+              </div>
 
-            <button className="save-btn" onClick={handleSaveStep}>
-              <FontAwesomeIcon icon={faSave} /> {editingStep ? "Update" : "Save"}
-            </button>
+              <div className="modal-form-group-testprocedures">
+                <label htmlFor="prerequisite_modal">Prerequisite</label>
+                <ReactQuill
+                  id="prerequisite_modal"
+                  theme="snow"
+                  value={newStep.prerequisite}
+                  onChange={(content) => handleQuillChange(content, 'prerequisite')}
+                  modules={quillModules}
+                  formats={quillFormats}
+                  className="modal-rte-testprocedures"
+                  placeholder="List any prerequisites..."
+                />
+              </div>
+            </div> {/* ปิด modal-body-testprocedures */}
+
+            {/* เพิ่ม Modal Footer สำหรับปุ่ม */}
+            <div className="modal-footer-testprocedures">
+              <button className="save-btn-testprocedures" onClick={handleSaveStep}>
+                <FontAwesomeIcon icon={editingStep ? faSave : faPlus} /> {editingStep ? "Update" : "Add"}
+              </button>
+            </div>
           </div>
         </div>
       )}

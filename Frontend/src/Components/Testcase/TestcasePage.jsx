@@ -336,7 +336,6 @@ const TestcasePage = () => {
                 <tr>
                   <th>Test Case ID</th>
                   <th>Title</th>
-                  <th>Type</th>
                   <th>Priority</th>
                   <th>Test Completion Date</th>
                   <th>Status</th>
@@ -358,11 +357,6 @@ const TestcasePage = () => {
 
                     <td className="testcase-name-cell">{test.testcase_name}</td>
 
-                    <td className="testcase-type-cell">
-                      <span className={`testcase-type-badge type-${test.testcase_type?.toLowerCase()}`}>
-                        {test.testcase_type || "Not set"}
-                      </span>
-                    </td>
 
                     <td className="testcase-priority-cell">
                       <span className={`testcase-priority-badge priority-${test.testcase_priority?.toLowerCase()}`}>

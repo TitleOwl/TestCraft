@@ -1,102 +1,133 @@
+// ModalVeriTestcase.js
+
 import React from 'react';
-// Import CSS ที่จะมีการแก้ไข Class Name ด้วย
-import "./testcase_css/VeriTestcaseModal.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faTimes,
     faUsers,
-    faUserCircle,
-    faTimesCircle,
-    faCheckCircle,
-    faListCheck,    // Icon สำหรับ Test Case Section
-    faFileAlt       // Icon สำหรับ Test Case Item (ตัวอย่าง)
+    faUser,
+    faClipboardList,
+    faClipboardCheck,
+    faCheckCircle
+    // Add faClock or faHourglass if you want a different icon for "Not Verified" status
 } from '@fortawesome/free-solid-svg-icons';
+
+// Import the new CSS file for the modal
+import './testcase_css/VeriTestcaseModal.css'; // <<< Make sure this path is correct
+
+// Helper function (optional, can be passed as prop or defined elsewhere)
+const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    try {
+        const options = { year: 'numeric', month: 'short', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString('en-GB', options);
+    } catch (e) {
+        console.error("Error formatting date:", dateString, e);
+        return "Invalid Date";
+    }
+};
+
 
 const ModalVeriTestcase = ({ show, onClose, details = {}, veritestcaseBy = [] }) => {
     if (!show) return null;
 
-    // --- เปลี่ยนชื่อตัวแปร ---
-    const linkedTestcaseIds = details.testcase_id // << เปลี่ยนชื่อตัวแปร
-        ? (Array.isArray(details.testcase_id) ? details.testcase_id : [details.testcase_id])
-        : [];
-
-    const handleModalContentClick = (e) => {
-        e.stopPropagation();
-    };
+    // Destructure details for easier access
+    const { verif_round, created_by, assigned_date, linked_testcases = [] } = details;
 
     return (
-        <div className="modal-overlay-vt" onClick={onClose}>
-            <div className="modal-content-vt" onClick={handleModalContentClick}>
-
-                {/* === Modal Header === */}
+        // Use class names from VeriTestcaseModal.css
+        <div className="modal-overlay-vt">
+            <div className="modal-content-vt">
                 <div className="modal-header-vt">
-                    <h2 className="modal-title-vt">Verification Details</h2>
-                    <button className="modal-close-btn-vt" onClick={onClose}>
+                    <h3 className="modal-title-vt"> {/* Apply title class */}
+                        Verification Details (VERIF-{verif_round || 'N/A'})
+                    </h3>
+                    <button className="modal-close-btn-vt" onClick={onClose}> {/* Apply close button class */}
                         <FontAwesomeIcon icon={faTimes} />
                     </button>
                 </div>
+                <div className="modal-body-vt"> {/* Apply body class */}
 
-                {/* === Modal Body === */}
-                <div className="modal-body-vt">
-
-                    {/* --- Reviewers Section (เหมือนเดิม) --- */}
-                    <div className="modal-section-vt">
-                        <h3 className="section-header-vt">
-                            <FontAwesomeIcon icon={faUsers} className="section-icon-vt" />
+                    {/* Reviewers Section */}
+                    <div className="modal-section-vt"> {/* Apply section wrapper */}
+                        <h4 className="section-header-vt"> {/* Apply section header class */}
+                            <FontAwesomeIcon icon={faUsers} className="section-icon-vt" /> {/* Apply icon class */}
                             Reviewers
-                        </h3>
-                        <div className="section-content-vt">
-                            {Array.isArray(veritestcaseBy) && veritestcaseBy.length > 0 ? (
+                        </h4>
+                        <div className="section-content-vt"> {/* Apply section content wrapper */}
+                            {veritestcaseBy.length > 0 ? (
                                 veritestcaseBy.map((reviewer, index) => (
+                                    // Apply reviewer item class
                                     <div className="reviewer-item-vt" key={index}>
-                                        <FontAwesomeIcon icon={faUserCircle} className="reviewer-avatar-icon-vt" />
+                                        {/* Apply avatar icon class */}
+                                        <FontAwesomeIcon icon={faUser} className="reviewer-avatar-icon-vt" />
+                                        {/* Apply reviewer info wrapper class */}
                                         <div className="reviewer-info-vt">
-                                            <span className="reviewer-name-vt">{reviewer.name || "Unknown"}</span>
-                                            <span className={`reviewer-status-vt ${reviewer.value === true ? 'verified' : 'not-verified'}`}>
-                                                {reviewer.value === true ? "Verified" : "Not verified"}
+                                             {/* Apply name class */}
+                                            <span className="reviewer-name-vt">{reviewer.name}</span>
+                                             {/* Apply status class + conditional verified/not-verified */}
+                                            <span className={`reviewer-status-vt ${reviewer.value ? 'verified' : 'not-verified'}`}>
+                                                {reviewer.value ? 'Verified' : 'Not verified'}
                                             </span>
                                         </div>
+                                        {/* Apply status icon class + conditional verified/not-verified */}
                                         <FontAwesomeIcon
-                                            icon={reviewer.value === true ? faCheckCircle : faTimesCircle}
-                                            className={`reviewer-status-icon-vt ${reviewer.value === true ? 'verified' : 'not-verified'}`}
+                                            icon={reviewer.value ? faCheckCircle : faTimes} // Use faTimes or another icon for not verified
+                                            className={`reviewer-status-icon-vt ${reviewer.value ? 'verified' : 'not-verified'}`}
                                         />
                                     </div>
                                 ))
                             ) : (
-                                <p className="no-data-vt">No reviewer data available.</p>
+                                 // Apply no data class
+                                <div className="no-data-vt">No reviewers assigned or status unavailable.</div>
                             )}
                         </div>
                     </div>
 
-                    {/* --- Test Cases Section (เปลี่ยนจาก Requirements) --- */}
-                    <div className="modal-section-vt">
-                        <h3 className="section-header-vt">
-                            <FontAwesomeIcon icon={faListCheck} className="section-icon-vt" />
-                            {/* --- เปลี่ยนข้อความ --- */}
+                    {/* Linked Test Cases Section */}
+                    <div className="modal-section-vt"> {/* Apply section wrapper */}
+                        <h4 className="section-header-vt"> {/* Apply section header class */}
+                            <FontAwesomeIcon icon={faClipboardList} className="section-icon-vt" /> {/* Apply icon class */}
                             Linked Test Cases
-                        </h3>
-                        <div className="section-content-vt">
-                            {/* --- เปลี่ยนชื่อตัวแปร --- */}
-                            {linkedTestcaseIds.length > 0 ? (
-                                linkedTestcaseIds.map((id, index) => (
-                                    // --- เปลี่ยน Class Name ---
-                                    <div className="testcase-item-vt" key={index}> {/* << เปลี่ยน class */}
-                                        {/* --- เปลี่ยน Class Name และ Icon (ถ้าต้องการ) --- */}
-                                        <FontAwesomeIcon icon={faFileAlt} className="testcase-icon-vt" /> {/* << เปลี่ยน class และ icon */}
-                                        {/* --- เปลี่ยน Class Name และ Prefix --- */}
-                                        <span className="testcase-id-vt">{`TC-${id.toString().padStart(3, '0')}`}</span> {/* << เปลี่ยน class และ prefix */}
+                        </h4>
+                        <div className="section-content-vt"> {/* Apply section content wrapper */}
+                            {linked_testcases.length > 0 ? (
+                                // Using div instead of ul to match reviewer structure, but ul is also fine
+                                // Apply test case item class
+                                linked_testcases.map((testcaseId, index) => (
+                                    <div key={index} className="testcase-item-vt">
+                                        {/* Apply test case icon class */}
+                                        <FontAwesomeIcon icon={faClipboardCheck} className="testcase-icon-vt" />
+                                        {/* Apply test case id class */}
+                                        <span className="testcase-id-vt">
+                                            TC-{String(testcaseId).padStart(3, '0')}
+                                        </span>
                                     </div>
                                 ))
                             ) : (
-                                // --- เปลี่ยนข้อความ ---
-                                <p className="no-data-vt">No test cases linked.</p>
+                                 // Apply no data class
+                                <div className="no-data-vt">No test cases linked to this verification round.</div>
                             )}
                         </div>
                     </div>
 
-                </div> {/* ปิด modal-body-vt */}
-            </div> {/* ปิด modal-content-vt */}
-        </div> // ปิด modal-overlay-vt
+                    {/* Optional: Other Details Section */}
+                     {/*
+                     <div className="modal-section-vt">
+                         <h4 className="section-header-vt">
+                             <FontAwesomeIcon icon={faInfoCircle} className="section-icon-vt" />
+                             Other Info
+                         </h4>
+                         <div className="section-content-vt other-info-content-vt"> // Optional specific class
+                             <p><strong>Created By:</strong> {created_by || 'N/A'}</p>
+                             <p><strong>Date Assigned:</strong> {assigned_date ? formatDate(assigned_date) : 'N/A'}</p>
+                         </div>
+                     </div>
+                     */}
+
+                </div>
+            </div>
+        </div>
     );
 };
 

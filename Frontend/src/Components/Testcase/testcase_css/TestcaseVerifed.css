@@ -1,334 +1,813 @@
-/* Container สำหรับ Checklist และ Comment */
-.testcaseveri-container {
-    margin-bottom: 50px;
+/* TestcaseVerifed.css - Adapted from ReqVerification.css - Premium Colorful Luxury Design */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    /* Base Colors */
+    --bg-primary-testcasesverified: #ffffff;
+    --bg-secondary-testcasesverified: #f8f9fc;
+    --bg-tertiary-testcasesverified: #eef1f8;
+
+    /* Text Colors */
+    --text-primary-testcasesverified: #1e293b;
+    --text-secondary-testcasesverified: #64748b;
+    --text-light-testcasesverified: #94a3b8;
+
+    /* Primary Brand Colors */
+    --primary-testcasesverified: #10b981;
+    /* Deep indigo */
+    --primary-light-testcasesverified: #818cf8;
+    --primary-dark-testcasesverified: #3730a3;
+
+    /* Accent Colors */
+    --accent-testcasesverified: #0ea5e9;
+    /* Sky blue */
+    --accent-light-testcasesverified: #7dd3fc;
+    --accent-dark-testcasesverified: #0369a1;
+
+    /* Status Colors */
+    --success-testcasesverified: #10b981;
+    /* Emerald */
+    --success-dark-testcasesverified: #059669;
+    --warning-testcasesverified: #f59e0b;
+    /* Amber */
+    --warning-dark-testcasesverified: #b45309;
+    --error-testcasesverified: #ef4444;
+    /* Red */
+    --error-dark-testcasesverified: #b91c1c;
+    --info-testcasesverified: #6366f1;
+    /* Indigo */
+    --working-testcasesverified: #8b5cf6;
+    /* Purple */
+
+    /* UI Elements */
+    --border-testcasesverified: #e2e8f0;
+    --border-light-testcasesverified: #f1f5f9;
+    --border-colored-testcasesverified: #c7d2fe;
+
+    /* Shadows */
+    --shadow-sm-testcasesverified: 0 1px 2px rgba(0, 0, 0, 0.03);
+    --shadow-md-testcasesverified: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --shadow-lg-testcasesverified: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+    --shadow-colored-testcasesverified: 0 4px 12px rgba(79, 70, 229, 0.15);
+
+    /* Border Radius */
+    --radius-sm-testcasesverified: 4px;
+    --radius-md-testcasesverified: 6px;
+    --radius-lg-testcasesverified: 8px;
+
+    /* Transitions */
+    --transition-testcasesverified: all 0.2s ease;
 }
 
-.testcase-verified-container {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    flex-wrap: wrap;
-    margin: 20px;
-}
-
-/* Checklist Section */
-.checklistveri-testcase-box {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    flex: 1;
-    /* ให้กล่องนี้ยืดตามขนาด */
-    max-width: 48%;
-    /* ควบคุมขนาด */
-    min-width: 300px;
-    /* กำหนดขนาดขั้นต่ำ */
-    height: 100%;
-    /* ความสูงเต็มที่ */
-}
-
-/* Comment Section */
-.commentveritestcase-box {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    flex: 1;
-    /* ให้กล่องนี้ยืดตามขนาด */
-    max-width: 48%;
-    /* ควบคุมขนาด */
-    min-width: 300px;
-    /* กำหนดขนาดขั้นต่ำ */
-    height: 100%;
-    /* ความสูงเต็มที่ */
-}
-
-/* Styling ของ Checklist */
-.checklistveri-testcase-title {
-    font-size: 24px;
-    font-weight: 600;
-    color: #2c3e50;
-    margin-bottom: 20px;
-    font-family: 'Arial', sans-serif;
-    letter-spacing: 0.5px;
-    text-align: left;
-}
-
-.checklistveri-testcase-list {
-    list-style-type: none;
-    padding: 0;
+/* Global Reset */
+* {
     margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.checklistveri-testcase-item {
-    margin-bottom: 15px;
-    display: flex;
-    align-items: center;
+body {
+    background-color: var(--bg-secondary-testcasesverified);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-.checklistveri-testcase-checkbox {
-    width: 18px;
-    height: 18px;
-    margin-right: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-/* Hover effect for checkbox label */
-.checklistveri-testcase-label:hover {
-    color: #1abc9c;
-}
-
-/* Focus state on checkbox */
-
-/* Checked state for checkbox */
-.checklistveri-testcase-checkbox:checked {
-    background-color: #1abc9c;
-    border-color: #1abc9c;
-}
-
-.checklistveri-testcase-loading {
-    color: #7f8c8d;
-    font-style: italic;
-    text-align: center;
-    font-size: 16px;
-    margin-top: 10px;
-}
-
-.checklistveri-testcase-label {
-    font-size: 20px;
-    color: #34495e;
-    font-weight: 500;
-    margin-left: 10px;
-    line-height: 1.5;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-/* Styling ของ Comment Section */
-.commentveritestcase-title {
-    font-size: 24px;
-    margin-bottom: 20px;
-    font-weight: 600;
-    color: #2c3e50;
-    font-family: 'Arial', sans-serif;
-    letter-spacing: 0.5px;
-    text-align: left;
-}
-
-.commentveritestcase-input-container {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 15px;
-}
-
-.commentveritestcase-textarea {
-    padding: 10px;
-    font-size: 16px;
-    resize: none;
-    height: 120px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    margin-bottom: 10px;
-}
-
-.commentveritestcase-submit-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    color: white;
-    background-color: #1e3a56;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    align-self: flex-end;
-}
-
-.commentveritestcase-submit-button:hover {
-    background-color: #0056b3;
-}
-
-/* Error Message */
-.commentveritestcase-error-message {
-    color: red;
-    font-size: 14px;
-}
-
-/* No Comments */
-.commentveritestcase-no-comments {
-    font-size: 16px;
-    color: #777;
-}
-
-/* Displaying Comments */
-.commentveritestcase-item {
-    background-color: #f9f9f9;
-    padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-}
-
-.commentveritestcase-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-}
-
-.commentveritestcase-name {
-    font-weight: bold;
-    color: #333;
-}
-
-.commentveritestcase-time {
-    font-size: 14px;
-    color: #777;
-}
-
-.commentveritestcase-text {
-    font-size: 16px;
-    color: #555;
-    margin-top: 20px;
-}
-
-.commentveritestcase-footer {
-    display: flex;
-    justify-content: flex-end;
-}
-
-.commentveritestcase-edit-button,
-.commentveritestcase-delete-button {
-    background: none;
-    border: none;
-    font-size: 18px;
-    color: #007bff;
-    cursor: pointer;
-}
-
-.commentveritestcase-delete-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 5px;
-    transition: transform 0.2s ease, opacity 0.2s ease;
-  }
-  
-  .commentveritestcase-delete-button:hover {
-    transform: scale(1.1);
-    opacity: 0.8;
-  }
-  
-  .commentveritestcase-trash {
-    width: 22px;
-    height: 22px;
-  }
-  
-
-.commentveritestcase-edit-button:hover,
-.commentveritestcase-delete-button:hover {
-    color: #0056b3;
-}
-
-/* Container สำหรับ Table */
-.boxrequirement-testcaseveri {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-}
-
-/* Styling ของ Table */
-.table-req-testcaseveri {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 16px;
-}
-
-.table-req-testcaseveri th,
-.table-req-testcaseveri td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
-
-.table-req-testcaseveri th {
-    background-color: #f8f9fa;
-    font-weight: bold;
-}
-
-.table-req-testcaseveri tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-.table-req-testcaseveri tr:hover {
-    background-color: #f1f1f1;
-}
-
-/* Message when no data is found */
-.table-req-testcaseveri td[colSpan="3"] {
-    text-align: center;
-    font-size: 16px;
-    color: #777;
-    padding: 20px;
-}
-
-/* Button container */
-.button-container {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 20px;
-}
-
-/* Save button */
-.savetestcaseveri-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    color: white;
-    background-color: #007bff;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-.savetestcaseveri-button:hover {
-    background-color: #0056b3;
-}
-
-/* Title - Verification Requirement */
-.title-testcasever {
-    font-size: 28px;
-    font-weight: 600;
-    color: #333;
-    text-align: center;
-    margin-bottom: 20px;
-    margin-top: 30px;
-    font-family: 'Roboto', sans-serif;
-    letter-spacing: 1px;
-    text-transform: capitalize;
-}
-
-/* Title - Software testcase */
-.title-softwaretestcase {
-    font-size: 24px;
-    font-weight: 600;
-    color: #2c3e50;
-    text-align: center;
-    margin-bottom: 30px;
-    font-family: 'Arial', sans-serif;
-    letter-spacing: 0.5px;
+/* Main container */
+.testcaseveri-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 30px;
+    background-color: var(--bg-primary-testcasesverified);
+    min-height: 100vh;
     position: relative;
 }
 
-/* Optional: Add a subtle line underneath for emphasis */
-.title-softwaretestcase::after {
+.testcaseveri-container::before {
     content: '';
-    display: block;
-    width: 80px;
-    height: 4px;
-    background-color: #2c3e50;
-    margin: 10px auto;
-    border-radius: 2px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(to right, var(--primary-testcasesverified));
+    z-index: 1;
+}
 
+/* Header */
+.testcaseveri-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+    position: relative;
+    /* Needed for absolute positioning of back button */
+}
+
+.testcaseveri-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-primary-testcasesverified);
+    margin: 0 auto;
+    /* Center title */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    letter-spacing: -0.02em;
+    padding-left: 80px;
+    /* Add padding to prevent overlap with back button */
+    padding-right: 80px;
+    /* Balance padding */
+    text-align: center;
+    /* Ensure text itself is centered if it wraps */
+}
+
+
+.testcaseveri-title-icon {
+    color: var(--primary-testcasesverified);
+}
+
+/* Back button */
+.testcaseveri-back-btn {
+    background-color: transparent;
+    color: var(--primary-testcasesverified);
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: var(--transition-testcasesverified);
+    position: absolute;
+    /* Position absolutely within the header */
+    left: 0;
+    /* Align to the left */
+    top: 50%;
+    /* Align vertically */
+    transform: translateY(-50%);
+    /* Adjust vertical alignment */
+}
+
+
+.testcaseveri-back-btn:hover {
+    color: #059669;
+    transform: translateY(-50%) translateX(-3px);
+    /* Adjust hover transform */
+}
+
+
+/* Flex container for two columns */
+.testcaseveri-flex-container {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 30px;
+}
+
+/* Box containers */
+.testcaseveri-box {
+    background: var(--bg-primary-testcasesverified);
+    border-radius: var(--radius-lg-testcasesverified);
+    border: 1px solid var(--border-testcasesverified);
+    box-shadow: var(--shadow-md-testcasesverified);
+    overflow: hidden;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    /* Ensure boxes stack content vertically */
+}
+
+/* Box headers */
+.testcaseveri-box h2 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary-testcasesverified);
+    padding: 16px 20px;
+    background-color: var(--bg-secondary-testcasesverified);
+    border-bottom: 1px solid var(--border-testcasesverified);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    /* Remove default margin */
+}
+
+.testcaseveri-icon {
+    color: var(--primary-testcasesverified);
+}
+
+/* Checklist styling */
+.testcaseveri-checklist {
+    list-style: none;
+    padding: 16px;
+    margin: 0;
+    /* Remove default margin */
+    overflow-y: auto;
+    max-height: 400px;
+    /* Adjust as needed */
+    flex-grow: 1;
+    /* Allow checklist to take available space */
+}
+
+.testcaseveri-checklist li {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-light-testcasesverified);
+    transition: var(--transition-testcasesverified);
+}
+
+.testcaseveri-checklist li:last-child {
+    border-bottom: none;
+}
+
+.testcaseveri-checklist li:hover {
+    background-color: var(--bg-tertiary-testcasesverified);
+}
+
+.testcaseveri-checklist label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    width: 100%;
+    color: var(--text-primary-testcasesverified);
+    font-size: 14px;
+}
+
+/* No items message in checklist */
+.testcaseveri-no-items {
+    color: var(--text-light-testcasesverified);
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
+}
+
+
+/* Custom checkbox styling */
+.testcaseveri-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 1px solid var(--border-testcasesverified);
+    border-radius: var(--radius-sm-testcasesverified);
+    background-color: white;
+    cursor: pointer;
+    position: relative;
+    vertical-align: middle;
+    transition: var(--transition-testcasesverified);
+    flex-shrink: 0;
+    /* Prevent checkbox from shrinking */
+}
+
+.testcaseveri-checkbox:checked {
+    background-color: var(--primary-testcasesverified);
+    border-color: var(--primary-testcasesverified);
+}
+
+.testcaseveri-checkbox:checked::after {
+    content: "";
+    position: absolute;
+    top: 4px;
+    left: 6px;
+    width: 5px;
+    height: 9px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.testcaseveri-checkbox:hover:not(:checked) {
+    border-color: var(--primary-light-testcasesverified);
+}
+
+/* Test Case Details table container */
+/* Use .testcaseveri-details if you added this class to the specific box */
+.testcaseveri-details {
+    margin-bottom: 30px;
+    /* Add margin below the details box */
+}
+
+
+.testcaseveri-table {
+    width: 100%;
+    border-collapse: separate;
+    /* Use separate for border-spacing */
+    border-spacing: 0;
+    margin-top: 0;
+    /* Ensure table is flush with the header */
+}
+
+
+.testcaseveri-table th {
+    background-color: var(--bg-secondary-testcasesverified);
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary-testcasesverified);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    border-bottom: 1px solid var(--border-testcasesverified);
+}
+
+.testcaseveri-table td {
+    padding: 12px 16px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--border-light-testcasesverified);
+    color: var(--text-primary-testcasesverified);
+    vertical-align: middle;
+    /* Align content vertically */
+}
+
+
+.testcaseveri-table tr:last-child td {
+    border-bottom: none;
+}
+
+.testcaseveri-table tr:hover {
+    background-color: var(--bg-tertiary-testcasesverified);
+}
+
+/* Test Case ID styling */
+.testcaseveri-table td:first-child {
+    font-family: "SF Mono", "Roboto Mono", monospace;
+    font-size: 13px;
+    color: var(--primary-testcasesverified);
+    font-weight: 500;
+}
+
+/* Action buttons */
+.testcaseveri-button-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    margin-top: 24px;
+    padding-top: 24px;
+    /* Add some space above buttons */
+    border-top: 1px solid var(--border-light-testcasesverified);
+    /* Optional separator */
+}
+
+.testcaseveri-save-button {
+    display: inline-flex;
+    /* Use inline-flex for better alignment */
+    align-items: center;
+    justify-content: center;
+    /* Center content */
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: var(--radius-md-testcasesverified);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-testcasesverified);
+    background-color: var(--primary-testcasesverified);
+    color: white;
+    border: none;
+    box-shadow: var(--shadow-colored-testcasesverified);
+    text-align: center;
+}
+
+.testcaseveri-save-button:hover {
+    background-color: #059669;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(79, 70, 229, 0.2);
+}
+
+.testcaseveri-cancel-button {
+    display: inline-flex;
+    /* Use inline-flex */
+    align-items: center;
+    justify-content: center;
+    /* Center content */
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: var(--radius-md-testcasesverified);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-testcasesverified);
+    background-color: transparent;
+    color: var(--text-secondary-testcasesverified);
+    border: 1px solid var(--border-testcasesverified);
+    text-align: center;
+}
+
+.testcaseveri-cancel-button:hover {
+    background-color: var(--bg-tertiary-testcasesverified);
+    color: var(--text-primary-testcasesverified);
+}
+
+/* Loading state */
+.testcaseveri-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    color: var(--text-secondary-testcasesverified);
+    min-height: 100px;
+    /* Give loading state some height */
+    flex-grow: 1;
+    /* Allow it to take space in flex containers */
+}
+
+.testcaseveri-spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid var(--border-testcasesverified);
+    border-radius: 50%;
+    border-top-color: var(--primary-testcasesverified);
+    animation: spin 1s linear infinite;
+    margin-right: 10px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Comment section specific styles */
+.testcaseveri-comment-container {
+    padding: 16px 20px;
+    /* Match box header padding */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    /* Spacing between input and list */
+    flex-grow: 1;
+    /* Allow comment section to fill box */
+    overflow-y: auto;
+    /* Add scroll if content overflows */
+    max-height: 400px;
+    /* Or match checklist height */
+}
+
+.testcaseveri-comment-input-area {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+
+.testcaseveri-comment-textarea {
+    border: 1px solid var(--border-testcasesverified);
+    border-radius: var(--radius-md-testcasesverified);
+    padding: 12px;
+    resize: vertical;
+    /* Allow vertical resize */
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text-primary-testcasesverified);
+    min-height: 80px;
+    /* Smaller initial height */
+    outline: none;
+    transition: var(--transition-testcasesverified);
+}
+
+.testcaseveri-comment-textarea:focus {
+    border-color: var(--primary-light-testcasesverified);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.testcaseveri-comment-submit-btn {
+    align-self: flex-end;
+    /* Position button to the right */
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    background-color: var(--primary-testcasesverified);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md-testcasesverified);
+    cursor: pointer;
+    transition: var(--transition-testcasesverified);
+}
+
+.testcaseveri-comment-submit-btn:hover {
+    background-color: #059669;
+    /* สีเขียวเข้มขึ้น */
+}
+
+.testcaseveri-comment-error {
+    color: var(--error-testcasesverified);
+    font-size: 13px;
+    margin-top: -10px;
+    /* Reduce gap after textarea */
+    margin-bottom: 10px;
+}
+
+.testcaseveri-comment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    /* Spacing between comments */
+}
+
+
+.testcaseveri-no-comments {
+    color: var(--text-light-testcasesverified);
+    font-style: italic;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.testcaseveri-comment-item {
+    background-color: var(--bg-tertiary-testcasesverified);
+    border-radius: var(--radius-md-testcasesverified);
+    padding: 12px 16px;
+    border: 1px solid var(--border-light-testcasesverified);
+}
+
+.testcaseveri-comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.testcaseveri-comment-author {
+    font-weight: 600;
+    color: var(--text-primary-testcasesverified);
+    font-size: 14px;
+}
+
+.testcaseveri-comment-date {
+    font-size: 12px;
+    color: var(--text-light-testcasesverified);
+}
+
+.testcaseveri-comment-text {
+    font-size: 14px;
+    color: var(--text-secondary-testcasesverified);
+    line-height: 1.5;
+    word-wrap: break-word;
+    /* Prevent long words from overflowing */
+    margin-bottom: 8px;
+    /* Space before footer */
+}
+
+.testcaseveri-comment-footer {
+    display: flex;
+    justify-content: flex-end;
+    /* Align delete button to the right */
+    align-items: center;
+}
+
+.testcaseveri-comment-delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    /* Add some clickable area */
+    line-height: 1;
+    /* Prevent extra space */
+}
+
+.testcaseveri-delete-icon {
+    width: 16px;
+    /* Adjust icon size */
+    height: 16px;
+    opacity: 0.6;
+    transition: opacity var(--transition-testcasesverified);
+}
+
+.testcaseveri-comment-delete-btn:hover .testcaseveri-delete-icon {
+    opacity: 1;
+}
+
+
+/* Alert Styles - Optional: Only needed if using the custom alert component */
+/* If using react-toastify, these can be removed or commented out */
+/*
+.testcaseveri-alert {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 500px;
+  z-index: 9999;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border-radius: 0 0 var(--radius-lg-testcasesverified) var(--radius-lg-testcasesverified);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.testcaseveri-alert.show {
+  animation: slideDown 0.5s ease forwards, fadeOut 0.5s ease 5s forwards;
+  pointer-events: auto;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translate(-50%, -100%);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+.testcaseveri-alert-success,
+.testcaseveri-alert-error,
+.testcaseveri-alert-warning {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+}
+
+.testcaseveri-alert-success {
+  background: linear-gradient(135deg, var(--success-testcasesverified), var(--success-dark-testcasesverified));
+}
+
+.testcaseveri-alert-error {
+  background: linear-gradient(135deg, var(--error-testcasesverified), var(--error-dark-testcasesverified));
+}
+
+.testcaseveri-alert-warning {
+  background: linear-gradient(135deg, var(--warning-testcasesverified), var(--warning-dark-testcasesverified));
+}
+
+.testcaseveri-alert-content {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.testcaseveri-alert-icon {
+  background-color: rgba(255, 255, 255, 0.2);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+}
+
+.testcaseveri-alert-message {
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.testcaseveri-alert-close {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  font-size: 18px;
+  transition: var(--transition-testcasesverified);
+}
+
+.testcaseveri-alert-close:hover {
+  color: white;
+}
+
+.testcaseveri-alert-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background-color: rgba(255, 255, 255, 0.7);
+  width: 100%;
+  transform-origin: left;
+  animation: progress 5s linear;
+}
+
+@keyframes progress {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+*/
+/* End Optional Alert Styles */
+
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .testcaseveri-flex-container {
+        flex-direction: column;
+    }
+
+    .testcaseveri-box {
+        max-height: none;
+        /* Remove max-height constraints on stacked boxes */
+    }
+
+    .testcaseveri-checklist,
+    .testcaseveri-comment-container {
+        max-height: 300px;
+        /* Adjust max height for smaller screens */
+    }
+}
+
+@media (max-width: 768px) {
+    .testcaseveri-container {
+        padding: 20px 15px;
+    }
+
+    .testcaseveri-header {
+        margin-bottom: 20px;
+    }
+
+    .testcaseveri-title {
+        font-size: 20px;
+        padding-left: 50px;
+        /* Adjust padding for smaller screens */
+        padding-right: 50px;
+    }
+
+    .testcaseveri-back-btn {
+        font-size: 13px;
+        gap: 5px;
+        /* Keep position absolute */
+    }
+
+
+    .testcaseveri-button-container {
+        flex-direction: column;
+        /* Stack buttons vertically */
+        gap: 12px;
+        /* Adjust gap for stacked buttons */
+    }
+
+    .testcaseveri-save-button,
+    .testcaseveri-cancel-button {
+        width: 100%;
+        /* Make buttons full width */
+        justify-content: center;
+        /* Center text/icon within button */
+        padding: 14px;
+        /* Adjust padding for larger touch targets */
+    }
+
+    .testcaseveri-table th,
+    .testcaseveri-table td {
+        padding: 10px 12px;
+        /* Reduce padding */
+        font-size: 13px;
+        /* Adjust font size */
+    }
+
+    .testcaseveri-table th {
+        font-size: 11px;
+    }
+
+
+    /* Optional: Hide table headers and display as blocks on very small screens */
+    /*
+  @media (max-width: 480px) {
+      .testcaseveri-table thead {
+          display: none;
+      }
+      .testcaseveri-table tr {
+          display: block;
+          margin-bottom: 15px;
+          border: 1px solid var(--border-testcasesverified);
+          border-radius: var(--radius-md-testcasesverified);
+          overflow: hidden;
+      }
+       .testcaseveri-table td {
+          display: block;
+          text-align: right;
+          padding-left: 50%;
+          position: relative;
+          border-bottom: 1px solid var(--border-light-testcasesverified);
+      }
+      .testcaseveri-table td::before {
+          content: attr(data-label);
+          position: absolute;
+          left: 10px;
+          width: calc(50% - 20px);
+          text-align: left;
+          font-weight: 600;
+          color: var(--text-secondary-testcasesverified);
+          font-size: 11px;
+          text-transform: uppercase;
+      }
+      .testcaseveri-table td:last-child {
+          border-bottom: none;
+      }
+       .testcaseveri-table td:first-child {
+           font-weight: normal;
+           color: var(--text-primary-testcasesverified);
+           font-family: inherit;
+       }
+  }
+  */
 }

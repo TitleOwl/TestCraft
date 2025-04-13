@@ -53,11 +53,11 @@ const ConfirmationModal = ({
 
                 {/* ปุ่ม */}
                 <div className="modal-actions">
-                    <button className="modal-confirm-button" onClick={onConfirm}>
-                        {confirmText}
-                    </button>
                     <button className="modal-cancel-button" onClick={onClose}>
                         {cancelText}
+                    </button>
+                    <button className="modal-confirm-button" onClick={onConfirm}>
+                        {confirmText}
                     </button>
                 </div>
             </div>

@@ -830,3 +830,8 @@ select {
     display: none;
   }
 }
+
+.testcase-type-cell {
+  padding: 8px 12px;
+  vertical-align: middle;
+}
