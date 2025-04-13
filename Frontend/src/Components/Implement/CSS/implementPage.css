@@ -1,299 +1,1318 @@
-/* ImplementPage.css (Enterprise Theme) */
+/* ImplementPage.css - Refined Purple-themed UI */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-    --primary: #2563eb;
-    --primary-dark: #1e40af;
-    --primary-light: #dbeafe;
-    --neutral-100: #f3f4f6;
-    --neutral-200: #e5e7eb;
-    --neutral-300: #d1d5db;
-    --neutral-400: #9ca3af;
-    --neutral-500: #6b7280;
-    --neutral-600: #4b5563;
-    --neutral-700: #374151;
-    --neutral-800: #1f2937;
-    --neutral-900: #111827;
-    --radius-md: 6px;
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-    --transition-base: all 0.3s ease;
-    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --imp-primary-color: #6200EE;
+    --imp-primary-darker: #5000c7;
+    --imp-primary-lighter: #BB86FC;
+    --imp-primary-bg-light: #F0EBFF;
+    --imp-text-color: #212529;
+    --imp-text-muted: #6C757D;
+    --imp-border-color: #DEE2E6;
+    --imp-border-light: #E9ECEF;
+    --imp-bg-light: #F8F9FA;
+    --imp-bg-card: #FFFFFF;
+    --imp-bg-subtle: #FCFCFC;
+    --imp-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --imp-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --imp-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --imp-border-radius: 0.375rem;
+    /* 6px */
+    --imp-border-radius-lg: 0.5rem;
+    /* 8px */
+    --imp-transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.implement-page {
-    font-family: var(--font-sans);
-    padding: 1.5rem;
-    background-color: var(--neutral-100);
-    color: var(--neutral-800);
-    max-width: 1440px;
+.imp-page-wrapper {
+    max-width: 1400px;
     margin: 0 auto;
+    padding: 2rem 1.5rem;
+    /* Increased padding */
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #F9F9F9;
+    /* Light background for the whole page */
 }
 
-.implement-repo-branch-container {
-    display: flex;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
-.implement-label {
-    display: flex;
-    align-items: center;
-    margin-right: 1rem;
-    font-weight: 500;
-}
-
-.implement-input {
-    flex: 1;
-    padding: 0.625rem;
-    margin-left: 0.5rem;
-    border: 1px solid var(--neutral-300);
-    border-radius: var(--radius-md);
+.imp-page-wrapper *,
+.imp-page-wrapper *::before,
+.imp-page-wrapper *::after {
     box-sizing: border-box;
-    font-size: 0.875rem;
 }
 
-.implement-fetch-btn, .implement-save-btn {
-    background-color: var(--primary);
+/* =================================
+   Header Section
+   ================================= */
+.imp-enterprise-header {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 2.5rem;
+    /* Increased margin */
+    background: linear-gradient(135deg, #4A0072, #7B1FA2);
+    /* Slightly adjusted gradient */
+    border-radius: var(--imp-border-radius-lg);
+    overflow: hidden;
+    box-shadow: var(--imp-shadow-lg);
     color: white;
-    padding: 0.625rem 1rem;
-    border: none;
-    border-radius: var(--radius-md);
-    cursor: pointer;
-    margin-top: 1rem;
-    transition: var(--transition-base);
-    box-shadow: var(--shadow-sm);
-    font-size: 0.875rem;
+}
+
+.imp-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 2.5rem;
+    /* Increased padding */
+}
+
+.imp-project-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    /* Added gap */
+}
+
+.imp-project-breadcrumb {
     display: flex;
     align-items: center;
+    gap: 0.5rem;
+    color: rgba(255, 255, 255, 0.8);
+    /* Slightly more opaque */
+    font-size: 0.9rem;
 }
 
-.implement-fetch-btn:hover, .implement-save-btn:hover {
-    background-color: var(--primary-dark);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+.imp-project-breadcrumb svg {
+    margin-right: 0.25rem;
 }
 
-.implement-main-container {
+.imp-project-title {
     display: flex;
-    margin-top: 1.5rem;
-    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+    /* Allow wrapping */
+    gap: 0.75rem 1rem;
+    /* Adjusted gap */
 }
 
-.implement-left-column, .implement-right-column {
-    flex: 1;
-    padding: 1rem;
-    background-color: white;
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-sm);
+.imp-project-name {
+    font-size: 1.75rem;
+    /* Larger */
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    margin: 0;
+    line-height: 1.2;
 }
 
-.implement-files-section, .implement-designs-section {
-    margin-bottom: 1rem;
-}
-
-.implement-section-title {
-    color: var(--primary);
-    border-bottom: 1px solid var(--neutral-200);
-    padding-bottom: 0.75rem;
-    margin-bottom: 1rem;
-    font-size: 1rem;
+.imp-badge {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 0.75rem;
     font-weight: 600;
+    padding: 0.3rem 0.8rem;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    /* Slightly stronger border */
 }
 
-.implement-file-tree {
-    list-style: none;
+/* --- Header Tabs --- */
+.imp-header-tab-bar {
+    display: flex;
     padding: 0;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.implement-file-item {
-    padding: 0.5rem 0.75rem;
-    border-bottom: 1px solid var(--neutral-200);
-}
-
-.implement-folder-label {
-    cursor: pointer;
+.imp-header-tab {
+    padding: 1rem 1.25rem;
+    /* Adjusted padding */
+    color: rgba(255, 255, 255, 0.75);
     font-weight: 500;
-}
-
-.implement-checkbox {
-    margin-right: 0.5rem;
-}
-
-.implement-design-list {
-    list-style: none;
-    padding: 0;
-}
-
-.implement-design-item {
-    padding: 0.5rem 0.75rem;
-    border-bottom: 1px solid var(--neutral-200);
-}
-
-.implement-relation {
-    background-color: white;
-    border-radius: var(--radius-md);
-    padding: 1.5rem;
-    margin-top: 1.5rem;
-    box-shadow: var(--shadow-sm);
-    overflow-x: auto;
-}
-
-.relation-topic {
-    color: var(--primary);
-    border-bottom: 1px solid var(--neutral-200);
-    padding-bottom: 0.75rem;
-    margin-bottom: 1rem;
-    font-size: 1.125rem;
-    font-weight: 600;
-}
-
-.relation-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.relation-table th,
-.relation-table td {
-    padding: 0.875rem 1rem;
-    text-align: left;
-    border-bottom: 1px solid var(--neutral-200);
-    font-size: 0.875rem;
-}
-
-.relation-table th {
-    font-weight: 600;
-    color: var(--neutral-700);
-    background-color: var(--neutral-50);
-}
-
-.relation-table tbody tr:hover {
-    background-color: var(--neutral-100);
-}
-
-.relation-at {
+    font-size: 0.9rem;
+    /* Slightly larger */
+    cursor: pointer;
+    transition: var(--imp-transition);
+    border-bottom: 3px solid transparent;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     white-space: nowrap;
 }
 
-/* Responsive Styles */
-@media (max-width: 768px) {
-    .relation-table thead {
-        display: none;
-    }
-
-    .relation-table tbody tr {
-        display: block;
-        margin-bottom: 1rem;
-        border-bottom: 1px solid var(--neutral-300);
-    }
-
-    .relation-table td {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        text-align: right;
-        padding: 0.5rem 1rem;
-        border: none;
-    }
-
-    .relation-table td:before {
-        content: attr(data-label);
-        font-weight: 600;
-        float: left;
-        text-align: left;
-    }
+.imp-header-tab:hover {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
-.relation-item {
+.imp-header-tab.imp-active {
+    color: white;
+    font-weight: 600;
+    /* Make active tab bolder */
+    border-bottom-color: var(--imp-primary-lighter);
+    background-color: rgba(187, 134, 252, 0.15);
+    /* Use variable */
+}
+
+.imp-tab-icon {
+    font-size: 1em;
+    /* Relative size */
+    opacity: 0.9;
+}
+
+/* --- Tutorial Button --- */
+.imp-tutorial-help-button {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+    transition: var(--imp-transition);
+}
+
+.imp-tutorial-help-button:hover {
+    color: white;
+    transform: scale(1.1);
+}
+
+.imp-tutorial-help-button-corner {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+/* =================================
+   Repo Section
+   ================================= */
+.imp-repo-section {
+    background-color: var(--imp-bg-card);
+    border-radius: var(--imp-border-radius);
+    box-shadow: var(--imp-shadow-sm);
+    padding: 1rem 1.5rem;
+    /* Adjusted padding */
+    margin-bottom: 1.5rem;
+    border-left: 4px solid var(--imp-primary-color);
+    /* Thicker border */
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.5rem;
+    /* Consistent gap */
+}
+
+.imp-repo-section .imp-card-header {
+    margin-bottom: 0;
+    padding: 0;
     display: flex;
     align-items: center;
+    gap: 0.5rem;
+    /* Gap between icon and title */
+    flex: 0 0 auto;
+}
+
+.imp-repo-section .imp-card-title {
+    font-size: 1rem;
+    /* Slightly larger */
+    font-weight: 600;
+    /* Bolder */
+    color: var(--imp-text-color);
+    margin: 0;
+}
+
+.imp-repo-section .imp-card-icon {
+    color: var(--imp-primary-color);
+}
+
+.imp-repo-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+    /* Take remaining space */
+    min-width: 200px;
+    /* Prevent extreme shrinking */
+}
+
+.imp-repo-inputs {
+    display: flex;
+    flex: 1 1 auto;
+    /* Allow shrinking but prefer growth */
+    gap: 1rem;
+    align-items: center;
+}
+
+.imp-input-group {
+    display: flex;
+    align-items: center;
+    flex: 1 1 300px;
+    /* Allow growth/shrink, base width */
+    max-width: 450px;
+    gap: 0.5rem;
+}
+
+.imp-input-group label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    /* Slightly lighter */
+    color: var(--imp-text-muted);
+    white-space: nowrap;
+    flex-shrink: 0;
+    /* Prevent label from shrinking */
+}
+
+.imp-input {
     padding: 0.5rem 0.75rem;
-    border-bottom: 1px solid var(--neutral-200);
-}
-
-.relation-item span {
-    margin-right: 0.75rem;
+    /* Increased padding */
     font-size: 0.875rem;
+    /* Slightly larger */
+    border: 1px solid var(--imp-border-color);
+    border-radius: var(--imp-border-radius);
+    background-color: var(--imp-bg-light);
+    flex: 1;
+    min-width: 150px;
+    /* Prevent extreme shrinking */
+    transition: border-color var(--imp-transition), box-shadow var(--imp-transition);
+    height: auto;
+    /* Remove fixed height */
 }
 
-.relation-item span:last-child {
-    margin-right: 0;
+.imp-input:disabled {
+    background-color: #E9ECEF;
+    /* Standard disabled color */
+    cursor: not-allowed;
+    opacity: 0.7;
 }
 
-.implement-progress-container {
-    width: 100%;
-    background-color: var(--neutral-200);
-    border-radius: var(--radius-md);
-    margin-top: 0.5rem;
-    height: 1rem;
-    overflow: hidden;
+.imp-input:focus {
+    outline: none;
+    border-color: var(--imp-primary-color);
+    box-shadow: 0 0 0 3px rgba(98, 0, 238, 0.15);
+    background-color: var(--imp-bg-card);
 }
 
-.implement-progress-bar {
+.imp-button-group {
+    display: flex;
+    gap: 0.75rem;
+    /* Increased gap */
+    margin-left: auto;
+    /* Push to the right */
+    flex-shrink: 0;
+    /* Prevent shrinking */
+}
+
+/* --- General Button Styles --- */
+.imp-fetch-btn,
+.imp-refresh-btn,
+.imp-save-btn,
+.imp-empty-button {
+    padding: 0.5rem 1rem;
+    /* Consistent padding */
+    font-size: 0.875rem;
+    /* Consistent font size */
+    border-radius: var(--imp-border-radius);
+    display: inline-flex;
+    /* Use inline-flex */
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    /* Bolder */
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color var(--imp-transition), border-color var(--imp-transition), color var(--imp-transition), box-shadow var(--imp-transition), transform var(--imp-transition);
+    border: 1px solid transparent;
+    /* Base border */
+    line-height: 1.5;
+    /* Ensure consistent height */
+    height: auto;
+    /* Remove fixed height */
+}
+
+.imp-fetch-btn:focus,
+.imp-refresh-btn:focus,
+.imp-save-btn:focus,
+.imp-empty-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(98, 0, 238, 0.25);
+}
+
+.imp-fetch-btn:disabled,
+.imp-refresh-btn:disabled,
+.imp-save-btn:disabled,
+.imp-empty-button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+/* --- Specific Button Styles --- */
+.imp-fetch-btn {
+    background-color: var(--imp-primary-color);
+    color: white;
+    border-color: var(--imp-primary-color);
+}
+
+.imp-fetch-btn:hover:not(:disabled) {
+    background-color: var(--imp-primary-darker);
+    border-color: var(--imp-primary-darker);
+    box-shadow: var(--imp-shadow-sm);
+}
+
+.imp-fetch-btn:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+.imp-refresh-btn {
+    background-color: var(--imp-bg-card);
+    color: var(--imp-text-muted);
+    border: 1px solid var(--imp-border-color);
+}
+
+.imp-refresh-btn:hover:not(:disabled) {
+    background-color: var(--imp-bg-light);
+    color: var(--imp-text-color);
+    border-color: #ADB5BD;
+    /* Slightly darker border on hover */
+}
+
+.imp-refresh-btn:active:not(:disabled) {
+    transform: scale(0.98);
+    background-color: #E9ECEF;
+    /* Slightly darker background on click */
+}
+
+.imp-save-btn {
+    background-color: var(--imp-primary-color);
+    color: white;
+    border-color: var(--imp-primary-color);
+}
+
+.imp-save-btn:hover:not(:disabled) {
+    background-color: var(--imp-primary-darker);
+    border-color: var(--imp-primary-darker);
+    box-shadow: var(--imp-shadow-md);
+    /* More pronounced shadow */
+    transform: translateY(-2px);
+}
+
+.imp-save-btn:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
+}
+
+/* =================================
+   Main Content & Mapping Area
+   ================================= */
+.imp-main-content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+.imp-mapping-container {
+    display: grid;
+    grid-template-columns: minmax(300px, 1fr) minmax(300px, 1fr);
+    /* Flexible columns with min width */
+    gap: 1.5rem;
+    align-items: start;
+    /* Align items to the top */
+}
+
+.imp-left-column,
+.imp-right-column {
+    display: flex;
+    /* Needed for card flex: 1 */
+    flex-direction: column;
+    min-height: 500px;
+    /* Minimum height for columns */
+}
+
+/* --- Cards (Files, Designs, Relations) --- */
+.imp-files-card,
+.imp-designs-card,
+.imp-relations-card {
+    background: var(--imp-bg-card);
+    box-shadow: var(--imp-shadow-md);
+    border-radius: var(--imp-border-radius-lg);
     height: 100%;
-    background-color: var(--primary);
-    width: 0%;
-    transition: width 0.3s ease;
+    /* Fill column height */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    /* Ensure content stays within rounded corners */
+    border: 1px solid var(--imp-border-light);
 }
 
-.implement-no-files {
-    color: var(--neutral-600);
-    font-style: italic;
+.imp-files-card .imp-card-header,
+.imp-designs-card .imp-card-header,
+.imp-relations-card .imp-card-header {
+    padding: 1rem 1.25rem;
+    /* Adjusted padding */
+    background-color: var(--imp-bg-light);
+    border-bottom: 1px solid var(--imp-border-light);
+    margin-bottom: 0;
+}
+
+.imp-card-header .imp-card-title {
+    font-size: 1.1rem;
+    /* Larger card titles */
+    font-weight: 600;
+    color: var(--imp-text-color);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.imp-card-header .imp-card-icon {
+    color: var(--imp-primary-color);
+    font-size: 1.1em;
+    /* Slightly larger icon */
+}
+
+.imp-card-description {
+    color: var(--imp-text-muted);
+    font-size: 0.875rem;
+    /* Slightly larger */
+    margin-top: 0.3rem;
+    margin-bottom: 0;
+}
+
+.imp-content-area {
+    padding: 1rem 1.25rem;
+    /* Consistent padding */
+    overflow-y: auto;
+    /* Vertical scroll only */
+    flex: 1;
+    /* Allow content area to grow */
+    position: relative;
+    /* Needed for potential absolute positioning inside */
+}
+
+/* =================================
+   File Explorer (Left Column)
+   ================================= */
+.imp-file-explorer {
+    border: 1px solid var(--imp-border-light);
+    border-radius: var(--imp-border-radius);
+    height: 100%;
+    overflow-y: auto;
+    background-color: var(--imp-bg-subtle);
+    padding: 0.5rem;
+    /* Add padding around the tree */
+}
+
+.imp-file-tree {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-family: inherit;
+    font-size: 0.9rem;
+    /* Slightly larger base font */
+}
+
+.imp-file-item {
+    margin-bottom: 0.15rem;
+    /* Reduced spacing */
+}
+
+.imp-folder-label,
+.imp-file-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    /* Increased padding */
+    border-radius: var(--imp-border-radius);
+    transition: background-color var(--imp-transition), color var(--imp-transition);
+    cursor: default;
+    /* Default cursor */
+}
+
+.imp-folder-label {
+    cursor: pointer;
+    /* Pointer only for folders */
+}
+
+.imp-folder-label:hover,
+.imp-file-label:hover {
+    background-color: rgba(98, 0, 238, 0.07);
+    /* Slightly darker hover */
+}
+
+.imp-folder-icon,
+.imp-file-icon {
+    opacity: 0.8;
+    width: 1.2em;
+    /* Ensure icons have consistent width */
+    text-align: center;
+    color: var(--imp-text-muted);
+}
+
+.imp-folder-name,
+.imp-file-name {
+    font-weight: 500;
+    color: var(--imp-text-color);
+    word-break: break-word;
+    /* Prevent long names overflowing */
+}
+
+.imp-folder-name {
+    font-weight: 600;
+    /* Make folders bolder */
+}
+
+.imp-file-label {
+    position: relative;
+    /* For checkbox positioning */
+}
+
+/* Nested file tree */
+.imp-file-tree .imp-file-tree {
+    margin-left: 1.25rem;
+    /* Consistent indent */
+    padding-left: 0.75rem;
+    /* Padding for the connecting line */
+    margin-top: 0.25rem;
+    border-left: 1px solid var(--imp-border-light);
+    /* Visual indicator for nesting */
+}
+
+/* --- File/Folder Checkbox & Selection --- */
+.imp-file-label .imp-checkbox {
+    margin-right: 0.5rem;
+}
+
+/* Style the entire label when its checkbox is checked */
+.imp-file-label.imp-file-selected {
+    background-color: var(--imp-primary-bg-light);
+    font-weight: 600;
+    /* Make selected file bold */
+}
+
+.imp-file-label.imp-file-selected .imp-file-name {
+    color: var(--imp-primary-darker);
+    /* Darker text for selected */
+}
+
+/* =================================
+   Design Selection (Right Column)
+   ================================= */
+.imp-designs-card .imp-card-header {
+    display: flex;
+    flex-direction: column;
+    /* Stack title/desc and search */
+    gap: 0.75rem;
+    /* Space between title/desc and search */
+}
+
+.imp-search-container {
+    width: 100%;
+    position: relative;
+}
+
+.imp-search-input {
+    width: 100%;
+    padding: 0.6rem 2.5rem 0.6rem 2.25rem;
+    /* Adjust padding for icons */
+    font-size: 0.9rem;
+    border: 1px solid var(--imp-border-color);
+    border-radius: var(--imp-border-radius);
+    background-color: var(--imp-bg-card);
+    /* White background for search */
+    transition: border-color var(--imp-transition), box-shadow var(--imp-transition);
+}
+
+.imp-search-input:focus {
+    outline: none;
+    border-color: var(--imp-primary-color);
+    box-shadow: 0 0 0 3px rgba(98, 0, 238, 0.15);
+}
+
+.imp-search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--imp-text-muted);
+    font-size: 1rem;
+    /* Larger search icon */
+    pointer-events: none;
+    /* Prevent icon blocking input */
+}
+
+.imp-clear-search-btn {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--imp-text-muted);
+    font-size: 1rem;
+    /* Larger clear icon */
+    transition: color var(--imp-transition);
+}
+
+.imp-clear-search-btn:hover {
+    color: var(--imp-text-color);
+}
+
+.imp-selected-file-info {
+    background-color: var(--imp-primary-bg-light);
+    border-radius: var(--imp-border-radius);
+    padding: 0.8rem 1rem;
+    /* Slightly more padding */
+    margin-bottom: 1rem;
+    /* Space below info box */
+    border-left: 4px solid var(--imp-primary-color);
+}
+
+.imp-selected-file-info h3 {
+    font-size: 0.95rem;
+    /* Slightly larger */
+    margin: 0 0 0.3rem 0;
+    color: #343A40;
+    font-weight: 600;
+    word-break: break-word;
+    /* Handle long file names */
+}
+
+.imp-selected-file-info p {
+    font-size: 0.85rem;
+    color: var(--imp-text-muted);
+    margin: 0;
+}
+
+.imp-design-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid var(--imp-border-light);
+    border-radius: var(--imp-border-radius);
+    background-color: var(--imp-bg-subtle);
+    max-height: 400px;
+    /* Increased max height */
+    overflow-y: auto;
+    flex-grow: 1;
+    /* Allow list to grow if space allows */
+}
+
+.imp-design-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    /* Increased padding */
+    border-bottom: 1px solid var(--imp-border-light);
+    transition: background-color var(--imp-transition);
+    cursor: default;
+    /* Default cursor */
+}
+
+.imp-design-item:hover {
+    background-color: rgba(98, 0, 238, 0.05);
+}
+
+.imp-design-item:last-child {
+    border-bottom: none;
+}
+
+/* Style the item when its checkbox is checked */
+.imp-design-item input[type="checkbox"]:checked+.imp-design-info {
+    /* You might want to add styles here, e.g., make text bolder */
+}
+
+.imp-design-item input[type="checkbox"]:checked+.imp-design-info .imp-design-name {
+    font-weight: 600;
+}
+
+
+.imp-design-info {
+    display: flex;
+    /* Simpler flex layout */
+    flex-direction: column;
+    /* Stack info vertically */
+    gap: 0.25rem;
+    /* Space between elements */
+    flex-grow: 1;
+    /* Take remaining space */
+}
+
+.imp-design-details {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    /* Allow wrapping if needed */
+}
+
+.imp-design-id {
+    font-weight: 600;
+    color: var(--imp-primary-color);
+    font-size: 0.85rem;
+    /* Adjusted size */
+    flex-shrink: 0;
+    /* Prevent ID from shrinking */
+}
+
+.imp-design-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--imp-text-color);
+    word-break: break-word;
+    flex-grow: 1;
+    /* Allow name to take space */
+    line-height: 1.3;
+}
+
+/* --- Design Type Badges --- */
+.imp-design-type-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.6rem;
+    background-color: #6F42C1;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    /* Slightly larger */
+    font-weight: 600;
+    color: white;
+    white-space: nowrap;
+    margin-left: auto;
+    /* Push badge to the right in flex */
+    flex-shrink: 0;
+    /* Prevent badge from shrinking */
+}
+
+/* Define colors for different types - keep or adjust as needed */
+.imp-type-class {
+    background-color: #805AD5;
+}
+
+.imp-type-sequence {
+    background-color: #DD6B20;
+}
+
+.imp-type-component {
+    background-color: #38A169;
+}
+
+.imp-type-activity {
+    background-color: #D69E2E;
+}
+
+.imp-type-state {
+    background-color: #00ACC1;
+}
+
+/* Add a default/fallback style */
+.imp-design-type-badge:not([class*="imp-type-"]) {
+    background-color: #6c757d;
+    /* Grey for unknown types */
+}
+
+/* --- Checkboxes (File & Design) --- */
+.imp-checkbox {
+    appearance: none;
+    width: 18px;
+    /* Slightly larger */
+    height: 18px;
+    border: 2px solid #ADB5BD;
+    /* Slightly darker border */
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all var(--imp-transition);
+    position: relative;
+    vertical-align: middle;
+    /* Better alignment */
+    background-color: var(--imp-bg-card);
+    flex-shrink: 0;
+    /* Prevent shrinking */
+    display: inline-block;
+    /* Ensure proper layout */
+}
+
+.imp-checkbox:checked {
+    background-color: var(--imp-primary-color);
+    border-color: var(--imp-primary-color);
+}
+
+.imp-checkbox:checked::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 5px;
+    width: 5px;
+    /* Adjusted checkmark size */
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.imp-checkbox:focus {
+    box-shadow: 0 0 0 3px rgba(98, 0, 238, 0.25);
+    outline: none;
+}
+
+.imp-checkbox:disabled {
+    background-color: #E9ECEF;
+    border-color: #CED4DA;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.imp-checkbox:disabled::after {
+    border-color: #ADB5BD;
+    /* Grey checkmark when disabled */
+}
+
+
+.imp-actions-container {
     margin-top: 1rem;
+    padding-top: 1rem;
+    /* Space above save button */
+    border-top: 1px solid var(--imp-border-light);
+    /* Separator line */
+    display: flex;
+    justify-content: flex-end;
 }
 
-.filter-design {
+/* =================================
+   Relations Table (Relations Tab)
+   ================================= */
+.imp-relations-card .imp-content-area {
+    padding: 0;
+    /* Remove padding to allow table full width */
+}
+
+.imp-relation-table {
+    width: 100%;
+    border-collapse: collapse;
+    /* Use collapse for cleaner lines */
+    border-spacing: 0;
+}
+
+.imp-relation-table th,
+.imp-relation-table td {
+    padding: 0.85rem 1.25rem;
+    /* Consistent padding */
+    text-align: left;
+    border-bottom: 1px solid var(--imp-border-light);
+    vertical-align: middle;
+    /* Align content vertically */
+}
+
+.imp-relation-table th {
+    background-color: var(--imp-bg-light);
+    font-size: 0.8rem;
+    /* Smaller header text */
+    font-weight: 600;
+    color: var(--imp-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    position: sticky;
+    /* Sticky header */
+    top: 0;
+    z-index: 10;
+    box-shadow: inset 0 -1px 0 var(--imp-border-light);
+    /* Line below sticky header */
+}
+
+.imp-relation-table tbody tr:nth-child(odd) {
+    background-color: var(--imp-bg-subtle);
+    /* Subtle striping */
+}
+
+.imp-relation-table tbody tr:hover {
+    background-color: rgba(98, 0, 238, 0.04);
+    /* Hover effect */
+}
+
+.imp-relation-table td {
+    font-size: 0.9rem;
+    color: var(--imp-text-color);
+}
+
+.imp-filename-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 500;
+    /* Slightly bolder filename */
+}
+
+.imp-file-icon {
+    opacity: 0.7;
+    font-size: 1.1rem;
+    /* Larger file icon */
+    color: #495057;
+}
+
+.imp-design-chip {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    /* Adjusted padding */
+    border-radius: 9999px;
+    background-color: var(--imp-primary-bg-light);
+    color: var(--imp-primary-darker);
+    /* Darker text for contrast */
+    font-size: 0.8rem;
+    /* Consistent small size */
+    font-weight: 500;
+    /* Normal weight */
+    margin: 0.15rem 0.3rem 0.15rem 0;
+    /* Spacing between chips */
+    line-height: 1.4;
+}
+
+.imp-date-cell {
+    color: var(--imp-text-muted);
+    white-space: nowrap;
+    font-size: 0.85rem;
+}
+
+/* =================================
+   Loading and Empty States
+   ================================= */
+.imp-loading-state,
+.imp-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+    /* More padding */
+    text-align: center;
+    color: var(--imp-text-muted);
+    min-height: 250px;
+    /* Ensure minimum height */
+    flex: 1;
+    /* Take available space */
+    background-color: var(--imp-bg-subtle);
+    /* Subtle background */
+    border-radius: var(--imp-border-radius);
+    /* Match card radius if needed */
+    margin: 0.5rem;
+    /* Margin inside content area */
+}
+
+.imp-loading-spinner {
+    width: 36px;
+    /* Larger spinner */
+    height: 36px;
+    border: 4px solid var(--imp-primary-bg-light);
+    /* Lighter border */
+    border-radius: 50%;
+    border-top-color: var(--imp-primary-color);
+    animation: imp-spin 0.8s linear infinite;
+    /* Faster spin */
+    margin-bottom: 1.25rem;
+}
+
+@keyframes imp-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.imp-loading-state p,
+.imp-empty-state p {
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.imp-empty-state p:last-of-type {
+    margin-bottom: 1.5rem;
+    /* More space before button */
+}
+
+
+.imp-progress-container {
+    width: 100%;
+    max-width: 300px;
+    height: 8px;
+    /* Thicker bar */
+    background-color: var(--imp-border-light);
+    border-radius: 9999px;
+    overflow: hidden;
+    margin: 0.75rem 0;
+}
+
+.imp-progress-bar {
+    height: 100%;
+    background-color: var(--imp-primary-color);
+    border-radius: 9999px;
+    transition: width 0.4s ease;
+    /* Smoother transition */
+}
+
+.imp-empty-icon {
+    font-size: 2.5rem;
+    /* Larger icon */
+    color: #ADB5BD;
     margin-bottom: 1rem;
 }
 
-.filter-design input {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid var(--neutral-300);
-    border-radius: var(--radius-md);
-    box-sizing: border-box;
-    font-size: 0.875rem;
+.imp-empty-button {
+    /* Styles already defined under General Button Styles */
+    /* Add specific overrides if needed */
 }
 
-/* เพิ่ม CSS ส่วนนี้เข้าไป */
-.implement-page > .implement-label:first-child {
-    display: flex;
-    flex-wrap: wrap; /* ให้ขึ้นบรรทัดใหม่เมื่อเนื้อที่เหลือน้อย */
-    align-items: center;
+/* =================================
+   Responsive Design
+   ================================= */
+@media (max-width: 1200px) {
+    .imp-header-top {
+        /* Allow natural wrapping */
+    }
+
+    .imp-repo-actions {
+        flex-direction: column;
+        align-items: stretch;
+        /* Stretch inputs/buttons full width */
+        gap: 0.75rem;
+    }
+
+    .imp-repo-inputs {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+        width: 100%;
+    }
+
+    .imp-input-group {
+        max-width: none;
+        /* Remove max-width */
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .imp-input {
+        width: 100%;
+    }
+
+    .imp-button-group {
+        margin-left: 0;
+        justify-content: flex-end;
+        /* Keep buttons to the right */
+        width: auto;
+        /* Don't force full width */
+    }
 }
 
-.implement-page > .implement-label:first-child > input {
-    flex: 1 1 200px; /* input ขยายเต็มที่และมีขนาดขั้นต่ำ 200px */
-    margin-left: 0.5rem;
-    min-width: 200px; /* ขนาดขั้นต่ำของ input */
+@media (max-width: 992px) {
+    .imp-page-wrapper {
+        padding: 1.5rem 1rem;
+    }
+
+    .imp-mapping-container {
+        grid-template-columns: 1fr;
+        /* Stack columns */
+        gap: 1.5rem;
+    }
+
+    .imp-left-column,
+    .imp-right-column {
+        min-height: auto;
+        /* Remove min-height when stacked */
+    }
+
+    .imp-design-list {
+        max-height: 350px;
+        /* Adjust max height if needed */
+    }
+
+    .imp-header-tab-bar {
+        padding: 0 0.5rem;
+        /* Reduce padding for scroll */
+        overflow-x: auto;
+        /* Enable horizontal scroll for tabs */
+        /* Add subtle scrollbar styling if desired */
+        scrollbar-width: thin;
+        scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+    }
+
+    .imp-header-tab-bar::-webkit-scrollbar {
+        height: 5px;
+    }
+
+    .imp-header-tab-bar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .imp-header-tab-bar::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+    }
 }
 
-/* ปรับ margin ของ label ที่สอง */
-.implement-page > .implement-label:nth-child(2) {
-    margin-top: 1rem;
+@media (max-width: 768px) {
+    .imp-header-top {
+        padding: 1.5rem;
+    }
+
+    .imp-project-name {
+        font-size: 1.5rem;
+    }
+
+    .imp-repo-section {
+        padding: 1rem;
+    }
+
+    .imp-button-group {
+        flex-direction: column;
+        /* Stack buttons vertically */
+        align-items: stretch;
+        /* Make buttons full width */
+    }
+
+    .imp-card-header {
+        padding: 0.8rem 1rem;
+    }
+
+    .imp-content-area {
+        padding: 0.8rem 1rem;
+    }
+
+    .imp-design-info {
+        /* Adjust layout if needed, e.g., force badge to new line */
+    }
+
+    .imp-design-type-badge {
+        /* Maybe reduce font size slightly */
+    }
+
+    /* Improve table display on medium screens before full stacking */
+    .imp-relation-table th,
+    .imp-relation-table td {
+        padding: 0.75rem 0.8rem;
+    }
 }
 
-.implement-refresh-btn {
-    background-color: var(--neutral-300);
-    color: var(--neutral-800);
-    padding: 0.625rem 1rem;
-    border: none;
-    border-radius: var(--radius-md);
-    cursor: pointer;
-    margin-top: 1rem;
-    margin-left: 0.5rem; /* เพิ่มระยะห่างจากปุ่ม Save */
-    transition: var(--transition-base);
-    box-shadow: var(--shadow-sm);
-    font-size: 0.875rem;
-}
+@media (max-width: 576px) {
+    .imp-page-wrapper {
+        padding: 1rem 0.5rem;
+    }
 
-.implement-refresh-btn:hover {
-    background-color: var(--neutral-400);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
+    .imp-header-top {
+        padding: 1rem;
+    }
 
-.design-id-select {
-    width: 200px;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    .imp-project-title {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .imp-project-name {
+        font-size: 1.3rem;
+    }
+
+    /* --- Mobile Table Transformation --- */
+    .imp-relation-table {
+        display: block;
+        /* Change table to block */
+        width: 100%;
+    }
+
+    .imp-relation-table thead {
+        display: none;
+        /* Hide table header */
+    }
+
+    .imp-relation-table tbody,
+    .imp-relation-table tr {
+        display: block;
+        /* Make body and rows block elements */
+        width: 100%;
+    }
+
+    .imp-relation-table tr {
+        margin-bottom: 1rem;
+        border: 1px solid var(--imp-border-color);
+        border-radius: var(--imp-border-radius);
+        overflow: hidden;
+        /* Clip content within rounded border */
+        box-shadow: var(--imp-shadow-sm);
+        background-color: var(--imp-bg-card);
+        /* Ensure background */
+    }
+
+    .imp-relation-table td {
+        display: flex;
+        /* Use flex for label/value pairs */
+        justify-content: space-between;
+        /* Space between label and value */
+        align-items: center;
+        /* Align items vertically */
+        padding: 0.75rem 1rem;
+        /* Consistent padding */
+        border-bottom: 1px solid var(--imp-border-light);
+        /* Separator line */
+        text-align: right;
+        /* Align value to the right */
+        font-size: 0.9rem;
+        gap: 0.5rem;
+        /* Gap between label and value */
+    }
+
+    .imp-relation-table td:last-child {
+        border-bottom: none;
+        /* Remove border from last cell */
+    }
+
+    .imp-relation-table td::before {
+        content: attr(data-label);
+        /* Use data-label for headers */
+        font-weight: 600;
+        color: var(--imp-text-muted);
+        font-size: 0.8rem;
+        /* Smaller label */
+        text-align: left;
+        /* Align label text left */
+        margin-right: auto;
+        /* Push value to the right */
+        white-space: nowrap;
+        /* Prevent label wrapping */
+        flex-shrink: 0;
+        /* Prevent label shrinking */
+    }
+
+    /* Specific adjustments for mobile table cells */
+    .imp-relation-table td[data-label="Design IDs"] {
+        flex-direction: column;
+        /* Stack label and chips */
+        align-items: flex-start;
+        /* Align left */
+    }
+
+    .imp-relation-table td[data-label="Design IDs"]::before {
+        margin-bottom: 0.5rem;
+        /* Space below label */
+    }
+
+    .imp-relation-table td[data-label="Design IDs"] span.imp-design-chip {
+        margin-right: 0.3rem;
+        /* Add right margin back */
+    }
+
+    .imp-relation-table td[data-label="Filename"] .imp-file-icon {
+        display: none;
+        /* Hide icon on mobile table view */
+    }
+
+    .imp-relation-table td[data-label="Filename"] span {
+        word-break: break-all;
+        /* Force break long filenames */
+    }
 }
