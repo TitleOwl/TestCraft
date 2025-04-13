@@ -1,105 +1,622 @@
-.create-baseline-container {
-    max-width: 900px;
-    margin: 40px auto;
-    padding: 20px;
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+/* CreateTestcasebaseline.css */
+/* Mirrors CreateBaseline.css with 'create-testcasebaseline-' prefix */
+/* and specific adjustments like .tc-id */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Assuming variables are defined globally or in another imported file */
+/* If not, copy the :root block from previous CSS examples */
+/* :root { ... copy variables here ... } */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  /* Use CSS variables defined elsewhere (assuming --tcb- prefix) */
+  background-color: var(--tcb-bg-color);
+  color: var(--tcb-text-color);
+  line-height: 1.5;
+}
+
+/* Main Container */
+.create-testcasebaseline-dashboard {
+  /* Changed prefix */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: var(--tcb-bg-color);
+  /* Use var */
+}
+
+/* Header Section */
+.create-testcasebaseline-header {
+  /* Changed prefix */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--tcb-border-color);
+  /* Use var */
+}
+
+.create-testcasebaseline-header-left,
+.create-testcasebaseline-header-right {
+  /* Changed prefix */
+  flex: 1;
+}
+
+.create-testcasebaseline-header-title {
+  /* Changed prefix */
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.create-testcasebaseline-header-title h1 {
+  /* Changed prefix */
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--tcb-text-dark);
+  /* Use var */
+  margin: 0;
+}
+
+.create-testcasebaseline-header-title svg {
+  /* Changed prefix */
+  color: var(--tcb-primary-color);
+  /* Use var */
+}
+
+.create-testcasebaseline-back-button {
+  /* Changed prefix */
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--tcb-bg-light);
+  /* Use var */
+  color: var(--tcb-text-color);
+  /* Use var */
+  border: 1px solid var(--tcb-border-color);
+  /* Use var */
+  border-radius: var(--tcb-border-radius);
+  /* Use var */
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--tcb-transition);
+  /* Use var */
+  box-shadow: var(--tcb-shadow-sm);
+  /* Use var */
+}
+
+.create-testcasebaseline-back-button:hover {
+  /* Changed prefix */
+  background-color: var(--tcb-bg-dark);
+  /* Use var */
+}
+
+/* Content Section */
+.create-testcasebaseline-content {
+  /* Changed prefix */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Card */
+.create-testcasebaseline-card {
+  /* Changed prefix */
+  background-color: var(--tcb-bg-light);
+  /* Use var */
+  border-radius: var(--tcb-border-radius);
+  /* Use var */
+  box-shadow: var(--tcb-shadow-md);
+  /* Use var */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.create-testcasebaseline-card-header {
+  /* Changed prefix */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--tcb-border-color);
+  /* Use var */
+}
+
+.create-testcasebaseline-title-section {
+  /* Changed prefix */
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.create-testcasebaseline-title-section h2 {
+  /* Changed prefix */
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--tcb-text-dark);
+  /* Use var */
+  margin: 0;
+}
+
+.create-testcasebaseline-title-section svg {
+  /* Changed prefix */
+  color: var(--tcb-primary-color);
+  /* Use var */
+}
+
+.create-testcasebaseline-selection-info {
+  /* Changed prefix */
+  font-size: 0.875rem;
+  color: var(--tcb-text-light);
+  /* Use var */
+  background-color: var(--tcb-bg-dark);
+  /* Use var */
+  padding: 0.375rem 0.75rem;
+  border-radius: 9999px;
+}
+
+/* Table Container */
+.create-testcasebaseline-table-container {
+  /* Changed prefix */
+  flex: 1;
+  overflow-x: auto;
+  padding: 0;
+  /* Ensure no extra padding */
+}
+
+.create-testcasebaseline-table {
+  /* Changed prefix */
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 100%;
+}
+
+.create-testcasebaseline-table th {
+  /* Changed prefix */
+  background-color: var(--tcb-bg-dark);
+  /* Use var */
+  color: var(--tcb-text-color);
+  /* Use var */
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  /* Keep padding consistent */
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  /* Ensure header stays above scrolling content */
+  border-bottom: 1px solid var(--tcb-border-color);
+  /* Use var */
+}
+
+.create-testcasebaseline-table td {
+  /* Changed prefix */
+  padding: 0.75rem 1rem;
+  /* Keep padding consistent */
+  border-bottom: 1px solid var(--tcb-border-color);
+  /* Use var */
+  font-size: 0.875rem;
+}
+
+.create-testcasebaseline-row {
+  /* Changed prefix */
+  transition: var(--tcb-transition);
+  /* Use var */
+  cursor: pointer;
+}
+
+.create-testcasebaseline-row:hover {
+  /* Changed prefix */
+  background-color: var(--tcb-bg-dark);
+  /* Use var */
+}
+
+.create-testcasebaseline-row.selected {
+  /* Changed prefix */
+  background-color: var(--tcb-primary-light);
+  /* Use var */
+}
+
+.create-testcasebaseline-row:last-child td {
+  /* Changed prefix */
+  border-bottom: none;
+}
+
+/* Table Columns (Keep generic names as they weren't changed in React) */
+.col-checkbox {
+  width: 5%;
+  text-align: center;
+}
+
+.col-id {
+  width: 15%;
+}
+
+.col-name {
+  width: 40%;
+}
+
+.col-type {
+  width: 20%;
+}
+
+.col-status {
+  width: 20%;
+}
+
+/* Changed ID class name */
+.tc-id {
+  font-weight: 600;
+  color: var(--tcb-primary-color);
+  /* Use var */
+}
+
+/* Checkbox Styling (Keep generic name 'styled-checkbox') */
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.styled-checkbox {
+  position: absolute;
+  opacity: 0;
+}
+
+.styled-checkbox+label {
+  position: relative;
+  cursor: pointer;
+  padding: 0;
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  background: white;
+  border: 1px solid var(--tcb-border-color);
+  /* Use var */
+  border-radius: 4px;
+  transition: var(--tcb-transition);
+  /* Use var */
+}
+
+.styled-checkbox:hover+label {
+  background: var(--tcb-bg-dark);
+  /* Use var */
+}
+
+.styled-checkbox:checked+label {
+  background: var(--tcb-primary-color);
+  /* Use var */
+  border-color: var(--tcb-primary-color);
+  /* Use var */
+}
+
+.styled-checkbox:checked+label:after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 2px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* Status Badge */
+.create-testcasebaseline-status-badge {
+  /* Changed prefix */
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Adjust status classes as needed for Test Cases */
+.create-testcasebaseline-status-badge.verified {
+  /* Class for 'VERIFIED' status */
+  background-color: var(--tcb-success-light);
+  /* Use var */
+  color: var(--tcb-success-color);
+  /* Use var */
+}
+
+.create-testcasebaseline-status-badge.baseline {
+  /* Class for 'BASELINE' status */
+  background-color: var(--tcb-info-light);
+  /* Use var */
+  color: var(--tcb-info-color);
+  /* Use var */
+}
+
+.create-testcasebaseline-status-badge.default {
+  /* Fallback class */
+  background-color: var(--tcb-secondary-color);
+  /* Use var */
+  color: white;
+}
+
+/* Actions Container */
+.create-testcasebaseline-actions {
+  /* Changed prefix */
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-top: 1px solid var(--tcb-border-color);
+  /* Use var */
+  background-color: var(--tcb-bg-light);
+  /* Use var */
+  /* Ensure actions are inside the card */
+}
+
+.create-testcasebaseline-cancel-button,
+.create-testcasebaseline-submit-button {
+  /* Changed prefix */
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--tcb-border-radius);
+  /* Use var */
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--tcb-transition);
+  /* Use var */
+}
+
+.create-testcasebaseline-cancel-button {
+  /* Changed prefix */
+  background-color: var(--tcb-bg-dark);
+  /* Use var */
+  color: var(--tcb-text-color);
+  /* Use var */
+  border: 1px solid var(--tcb-border-color);
+  /* Use var */
+}
+
+.create-testcasebaseline-cancel-button:hover {
+  /* Changed prefix */
+  background-color: #e2e8f0;
+  /* Consider using a var like --tcb-border-color-hover */
+}
+
+.create-testcasebaseline-submit-button {
+  /* Changed prefix */
+  background-color: var(--tcb-primary-color);
+  /* Use var */
+  color: white;
+  border: none;
+}
+
+.create-testcasebaseline-submit-button:hover {
+  /* Changed prefix */
+  background-color: var(--tcb-primary-hover);
+  /* Use var */
+}
+
+.create-testcasebaseline-submit-button:disabled {
+  /* Changed prefix */
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Loading State */
+.create-testcasebaseline-loading-state {
+  /* Changed prefix */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  background-color: var(--tcb-bg-light);
+  /* Use var */
+  border-radius: var(--tcb-border-radius);
+  /* Use var */
+  box-shadow: var(--tcb-shadow-md);
+  /* Use var */
+  flex: 1;
+  /* Allow it to take space */
+}
+
+.create-testcasebaseline-loading-spinner {
+  /* Changed prefix */
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: var(--tcb-primary-color);
+  /* Use var */
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+/* Error State */
+.create-testcasebaseline-error-state {
+  /* Changed prefix */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  background-color: var(--tcb-bg-light);
+  /* Use var */
+  border-radius: var(--tcb-border-radius);
+  /* Use var */
+  box-shadow: var(--tcb-shadow-md);
+  /* Use var */
+  flex: 1;
+  /* Allow it to take space */
+}
+
+.create-testcasebaseline-error-icon {
+  /* Changed prefix */
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--tcb-danger-color);
+  /* Use var */
+}
+
+.create-testcasebaseline-error-state h3 {
+  /* Changed prefix */
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--tcb-text-dark);
+  /* Use var */
+  margin-bottom: 0.5rem;
+}
+
+.create-testcasebaseline-error-state p {
+  /* Changed prefix */
+  color: var(--tcb-text-lighter);
+  /* Use var */
+  max-width: 400px;
+}
+
+/* Empty State */
+.create-testcasebaseline-empty-state {
+  /* Changed prefix */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  background-color: var(--tcb-bg-light);
+  /* Use var */
+  border-radius: var(--tcb-border-radius);
+  /* Use var */
+  box-shadow: var(--tcb-shadow-md);
+  /* Use var */
+  flex: 1;
+  /* Allow it to take space */
+}
+
+.create-testcasebaseline-empty-icon {
+  /* Changed prefix */
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.create-testcasebaseline-empty-state h3 {
+  /* Changed prefix */
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--tcb-text-dark);
+  /* Use var */
+  margin-bottom: 0.5rem;
+}
+
+.create-testcasebaseline-empty-state p {
+  /* Changed prefix */
+  color: var(--tcb-text-lighter);
+  /* Use var */
+  max-width: 400px;
+}
+
+/* Animations (remain the same) */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
   }
-  
-  .create-baseline-title {
-    text-align: center;
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
+
+  100% {
+    transform: rotate(360deg);
   }
-  
-  .create-baseline-content {
-    display: flex;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .create-testcasebaseline-dashboard {
+    /* Changed prefix */
+    padding: 1rem;
+  }
+
+  .create-testcasebaseline-header {
+    /* Changed prefix */
     flex-direction: column;
-    gap: 20px;
+    gap: 1rem;
+    align-items: flex-start;
   }
-  
-  .create-baseline-left-panel {
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #f9f9f9;
+
+  .create-testcasebaseline-header-title {
+    /* Changed prefix */
+    order: -1;
+    margin-bottom: 1rem;
   }
-  
-  .create-baseline-section-title {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-  
-  .create-baseline-loading-message,
-  .create-baseline-error-message,
-  .create-baseline-no-data {
-    text-align: center;
-    font-size: 16px;
-    color: #ff0000;
-  }
-  
-  .create-baseline-testcases-table {
+
+  .create-testcasebaseline-header-left,
+  .create-testcasebaseline-header-right {
+    /* Changed prefix */
     width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
   }
-  
-  .create-baseline-testcases-table th,
-  .create-baseline-testcases-table td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: center;
+
+  .create-testcasebaseline-card-header {
+    /* Changed prefix */
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
   }
-  
-  .create-baseline-testcases-table th {
-    background-color: #007bff;
-    color: white;
+
+  .create-testcasebaseline-selection-info {
+    /* Changed prefix */
+    align-self: flex-start;
   }
-  
-  .create-baseline-testcases-table tbody tr:nth-child(even) {
-    background-color: #f2f2f2;
+
+  .create-testcasebaseline-actions {
+    /* Changed prefix */
+    flex-direction: column-reverse;
+    gap: 0.75rem;
   }
-  
-  .create-baseline-testcases-table input[type='checkbox'] {
-    width: 16px;
-    height: 16px;
-  }
-  
-  .create-baseline-action-buttons {
-    display: flex;
+
+  .create-testcasebaseline-cancel-button,
+  .create-testcasebaseline-submit-button {
+    /* Changed prefix */
+    width: 100%;
     justify-content: center;
-    gap: 15px;
-    margin-top: 20px;
   }
-  
-  .create-baseline-create-button,
-  .create-baseline-btn-cancel {
-    padding: 10px 20px;
-    font-size: 16px;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
+
+  /* Hide less important columns on small screens if needed */
+  .col-type {
+    display: none;
   }
-  
-  .create-baseline-create-button {
-    background-color: #28a745;
-    color: white;
+
+  /* Allow other columns to adjust */
+  .col-checkbox,
+  .col-id,
+  .col-name,
+  .col-status {
+    width: auto;
   }
-  
-  .create-baseline-create-button:hover {
-    background-color: #218838;
+
+  .create-testcasebaseline-table th,
+  .create-testcasebaseline-table td {
+    /* Changed prefix */
+    padding: 0.75rem 0.5rem;
+    /* Adjust padding for smaller screens */
   }
-  
-  .create-baseline-btn-cancel {
-    background-color: #dc3545;
-    color: white;
-  }
-  
-  .create-baseline-btn-cancel:hover {
-    background-color: #c82333;
-  }
-  
+}
