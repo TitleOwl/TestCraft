@@ -426,11 +426,6 @@ body {
   font-weight: 500;
 }
 
-.status-working {
-  background-color: rgba(139, 92, 246, 0.1);
-  color: var(--working);
-}
-
 /* Custom checkbox styling - scoped to Create Verification page */
 .createveri-container input[type="checkbox"] {
   appearance: none;
