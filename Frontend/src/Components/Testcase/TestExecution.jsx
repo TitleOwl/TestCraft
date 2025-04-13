@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import "./testcase_css/TestExecution.css"; // ตรวจสอบว่า import CSS ถูกต้อง
+import { useNavigate } from "react-router-dom";
 
 const TestExecution = () => {
   const { testcaseId } = useParams();
@@ -13,7 +14,9 @@ const TestExecution = () => {
   const [testFiles, setTestFiles] = useState({}); // State สำหรับเก็บไฟล์ของแต่ละ step (key: test_procedures_id)
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedStep, setSelectedStep] = useState(null); // State สำหรับ step ที่ถูกเลือกเพื่อเปิด modal
-
+  const navigate = useNavigate();
+  const queryParams = new URLSearchParams(window.location.search);
+  const projectId = queryParams.get("project_id");
   const statusOptions = ["Passed", "Failed", "In Progress"];
 
   // useEffect สำหรับดึงข้อมูลเมื่อ component โหลด หรือ testcaseId เปลี่ยน
@@ -214,11 +217,15 @@ const TestExecution = () => {
     setModalOpen(false);
     setSelectedStep(null);
   };
+  const handleBackClick = () => {
+    navigate(`/ExecutionList?project_id=${projectId}`);
+  };
 
-  // --- JSX Rendering ---
   return (
     <div className="TestExecution">
-      <button className="back-test-execution">Back</button>
+      <button className="back-test-execution" onClick={handleBackClick}>
+        ← Back
+      </button>
       <button className="save-button" onClick={handleSave}>Save</button>
       <h3>Test Execution : TC-0{testCase?.testcase_id || "-"} {testCase?.testcase_name || "Unknown"}</h3>
       <p><strong>Completion Date:</strong> {testCase?.testcase_at ? new Date(testCase.testcase_at).toLocaleDateString("th-TH") : "-"}</p>
@@ -305,6 +312,7 @@ const TestExecution = () => {
 
             {/* Input สำหรับเลือกไฟล์ */}
             <input
+              className="inputfile-testexec"
               type="file"
               // ส่ง index ไป handleFileChange (อาจจะไม่จำเป็นแล้วถ้าใช้ selectedStep)
               onChange={(event) => handleFileChange(testSteps.indexOf(selectedStep), event)}

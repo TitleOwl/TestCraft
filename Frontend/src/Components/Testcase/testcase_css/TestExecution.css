@@ -4,46 +4,194 @@
   padding: 20px;
 }
 
-h3 {
-  font-size: 18px;
-  font-weight: bold;
-  text-align: left;
-  margin-bottom: 10px;
-}
+/* === CSS for Test Execution Table (.test-execution-table) === */
 
-p {
-  font-size: 14px;
-  margin: 5px 0;
-}
-
+/* --- Base Table Styling --- */
 .test-execution-table {
   width: 100%;
+  /* กว้างเต็มพื้นที่ */
   border-collapse: collapse;
+  /* เส้นขอบติดกัน */
+  margin-top: 25px;
+  /* ระยะห่างจากส่วนบน */
+  background-color: #ffffff;
+  /* พื้นหลังตารางสีขาว */
+  border: 1px solid #e0e0e0;
+  /* เส้นขอบตารางสีเทาอ่อน */
+  border-radius: 8px;
+  /* มุมโค้งมน */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  /* เงาเล็กน้อย */
+  overflow: hidden;
+  /* สำหรับ border-radius */
+  font-size: 15px;
+  /* ขนาดฟอนต์พื้นฐานสำหรับตาราง */
+}
+
+/* --- Table Header (th) --- */
+.test-execution-table th {
+  padding: 14px 16px;
+  /* ระยะขอบภายใน header cell */
+  text-align: left;
+  /* จัดชิดซ้าย */
+  background-color: #f9fafb;
+  /* พื้นหลังหัวตารางสีเทาอ่อนมาก */
+  color: #374151;
+  /* สีตัวหนังสือหัวตาราง (เข้มกว่าเดิมเล็กน้อย) */
+  font-weight: 600;
+  /* ตัวหนา */
+  font-size: 0.85rem;
+  /* ขนาดเล็กกว่าปกติเล็กน้อย */
+  border-bottom: 2px solid #10b981;
+  /* << เส้นขอบล่างสีเขียวธีม */
+  text-transform: uppercase;
+  /* ตัวพิมพ์ใหญ่ (ถ้าต้องการ) */
+  letter-spacing: 0.5px;
+  /* ระยะห่างตัวอักษร */
+}
+
+/* --- Table Data Cells (td) --- */
+.test-execution-table td {
+  padding: 12px 16px;
+  /* ระยะขอบภายใน data cell */
+  text-align: left;
+  vertical-align: top;
+  /* จัดชิดบน (กรณีข้อความหลายบรรทัด) */
+  border-bottom: 1px solid #f3f4f6;
+  /* << เส้นคั่นระหว่างแถวสีเทาจางๆ */
+  color: #4b5563;
+  /* สีตัวหนังสือ data cell */
+  line-height: 1.5;
+  /* ระยะห่างบรรทัด อ่านง่าย */
+}
+
+/* --- Table Body Rows (tbody tr) --- */
+.test-execution-table tbody tr:last-child td {
+  border-bottom: none;
+  /* แถวสุดท้ายไม่มีเส้นขอบล่าง */
+}
+
+.test-execution-table tbody tr:hover {
+  background-color: #f3f4f6;
+  /* << สีพื้นหลังเมื่อเมาส์ชี้ (เทาอ่อน) */
+}
+
+/* --- Rich Text Content inside Cells --- */
+.test-execution-table td div {
+  line-height: 1.5;
   margin-top: 10px;
 }
 
-.test-execution-table th,
-.test-execution-table td {
-  border: 1px solid #ccc;
-  padding: 10px;
-  text-align: left;
+.test-execution-table td div p:last-child,
+.test-execution-table td div ul:last-child,
+.test-execution-table td div ol:last-child {
+  margin-bottom: 0;
+  /* ลบ margin ล่างของ element สุดท้ายใน cell */
 }
 
-.test-execution-table th {
-  background-color: #ddd;
-  font-weight: bold;
+.test-execution-table td div ul,
+.test-execution-table td div ol {
+  padding-left: 20px;
+  margin-top: 6px;
+  margin-bottom: 6px;
 }
 
-.test-execution-table td input {
+/* --- Status Dropdown --- */
+.test-execution-table select {
   width: 100%;
-  border: 1px solid #ccc;
-  padding: 5px;
+  /* กว้างเต็ม cell */
+  padding: 8px 12px;
+  /* ระยะขอบ */
+  border: 1px solid #d1d5db;
+  /* เส้นขอบเทา */
+  border-radius: 6px;
+  /* มุมมน */
+  font-size: 0.9rem;
+  /* ขนาดฟอนต์ */
+  box-sizing: border-box;
+  /* รวม padding/border ใน width */
+  background-color: #fff;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.test-execution-table td input[type="checkbox"] {
-  width: auto;
-  display: block;
-  margin: auto;
+.test-execution-table select:focus {
+  outline: none;
+  border-color: #10b981;
+}
+
+/* --- Actual Result Input --- */
+.test-execution-table input[type="text"] {
+  width: 100%;
+  /* กว้างเต็ม cell */
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.test-execution-table input[type="text"]:focus {
+  outline: none;
+  border-color: #10b981;
+  /* << เส้นขอบสีเขียวเมื่อ focus */
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+  /* << เงาสีเขียวจางๆ */
+}
+
+/* --- View Files Button --- */
+.test-execution-table button {
+  padding: 6px 14px;
+  /* ขนาดปุ่ม */
+  font-size: 0.85rem;
+  background-color: #6b7280;
+  /* สีเทา */
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.test-execution-table button:hover {
+  background-color: #4b5563;
+  /* สีเทาเข้มขึ้น */
+}
+
+.test-execution-table button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+  /* << เงาสีเขียวเมื่อ focus */
+}
+
+.back-test-execution {
+  content: '← ';
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #10b981;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 10px;
+}
+
+/* --- No Data Row --- */
+.test-execution-table .no-data {
+  text-align: center;
+  /* จัดกลาง */
+  color: #6b7280;
+  /* สีเทา */
+  padding: 30px 15px;
+  /* ระยะห่างเยอะๆ */
+  font-style: italic;
+}
+
+/* ปรับ padding cell แรกเมื่อมี border ซ้าย */
+.test-execution-table tr[data-status] td:first-child {
+  padding-top: 22px;
+  padding-left: 12px;
 }
 
 .save-button {
@@ -82,35 +230,13 @@ p {
   text-align: center;
 }
 
-/* สีพื้นหลังเมื่อเลือกสถานะ */
-.test-execution-table .status-select.passed {
-  background-color: #d4edda;
-  /* เขียว */
-  color: #155724;
-}
-
-.test-execution-table .status-select.failed {
-  background-color: #f8d7da;
-  /* แดง */
-  color: #721c24;
-}
-
-.test-execution-table .status-select.in-progress {
-  background-color: #fff3cd;
-  /* เหลือง */
-  color: #856404;
-}
-
-.test-execution-table .status-select.blocked {
-  background-color: #d1ecf1;
-  /* ฟ้า */
-  color: #0c5460;
-}
 
 /* ตั้งค่าพื้นฐานสำหรับ td ที่เปลี่ยนสี */
 .status-cell {
+  margin-top: 5px;
   padding: 5px;
   text-align: center;
+  border-radius: 20px;
 }
 
 /* สีของ Test Status */
@@ -143,6 +269,7 @@ p {
   background: transparent;
   border: none;
   font-weight: bold;
+  color: #4b5563;
   font-size: 14px;
   cursor: pointer;
   width: 100%;
@@ -237,58 +364,80 @@ p {
 
 /* Style the container/wrapper of the file input */
 .modal-content input[type="file"] {
-  display: block; /* Make it take its own line */
-  width: 90%; /* Adjust width as needed, relative to modal */
-  margin: 15px auto; /* Add space above/below and center horizontally */
-  padding: 10px; /* Add some internal spacing */
-  border: 2px dashed #ccc; /* A dashed border often indicates a drop zone */
-  border-radius: 8px; /* Match other rounded corners */
-  background-color: #f9f9f9; /* Light background */
-  font-size: 14px; /* Control font size of the default text */
-  color: #555; /* Color for the "No file chosen" text */
-  cursor: pointer; /* Indicate it's clickable */
-  transition: border-color 0.3s ease, background-color 0.3s ease; /* Smooth transitions */
-  box-sizing: border-box; /* Ensure padding/border are included in width */
-  text-align: center; /* Center the button and text within the input area */
+  display: block;
+  /* Make it take its own line */
+  width: 90%;
+  /* Adjust width as needed, relative to modal */
+  margin: 15px auto;
+  /* Add space above/below and center horizontally */
+  padding: 10px;
+  /* Add some internal spacing */
+  border: 2px dashed #ccc;
+  /* A dashed border often indicates a drop zone */
+  border-radius: 8px;
+  /* Match other rounded corners */
+  background-color: #f9f9f9;
+  /* Light background */
+  font-size: 14px;
+  /* Control font size of the default text */
+  color: #555;
+  /* Color for the "No file chosen" text */
+  cursor: pointer;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+  /* Smooth transitions */
+  box-sizing: border-box;
+  /* Ensure padding/border are included in width */
+  text-align: center;
+  /* Center the button and text within the input area */
 }
 
 /* Add a subtle hover effect to the input area */
 .modal-content input[type="file"]:hover {
-  border-color: #007bff; /* Change border color on hover */
-  background-color: #f1f1f1; /* Slightly change background on hover */
+  border-color: #10b981;
+  /* Change border color on hover */
+  background-color: #f1f1f1;
+  /* Slightly change background on hover */
 }
 
 /* Style the actual button part of the file input using the pseudo-element */
 /* This targets the "Choose File" or "Browse" button */
 .modal-content input[type="file"]::file-selector-button {
-  padding: 8px 15px; /* Button padding */
-  border: none; /* Remove default border */
-  border-radius: 5px; /* Rounded corners for the button */
-  background-color: #007bff; /* Blue background, consistent with download */
-  color: white; /* White text */
-  font-size: 14px; /* Font size for button text */
+  padding: 8px 15px;
+  /* Button padding */
+  border: none;
+  /* Remove default border */
+  border-radius: 5px;
+  /* Rounded corners for the button */
+  background-color: #10b981;
+  /* Blue background, consistent with download */
+  color: white;
+  /* White text */
+  font-size: 14px;
+  /* Font size for button text */
   font-weight: bold;
-  cursor: pointer; /* Pointer cursor on the button */
-  margin-right: 15px; /* Space between the button and the file name text */
-  transition: background-color 0.3s ease; /* Smooth background transition */
+  cursor: pointer;
+  /* Pointer cursor on the button */
+  margin-right: 15px;
+  /* Space between the button and the file name text */
+  transition: background-color 0.3s ease;
+  /* Smooth background transition */
   /* You might need vendor prefixes for older browsers, but ::file-selector-button is fairly modern */
 }
 
 /* Hover effect specifically for the button part */
 .modal-content input[type="file"]::file-selector-button:hover {
-  background-color: #0056b3; /* Darker blue on hover */
+  background-color: #0f9d6e;
 }
 
 /* Optional: Style on focus for accessibility */
 .modal-content input[type="file"]:focus-within {
-   outline: 2px solid #0056b3;
-   outline-offset: 2px;
-   border-color: #007bff; /* Highlight border when focused */
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
 }
 
 /* Hide the default focus outline which might look messy with ::file-selector-button */
 .modal-content input[type="file"]:focus {
-   outline: none;
+  outline: none;
 }
 
 .download-btn,
@@ -332,19 +481,28 @@ p {
 
 /* --- CSS สำหรับ Debug การแสดงผล Input File (ใช้ชั่วคราว) --- */
 .modal-overlay .modal-content input[type="file"] {
-  display: block !important; /* บังคับให้เป็น block */
-  visibility: visible !important; /* บังคับให้มองเห็น */
-  opacity: 1 !important; /* บังคับให้ทึบแสง */
-  width: auto !important; /* กำหนดความกว้างอัตโนมัติ */
-  height: auto !important; /* กำหนดความสูงอัตโนมัติ */
-  position: static !important; /* ยกเลิกการจัดตำแหน่งพิเศษ */
-  padding: 10px !important; /* เพิ่ม padding */
-  margin: 20px auto !important; /* เพิ่ม margin */
-  z-index: 9999 !important; /* ลองกำหนด z-index สูงๆ */
+  display: block !important;
+  /* บังคับให้เป็น block */
+  visibility: visible !important;
+  /* บังคับให้มองเห็น */
+  opacity: 1 !important;
+  /* บังคับให้ทึบแสง */
+  width: auto !important;
+  /* กำหนดความกว้างอัตโนมัติ */
+  height: auto !important;
+  /* กำหนดความสูงอัตโนมัติ */
+  position: static !important;
+  /* ยกเลิกการจัดตำแหน่งพิเศษ */
+  padding: 10px !important;
+  /* เพิ่ม padding */
+  margin: 20px auto !important;
+  /* เพิ่ม margin */
+  z-index: 9999 !important;
+  /* ลองกำหนด z-index สูงๆ */
 }
 
 /* อาจจะต้องลองกับ ::file-selector-button ด้วย ถ้า input แสดงแต่ปุ่มไม่แสดง */
 .modal-overlay .modal-content input[type="file"]::file-selector-button {
-    visibility: visible !important;
-    opacity: 1 !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }

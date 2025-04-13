@@ -41,15 +41,16 @@ const ExecutionList = () => {
         confirmButtonText: "ตกลง",
       });
     } else {
-      navigate(`/TestExecution/${execution.testcase_id}`);
+      // เพิ่ม ?project_id=${project_id} ต่อท้าย URL ที่จะไป
+      console.log(`Navigating to TestExecution for testcase ${execution.testcase_id} with project_id ${project_id}`);
+      navigate(`/TestExecution/${execution.testcase_id}?project_id=${project_id}`); // <--- แก้ไขบรรทัดนี้
     }
   };
-
   return (
     // className หลักยังคงเดิม เพราะมันลงท้ายด้วย 'execution-list' อยู่แล้ว
     <div className="execution-list">
       <button onClick={() => navigate(`/Dashboard?project_id=${project_id}`, { state: { selectedSection: "Testcase" } })}>
-        Back
+      Back
       </button>
       <h2>Test Execution</h2>
       {/* เปลี่ยน className ของ search bar */}
@@ -66,7 +67,6 @@ const ExecutionList = () => {
           <tr>
             <th>Test Case ID</th>
             <th>Test Title</th>
-            <th>Test Status</th>
             <th>Completion Date</th>
             <th>Actions</th>
           </tr>
@@ -77,7 +77,6 @@ const ExecutionList = () => {
               <tr key={execution.test_execution_id}>
                 <td>TC-{execution.testcase_id.toString().padStart(3, "0")}</td>
                 <td>{execution.testcase_name || "N/A"}</td>
-                <td>{execution.test_execution_status}</td>
                 <td>{formatDate(execution.testcase_at)}</td>
                 <td>
                   {/* เปลี่ยน className ของปุ่ม Execute */}
