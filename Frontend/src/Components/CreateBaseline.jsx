@@ -1,8 +1,94 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css";
 import "./CSS/CreateBaseline.css";
+
+// Icons
+const BackIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="19" y1="12" x2="5" y2="12"></line>
+    <polyline points="12 19 5 12 12 5"></polyline>
+  </svg>
+);
+
+const CheckIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="20 6 9 17 4 12"></polyline>
+  </svg>
+);
+
+const CancelIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="18" y1="6" x2="6" y2="18"></line>
+    <line x1="6" y1="6" x2="18" y2="18"></line>
+  </svg>
+);
+
+const BaselineIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="6" y1="3" x2="6" y2="15"></line>
+    <circle cx="18" cy="6" r="3"></circle>
+    <circle cx="6" cy="18" r="3"></circle>
+    <path d="M18 9a9 9 0 0 1-9 9"></path>
+  </svg>
+);
+
+const ListIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="8" y1="6" x2="21" y2="6"></line>
+    <line x1="8" y1="12" x2="21" y2="12"></line>
+    <line x1="8" y1="18" x2="21" y2="18"></line>
+    <line x1="3" y1="6" x2="3.01" y2="6"></line>
+    <line x1="3" y1="12" x2="3.01" y2="12"></line>
+    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+  </svg>
+);
+
+// Custom Status Badge Component
+const StatusBadge = ({ status }) => {
+  let statusClass = "";
+  
+  switch (status) {
+    case "VALIDATED":
+      statusClass = "validated";
+      break;
+    case "BASELINE":
+      statusClass = "baseline";
+      break;
+    default:
+      statusClass = "default";
+  }
+  
+  return <span className={`create-baseline-status-badge ${statusClass}`}>{status}</span>;
+};
+
+// Loading Component
+const LoadingState = () => (
+  <div className="create-baseline-loading-state">
+    <div className="create-baseline-loading-spinner"></div>
+    <p>Loading requirements...</p>
+  </div>
+);
+
+// Error Component
+const ErrorState = ({ message }) => (
+  <div className="create-baseline-error-state">
+    <div className="create-baseline-error-icon">⚠️</div>
+    <h3>Error</h3>
+    <p>{message}</p>
+  </div>
+);
+
+// Empty State Component
+const EmptyState = () => (
+  <div className="create-baseline-empty-state">
+    <div className="create-baseline-empty-icon">📋</div>
+    <h3>No Validated Requirements</h3>
+    <p>There are no validated requirements available to set as baseline.</p>
+  </div>
+);
 
 const CreateBaseline = () => {
   const [validatedRequirements, setValidatedRequirements] = useState([]);
@@ -10,11 +96,32 @@ const CreateBaseline = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectAll, setSelectAll] = useState(false);
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const projectId = queryParams.get("project_id");
   const navigate = useNavigate();
+
+  // Handle "Select All" checkbox
+  const handleSelectAll = () => {
+    if (selectAll) {
+      setSelectedRequirements([]);
+    } else {
+      const allIds = validatedRequirements.map(req => req.requirement_id);
+      setSelectedRequirements(allIds);
+    }
+    setSelectAll(!selectAll);
+  };
+
+  // Check if all requirements are selected
+  useEffect(() => {
+    if (validatedRequirements.length > 0) {
+      setSelectAll(
+        selectedRequirements.length === validatedRequirements.length
+      );
+    }
+  }, [selectedRequirements, validatedRequirements]);
 
   // Fetch validated requirements
   useEffect(() => {
@@ -35,7 +142,8 @@ const CreateBaseline = () => {
         );
 
         setValidatedRequirements(validated);
-      } catch {
+      } catch (err) {
+        console.error("Error fetching requirements:", err);
         setError("Failed to load requirements. Please try again later.");
       } finally {
         setLoading(false);
@@ -179,71 +287,133 @@ const CreateBaseline = () => {
     }
 };
 
-
-
-
-
   const handleCancel = () => {
     navigate(`/Baseline?project_id=${projectId}`);
   };
 
   return (
-    <div className="baseline-container">
-      <h1 className="baseline-title">Set Baseline</h1>
-      <div className="baseline-content">
-        <div className="baseline-left-panel">
-          <h2 className="baseline-section-title">Requirements</h2>
-          {loading ? (
-            <p className="baseline-loading-message">Loading requirements...</p>
-          ) : error ? (
-            <p className="baseline-error-message">{error}</p>
-          ) : validatedRequirements.length === 0 ? (
-            <p className="baseline-no-data">No validated requirements found.</p>
-          ) : (
-            <table className="baseline-requirements-table">
-              <thead>
-                <tr>
-                  <th>Select</th>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Type</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {validatedRequirements.map((req) => (
-                  <tr key={req.requirement_id}>
-                    <td>
-                      <input
-                        type="checkbox"
-                        checked={selectedRequirements.includes(req.requirement_id)}
-                        onChange={() => handleSelect(req.requirement_id)}
-                      />
-                    </td>
-                    <td>REQ-{req.requirement_id}</td>
-                    <td>{req.requirement_name}</td>
-                    <td>{req.requirement_type}</td>
-                    <td>{req.requirement_status}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+    <div className="create-baseline-dashboard">
+      <div className="create-baseline-header">
+        <div className="create-baseline-header-left">
+          <button className="create-baseline-back-button" onClick={handleCancel}>
+            <BackIcon />
+            <span>Back</span>
+          </button>
         </div>
+        <div className="create-baseline-header-title">
+          <BaselineIcon />
+          <h1>Create New Baseline</h1>
+        </div>
+        <div className="create-baseline-header-right"></div>
       </div>
 
-      <div className="baseline-action-buttons">
-        <button
-          className="baseline-create-button"
-          onClick={handleCreateBaseline}
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "Creating..." : "Set Baseline"}
-        </button>
-        <button className="baseline-btn-cancel" onClick={handleCancel}>
-          Cancel
-        </button>
+      <div className="create-baseline-content">
+        {loading ? (
+          <LoadingState />
+        ) : error ? (
+          <ErrorState message={error} />
+        ) : validatedRequirements.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <div className="create-baseline-card">
+            <div className="create-baseline-card-header">
+              <div className="create-baseline-title-section">
+                <ListIcon />
+                <h2>Validated Requirements</h2>
+              </div>
+              <div className="create-baseline-selection-info">
+                <span>{selectedRequirements.length} of {validatedRequirements.length} selected</span>
+              </div>
+            </div>
+            
+            <div className="create-baseline-table-container">
+              <table className="create-baseline-table">
+                <thead>
+                  <tr>
+                    <th className="col-checkbox">
+                      <div className="checkbox-container">
+                        <input
+                          type="checkbox"
+                          checked={selectAll}
+                          onChange={handleSelectAll}
+                          id="select-all"
+                          className="styled-checkbox"
+                        />
+                        <label htmlFor="select-all"></label>
+                      </div>
+                    </th>
+                    <th className="col-id">ID</th>
+                    <th className="col-name">Name</th>
+                    <th className="col-type">Type</th>
+                    <th className="col-status">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {validatedRequirements.map((req) => (
+                    <tr 
+                      key={req.requirement_id} 
+                      className={`create-baseline-row ${selectedRequirements.includes(req.requirement_id) ? 'selected' : ''}`}
+                      onClick={() => handleSelect(req.requirement_id)}
+                    >
+                      <td className="col-checkbox">
+                        <div className="checkbox-container">
+                          <input
+                            type="checkbox"
+                            checked={selectedRequirements.includes(req.requirement_id)}
+                            onChange={() => handleSelect(req.requirement_id)}
+                            id={`req-${req.requirement_id}`}
+                            className="styled-checkbox"
+                          />
+                          <label htmlFor={`req-${req.requirement_id}`}></label>
+                        </div>
+                      </td>
+                      <td className="col-id">
+                        <span className="req-id">REQ-{String(req.requirement_id).padStart(3, '0')}</span>
+                      </td>
+                      <td className="col-name">{req.requirement_name}</td>
+                      <td className="col-type">{req.requirement_type || 'N/A'}</td>
+                      <td className="col-status">
+                        <StatusBadge status={req.requirement_status} />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            
+            <div className="create-baseline-actions">
+              <button
+                className="create-baseline-cancel-button"
+                onClick={handleCancel}
+              >
+                <CancelIcon />
+                <span>Cancel</span>
+              </button>
+              <button
+                className="create-baseline-submit-button"
+                onClick={handleCreateBaseline}
+                disabled={isSubmitting || selectedRequirements.length === 0}
+              >
+                <CheckIcon />
+                <span>{isSubmitting ? "Creating..." : "Set Baseline"}</span>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
+
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </div>
   );
 };

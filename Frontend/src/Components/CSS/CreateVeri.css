@@ -6,50 +6,124 @@
   --bg-primary: #ffffff;
   --bg-secondary: #f8f9fc;
   --bg-tertiary: #eef1f8;
-  
+
   /* Text Colors */
   --text-primary: #1e293b;
   --text-secondary: #64748b;
   --text-light: #94a3b8;
-  
+
   /* Primary Brand Colors */
-  --primary: #4f46e5;      /* Deep indigo */
+  --primary: #4f46e5;
+  /* Deep indigo */
   --primary-light: #818cf8;
   --primary-dark: #3730a3;
-  
+
   /* Accent Colors */
-  --accent: #0ea5e9;       /* Sky blue */
+  --accent: #0ea5e9;
+  /* Sky blue */
   --accent-light: #7dd3fc;
   --accent-dark: #0369a1;
-  
+
   /* Status Colors */
-  --success: #10b981;      /* Emerald */
+  --success: #10b981;
+  /* Emerald */
   --success-dark: #059669;
-  --warning: #f59e0b;      /* Amber */
+  --warning: #f59e0b;
+  /* Amber */
   --warning-dark: #b45309;
-  --error: #ef4444;        /* Red */
+  --error: #ef4444;
+  /* Red */
   --error-dark: #b91c1c;
-  --info: #6366f1;         /* Indigo */
-  --working: #8b5cf6;      /* Purple */
-  
+  --info: #6366f1;
+  /* Indigo */
+  --working: #8b5cf6;
+  /* Purple */
+
   /* UI Elements */
   --border: #e2e8f0;
   --border-light: #f1f5f9;
   --border-colored: #c7d2fe;
-  
+
   /* Shadows */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.03);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
   --shadow-colored: 0 4px 12px rgba(79, 70, 229, 0.15);
-  
+
   /* Border Radius */
   --radius-sm: 4px;
   --radius-md: 6px;
   --radius-lg: 8px;
-  
+
   /* Transitions */
   --transition: all 0.2s ease;
+
+  /* 1. Functionality (เขียวอมฟ้า) */
+  /* Add other status/type colors as needed */
+  --type-functional-bg: #3182CE;
+  --type-functional-text: white;
+  /* Dark Cyan */
+
+  /* 2. User Interface (ที่คุณกำหนด หรือแบบอื่นๆ) */
+  /* --- แบบที่คุณกำหนด --- */
+  --type-user-interface-bg: #805AD5;
+  --type-user-interface-text: white;
+  /* --- หรือ แบบอื่นๆ ให้เข้าชุด (เช่น Indigo อ่อน) --- */
+  /* --type-user-interface-bg: #E0E7FF; */
+  /* --type-user-interface-text: #4338CA; */
+
+  /* 3. External Interfaces (ฟ้า) */
+  --type-external-interfaces-bg: #DD6B20;
+  --type-external-interfaces-text: white;
+  /* Dark Sky */
+
+  /* 4. Reliability (ส้ม/เหลืองอำพัน) */
+  --type-reliability-bg: #FEF3C7;
+  /* Light Amber */
+  --type-reliability-text: #B45309;
+  /* Dark Amber */
+
+  /* 5. Maintenance (เทา) */
+  --type-maintenance-bg: #F3F4F6;
+  /* Light Gray */
+  --type-maintenance-text: #374151;
+  /* Dark Gray */
+
+  /* 6. Portability (เขียวมิ้นท์) */
+  --type-portability-bg: #D1FAE5;
+  /* Light Emerald */
+  --type-portability-text: #047857;
+  /* Dark Emerald */
+
+  /* 7. Limitations Design and construction (ชมพู/แดง) */
+  --type-limitations-design-construction-bg: #FFF1F2;
+  /* Light Rose */
+  --type-limitations-design-construction-text: #BE185D;
+  /* Dark Rose */
+
+  /* 8. Interoperability (เขียวอ่อน) */
+  --type-interoperability-bg: #ECFCCB;
+  /* Light Lime */
+  --type-interoperability-text: #4D7C0F;
+  /* Dark Lime */
+
+  /* 9. Reusability (ชมพูม่วง) */
+  --type-reusability-bg: #FAE8FF;
+  /* Light Fuchsia */
+  --type-reusability-text: #A21CAF;
+  /* Dark Fuchsia */
+
+  /* 10. Legal and regulative (น้ำตาลอ่อน/เทาเข้ม) */
+  --type-legal-regulative-bg: #F1F5F9;
+  /* Slate 100 */
+  --type-legal-regulative-text: #334155;
+  /* Slate 700 */
+
+  /* สีสำรอง/Default */
+  --type-unknown-bg: #E5E7EB;
+  /* Gray 200 */
+  --type-unknown-text: #4B5563;
+  /* Gray 600 */
 }
 
 /* Global Reset */
@@ -194,7 +268,7 @@ body {
   margin-top: 12px;
 }
 
-.createveri-search, 
+.createveri-search,
 .createveri-filter {
   display: flex;
   align-items: center;
@@ -333,12 +407,14 @@ body {
 
 .type-non-functional {
   background-color: rgba(249, 115, 22, 0.1);
-  color: #c2410c; /* Orange dark */
+  color: #c2410c;
+  /* Orange dark */
 }
 
 .type-constraint {
   background-color: rgba(168, 85, 247, 0.1);
-  color: #7e22ce; /* Purple dark */
+  color: #7e22ce;
+  /* Purple dark */
 }
 
 /* Status badge */
@@ -355,8 +431,8 @@ body {
   color: var(--working);
 }
 
-/* Custom checkbox styling */
-input[type="checkbox"] {
+/* Custom checkbox styling - scoped to Create Verification page */
+.createveri-container input[type="checkbox"] {
   appearance: none;
   -webkit-appearance: none;
   width: 18px;
@@ -370,12 +446,12 @@ input[type="checkbox"] {
   transition: var(--transition);
 }
 
-input[type="checkbox"]:checked {
+.createveri-container input[type="checkbox"]:checked {
   background-color: var(--primary);
   border-color: var(--primary);
 }
 
-input[type="checkbox"]:checked::after {
+.createveri-container input[type="checkbox"]:checked::after {
   content: "";
   position: absolute;
   top: 4px;
@@ -387,9 +463,10 @@ input[type="checkbox"]:checked::after {
   transform: rotate(45deg);
 }
 
-input[type="checkbox"]:hover:not(:checked) {
+.createveri-container input[type="checkbox"]:hover:not(:checked) {
   border-color: var(--primary-light);
 }
+
 
 /* Empty states, loading, and error messages */
 .createveri-loading,
@@ -528,10 +605,13 @@ input[type="checkbox"]:hover:not(:checked) {
 }
 
 .createveri-btn-create:disabled {
-  background-color: var(--text-light);
+  background-color: #6366F1;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
+  background-color: var(--primary);
+  color: white;
+  border-color: 6366F1;
 }
 
 .createveri-btn-cancel {
@@ -591,6 +671,7 @@ input[type="checkbox"]:hover:not(:checked) {
     transform: translate(-50%, -100%);
     opacity: 0;
   }
+
   to {
     transform: translate(-50%, 0);
     opacity: 1;
@@ -601,6 +682,7 @@ input[type="checkbox"]:hover:not(:checked) {
   from {
     opacity: 1;
   }
+
   to {
     opacity: 0;
     pointer-events: none;
@@ -681,6 +763,7 @@ input[type="checkbox"]:hover:not(:checked) {
   from {
     transform: scaleX(1);
   }
+
   to {
     transform: scaleX(0);
   }
@@ -691,17 +774,17 @@ input[type="checkbox"]:hover:not(:checked) {
   .createveri-content {
     flex-direction: column;
   }
-  
+
   .createveri-left-panel,
   .createveri-right-panel {
     width: 100%;
   }
-  
+
   .createveri-right-panel {
     display: flex;
     flex-direction: column;
   }
-  
+
   .createveri-reviewers-list {
     max-height: 300px;
   }
@@ -711,25 +794,25 @@ input[type="checkbox"]:hover:not(:checked) {
   .createveri-container {
     padding: 20px 15px;
   }
-  
+
   .createveri-header h1 {
     font-size: 20px;
   }
-  
+
   .createveri-tools {
     flex-direction: column;
   }
-  
+
   .createveri-action-buttons {
     flex-direction: column;
   }
-  
+
   .createveri-btn-create,
   .createveri-btn-cancel {
     width: 100%;
     justify-content: center;
   }
-  
+
   .createveri-alert {
     max-width: 95%;
   }

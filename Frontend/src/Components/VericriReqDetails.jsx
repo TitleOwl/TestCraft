@@ -56,7 +56,7 @@ const VericriReqDetails = () => {
     }, [vericriReqData]);
 
     const navigateBack = () => {
-        navigate(`/VeriVaView?project_id=${projectId}`);
+        navigate(-1);
     };
 
     const formatDate = (dateString) => {

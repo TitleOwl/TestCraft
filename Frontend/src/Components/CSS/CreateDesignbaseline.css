@@ -281,10 +281,6 @@
     transition: var(--cdb-transition);
 }
 
-.styled-checkbox:checked + label {
-    background-color: var(--cdb-primary-color);
-    border-color: var(--cdb-primary-color);
-}
 
 .styled-checkbox:disabled + label {
     background-color: #e0e0e0;

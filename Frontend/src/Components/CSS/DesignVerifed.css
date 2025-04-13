@@ -1,334 +1,618 @@
-/* Container สำหรับ Checklist และ Comment */
+/* DesignVerifed.css - Premium Colorful Luxury Design (DSV Theme) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* --- Prefixed Variables & New Theme --- */
+
+  /* Base Colors */
+  --dsv-bg-primary: #ffffff;
+  --dsv-bg-secondary: #f8f9fc; /* Keep light backgrounds */
+  --dsv-bg-tertiary: #fff8f0; /* Slightly warm tertiary */
+
+  /* Text Colors */
+  --dsv-text-primary: #1e293b; /* Keep dark text for contrast */
+  --dsv-text-secondary: #64748b;
+  --dsv-text-light: #94a3b8;
+
+  /* === Primary Brand Colors (New Theme: #d76000) === */
+  --dsv-primary: #d76000;        /* Main dark orange/brown */
+  --dsv-primary-light: #f88020;  /* Lighter orange */
+  --dsv-primary-dark: #b05000;   /* Darker brown/orange */
+
+  /* Accent Colors (Can keep or adjust - keeping Sky Blue for contrast) */
+  --dsv-accent: #d76000;       /* Sky blue */
+  --dsv-accent-light: #d76000;
+  --dsv-accent-dark: #d76000;
+
+  /* Status Colors (Keeping standard ones) */
+  --dsv-success: #d76000;      /* Emerald */
+  --dsv-success-dark: #d76000;
+  --dsv-warning: #f59e0b;      /* Amber */
+  --dsv-warning-dark: #b45309;
+  --dsv-error: #ef4444;        /* Red */
+  --dsv-error-dark: #b91c1c;
+  --dsv-info: #d76000;         /* Indigo (Could change if desired) */
+  --dsv-working: #d76000;       /* Purple (Could change if desired) */
+
+  /* UI Elements */
+  --dsv-border: #e2e8f0;          /* Standard border */
+  --dsv-border-light: #f1f5f9;
+  --dsv-border-colored: #fdd8b5; /* Light orange border related to primary */
+
+  /* Shadows */
+  --dsv-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.03);
+  --dsv-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --dsv-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+  --dsv-shadow-colored: 0 4px 12px rgba(215, 96, 0, 0.15); /* Shadow using new primary */
+
+  /* Border Radius */
+  --dsv-radius-sm: 4px;
+  --dsv-radius-md: 6px;
+  --dsv-radius-lg: 8px;
+
+  /* Transitions */
+  --dsv-transition: all 0.2s ease;
+}
+
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--dsv-bg-secondary); /* Using prefixed variable */
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Main container */
 .designveri-container {
-    margin-bottom: 50px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: var(--dsv-bg-primary); /* Using prefixed variable */
+  min-height: 100vh;
+  position: relative;
 }
 
-.design-verified-container {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    flex-wrap: wrap;
-    margin: 20px;
+.designveri-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  /* Using prefixed variables with new primary */
+  background: linear-gradient(to right, var(--dsv-primary), var(--dsv-accent));
+  z-index: 1;
 }
 
-/* Checklist Section */
-.checklistveri-design-box {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    flex: 1;
-    /* ให้กล่องนี้ยืดตามขนาด */
-    max-width: 48%;
-    /* ควบคุมขนาด */
-    min-width: 300px;
-    /* กำหนดขนาดขั้นต่ำ */
-    height: 100%;
-    /* ความสูงเต็มที่ */
+/* General Error Message */
+.designveri-main-error {
+    color: var(--dsv-error-dark); /* Using prefixed variable */
+    background-color: #fee2e2; /* Light red background */
+    border: 1px solid var(--dsv-error); /* Using prefixed variable */
+    border-radius: var(--dsv-radius-md); /* Using prefixed variable */
+    padding: 10px 15px;
+    margin-bottom: 20px; /* Space below error */
+    font-size: 14px;
+    text-align: center;
 }
 
-/* Comment Section */
+
+/* Header */
+.designveri-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.designveri-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--dsv-text-primary); /* Using prefixed variable */
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  letter-spacing: -0.02em;
+  padding-bottom: 15px;
+}
+
+.designveri-title-icon {
+  color: var(--dsv-primary); /* Using prefixed variable */
+}
+
+/* Back button */
+.designveri-back-btn {
+  background-color: transparent;
+  color: var(--dsv-primary); /* Using prefixed variable */
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: var(--dsv-transition); /* Using prefixed variable */
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.designveri-back-btn:hover {
+  color: var(--dsv-primary-dark); /* Using prefixed variable */
+  transform: translateX(-3px);
+}
+
+/* Flex container */
+.designveri-flex-container {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 30px;
+}
+
+/* --- Box styling --- */
+.designveri-box,
+.checklistveri-design-box,
 .commentveridesign-box {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    flex: 1;
-    /* ให้กล่องนี้ยืดตามขนาด */
-    max-width: 48%;
-    /* ควบคุมขนาด */
-    min-width: 300px;
-    /* กำหนดขนาดขั้นต่ำ */
-    height: 100%;
-    /* ความสูงเต็มที่ */
+  background: var(--dsv-bg-primary); /* Using prefixed variable */
+  border-radius: var(--dsv-radius-lg); /* Using prefixed variable */
+  border: 1px solid var(--dsv-border); /* Using prefixed variable */
+  box-shadow: var(--dsv-shadow-md); /* Using prefixed variable */
+  overflow: hidden;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Styling ของ Checklist */
-.checklistveri-design-title {
-    font-size: 24px;
-    font-weight: 600;
-    color: #2c3e50;
-    margin-bottom: 20px;
-    font-family: 'Arial', sans-serif;
-    letter-spacing: 0.5px;
-    text-align: left;
+/* Box headers */
+.designveri-box h2,
+.checklistveri-design-box h2,
+.commentveridesign-box h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--dsv-text-primary); /* Using prefixed variable */
+  padding: 16px 20px;
+  background-color: var(--dsv-bg-secondary); /* Using prefixed variable */
+  border-bottom: 1px solid var(--dsv-border); /* Using prefixed variable */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
 }
 
+.designveri-icon {
+  color: var(--dsv-primary); /* Using prefixed variable */
+}
+
+/* --- Checklist Specific Styling --- */
 .checklistveri-design-list {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
+  list-style: none;
+  padding: 16px;
+  overflow-y: auto;
+  max-height: 400px;
+  flex-grow: 1;
 }
 
 .checklistveri-design-item {
-    margin-bottom: 15px;
-    display: flex;
-    align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--dsv-border-light); /* Using prefixed variable */
+  transition: var(--dsv-transition); /* Using prefixed variable */
 }
 
-.checklistveri-design-checkbox {
-    width: 18px;
-    height: 18px;
-    margin-right: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+.checklistveri-design-item:last-child {
+  border-bottom: none;
 }
 
-/* Hover effect for checkbox label */
-.checklistveri-design-label:hover {
-    color: #1abc9c;
-}
-
-/* Focus state on checkbox */
-
-/* Checked state for checkbox */
-.checklistveri-design-checkbox:checked {
-    background-color: #1abc9c;
-    border-color: #1abc9c;
-}
-
-.checklistveri-design-loading {
-    color: #7f8c8d;
-    font-style: italic;
-    text-align: center;
-    font-size: 16px;
-    margin-top: 10px;
+.checklistveri-design-item:hover {
+  background-color: var(--dsv-bg-tertiary); /* Using prefixed variable */
 }
 
 .checklistveri-design-label {
-    font-size: 20px;
-    color: #34495e;
-    font-weight: 500;
-    margin-left: 10px;
-    line-height: 1.5;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  width: 100%;
+  color: var(--dsv-text-primary); /* Using prefixed variable */
+  font-size: 14px;
 }
 
-/* Styling ของ Comment Section */
-.commentveridesign-title {
-    font-size: 24px;
-    margin-bottom: 20px;
-    font-weight: 600;
-    color: #2c3e50;
-    font-family: 'Arial', sans-serif;
-    letter-spacing: 0.5px;
-    text-align: left;
+/* Custom checkbox styling */
+.checklistveri-design-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--dsv-border); /* Using prefixed variable */
+  border-radius: var(--dsv-radius-sm); /* Using prefixed variable */
+  background-color: white;
+  cursor: pointer;
+  position: relative;
+  vertical-align: middle;
+  transition: var(--dsv-transition); /* Using prefixed variable */
+  flex-shrink: 0;
+}
+
+.checklistveri-design-checkbox:checked {
+  background-color: var(--dsv-primary); /* Using prefixed variable */
+  border-color: var(--dsv-primary); /* Using prefixed variable */
+}
+
+.checklistveri-design-checkbox:checked::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  width: 5px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.checklistveri-design-checkbox:hover:not(:checked) {
+  border-color: var(--dsv-primary-light); /* Using prefixed variable */
+}
+
+.checklistveri-design-checkbox:disabled {
+  cursor: not-allowed;
+  background-color: var(--dsv-bg-tertiary); /* Using prefixed variable */
+  opacity: 0.7;
+}
+.checklistveri-design-checkbox:disabled:checked {
+  background-color: var(--dsv-primary-light); /* Using prefixed variable */
+  opacity: 0.7;
+}
+
+/* --- Comment Section Specific Styling --- */
+.designveri-comment-container {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1;
+  overflow: hidden;
 }
 
 .commentveridesign-input-container {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 15px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
 }
 
 .commentveridesign-textarea {
-    padding: 10px;
-    font-size: 16px;
-    resize: none;
-    height: 120px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    margin-bottom: 10px;
+  border: 1px solid var(--dsv-border); /* Using prefixed variable */
+  border-radius: var(--dsv-radius-md); /* Using prefixed variable */
+  padding: 12px;
+  resize: vertical;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--dsv-text-primary); /* Using prefixed variable */
+  flex: 1;
+  min-height: 80px;
+  outline: none;
+  transition: var(--dsv-transition); /* Using prefixed variable */
+}
+
+.commentveridesign-textarea:focus {
+  border-color: var(--dsv-primary-light); /* Using prefixed variable */
+  /* Using prefixed variable, updated color */
+  box-shadow: 0 0 0 3px rgba(215, 96, 0, 0.1);
 }
 
 .commentveridesign-submit-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    color: white;
-    background-color: #1e3a56;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    align-self: flex-end;
+  padding: 10px 15px;
+  border-radius: var(--dsv-radius-md); /* Using prefixed variable */
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--dsv-transition); /* Using prefixed variable */
+  background-color: var(--dsv-accent); /* Using prefixed variable */
+  color: white;
+  border: none;
+  align-self: flex-end;
 }
 
-.commentveridesign-submit-button:hover {
-    background-color: #0056b3;
+.commentveridesign-submit-button:hover:not(:disabled) {
+  background-color: var(--dsv-accent-dark); /* Using prefixed variable */
 }
 
-/* Error Message */
-.commentveridesign-error-message {
-    color: red;
-    font-size: 14px;
+.commentveridesign-submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-/* No Comments */
-.commentveridesign-no-comments {
-    font-size: 16px;
-    color: #777;
+.commentveridesign-list-area {
+  flex-grow: 1;
+  overflow-y: auto;
+  max-height: 300px;
+  padding-right: 5px;
 }
 
-/* Displaying Comments */
 .commentveridesign-item {
-    background-color: #f9f9f9;
-    padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  background-color: var(--dsv-bg-secondary); /* Using prefixed variable */
+  border: 1px solid var(--dsv-border-light); /* Using prefixed variable */
+  border-radius: var(--dsv-radius-md); /* Using prefixed variable */
+  padding: 12px 15px;
+  margin-bottom: 15px;
+}
+.commentveridesign-item:last-child {
+  margin-bottom: 0;
 }
 
 .commentveridesign-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
 }
 
 .commentveridesign-name {
-    font-weight: bold;
-    color: #333;
+  font-weight: 600;
+  color: var(--dsv-text-primary); /* Using prefixed variable */
+  font-size: 14px;
 }
 
 .commentveridesign-time {
-    font-size: 14px;
-    color: #777;
+  font-size: 11px;
+  color: var(--dsv-text-light); /* Using prefixed variable */
 }
 
 .commentveridesign-text {
-    font-size: 16px;
-    color: #555;
-    margin-top: 20px;
+  font-size: 14px;
+  color: var(--dsv-text-secondary); /* Using prefixed variable */
+  line-height: 1.5;
+  margin-bottom: 10px;
+  word-wrap: break-word;
 }
 
 .commentveridesign-footer {
-    display: flex;
-    justify-content: flex-end;
-}
-
-.commentveridesign-edit-button,
-.commentveridesign-delete-button {
-    background: none;
-    border: none;
-    font-size: 18px;
-    color: #007bff;
-    cursor: pointer;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 .commentveridesign-delete-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 5px;
-    transition: transform 0.2s ease, opacity 0.2s ease;
-  }
-  
-  .commentveridesign-delete-button:hover {
-    transform: scale(1.1);
-    opacity: 0.8;
-  }
-  
-  .commentveridesign-trash {
-    width: 22px;
-    height: 22px;
-  }
-  
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.6;
+  transition: var(--dsv-transition); /* Using prefixed variable */
+}
 
-.commentveridesign-edit-button:hover,
 .commentveridesign-delete-button:hover {
-    color: #0056b3;
+  opacity: 1;
 }
 
-/* Container สำหรับ Table */
-.boxrequirement-designveri {
-    background-color: #fff;
+.commentveridesign-trash {
+  width: 16px;
+  height: 16px;
+}
+
+.commentveridesign-no-comments,
+.designveri-no-items {
+    text-align: center;
+    color: var(--dsv-text-light); /* Using prefixed variable */
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
+    font-size: 14px;
 }
 
-/* Styling ของ Table */
-.table-req-designveri {
+
+/* --- Design Details Table Styling --- */
+.designveri-details {
+  margin-bottom: 24px;
+  flex: none;
+  width: 100%;
+}
+
+.designveri-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+}
+
+.designveri-table th {
+  background-color: var(--dsv-bg-secondary); /* Using prefixed variable */
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--dsv-text-secondary); /* Using prefixed variable */
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-bottom: 1px solid var(--dsv-border); /* Using prefixed variable */
+}
+
+.designveri-table td {
+  padding: 12px 16px;
+  font-size: 14px;
+  border-bottom: 1px solid var(--dsv-border-light); /* Using prefixed variable */
+  color: var(--dsv-text-primary); /* Using prefixed variable */
+  vertical-align: middle;
+  word-wrap: break-word;
+}
+
+.designveri-table tr:last-child td {
+  border-bottom: none;
+}
+
+.designveri-table tr:hover {
+  background-color: var(--dsv-bg-tertiary); /* Using prefixed variable */
+}
+
+/* Design ID styling */
+.designveri-table td:first-child {
+  font-family: "SF Mono", "Roboto Mono", monospace;
+  font-size: 13px;
+  color: var(--dsv-accent-dark); /* Using prefixed variable (Accent for Design ID) */
+  font-weight: 500;
+  width: 15%;
+}
+.designveri-table th:first-child { width: 15%; }
+
+/* Diagram Name */
+.designveri-table td:nth-child(2) { width: 35%; }
+.designveri-table th:nth-child(2) { width: 35%; }
+
+/* Design Type */
+.designveri-table td:nth-child(3) { width: 20%; }
+.designveri-table th:nth-child(3) { width: 20%; }
+
+/* Related Req IDs */
+.designveri-table td:nth-child(4) {
+    width: 30%;
+    font-size: 13px;
+    color: var(--dsv-primary); /* Using prefixed variable (Primary for Req IDs) */
+}
+.designveri-table th:nth-child(4) { width: 30%; }
+
+
+/* Action buttons */
+.designveri-button-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--dsv-border-light); /* Using prefixed variable */
+}
+
+.designveri-save-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: var(--dsv-radius-md); /* Using prefixed variable */
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--dsv-transition); /* Using prefixed variable */
+  background-color: var(--dsv-primary); /* Using prefixed variable */
+  color: white;
+  border: none;
+  box-shadow: var(--dsv-shadow-colored); /* Using prefixed variable */
+}
+
+.designveri-save-button:hover:not(:disabled) {
+  background-color: var(--dsv-primary-dark); /* Using prefixed variable */
+  transform: translateY(-2px);
+  /* Using prefixed variable */
+  box-shadow: 0 6px 15px rgba(215, 96, 0, 0.2); /* Updated shadow color */
+}
+
+.designveri-cancel-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: var(--dsv-radius-md); /* Using prefixed variable */
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--dsv-transition); /* Using prefixed variable */
+  background-color: transparent;
+  color: var(--dsv-text-secondary); /* Using prefixed variable */
+  border: 1px solid var(--dsv-border); /* Using prefixed variable */
+}
+
+.designveri-cancel-button:hover:not(:disabled) {
+  background-color: var(--dsv-bg-tertiary); /* Using prefixed variable */
+  color: var(--dsv-text-primary); /* Using prefixed variable */
+}
+
+/* Disabled state for buttons */
+.designveri-save-button:disabled,
+.designveri-cancel-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: var(--dsv-shadow-sm); /* Using prefixed variable */
+}
+
+
+/* Loading state */
+.designveri-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  color: var(--dsv-text-secondary); /* Using prefixed variable */
+  font-size: 14px;
+}
+
+.designveri-spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--dsv-border); /* Using prefixed variable */
+  border-radius: 50%;
+  border-top-color: var(--dsv-primary); /* Using prefixed variable */
+  animation: spin 1s linear infinite;
+  margin-right: 10px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .designveri-flex-container {
+    flex-direction: column;
+  }
+  .designveri-box,
+  .checklistveri-design-box,
+  .commentveridesign-box {
+      min-height: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .designveri-container {
+    padding: 20px 15px;
+  }
+
+  .designveri-title {
+    font-size: 20px;
+    text-align: center;
+    padding-bottom: 20px;
+  }
+   .designveri-back-btn {
+      top: 5px;
+  }
+
+  .designveri-button-container {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .designveri-save-button,
+  .designveri-cancel-button {
     width: 100%;
-    border-collapse: collapse;
-    font-size: 16px;
-}
+    justify-content: center;
+  }
 
-.table-req-designveri th,
-.table-req-designveri td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
-
-.table-req-designveri th {
-    background-color: #f8f9fa;
-    font-weight: bold;
-}
-
-.table-req-designveri tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-.table-req-designveri tr:hover {
-    background-color: #f1f1f1;
-}
-
-/* Message when no data is found */
-.table-req-designveri td[colSpan="3"] {
-    text-align: center;
-    font-size: 16px;
-    color: #777;
-    padding: 20px;
-}
-
-/* Button container */
-.button-container {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 20px;
-}
-
-/* Save button */
-.savedesignveri-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    color: white;
-    background-color: #007bff;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-.savedesignveri-button:hover {
-    background-color: #0056b3;
-}
-
-/* Title - Verification Requirement */
-.title-designver {
-    font-size: 28px;
-    font-weight: 600;
-    color: #333;
-    text-align: center;
-    margin-bottom: 20px;
-    margin-top: 30px;
-    font-family: 'Roboto', sans-serif;
-    letter-spacing: 1px;
-    text-transform: capitalize;
-}
-
-/* Title - Software Design */
-.title-softwaredesign {
-    font-size: 24px;
-    font-weight: 600;
-    color: #2c3e50;
-    text-align: center;
-    margin-bottom: 30px;
-    font-family: 'Arial', sans-serif;
-    letter-spacing: 0.5px;
-    position: relative;
-}
-
-/* Optional: Add a subtle line underneath for emphasis */
-.title-softwaredesign::after {
-    content: '';
-    display: block;
-    width: 80px;
-    height: 4px;
-    background-color: #2c3e50;
-    margin: 10px auto;
-    border-radius: 2px;
+  .designveri-table {
+       display: block;
+       overflow-x: auto;
+       white-space: nowrap;
+  }
+   .designveri-table th, .designveri-table td {
+        white-space: nowrap;
+   }
+   .designveri-table th, .designveri-table td {
+        width: auto !important;
+   }
 
 }

@@ -105,11 +105,27 @@
   gap: 0.25rem;
 }
 
+.create-requirement-form-groups label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--gray-700);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.create-requirement-form-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 .create-requirement-form-group label::after {
   content: "*";
   color: var(--danger);
   font-size: 0.75rem;
 }
+
 
 /* Input elements with consistent styling and high-quality interactions */
 .create-requirement-input,
