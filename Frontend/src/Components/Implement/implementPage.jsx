@@ -1,9 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import "../Implement/CSS/implementPage.css";
 import { useLocation, useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faHome,
+  faListAlt,
+  faCodeBranch,
+  faPlus,
+  faSearch,
+  faTimes,
+  faFileAlt,
+  faEye,
+  faTrash,
+  faDownload,
+  faTable,
+  faQuestionCircle,
+  faSyncAlt,
+} from "@fortawesome/free-solid-svg-icons";
+import Modal from "react-modal";
 import fetchfileimplement from "../Implement/image/fetch-file.png";
 import Select from 'react-select';
+import Joyride, { STATUS } from 'react-joyride';
+import "./CSS/implementPage.css";
+
+Modal.setAppElement("#root"); // For accessibility
 
 const ImplementPage = () => {
   const navigate = useNavigate();
@@ -25,17 +45,54 @@ const ImplementPage = () => {
   const [relations, setRelations] = useState([]);
   const [editingRelation, setEditingRelation] = useState(null);
   const [editedDesignIds, setEditedDesignIds] = useState([]);
+  const [activeTab, setActiveTab] = useState("mapping");
+  const [projectName, setProjectName] = useState("");
+  const [runTutorial, setRunTutorial] = useState(false);
+  
   const apiToken = process.env.REACT_APP_API_TOKEN;
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const projectId = queryParams.get("project_id");
 
+  const tutorialSteps = [
+    {
+      target: '.imp-fetch-btn',
+      content: 'Start by fetching files from your GitHub repository.',
+      placement: 'bottom',
+      disableBeacon: true,
+    },
+    {
+      target: '.imp-file-tree',
+      content: 'Select files from your repository that you want to map to designs.',
+      placement: 'right',
+    },
+    {
+      target: '.imp-design-list',
+      content: 'Choose designs to associate with your selected file.',
+      placement: 'left',
+    },
+    {
+      target: '.imp-save-btn',
+      content: 'Save the relationship between your file and selected designs.',
+      placement: 'top',
+    },
+    {
+      target: '.imp-relation-table',
+      content: 'View all your file-design relationships here.',
+      placement: 'top',
+    }
+  ];
+
+  const handleRestartTutorial = () => {
+    setRunTutorial(true);
+  };
+
   const filteredDesigns = designs.filter(design => {
     const searchLower = searchQuery.toLowerCase();
     return (
-      design.design_id.toString().includes(searchLower) ||  // ค้นหา Design ID
-      design.diagram_name.toLowerCase().includes(searchLower) ||  // ค้นหาชื่อ
-      design.design_type.toLowerCase().includes(searchLower)  // ค้นหาประเภท
+      design.design_id.toString().includes(searchLower) ||
+      design.diagram_name.toLowerCase().includes(searchLower) ||
+      design.design_type.toLowerCase().includes(searchLower)
     );
   });
 
@@ -44,12 +101,10 @@ const ImplementPage = () => {
 
     const repoName = repoLink.replace('https://github.com/', '').replace('.git', '');
     const apiUrl = `https://api.github.com/repos/${repoName}/commits?path=${selectedFilePath}`;
-    // console.log("apiUrl", apiUrl) // Debug
 
     try {
       const response = await fetch(apiUrl, {
         headers: {
-          // เปลี่ยนจาก hardcode token มาใช้ตัวแปร apiToken ที่ดึงมาจาก .env
           'Authorization': `token ${apiToken}`
         },
       });
@@ -58,20 +113,17 @@ const ImplementPage = () => {
         const data = await response.json();
         console.log("Commits data: ", data);
 
-        // ป้องกัน error: ตรวจสอบ commit.files ก่อน
         const updatedFiles = data.map(commit => {
           if (commit.files && Array.isArray(commit.files)) {
             return commit.files;
           } else {
-            // ถ้า commit.files ไม่มี, หรือไม่ใช่ array, return empty array
-            return []; // สำคัญ: ต้อง return array เปล่า เพื่อให้ .flat() ทำงานได้
+            return [];
           }
         }).flat();
 
-        console.log("updatedFiles", updatedFiles); // Debug: ดูว่า updatedFiles มีอะไรบ้าง
+        console.log("updatedFiles", updatedFiles);
 
         const modifiedFiles = updatedFiles.filter(file => {
-          // ป้องกัน error: ตรวจสอบ file ก่อนเข้าถึง file.filename
           return file && file.filename === selectedFilePath;
         });
         return modifiedFiles.length > 0;
@@ -81,13 +133,11 @@ const ImplementPage = () => {
     }
   };
 
-
   useEffect(() => {
-    // เรียกใช้ fetchCommits เพื่อดึงข้อมูลการเปลี่ยนแปลง
     fetchCommits().then(modifiedFiles => {
-      setModifiedFiles(modifiedFiles); // อัพเดตไฟล์ที่ถูกเปลี่ยนแปลง
+      setModifiedFiles(modifiedFiles);
     });
-  }, [repoLink, selectedFilePath]); // update เมื่อ repoLink หรือ selectedFilePath เปลี่ยน
+  }, [repoLink, selectedFilePath]);
 
   const fetchImplementConfig = async () => {
     try {
@@ -107,6 +157,16 @@ const ImplementPage = () => {
     }
   };
 
+  // Fetch project name
+  const fetchProjectName = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3001/project/${projectId}`);
+      setProjectName(response.data.project_name);
+    } catch (error) {
+      console.error("Error fetching project name:", error);
+    }
+  };
+
   useEffect(() => {
     const storedRepoLink = localStorage.getItem("repoLink");
     const storedBranch = localStorage.getItem("repoBranch");
@@ -114,17 +174,17 @@ const ImplementPage = () => {
     if (storedRepoLink) setRepoLink(storedRepoLink);
     if (storedBranch) setRepoBranch(storedBranch);
 
+    fetchProjectName();
     fetchImplementConfig();
-    fetchDesigns(); // เรียก fetchDesigns ที่นี่
-  }, [projectId]); // Fetch config and designs when projectId changes
+    fetchDesigns();
+  }, [projectId]);
 
   useEffect(() => {
     const storedFiles = localStorage.getItem("repoFiles");
     if (storedFiles) {
-      setFileNames(JSON.parse(storedFiles)); // โหลดไฟล์เก่ามาใช้
+      setFileNames(JSON.parse(storedFiles));
     }
   }, []);
-
 
   const handleRepoLinkChange = (event) => {
     const value = event.target.value;
@@ -138,13 +198,12 @@ const ImplementPage = () => {
     localStorage.setItem("repoBranch", value);
   };
 
-
   const toggleFolder = (folderPath) => {
     setExpandedFolders((prev) => {
       if (prev.includes(folderPath)) {
-        return prev.filter((path) => path !== folderPath); // ปิดโฟลเดอร์ที่ถูกกดซ้ำ
+        return prev.filter((path) => path !== folderPath);
       } else {
-        return [...prev, folderPath]; // เปิดโฟลเดอร์ที่ถูกกด
+        return [...prev, folderPath];
       }
     });
   };
@@ -175,7 +234,6 @@ const ImplementPage = () => {
       setLoadingPercentage(0);
       let loadedFilesCount = 0;
 
-      // ส่ง POST ไปที่ `/fetchfilelog` เพื่อบันทึก log
       const logResponse = await axios.post('http://localhost:3001/fetchfilelog', { project_id: projectId });
 
       if (logResponse.status !== 200) {
@@ -187,7 +245,6 @@ const ImplementPage = () => {
 
       const response = await fetch(apiUrl, {
         headers: {
-          // เปลี่ยนจาก hardcode token มาใช้ตัวแปร apiToken ที่ดึงมาจาก .env
           'Authorization': `token ${apiToken}`
         },
       });
@@ -202,7 +259,7 @@ const ImplementPage = () => {
             loadedFilesCount += 1;
             const percentage = (loadedFilesCount / totalFiles) * 100;
             setLoadingPercentage(percentage);
-            await new Promise(resolve => setTimeout(resolve, 80)); // จำลองเวลาโหลด
+            await new Promise(resolve => setTimeout(resolve, 80));
           }
 
           setLoadingPercentage(100);
@@ -217,12 +274,8 @@ const ImplementPage = () => {
     }
   };
 
-
-
-
-  // เคลียร์ค่าเมื่อโหลดหน้าใหม่หรือไม่ใช้ค่าเก่า
   useEffect(() => {
-    setFileNames([]); // รีเซ็ตค่า fileNames ที่โหลดเก่ามา
+    setFileNames([]);
   }, []);
 
   const buildFileTree = async (repoName, items, parentPath = '') => {
@@ -246,7 +299,6 @@ const ImplementPage = () => {
     try {
       const response = await fetch(folderApiUrl, {
         headers: {
-          // เปลี่ยนจาก hardcode token มาใช้ตัวแปร apiToken ที่ดึงมาจาก .env
           'Authorization': `token ${apiToken}`
         },
       });
@@ -302,14 +354,13 @@ const ImplementPage = () => {
     setSelectedFiles((prev) => {
       const isSelected = prev.includes(designId);
       const updatedFiles = isSelected
-        ? prev.filter((id) => id !== designId) // เอาออกถ้าถูกเลือกซ้ำ
-        : [...prev, designId]; // เพิ่มเข้าไปถ้ายังไม่มี
+        ? prev.filter((id) => id !== designId)
+        : [...prev, designId];
 
       console.log("After:", updatedFiles);
       return updatedFiles;
     });
   };
-
 
   const handleSave = async () => {
     console.log("🔍 Selected Files before save:", selectedFiles);
@@ -334,7 +385,7 @@ const ImplementPage = () => {
       return {
         implement_filename: filePath,
         project_id: projectId,
-        design_id: designIds // จัดเก็บ design_ids หลายๆ อัน
+        design_id: designIds
       };
     });
 
@@ -370,11 +421,11 @@ const ImplementPage = () => {
             acc[key] = {
               implement_id,
               implement_filename,
-              design_ids: [design_id],  // initial array
+              design_ids: [design_id],
               relation_at,
             };
           } else {
-            acc[key].design_ids.push(design_id);  // add design_id
+            acc[key].design_ids.push(design_id);
           }
 
           return acc;
@@ -386,7 +437,7 @@ const ImplementPage = () => {
         // แปลง design_ids ให้เป็น string โดยใช้ join
         const formattedRelationsArray = relationsArray.map(relation => ({
           ...relation,
-          design_ids: relation.design_ids.join(','), // เปลี่ยนจาก comma เป็น dash
+          design_ids: relation.design_ids.join(','),
         }));
 
         setRelations(formattedRelationsArray);
@@ -401,181 +452,341 @@ const ImplementPage = () => {
     return () => clearInterval(intervalId);
   }, [projectId]);
 
-
-
   const handleRefresh = () => {
     setSelectedFiles([]);
     setSelectedFilePath("");
   };
 
   return (
-    <div className="implement-page">
-      <div className="implement-repo-branch-container"> {/* เพิ่ม container */}
-        <label className="implement-label">
-          Link Github Repository:
-          <input
-            type="text"
-            value={repoLink}
-            disabled
-            onChange={handleRepoLinkChange}
-            placeholder="e.g., username/repository"
-            className="implement-input"
-          />
-        </label>
-        <label className="implement-label">
-          Github Branch:
-          <input
-            type="text"
-            value={repoBranch}
-            disabled
-            onChange={handleBranchChange}
-            placeholder="e.g., main"
-            className="implement-input"
-          />
-        </label>
-        <button onClick={fetchFilesFromRepo} disabled={loading} className="implement-fetch-btn">
-          <img src={fetchfileimplement} alt="fetchfileimplement" className="fetchfileimplement" />  {loading ? 'Loading...' : 'Fetch Files'}
-        </button>
-      </div>
+    <div className="imp-page-wrapper">
+      <Joyride
+        steps={tutorialSteps}
+        run={runTutorial}
+        continuous
+        showProgress
+        showSkipButton
+        styles={{
+          options: {
+            zIndex: 10000,
+          },
+        }}
+        callback={(data) => {
+          const { status } = data;
+          if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
+            setRunTutorial(false);
+            localStorage.setItem('implementPageTutorialShown', 'true');
+          }
+        }}
+      />
 
-      <button onClick={handleRefresh} className="implement-refresh-btn">
-        Refresh
-      </button>
-      <div className="implement-main-container">
-        <div className="implement-left-column">
-          <div className="implement-files-section">
-            <h3 className="implement-section-title">Select Files from Repository:</h3>
-            {loading ? (
-              <div>
-                <p>Loading files...</p>
-                <div className="implement-progress-container">
-                  <div
-                    className="implement-progress-bar"
-                    style={{ width: `${loadingPercentage}%` }}
-                  ></div>
-                </div>
-                <p>{loadingPercentage.toFixed(2)}%</p>
-              </div>
-            ) : fileNames.length > 0 ? (
-              <FileTree
-                files={fileNames}
-                onSelect={handleFileSelection}
-                expandedFolders={expandedFolders}
-                toggleFolder={toggleFolder}
-                fileStatuses={fileStatuses}
-                selectedFiles={selectedFiles} // ส่ง selectedFiles ไปยัง FileTree
-              />
-            ) : (
-              <p className="implement-no-files">Please click "Fetch Files" first.</p>
-            )}
+      {/* Enterprise Header - Similar to RequirementPage */}
+      <div className="imp-enterprise-header">
+        <div className="imp-header-top">
+          <div className="imp-project-info">
+            <div className="imp-project-breadcrumb">
+              <FontAwesomeIcon icon={faHome} />
+              / Projects / {projectName || "Loading..."}
+            </div>
+            <div className="imp-project-title">
+              <h1 className="imp-project-name">{projectName || "Loading..."}</h1>
+              <span className="imp-badge">IMPLEMENTATION MAPPING</span>
+              <button
+                onClick={handleRestartTutorial}
+                className="imp-tutorial-help-button imp-tutorial-help-button-corner"
+                title="Show Tutorial"
+              >
+                <FontAwesomeIcon icon={faQuestionCircle} />
+              </button>
+            </div>
           </div>
         </div>
 
-        <div className="implement-right-column">
-          <div className="implement-designs-section">
-            <div className='filter-design'>
-              Filter
-              <input
-                type="text"
-                placeholder="Search by Design ID, Name, or Type"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+        <div className="imp-header-tab-bar">
+          <div
+            className={`imp-header-tab ${activeTab === 'mapping' ? 'imp-active' : ''}`}
+            onClick={() => setActiveTab('mapping')}
+          >
+            <FontAwesomeIcon icon={faCodeBranch} className="imp-tab-icon" />
+            File-Design Mapping
+          </div>
+          <div
+            className={`imp-header-tab ${activeTab === 'relations' ? 'imp-active' : ''}`}
+            onClick={() => setActiveTab('relations')}
+          >
+            <FontAwesomeIcon icon={faTable} className="imp-tab-icon" />
+            Relationship List
+          </div>
+        </div>
+      </div>
+
+      <div className="imp-main-content">
+        {/* Repository Section */}
+        <div className="imp-repo-section">
+          <div className="imp-card-header">
+            <h2 className="imp-card-title">
+              <FontAwesomeIcon icon={faCodeBranch} className="imp-card-icon" />
+              GitHub Repository
+            </h2>
+            <div className="imp-repo-actions">
+              <div className="imp-repo-inputs">
+                <div className="imp-input-group">
+                  <label>Repository Link:</label>
+                  <input
+                    type="text"
+                    value={repoLink}
+                    disabled
+                    onChange={handleRepoLinkChange}
+                    placeholder="e.g., username/repository"
+                    className="imp-input"
+                  />
+                </div>
+                <div className="imp-input-group">
+                  <label>Branch:</label>
+                  <input
+                    type="text"
+                    value={repoBranch}
+                    disabled
+                    onChange={handleBranchChange}
+                    placeholder="e.g., main"
+                    className="imp-input"
+                  />
+                </div>
+              </div>
+              <div className="imp-button-group">
+                <button onClick={fetchFilesFromRepo} disabled={loading} className="imp-fetch-btn">
+                      <FontAwesomeIcon icon={faSyncAlt} />
+                      Fetch Files
+                </button>
+                <button onClick={handleRefresh} className="imp-refresh-btn">
+                  <FontAwesomeIcon icon={faTimes} />
+                  Clear Selection
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content Based on Active Tab */}
+        {activeTab === 'mapping' && (
+          <div className="imp-mapping-container">
+            {/* Left Column - File Tree */}
+            <div className="imp-left-column">
+              <div className="imp-files-card">
+                <div className="imp-card-header">
+                  <h2 className="imp-card-title">
+                    <FontAwesomeIcon icon={faFileAlt} className="imp-card-icon" />
+                    Repository Files
+                  </h2>
+                  <p className="imp-card-description">
+                    Select files from your repository to map to design components
+                  </p>
+                </div>
+                <div className="imp-content-area">
+                  {loading ? (
+                    <div className="imp-loading-state">
+                      <div className="imp-loading-spinner"></div>
+                      <p>Loading files...</p>
+                      <div className="imp-progress-container">
+                        <div
+                          className="imp-progress-bar"
+                          style={{ width: `${loadingPercentage}%` }}
+                        ></div>
+                      </div>
+                      <p>{loadingPercentage.toFixed(2)}%</p>
+                    </div>
+                  ) : fileNames.length > 0 ? (
+                    <div className="imp-file-explorer">
+                      <FileTree
+                        files={fileNames}
+                        onSelect={handleFileSelection}
+                        expandedFolders={expandedFolders}
+                        toggleFolder={toggleFolder}
+                        fileStatuses={fileStatuses}
+                        selectedFiles={selectedFiles}
+                      />
+                    </div>
+                  ) : (
+                    <div className="imp-empty-state">
+                      <FontAwesomeIcon icon={faFileAlt} className="imp-empty-icon" />
+                      <p>No files loaded. Click "Fetch Files" to load repository files.</p>
+                      <button onClick={fetchFilesFromRepo} className="imp-empty-button">
+                        <FontAwesomeIcon icon={faSyncAlt} />
+                        Fetch Files
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
 
-            <h3 className="implement-section-title">Selected Designs:</h3>
-            {/* ตรงนี้จะเปลี่ยน */}
-            {filteredDesigns.length > 0 ? (
-              <ul className="implement-design-list">
-                {filteredDesigns.map((design) => (
-                  <li key={design.design_id} className="implement-design-item">
+            {/* Right Column - Design Selection */}
+            <div className="imp-right-column">
+              <div className="imp-designs-card">
+                <div className="imp-card-header">
+                  <h2 className="imp-card-title">
+                    <FontAwesomeIcon icon={faTable} className="imp-card-icon" />
+                    Design Selection
+                  </h2>
+                  <div className="imp-search-container">
+                    <FontAwesomeIcon icon={faSearch} className="imp-search-icon" />
                     <input
-                      type="checkbox"
-                      checked={selectedFiles.includes(design.design_id)}
-                      onChange={() => {
-                        if (selectedFilePath) {
-                          handleDesignSelection(selectedFilePath, design.design_id);
-                        }
-                      }}
-                      className="implement-checkbox"
+                      type="text"
+                      className="imp-search-input"
+                      placeholder="Search designs by ID, name, or type..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
                     />
-                    SD{design.design_id} - {design.diagram_name} - {design.design_type}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>{selectedFilePath ? "No designs to be matched." : "No file selected."}</p>
-            )}
-            <button onClick={handleSave} className="implement-save-btn">
-              Save
-            </button>
+                    {searchQuery && (
+                      <button
+                        className="imp-clear-search-btn"
+                        onClick={() => setSearchQuery('')}
+                        title="Clear search"
+                      >
+                        <FontAwesomeIcon icon={faTimes} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <div className="imp-content-area">
+                  <div className="imp-selected-file-info">
+                    <h3>Selected File: {selectedFilePath ? selectedFilePath.split('/').pop() : "No file selected"}</h3>
+                    <p>Please select a file first, then choose designs to associate with it.</p>
+                  </div>
+                  {filteredDesigns.length > 0 ? (
+                    <ul className="imp-design-list">
+                      {filteredDesigns.map((design) => (
+                        <li key={design.design_id} className="imp-design-item">
+                          <input
+                            type="checkbox"
+                            checked={selectedFiles.includes(design.design_id)}
+                            onChange={() => {
+                              if (selectedFilePath) {
+                                handleDesignSelection(selectedFilePath, design.design_id);
+                              }
+                            }}
+                            disabled={!selectedFilePath}
+                            className="imp-checkbox"
+                          />
+                          <div className="imp-design-info">
+                            <span className="imp-design-id">SD{design.design_id}</span>
+                            <span className="imp-design-name">{design.diagram_name}</span>
+                            <span className={`imp-design-type-badge imp-type-${design.design_type.toLowerCase().replace(/\s+/g, '-')}`}>
+                              {design.design_type}
+                            </span>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <div className="imp-empty-state">
+                      <FontAwesomeIcon icon={faTable} className="imp-empty-icon" />
+                      <p>{searchQuery ? "No designs match your search." : "No baseline designs available."}</p>
+                    </div>
+                  )}
+                  <div className="imp-actions-container">
+                    <button 
+                      onClick={handleSave} 
+                      className="imp-save-btn"
+                      disabled={!selectedFilePath || selectedFiles.filter(file => typeof file === 'number').length === 0}
+                    >
+                      <FontAwesomeIcon icon={faPlus} />
+                      Save Mapping
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
+        )}
 
-        </div>
-      </div>
+        {activeTab === 'relations' && (
+          <div className="imp-relations-card">
+            <div className="imp-card-header">
+              <h2 className="imp-card-title">
+                <FontAwesomeIcon icon={faCodeBranch} className="imp-card-icon" />
+                File-Design Relations
+              </h2>
+              <p className="imp-card-description">
+                View and manage relationships between implementation files and design components
+              </p>
+            </div>
+            <div className="imp-content-area">
+              {relations.length > 0 ? (
+                <table className="imp-relation-table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Filename</th>
+                      <th>Design IDs</th>
+                      <th>Created At</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {relations.map((relation, index) => {
+                      const formattedDate = new Intl.DateTimeFormat('th-TH', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        second: 'numeric',
+                      }).format(new Date(relation.relation_at));
 
-      <div className="implement-relation">
-        <h2 className="relation-topic">File and Design Relations (Filename ↔ Design ID)</h2>
-        {relations.length > 0 ? (
-          <table className="relation-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Filename</th>
-                <th>Design IDs</th>
-                <th>Relation At</th>
-              </tr>
-            </thead>
-            <tbody>
-              {relations.map((relation, index) => {
-                const formattedDate = new Intl.DateTimeFormat('th-TH', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  hour: 'numeric',
-                  minute: 'numeric',
-                  second: 'numeric',
-                }).format(new Date(relation.relation_at));
-
-                return (
-                  <tr key={index}>
-                    <td data-label="#">{index + 1}</td>
-                    <td data-label="Filename">{relation.implement_filename}</td>
-                    <td data-label="Design IDs"> {relation.design_ids}</td>
-                    <td data-label="Relation At" className="relation-at">
-                      {formattedDate}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        ) : (
-          <p>No relations found</p>
+                      return (
+                        <tr key={index}>
+                          <td data-label="#">{index + 1}</td>
+                          <td data-label="Filename" className="imp-filename-cell">
+                            <span className="imp-file-icon">📄</span>
+                            {relation.implement_filename}
+                          </td>
+                          <td data-label="Design IDs"> 
+                            {relation.design_ids.split(',').map(id => (
+                              <span key={id} className="imp-design-chip">SD{id}</span>
+                            ))}
+                          </td>
+                          <td data-label="Created At" className="imp-date-cell">
+                            {formattedDate}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              ) : (
+                <div className="imp-empty-state">
+                  <FontAwesomeIcon icon={faCodeBranch} className="imp-empty-icon" />
+                  <p>No file-design relations have been created yet.</p>
+                  <p>Select a file and associate it with designs to create a relationship.</p>
+                </div>
+              )}
+            </div>
+          </div>
         )}
       </div>
-
     </div>
   );
 };
 
 const FileTree = ({ files, onSelect, expandedFolders, toggleFolder, parentPath = "", selectedFiles }) => {
   return (
-    <ul className="implement-file-tree">
+    <ul className="imp-file-tree">
       {files.map((item) => {
         const fullPath = parentPath ? `${parentPath}/${item.name}` : item.name;
 
         return (
-          <li key={fullPath} className="implement-file-item">
+          <li key={fullPath} className="imp-file-item">
             {item.type === "folder" ? (
               <>
-                <span
-                  className="implement-folder-label"
+                <div 
+                  className="imp-folder-label"
                   onClick={() => toggleFolder(fullPath)}
                   aria-expanded={expandedFolders && expandedFolders.includes(fullPath)}
                 >
-                  {expandedFolders && expandedFolders.includes(fullPath) ? "📂" : "📁"} {item.name}
-                </span>
+                  <span className="imp-folder-icon">
+                    {expandedFolders && expandedFolders.includes(fullPath) ? "📂" : "📁"}
+                  </span>
+                  <span className="imp-folder-name">{item.name}</span>
+                </div>
                 {expandedFolders && expandedFolders.includes(fullPath) && item.children ? (
                   <FileTree
                     files={item.children}
@@ -583,20 +794,21 @@ const FileTree = ({ files, onSelect, expandedFolders, toggleFolder, parentPath =
                     expandedFolders={expandedFolders}
                     toggleFolder={toggleFolder}
                     parentPath={fullPath}
-                    selectedFiles={selectedFiles} // ส่ง selectedFiles ไปยัง FileTree
+                    selectedFiles={selectedFiles}
                   />
                 ) : null}
               </>
             ) : (
-              <>
+              <div className={`imp-file-label ${selectedFiles.includes(item.name) ? 'imp-file-selected' : ''}`}>
                 <input
                   type="checkbox"
                   onChange={() => onSelect(fullPath)}
-                  className="implement-checkbox"
-                  checked={selectedFiles.includes(item.name)} // ตรวจสอบว่าไฟล์ถูกเลือกหรือไม่
+                  className="imp-checkbox"
+                  checked={selectedFiles.includes(item.name)}
                 />
-                📄 {item.name}
-              </>
+                <span className="imp-file-icon">📄</span>
+                <span className="imp-file-name">{item.name}</span>
+              </div>
             )}
           </li>
         );
@@ -604,6 +816,5 @@ const FileTree = ({ files, onSelect, expandedFolders, toggleFolder, parentPath =
     </ul>
   );
 };
-
 
 export default ImplementPage;

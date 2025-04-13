@@ -117,8 +117,8 @@ const TestExecution = () => {
   const handleFileChange = async (index, event) => { // index อาจจะไม่จำเป็นแล้วถ้าใช้ selectedStep
     const file = event.target.files[0];
     if (!file || !selectedStep) {
-        console.warn("No file selected or no step selected.");
-        return; // ไม่มีไฟล์ หรือ ไม่มี selectedStep
+      console.warn("No file selected or no step selected.");
+      return; // ไม่มีไฟล์ หรือ ไม่มี selectedStep
     }
 
     const currentProcedureId = selectedStep.test_procedures_id; // ใช้ ID จาก selectedStep โดยตรง
@@ -169,8 +169,8 @@ const TestExecution = () => {
   const handleDeleteFile = async (test_procedures_id, fileIndex) => {
     // ตรวจสอบว่ามีข้อมูลไฟล์ใน state ก่อนดำเนินการ
     if (!testFiles[test_procedures_id] || !testFiles[test_procedures_id][fileIndex]) {
-        console.error("File data not found for deletion.");
-        return;
+      console.error("File data not found for deletion.");
+      return;
     }
 
     const fileName = testFiles[test_procedures_id][fileIndex].file_testcase_name;
@@ -218,11 +218,10 @@ const TestExecution = () => {
   // --- JSX Rendering ---
   return (
     <div className="TestExecution">
-      
+      <button className="back-test-execution">Back</button>
       <button className="save-button" onClick={handleSave}>Save</button>
-      <h3>Test Execution : TC-0{testCase?.testcase_id || "-" } {testCase?.testcase_name || "Unknown"}</h3>
+      <h3>Test Execution : TC-0{testCase?.testcase_id || "-"} {testCase?.testcase_name || "Unknown"}</h3>
       <p><strong>Completion Date:</strong> {testCase?.testcase_at ? new Date(testCase.testcase_at).toLocaleDateString("th-TH") : "-"}</p>
-
 
       <table className="test-execution-table">
         <thead>
@@ -241,9 +240,29 @@ const TestExecution = () => {
             testSteps.map((step, index) => (
               <tr key={step.test_procedures_id} data-status={step.test_status || "default"}>
                 <td>{index + 1}</td>
-                <td>{step.required_action}</td>
-                <td>{step.expected_result}</td>
-                <td>{step.prerequisite || "-"}</td>
+                {/* --- การเปลี่ยนแปลงเริ่มต้นที่นี่ --- */}
+                {/* ใช้ dangerouslySetInnerHTML สำหรับ Required Action */}
+                <td>
+                  <div dangerouslySetInnerHTML={{ __html: step.required_action || '' }} />
+                </td>
+                {/* ใช้ dangerouslySetInnerHTML สำหรับ Expected Result */}
+                <td>
+                  <div dangerouslySetInnerHTML={{ __html: step.expected_result || '' }} />
+                </td>
+                {/* ใช้ dangerouslySetInnerHTML สำหรับ Prerequisite */}
+                <td>
+                  {/* แสดง '-' ถ้าไม่มีข้อมูล, หรือ render HTML ถ้ามี */}
+                  {step.prerequisite ? (
+                    <div dangerouslySetInnerHTML={{ __html: step.prerequisite }} />
+                  ) : (
+                    '-'
+                  )}
+                  {/* หรือถ้าต้องการให้ช่องว่างเมื่อไม่มี prerequisite: */}
+                  {/* <div dangerouslySetInnerHTML={{ __html: step.prerequisite || '' }} /> */}
+                </td>
+                {/* --- การเปลี่ยนแปลงสิ้นสุดที่นี่ --- */}
+
+                {/* คอลัมน์ที่เหลือเหมือนเดิม */}
                 <td className={`status-cell ${step.test_status?.toLowerCase().replace(/\s+/g, "-") || ""}`}>
                   <select
                     value={step.test_status || ""}
@@ -263,7 +282,6 @@ const TestExecution = () => {
                   />
                 </td>
                 <td>
-                  {/* ปุ่มเปิด Modal */}
                   <button onClick={() => openModal(step)}>View Files</button>
                 </td>
               </tr>
@@ -290,7 +308,7 @@ const TestExecution = () => {
               type="file"
               // ส่ง index ไป handleFileChange (อาจจะไม่จำเป็นแล้วถ้าใช้ selectedStep)
               onChange={(event) => handleFileChange(testSteps.indexOf(selectedStep), event)}
-              style={{marginBottom: '15px'}} // เพิ่มระยะห่างด้านล่างเล็กน้อย
+              style={{ marginBottom: '15px' }} // เพิ่มระยะห่างด้านล่างเล็กน้อย
             />
 
             {/* ส่วนแสดงรายการไฟล์ */}
