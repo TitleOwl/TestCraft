@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
+// import Swal from "sweetalert2"; // <--- ลบออก
+import { toast, ToastContainer } from 'react-toastify'; // <--- เพิ่ม import toast และ ToastContainer
+import 'react-toastify/dist/ReactToastify.css';   // <--- เพิ่ม import CSS ของ toastify
 import Select from "react-select";
 
 // Import CSS
@@ -32,19 +34,18 @@ const CreateDesign = () => {
     const [selectedRequirementsId, setRequirementsId] = useState([]);
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [uploadedFiles, setUploadedFiles] = useState([]);
-    const [showAlert, setShowAlert] = useState(false);
-    const [alertType, setAlertType] = useState("success");
-    const [alertMessage, setAlertMessage] = useState("");
+    const [showAlert, setShowAlert] = useState(false);       // <-- Custom alert state (คงไว้)
+    const [alertType, setAlertType] = useState("success");   // <-- Custom alert state (คงไว้)
+    const [alertMessage, setAlertMessage] = useState("");    // <-- Custom alert state (คงไว้)
     const [showDiagram, setShowDiagram] = useState(false);
 
     const diagramRef = useRef(null);
-    const diagramSectionRef = useRef(null); // Ref for the diagram container itself
+    const diagramSectionRef = useRef(null);
     const navigate = useNavigate();
     const queryParams = new URLSearchParams(window.location.search);
     const projectId = queryParams.get("project_id");
 
-    // --- functions (เหมือนเดิม) ---
-    // showAlertMessage, fetchRequirements, useEffect, uploadFiles, handleFileChange, handleToggleDiagram, handleSubmit
+    // --- functions (เหมือนเดิม ยกเว้น handleSubmit) ---
 
     // --- fetchRequirements ---
     const fetchRequirements = useCallback(async () => {
@@ -98,8 +99,9 @@ const CreateDesign = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!designStatement || !designType || !diagramType || !description || selectedRequirementsId.length === 0) {
-            setError("Please fill in all required fields and select at least one requirement.");
-            Swal.fire('ข้อมูลไม่ครบ', 'กรุณากรอกข้อมูล Design ให้ครบถ้วน และเลือก Requirement อย่างน้อย 1 รายการ', 'warning');
+            const errorMessage = "Please fill in all required fields and select at least one requirement.";
+            setError(errorMessage);
+            toast.warn('กรุณากรอกข้อมูล Design ให้ครบถ้วน และเลือก Requirement อย่างน้อย 1 รายการ');
             return;
         }
         setLoading(true);
@@ -118,13 +120,12 @@ const CreateDesign = () => {
             if (!createdDesignId) throw new Error("Design ID not returned.");
 
             // 2. Save Diagram via ref (if shown)
-            let diagramSaveSuccess = true; // Assume success if no diagram is shown or no ref
+            let diagramSaveSuccess = true;
             if (showDiagram && diagramRef.current && typeof diagramRef.current.saveDiagram === 'function') {
                 diagramSaveSuccess = await diagramRef.current.saveDiagram(createdDesignId);
                 if (!diagramSaveSuccess) console.error("⚠️ Metadata created, but failed auto-save diagram.");
             } else if (showDiagram) {
                 console.warn("⚠️ Diagram component ref/method not available, but diagram was shown.");
-                // diagramSaveSuccess = false; // Or handle as appropriate if diagram editor *must* exist when shown
             }
 
             // 3. Save History
@@ -145,24 +146,36 @@ const CreateDesign = () => {
 
             // 5. Success Notification and Redirect based on diagram save status
             if (diagramSaveSuccess) {
-                Swal.fire({ icon: "success", title: "Design Created!", text: "Design saved successfully.", showConfirmButton: false, timer: 2000 })
-                    .then(() => { navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } }); });
-            } else {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Partial Success',
-                    text: 'Design metadata created, but failed to save the diagram. Please try editing the design to save the diagram again.',
-                    confirmButtonText: 'OK'
-                }).then(() => {
-                    navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } }); // Navigate back anyway or to edit page
+                toast.success("Design saved successfully.", {
+                    // --- เพิ่ม onClose ที่นี่ ---
+                    onClose: () => {
+                        console.log("Success toast closed, navigating..."); // Optional: for debugging
+                        navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } });
+                    }
+                    // สามารถกำหนด autoClose เพิ่มเติมได้ถ้าต้องการ เช่น autoClose: 2000
                 });
-                setError("Failed to save diagram content."); // Update error state
+                // --- ลบ navigate เดิมออกจากตรงนี้ ---
+                // navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } });
+            } else {
+                const partialSuccessMsg = 'Design metadata created, but failed to save the diagram. Please try editing the design to save the diagram again.';
+                toast.warn(partialSuccessMsg, {
+                     // --- เพิ่ม onClose ที่นี่ ---
+                    onClose: () => {
+                        console.log("Warning toast closed, navigating..."); // Optional: for debugging
+                        navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } });
+                    }
+                     // สามารถกำหนด autoClose เพิ่มเติมได้ถ้าต้องการ
+                });
+                setError("Failed to save diagram content.");
+                // --- ลบ navigate เดิมออกจากตรงนี้ ---
+                // navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } });
             }
 
         } catch (error) {
             console.error("❌ Error during design creation:", error);
-            Swal.fire({ icon: 'error', title: 'Creation Failed', text: error.message || 'An unexpected error occurred.' });
-            setError(error.message || "Something went wrong.")
+            const creationErrorMsg = `Creation Failed: ${error.message || 'An unexpected error occurred.'}`;
+            toast.error(creationErrorMsg); // Error toast ปกติไม่ต้อง navigate ต่อ
+            setError(error.message || "Something went wrong.");
         } finally {
             setLoading(false);
         }
@@ -172,14 +185,13 @@ const CreateDesign = () => {
     // --- JSX Rendering ---
     return (
         <div className="create-design-container">
+             {/* ควรมี ToastContainer เพียงที่เดียวใน App */}
+             {/* <ToastContainer /> */}
             <h1 className="create-design-header">Create Software Design</h1>
-            {error && <p className="create-design-error">{error}</p>}
+            {error && <p className="create-design-error"><FontAwesomeIcon icon={faExclamationTriangle}/> {error}</p>}
 
-            {/* --- Layout Wrapper (Optional but useful for styling) --- */}
-            <div className="create-design-layout"> {/* NEW: Wrapper for flex/grid layout */}
-
-                {/* --- Form Container --- */}
-                <div className="create-design-form-container"> {/* NEW: Specific container for the form */}
+            <div className="create-design-layout">
+                <div className="create-design-form-container">
                     <form className="create-design-form" onSubmit={handleSubmit}>
                         {/* Diagram Name */}
                         <div className="create-design-form-group">
@@ -210,7 +222,7 @@ const CreateDesign = () => {
                         </div>
 
                         {/* Requirement ID Selection */}
-                        <div className="create-design-form-groups"> {/* Note: class name here is 'form-groups' plural */}
+                        <div className="create-design-form-groups">
                             <label htmlFor="requirementId">Requirement ID</label>
                             <Select
                                 isMulti
@@ -218,7 +230,7 @@ const CreateDesign = () => {
                                 value={baselineRequirements.filter(req => selectedRequirementsId.includes(req.requirement_id)).map(req => ({ value: req.requirement_id, label: `REQ-${String(req.requirement_id).padStart(3, '0')}: ${req.requirement_name}` }))}
                                 onChange={(selectedOptions) => setRequirementsId(selectedOptions ? selectedOptions.map((option) => option.value) : [])}
                                 placeholder="Select Related Baseline Requirement(s)"
-                                className="create-design-select-files" // Use this class or a general one
+                                className="create-design-select-files"
                                 classNamePrefix="react-select"
                                 isLoading={loading && baselineRequirements.length === 0}
                                 isDisabled={loading}
@@ -228,33 +240,31 @@ const CreateDesign = () => {
                         {/* Add or Draw Diagram Section */}
                         <div className="create-design-form-group">
                             <label>Add or Draw Diagram</label>
-                            {/* Hidden File Input */}
                             <input
                                 type="file"
                                 id="designFiles"
                                 multiple
                                 accept="image/*,.pdf,.doc,.docx,.txt,.zip,.rar"
                                 onChange={handleFileChange}
-                                className="create-design-file-input" // Keep hidden
-                                disabled={loading || showDiagram} // Optionally disable file upload if drawing
-                                style={{ display: 'none' }} // Ensure it's hidden
+                                className="create-design-file-input"
+                                disabled={loading || showDiagram}
+                                style={{ display: 'none' }}
                                 aria-hidden="true"
                             />
                             <div className="create-design-action-buttons-inline">
-                                <label htmlFor="designFiles" className={`create-design-btn-attach ${showDiagram ? 'disabled' : ''}`}> {/* Add disabled class */}
+                                <label htmlFor="designFiles" className={`create-design-btn-attach ${showDiagram || loading ? 'disabled' : ''}`}>
                                     <FontAwesomeIcon icon={faPaperclip} /> Choose Files...
                                 </label>
                                 <button
                                     type="button"
                                     className="create-design-btn-draw"
-                                    onClick={handleToggleDiagram} // Toggle Diagram visibility
+                                    onClick={handleToggleDiagram}
                                     disabled={loading}
                                 >
                                     <FontAwesomeIcon icon={faPencilRuler} /> {showDiagram ? "Hide Diagram" : "Draw Diagram"}
                                 </button>
                             </div>
-                            {/* File Preview List */}
-                            {uploadedFiles.length > 0 && !showDiagram && ( // Only show preview if not drawing
+                            {uploadedFiles.length > 0 && !showDiagram && (
                                 <div className="file-preview-list">
                                     {uploadedFiles.map((file, index) => (
                                         <p key={index} className="file-preview-item">
@@ -282,28 +292,25 @@ const CreateDesign = () => {
                                 {loading ? (<><FontAwesomeIcon icon={faSpinner} spin /> Creating...</>) : ("Create Design")}
                             </button>
                         </div>
-                    </form> {/* --- End Form Section --- */}
-                </div> {/* --- End Form Container --- */}
+                    </form>
+                </div>
 
-
-                {/* --- Diagram Editor Container (Conditionally Rendered) --- */}
+                {/* Diagram Editor Container */}
                 {showDiagram && (
-                    <div className="create-design-diagram-container" ref={diagramSectionRef}> {/* NEW: Specific container for the diagram */}
+                    <div className="create-design-diagram-container" ref={diagramSectionRef}>
                          <h2>Diagram Editor</h2>
-                         <div className="diagram-editor-content"> {/* Optional: Inner wrapper if needed for styling */}
-                            <CreateDiagram
-                                ref={diagramRef}
-                                isDisabled={loading}
-                                // projectId={projectId} // Pass if needed by CreateDiagram
-                            />
+                         <div className="diagram-editor-content">
+                             <CreateDiagram
+                                 ref={diagramRef}
+                                 isDisabled={loading}
+                             />
                          </div>
-                    </div>
-                )} {/* --- End Diagram Editor Container --- */}
+                     </div>
+                )}
 
-            </div> {/* --- End Layout Wrapper --- */}
+            </div>
 
-
-            {/* --- Custom Alert Notification (remains outside layout) --- */}
+            {/* Custom Alert Notification */}
             <div className={`create-design-alert ${showAlert ? 'show' : ''}`}>
                 <div className={`create-design-alert-${alertType}`}>
                     <div className="create-design-alert-content">

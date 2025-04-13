@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Swal from "sweetalert2";
+// import Swal from "sweetalert2"; // <--- ลบออก
+import { toast, ToastContainer } from 'react-toastify'; // <--- เพิ่ม import toast และ ToastContainer
+import 'react-toastify/dist/ReactToastify.css';   // <--- เพิ่ม import CSS ของ toastify
 import { useLocation, useNavigate } from "react-router-dom";
 import Joyride, { STATUS } from 'react-joyride';
 
-// Import CSS (You'll need to update this path and the CSS file itself)
-// import "./CSS/CreateVeriDesign.css"; // <<< Update this path if needed
-import "./CSS/CreateVeriDesign.css"; // <<< Temporarily keep using CreateVeri CSS for display, remind user to create CreateVeriDesign.css
+// Import CSS
+import "./CSS/CreateVeriDesign.css";
 
 // Import icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -21,7 +22,7 @@ import {
     faSpinner,
     faExclamationTriangle,
     faQuestionCircle,
-    faDraftingCompass
+    faDraftingCompass // ไม่ได้ถูกใช้ แต่เก็บไว้ก่อน
 } from '@fortawesome/free-solid-svg-icons';
 
 const CreateVeriDesign = () => {
@@ -149,11 +150,11 @@ const CreateVeriDesign = () => {
     };
 
      const handleSelectAllDesigns = () => {
-         if (selectedDesigns.length === filteredDesigns.length) {
+        if (selectedDesigns.length === filteredDesigns.length) {
              setSelectedDesigns([]);
-         } else {
+        } else {
              setSelectedDesigns(filteredDesigns.map(design => design.design_id));
-         }
+        }
      };
 
     const handleCheckboxReviewer = (memberName) => {
@@ -188,16 +189,16 @@ const CreateVeriDesign = () => {
     // Filter Designs Logic (remains the same)
     const filteredDesigns = workingDesigns.filter(design => {
          const matchesSearch =
-             design.diagram_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-             `SD-${String(design.design_id).padStart(2, '0')}`.toLowerCase().includes(searchQuery.toLowerCase());
+              design.diagram_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              `SD-${String(design.design_id).padStart(2, '0')}`.toLowerCase().includes(searchQuery.toLowerCase());
          const matchesType = filterType ? design.diagram_type === filterType : true;
          return matchesSearch && matchesType;
      });
      const designTypes = [...new Set(workingDesigns.map(design => design.diagram_type).filter(Boolean))];
 
-    // Handle Create Verification (Logic remains the same, using Swal)
+    // Handle Create Verification (Logic remains the same, using toast)
     const handleCreateVerification = async () => {
-        // ... (Keep the existing complex logic using Swal) ...
+        // ... (Keep the existing complex logic using toast) ...
         const storedUsername = localStorage.getItem("username") || "DefaultUser"; // ใส่ default ถ้าไม่มี
         const timestamp = new Date().toISOString();
 
@@ -207,19 +208,23 @@ const CreateVeriDesign = () => {
 
         // --- 1. Initial Input Validation ---
         if (!projectId) {
-            Swal.fire({ icon: "error", title: "Error", text: "Invalid project ID." });
+            // Swal.fire({ icon: "error", title: "Error", text: "Invalid project ID." });
+            toast.error("Invalid project ID."); // <--- เปลี่ยนแล้ว
             return;
         }
         if (selectedDesigns.length === 0) {
-            Swal.fire({ icon: "warning", title: "Warning", text: "Please select at least one design." });
+            // Swal.fire({ icon: "warning", title: "Warning", text: "Please select at least one design." });
+            toast.warn("Please select at least one design."); // <--- เปลี่ยนแล้ว
             return;
         }
         if (selectedReviewerNames.length === 0) {
-            Swal.fire({ icon: "warning", title: "Warning", text: "Please select at least one reviewer." });
+            // Swal.fire({ icon: "warning", title: "Warning", text: "Please select at least one reviewer." });
+            toast.warn("Please select at least one reviewer."); // <--- เปลี่ยนแล้ว
             return;
         }
         if (!storedUsername) {
-            Swal.fire({ icon: "error", title: "Error", text: "No user found. Please login again." });
+            // Swal.fire({ icon: "error", title: "Error", text: "No user found. Please login again." });
+            toast.error("No user found. Please login again."); // <--- เปลี่ยนแล้ว
             return;
         }
 
@@ -278,6 +283,7 @@ const CreateVeriDesign = () => {
                   validRequirementIdArray = [];
              }
 
+
             if (!hasError) {
                 designsToProcess.push({
                     design_id: designId,
@@ -301,11 +307,21 @@ const CreateVeriDesign = () => {
         // --- 3. Handle Validation Results ---
         if (validationErrors.length > 0) {
             console.error("Validation failed for some designs:", validationErrors);
-            Swal.fire({
-                icon: "error",
-                title: "Data Validation Failed",
-                html: `<div style="text-align: left; max-height: 200px; overflow-y: auto; margin-top: 10px;">Cannot proceed. Please fix the data for the following designs:<ul style="margin-left: 20px; margin-top: 5px;">${validationErrors.map(err => `<li>${err}</li>`).join('')}</ul></div>`,
-            });
+            // Swal.fire({
+            //     icon: "error",
+            //     title: "Data Validation Failed",
+            //     html: `<div style="text-align: left; max-height: 200px; overflow-y: auto; margin-top: 10px;">Cannot proceed. Please fix the data for the following designs:<ul style="margin-left: 20px; margin-top: 5px;">${validationErrors.map(err => `<li>${err}</li>`).join('')}</ul></div>`,
+            // });
+            // --- แสดงผล list ใน toast (อาจจะต้องปรับ style หรือพิจารณา UX อื่น) ---
+            const errorContent = (
+                <div style={{ textAlign: 'left' }}>
+                    Data Validation Failed. Cannot proceed. Please fix:
+                    <ul style={{ marginLeft: '15px', marginTop: '5px', maxHeight: '100px', overflowY: 'auto', fontSize: '0.9em' }}>
+                        {validationErrors.map((err, index) => <li key={index}>{err}</li>)}
+                    </ul>
+                </div>
+            );
+            toast.error(errorContent, { autoClose: false }); // <--- เปลี่ยนแล้ว
             return;
         }
 
@@ -343,56 +359,75 @@ const CreateVeriDesign = () => {
 
             // 4.3 Create History Records
             if (veridesignResponse.status === 201) {
-                console.log("Veridesign records created successfully. Now creating history records...");
-                const historyPromises = [];
-                designsToProcess.forEach(d => {
-                    const requirementIdsToLog = d.requirement_id_array;
-                    if (requirementIdsToLog && requirementIdsToLog.length > 0) {
-                        requirementIdsToLog.forEach(singleReqId => {
-                            const historyData = {
-                                design_id: d.design_id, requirement_id: singleReqId, design_type: d.design_type,
-                                diagram_name: d.diagram_name, diagram_type: d.diagram_type,
-                                design_description: d.design_description, design_status: "WAITING FOR VERIFICATION"
-                            };
-                            console.log(`📜 [History] Preparing post for Design ${d.design_id} / Req ${singleReqId}`);
-                            historyPromises.push(
-                                axios.post("http://localhost:3001/addHistoryDesign", historyData)
-                                    .then(res => { if (res.status === 201) { console.log(`[History] ✅ Added for Design ${d.design_id} / Req ${singleReqId}`); } else { console.warn(`[History] Non-201 status for Design ${d.design_id} / Req ${singleReqId}. Status: ${res.status}`); } return { status: 'fulfilled', designId: d.design_id, reqId: singleReqId }; })
-                                    .catch(err => { console.error(`[History] ❌ Error for Design ${d.design_id} / Req ${singleReqId}:`, err.response?.data || err.message); return { status: 'rejected', designId: d.design_id, reqId: singleReqId, reason: err.response?.data?.message || err.message || 'Unknown history save error' }; })
-                            );
-                        });
-                    } else { console.log(`[History] No valid requirement IDs to log for Design ${d.design_id}.`); }
-                });
+                 console.log("Veridesign records created successfully. Now creating history records...");
+                 const historyPromises = [];
+                 designsToProcess.forEach(d => {
+                     const requirementIdsToLog = d.requirement_id_array;
+                     if (requirementIdsToLog && requirementIdsToLog.length > 0) {
+                         requirementIdsToLog.forEach(singleReqId => {
+                             const historyData = {
+                                 design_id: d.design_id, requirement_id: singleReqId, design_type: d.design_type,
+                                 diagram_name: d.diagram_name, diagram_type: d.diagram_type,
+                                 design_description: d.design_description, design_status: "WAITING FOR VERIFICATION"
+                             };
+                             console.log(`📜 [History] Preparing post for Design ${d.design_id} / Req ${singleReqId}`);
+                             historyPromises.push(
+                                 axios.post("http://localhost:3001/addHistoryDesign", historyData)
+                                     .then(res => { if (res.status === 201) { console.log(`[History] ✅ Added for Design ${d.design_id} / Req ${singleReqId}`); } else { console.warn(`[History] Non-201 status for Design ${d.design_id} / Req ${singleReqId}. Status: ${res.status}`); } return { status: 'fulfilled', designId: d.design_id, reqId: singleReqId }; })
+                                     .catch(err => { console.error(`[History] ❌ Error for Design ${d.design_id} / Req ${singleReqId}:`, err.response?.data || err.message); return { status: 'rejected', designId: d.design_id, reqId: singleReqId, reason: err.response?.data?.message || err.message || 'Unknown history save error' }; })
+                             );
+                         });
+                     } else { console.log(`[History] No valid requirement IDs to log for Design ${d.design_id}.`); }
+                 });
+
 
                 if (historyPromises.length > 0) {
-                    console.log(`Waiting for ${historyPromises.length} history records...`);
-                    const historyResults = await Promise.allSettled(historyPromises);
-                    const failedHistory = historyResults.filter(r => r.status === 'rejected');
-                    if (failedHistory.length > 0) {
-                        console.error("Some history records failed:", failedHistory);
-                        const errorDetails = failedHistory.map(f => `<li>Design ${f.reason.designId} / Req ${f.reason.reqId}: ${f.reason.reason}</li>`).join(''); // Adjusted path
-                        Swal.fire({ icon: 'warning', title: 'History Warning', html: `Could not record history for ${failedHistory.length} item(s).<br><ul style="text-align:left; margin-left: 20px; max-height: 150px; overflow-y: auto; margin-top: 5px;">${errorDetails}</ul>` });
-                    } else { console.log("All required history records created."); }
-                } else { console.log("No history records needed."); }
+                     console.log(`Waiting for ${historyPromises.length} history records...`);
+                     const historyResults = await Promise.allSettled(historyPromises);
+                     const failedHistory = historyResults.filter(r => r.status === 'rejected');
+                     if (failedHistory.length > 0) {
+                         console.error("Some history records failed:", failedHistory);
+                         // const errorDetails = failedHistory.map(f => `<li>Design ${f.reason.designId} / Req ${f.reason.reqId}: ${f.reason.reason}</li>`).join(''); // Adjusted path
+                         // Swal.fire({ icon: 'warning', title: 'History Warning', html: `Could not record history for ${failedHistory.length} item(s).<br><ul style="text-align:left; margin-left: 20px; max-height: 150px; overflow-y: auto; margin-top: 5px;">${errorDetails}</ul>` });
 
-                // --- 5. Update UI and Navigate ---
-                setWorkingDesigns((prev) => prev.filter((design) => !selectedDesigns.includes(design.design_id)));
-                setSelectedDesigns([]);
-                setSelectedReviewers({});
-                Swal.fire({ icon: "success", title: "Success", text: "Verification initiated!", timer: 1500, showConfirmButton: false }).then(() => {
-                    navigate(`/VeriDesign?project_id=${projectId}`);
-                });
+                        // --- แสดง list error ใน toast (อาจจะต้องปรับ style หรือพิจารณา UX อื่น) ---
+                         const historyErrorContent = (
+                             <div style={{ textAlign: 'left' }}>
+                                 History Warning: Could not record history for {failedHistory.length} item(s).
+                                 <ul style={{ marginLeft: '15px', marginTop: '5px', maxHeight: '100px', overflowY: 'auto', fontSize: '0.9em' }}>
+                                     {failedHistory.map((f, index) => (
+                                         <li key={index}>
+                                             {/* ใช้ f.value แทน f.reason หากต้องการเข้าถึงข้อมูลที่ส่งกลับมาตอน fulfilled/rejected */}
+                                             Design {f.value?.designId ?? f.reason?.designId ?? 'N/A'} / Req {f.value?.reqId ?? f.reason?.reqId ?? 'N/A'}: {f.reason?.reason ?? 'Unknown error'}
+                                         </li>
+                                     ))}
+                                 </ul>
+                             </div>
+                         );
+                         toast.warn(historyErrorContent, { autoClose: 8000 }); // <--- เปลี่ยนแล้ว
 
+                     } else { console.log("All required history records created."); }
+                 } else { console.log("No history records needed."); }
+
+                 // --- 5. Update UI, Show Toast, and Navigate ---
+                 setWorkingDesigns((prev) => prev.filter((design) => !selectedDesigns.includes(design.design_id)));
+                 setSelectedDesigns([]);
+                 setSelectedReviewers({});
+
+                 toast.success("Verification Created!"); // <--- เปลี่ยนแล้ว
             } else {
-                Swal.fire({ icon: "error", title: "Veridesign Error", text: veridesignResponse.data?.message || "Failed to create verification records." });
+                // Swal.fire({ icon: "error", title: "Veridesign Error", text: veridesignResponse.data?.message || "Failed to create verification records." });
+                toast.error(veridesignResponse.data?.message || "Failed to create verification records."); // <--- เปลี่ยนแล้ว
                 console.warn("Veridesign creation failed. Rollback needed?");
             }
         } catch (error) {
             console.error("Error during create verification process:", error);
-            Swal.fire({ icon: "error", title: "Process Error", text: error.response?.data?.message || error.message || "An error occurred." });
-             console.warn("Error occurred. Rollback needed?");
+            // Swal.fire({ icon: "error", title: "Process Error", text: error.response?.data?.message || error.message || "An error occurred." });
+            toast.error(error.response?.data?.message || error.message || "An error occurred during the process."); // <--- เปลี่ยนแล้ว
+            console.warn("Error occurred. Rollback needed?");
         } finally {
             setIsSubmitting(false);
+            // ถ้าต้องการเคลียร์ selection เสมอไม่ว่าจะสำเร็จหรือล้มเหลว ก็อาจจะใส่ setSelected... ไว้ตรงนี้
         }
     };
 
@@ -401,6 +436,19 @@ const CreateVeriDesign = () => {
     return (
         // Use NEW class names with createveri-design- prefix
         <div className="createveri-design-container">
+            {/* --- เพิ่ม ToastContainer ที่นี่ หรือใน Component หลัก เช่น App.js --- */}
+            {/* หากใส่ใน App.js แล้ว ไม่ต้องใส่ซ้ำที่นี่ */}
+            {/* <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+            /> */}
             <Joyride
               steps={createVeriDesignTutorialSteps}
               run={runCreateVeriDesignTutorial}
@@ -423,11 +471,11 @@ const CreateVeriDesign = () => {
                      Create Design Verification
                 </h1>
                 <button
-                    onClick={handleRestartCreateVeriDesignTutorial}
-                    className="tutorial-help-button tutorial-help-button-corner" // Keep generic class? Or change too? Let's keep generic for now.
-                    title="Show Tutorial"
-                    style={{ position: 'absolute', top: '15px', right: '20px', fontSize: '1.6rem', background: 'none', border: 'none', color: 'gray', cursor: 'pointer' }}
-                  >
+                     onClick={handleRestartCreateVeriDesignTutorial}
+                     className="tutorial-help-button tutorial-help-button-corner"
+                     title="Show Tutorial"
+                     style={{ position: 'absolute', top: '15px', right: '20px', fontSize: '1.6rem', background: 'none', border: 'none', color: 'gray', cursor: 'pointer' }}
+                   >
                     <FontAwesomeIcon icon={faQuestionCircle} />
                  </button>
             </div>
@@ -473,27 +521,27 @@ const CreateVeriDesign = () => {
                     {loading ? (
                         <div className="createveri-design-loading"><FontAwesomeIcon icon={faSpinner} spin /> <p>Loading designs...</p></div>
                     ) : designsError ? (
-                        <div className="createveri-design-error-message"><FontAwesomeIcon icon={faTimes} /> <p>{designsError}</p></div>
+                        <div className="createveri-design-error-message"><FontAwesomeIcon icon={faExclamationTriangle} /> <p>{designsError}</p></div> // Changed icon for error
                     ) : workingDesigns.length === 0 && !searchQuery && !filterType ? (
                         <div className="createveri-design-empty-state"><p>No designs found in 'WORKING' status.</p></div>
                     ) : (
                         <>
-              <div className="createveri-design-select-all">
-                <input
-                  type="checkbox"
-                  className="checkbox-design" // <<< เพิ่ม class ตรงนี้
-                  id="select-all-designs"
-                  checked={selectedDesigns.length === filteredDesigns.length && filteredDesigns.length > 0}
-                  onChange={handleSelectAllDesigns}
-                  disabled={filteredDesigns.length === 0}
-                />
-  <label htmlFor="select-all-designs">Select All</label>
-  <span className="createveri-design-selected-count">
-    {selectedDesigns.length} of {filteredDesigns.length} selected
-  </span>
-</div>
+                         <div className="createveri-design-select-all">
+                           <input
+                             type="checkbox"
+                             className="checkbox-design" // <<< เพิ่ม class ตรงนี้
+                             id="select-all-designs"
+                             checked={selectedDesigns.length === filteredDesigns.length && filteredDesigns.length > 0}
+                             onChange={handleSelectAllDesigns}
+                             disabled={filteredDesigns.length === 0}
+                           />
+                            <label htmlFor="select-all-designs">Select All</label>
+                             <span className="createveri-design-selected-count">
+                               {selectedDesigns.length} of {filteredDesigns.length} selected
+                             </span>
+                         </div>
                             <div className="createveri-design-table-container">
-                                <table className="createveri-design-requirements-table"> {/* Consider renaming class if needed: createveri-design-designs-table */}
+                                <table className="createveri-design-requirements-table">
                                     <thead>
                                         <tr>
                                             <th className="createveri-design-checkbox-column">Select</th>
@@ -503,15 +551,15 @@ const CreateVeriDesign = () => {
                                     <tbody>
                                         {filteredDesigns.length === 0 ? (
                                              <tr><td colSpan="5" className="createveri-design-no-results">No designs match your filters.</td></tr>
-                                         ) : (
+                                        ) : (
                                             filteredDesigns.map((design) => (
                                                 <tr key={design.design_id} className={selectedDesigns.includes(design.design_id) ? "selected-row" : ""}>
                                                     <td> <input
-                              type="checkbox"
-                              className="checkbox-design" // <<< เพิ่ม class ตรงนี้
-                              checked={selectedDesigns.includes(design.design_id)}
-                              onChange={() => handleSelect(design.design_id, setSelectedDesigns)}
-                            /></td>
+                                                     type="checkbox"
+                                                     className="checkbox-design" // <<< เพิ่ม class ตรงนี้
+                                                     checked={selectedDesigns.includes(design.design_id)}
+                                                     onChange={() => handleSelect(design.design_id, setSelectedDesigns)}
+                                                 /></td>
                                                     <td className="req-id">SD-{String(design.design_id).padStart(2, '0')}</td>
                                                     <td>{design.diagram_name || 'N/A'}</td>
                                                     <td>{design.diagram_type || 'N/A'}</td>
@@ -535,38 +583,38 @@ const CreateVeriDesign = () => {
                     {isLoadingMembers ? (
                         <div className="createveri-design-loading"><FontAwesomeIcon icon={faSpinner} spin /><p>Loading reviewers...</p></div>
                     ) : membersError ? (
-                        <div className="createveri-design-error-message"><FontAwesomeIcon icon={faTimes} /><p>{membersError}</p></div>
+                        <div className="createveri-design-error-message"><FontAwesomeIcon icon={faExclamationTriangle} /><p>{membersError}</p></div> // Changed icon for error
                     ) : members.length === 0 ? (
                         <div className="createveri-design-empty-state"><p>No reviewers found for this project.</p></div>
                     ) : (
                         <div className="createveri-design-reviewers-container">
                             <div className="createveri-design-select-all">
                             <input
-    type="checkbox"
-    id="select-all-reviewers"
-    className="checkbox-design" // <<< เพิ่ม class ตรงนี้
-    onChange={handleSelectAllReviewers}
-    checked={(() => {
-      const allReviewerNames = [];
-      members.forEach(member => {
-        try {
-          // Ensure member.project_member exists and is a string before parsing
-          const memberInfo = (member && member.project_member && typeof member.project_member === 'string')
-                              ? JSON.parse(member.project_member)
-                              : [];
-          // Ensure memberInfo is an array before iterating
-          if (Array.isArray(memberInfo)) {
-             memberInfo.forEach(info => { if (info && info.name) allReviewerNames.push(info.name); });
-          }
-        } catch (e) {
-            console.error("Error parsing project_member in checked logic:", e, member?.project_member);
-        }
-      });
-      const uniqueReviewerNames = [...new Set(allReviewerNames)];
-      // Check if uniqueReviewerNames is not empty before calling .every
-      return uniqueReviewerNames.length > 0 && uniqueReviewerNames.every(name => selectedReviewers[name]);
-    })()}
-  />
+                                type="checkbox"
+                                id="select-all-reviewers"
+                                className="checkbox-design" // <<< เพิ่ม class ตรงนี้
+                                onChange={handleSelectAllReviewers}
+                                checked={(() => {
+                                 const allReviewerNames = [];
+                                 members.forEach(member => {
+                                   try {
+                                     // Ensure member.project_member exists and is a string before parsing
+                                     const memberInfo = (member && member.project_member && typeof member.project_member === 'string')
+                                                        ? JSON.parse(member.project_member)
+                                                        : [];
+                                     // Ensure memberInfo is an array before iterating
+                                     if (Array.isArray(memberInfo)) {
+                                        memberInfo.forEach(info => { if (info && info.name) allReviewerNames.push(info.name); });
+                                     }
+                                   } catch (e) {
+                                      console.error("Error parsing project_member in checked logic:", e, member?.project_member);
+                                   }
+                                 });
+                                 const uniqueReviewerNames = [...new Set(allReviewerNames)];
+                                 // Check if uniqueReviewerNames is not empty before calling .every
+                                 return uniqueReviewerNames.length > 0 && uniqueReviewerNames.every(name => selectedReviewers[name]);
+                                })()}
+                             />
                                 <label htmlFor="select-all-reviewers">Select All Reviewers</label>
                             </div>
                             <div className="createveri-design-reviewers-list">
@@ -584,9 +632,9 @@ const CreateVeriDesign = () => {
                         </div>
                     )}
                     <div className="createveri-design-summary">
-                         <h3>Selection Summary</h3>
-                         <div className="createveri-design-summary-item"><span>Designs:</span><span className="createveri-design-summary-count">{selectedDesigns.length}</span></div>
-                         <div className="createveri-design-summary-item"><span>Reviewers:</span><span className="createveri-design-summary-count">{Object.values(selectedReviewers).filter(Boolean).length}</span></div>
+                           <h3>Selection Summary</h3>
+                           <div className="createveri-design-summary-item"><span>Designs:</span><span className="createveri-design-summary-count">{selectedDesigns.length}</span></div>
+                           <div className="createveri-design-summary-item"><span>Reviewers:</span><span className="createveri-design-summary-count">{Object.values(selectedReviewers).filter(Boolean).length}</span></div>
                      </div>
                 </div>
             </div>
@@ -601,9 +649,6 @@ const CreateVeriDesign = () => {
                     {isSubmitting ? (<><FontAwesomeIcon icon={faSpinner} spin /> Creating...</>) : (<><FontAwesomeIcon icon={faCheckCircle} /> Create Verification</>)}
                 </button>
             </div>
-
-             {/* Alert placeholder (if needed later) */}
-             {/* <div className={`createveri-design-alert ...`}> ... </div> */}
 
         </div> // End createveri-design-container
     );

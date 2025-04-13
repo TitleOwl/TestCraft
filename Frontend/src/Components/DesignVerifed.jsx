@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react"; // Added useRef
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import "./CSS/DesignVerifed.css"; // Keep DesignVerifed CSS
 import trash_comment from "../image/trash_comment.png";
@@ -321,351 +320,363 @@ const DesignVerifed = () => {
     });
   };
 
- const handleSave = async () => {
-         // --- Debugging & Initial Checks ---
-         console.log("Attempting to save verification for veridesignId:", veridesignId);
-         console.log("Raw designId string (from URL/props):", designId);
-         console.log("State designDetails at start of handleSave:", JSON.stringify(designDetails, null, 2));
-         console.log("[VeriCri] Checking structure of designcriList:", JSON.stringify(designcriList, null, 2));
+  const handleSave = async () => {
+    // --- Debugging & Initial Checks ---
+    console.log("Attempting to save verification for veridesignId:", veridesignId);
+    console.log("Raw designId string (from URL/props):", designId);
+    console.log("State designDetails at start of handleSave:", JSON.stringify(designDetails, null, 2));
+    console.log("[VeriCri] Checking structure of designcriList:", JSON.stringify(designcriList, null, 2));
+
+    // Assume storedUsername, veridesignId, designId, designDetails, designcriList, checkboxState,
+    // veridesignBy, projectId, navigate, setIsSubmitting are defined in the component's scope
+
+    if (!storedUsername) {
+        // Swal.fire('Error', 'User not identified.', 'error');
+        toast.error('User not identified.'); // <--- เปลี่ยนแล้ว
+        return;
+    }
+    if (!veridesignId) {
+       // Swal.fire('Error', 'Verification task ID missing.', 'error');
+       toast.error('Verification task ID missing.'); // <--- เปลี่ยนแล้ว
+       return;
+    }
+    // Corrected check for designId: Ensure it's a non-empty string before proceeding
+    if (!designId || typeof designId !== 'string' || designId.trim() === '') {
+        // Swal.fire('Error', 'Associated design IDs missing.', 'error');
+        toast.error('Associated design ID(s) missing or invalid.'); // <--- เปลี่ยนแล้ว
+        return;
+    }
 
 
-         if (!storedUsername) { Swal.fire('Error', 'User not identified.', 'error'); return; }
-         if (!veridesignId) { Swal.fire('Error', 'Verification task ID missing.', 'error'); return; }
-         if (!designId || typeof designId !== 'string' || designId.trim() === '') { Swal.fire('Error', 'Associated design IDs missing.', 'error'); return; }
+    // Check criteria completion
+    const allChecked = Array.isArray(designcriList) && designcriList.length > 0 && designcriList.every((criteria) => !!checkboxState[criteria?.design_cri_id]);
 
-         // Check criteria completion
-         const allChecked = Array.isArray(designcriList) && designcriList.length > 0 && designcriList.every((criteria) => !!checkboxState[criteria?.design_cri_id]);
+    // User's logic: If criteria exist but are not all checked, show warning and navigate away
+    if (!allChecked && Array.isArray(designcriList) && designcriList.length > 0) {
+       toast.warn('Criteria Saved', {
+           // --- เพิ่ม onClose ที่นี่ ---
+           onClose: () => navigate(`/VeriDesign?project_id=${projectId}`) // Or /Dashboard?project_id=...
+       }); // <--- เปลี่ยนแล้ว
+       return; // Return after showing toast
+    } else if (!Array.isArray(designcriList) || designcriList.length === 0) {
+        console.warn("No design criteria found to check. Proceeding without criteria check.");
+    }
 
-         // User's logic: If criteria exist but are not all checked, show warning and navigate away
-         if (!allChecked && Array.isArray(designcriList) && designcriList.length > 0) {
-             Swal.fire({ icon: 'warning', title: 'Incomplete Criteria', text: 'Criteria selections saved (if applicable), returning to list.' });
-             // Navigate back to the list or dashboard
-              navigate(`/VeriDesign?project_id=${projectId}`); // Or /Dashboard?project_id=...
-             return;
-         } else if (!Array.isArray(designcriList) || designcriList.length === 0) {
-             console.warn("No design criteria found to check. Proceeding without criteria check.");
-         }
+    // --- Prepare Data for First API Call ---
+    const updatedVeridesignBy = { ...veridesignBy, [storedUsername]: true };
+    const numericVeridesignId = parseInt(veridesignId, 10);
+    if (isNaN(numericVeridesignId)) {
+       // Swal.fire('Error', 'Invalid internal ID format.', 'error');
+       toast.error('Invalid internal ID format.'); // <--- เปลี่ยนแล้ว
+       return;
+    }
 
-         // --- Prepare Data for First API Call ---
-         // Ensure veridesignBy state is up-to-date (fetched in useEffect)
-         const updatedVeridesignBy = { ...veridesignBy, [storedUsername]: true };
-         const numericVeridesignId = parseInt(veridesignId, 10);
-         if (isNaN(numericVeridesignId)) { Swal.fire('Error', 'Invalid internal ID format.', 'error'); return; }
+    const updateReviewerPayload = {
+        veridesign_id: numericVeridesignId,
+        veridesign_by: updatedVeridesignBy
+    };
+    console.log("Sending payload to /update-veridesign-by:", JSON.stringify(updateReviewerPayload, null, 2));
 
-         // --- Payload for updating reviewer status ---
-         // *Important:* The backend expects the entire object, not just the changed user
-         const updateReviewerPayload = {
-             veridesign_id: numericVeridesignId,
-             veridesign_by: updatedVeridesignBy // Send the whole updated object
-         };
-         console.log("Sending payload to /update-veridesign-by:", JSON.stringify(updateReviewerPayload, null, 2));
+    setIsSubmitting(true);
 
-         setIsSubmitting(true);
+    // --- Main Save Process ---
+    try {
+        // 1. Update reviewer status FIRST
+        const response = await axios.put("http://localhost:3001/update-veridesign-by", updateReviewerPayload);
 
-         // --- Main Save Process ---
-         try {
-             // 1. Update reviewer status FIRST
-             const response = await axios.put("http://localhost:3001/update-veridesign-by", updateReviewerPayload);
+        if (response.data.message === "ไม่พบข้อมูล veridesign นี้ในฐานข้อมูล") {
+            // Swal.fire('Not Found', 'Verification data not found on the server.', 'error');
+            toast.error('Verification data not found on the server.'); // <--- เปลี่ยนแล้ว
+            setIsSubmitting(false);
+            return;
+        }
+        if (response.status !== 200) {
+           throw new Error(response.data.message || `Failed to update reviewer status. Status: ${response.status}`);
+        }
 
-             // Handle specific "not found" message from backend
-             if (response.data.message === "ไม่พบข้อมูล veridesign นี้ในฐานข้อมูล") {
-                  Swal.fire('Not Found', 'Verification data not found on the server.', 'error');
-                  setIsSubmitting(false);
-                  return;
-              }
-             // Check for other potential non-200 status codes if the backend doesn't throw an error for them
-              if (response.status !== 200) {
-                 throw new Error(response.data.message || `Failed to update reviewer status. Status: ${response.status}`);
-              }
+        console.log("Reviewer status update response:", response.data);
 
-             console.log("Reviewer status update response:", response.data);
+        // 2. Refetch verification details to get the *actual* current state after update
+        console.log("Refetching verification details after update...");
+        if (!projectId) { throw new Error("Missing project ID for refetch."); }
 
-             // 2. Refetch verification details to get the *actual* current state after update
-             console.log("Refetching verification details after update...");
-             if (!projectId) { throw new Error("Missing project ID for refetch."); }
+        const updatedResponse = await axios.get("http://localhost:3001/designveri", { params: { project_id: projectId, veridesign_id: numericVeridesignId } });
 
-             // Use the same endpoint used in useEffect for consistency
-             const updatedResponse = await axios.get("http://localhost:3001/designveri", { params: { project_id: projectId, veridesign_id: numericVeridesignId /* Use numeric ID here */ } });
+        if (!updatedResponse.data || (Array.isArray(updatedResponse.data) && updatedResponse.data.length === 0)) {
+           console.error("Refetch Error: Could not refetch details, received:", updatedResponse.data);
+           throw new Error("Could not refetch verification details after update.");
+        }
 
-             if (!updatedResponse.data || (Array.isArray(updatedResponse.data) && updatedResponse.data.length === 0)) {
-                 // It's possible the refetch returns an empty array if the item was somehow deleted between calls, or filtering is strict
-                 console.error("Refetch Error: Could not refetch details, received:", updatedResponse.data);
-                 throw new Error("Could not refetch verification details after update.");
-             }
+        let currentVeriData = null;
+        if (Array.isArray(updatedResponse.data)) {
+           currentVeriData = updatedResponse.data.find(d => d.id === numericVeridesignId);
+        } else if (typeof updatedResponse.data === 'object' && updatedResponse.data !== null && updatedResponse.data.id === numericVeridesignId) {
+           currentVeriData = updatedResponse.data;
+        }
 
-             // Find the specific verification task data from the refetched response
-             let currentVeriData = null;
-             if (Array.isArray(updatedResponse.data)) {
-                  // Find the specific item by its unique ID
-                 currentVeriData = updatedResponse.data.find(d => d.id === numericVeridesignId); // Assuming 'id' is the correct field name
-             } else if (typeof updatedResponse.data === 'object' && updatedResponse.data !== null && updatedResponse.data.id === numericVeridesignId) {
-                  // Handle case where API might return a single object if only one matches
-                 currentVeriData = updatedResponse.data;
-             }
+        if (!currentVeriData) {
+           console.error("Refetch Error: Could not find matching veri data ID:", numericVeridesignId, "in refetched data:", updatedResponse.data);
+           throw new Error("Could not find the updated verification data after refetch.");
+        }
+        console.log("Refetched currentVeriData:", currentVeriData);
 
-             if (!currentVeriData) {
-                  console.error("Refetch Error: Could not find matching veri data ID:", numericVeridesignId, "in refetched data:", updatedResponse.data);
-                  throw new Error("Could not find the updated verification data after refetch.");
-              }
-             console.log("Refetched currentVeriData:", currentVeriData);
+        // 3. Check if all reviewed using the REFETCHED data's veridesign_by
+        let refetchedVeridesignBy = currentVeriData.veridesign_by;
+        if (typeof refetchedVeridesignBy === 'string') {
+            try { refetchedVeridesignBy = JSON.parse(refetchedVeridesignBy); } catch (e) { console.error("Error parsing refetched veridesign_by", e); refetchedVeridesignBy = {}; }
+        }
+        if (typeof refetchedVeridesignBy !== 'object' || refetchedVeridesignBy === null) {
+           console.warn("Refetched veridesign_by is not a valid object after potential parsing:", refetchedVeridesignBy);
+           refetchedVeridesignBy = {};
+        }
 
-             // 3. Check if all reviewed using the REFETCHED data's veridesign_by
-             let refetchedVeridesignBy = currentVeriData.veridesign_by;
+        const allReviewed = Object.keys(refetchedVeridesignBy).length > 0 && Object.values(refetchedVeridesignBy).every((status) => status === true);
+        console.log("Checking allReviewed:", allReviewed, "using refetched data:", refetchedVeridesignBy);
 
-             // Ensure the refetched data is a usable object
-             if (typeof refetchedVeridesignBy === 'string') {
-                  try { refetchedVeridesignBy = JSON.parse(refetchedVeridesignBy); } catch (e) { console.error("Error parsing refetched veridesign_by", e); refetchedVeridesignBy = {}; }
-              }
-             if (typeof refetchedVeridesignBy !== 'object' || refetchedVeridesignBy === null) {
-                 console.warn("Refetched veridesign_by is not a valid object after potential parsing:", refetchedVeridesignBy);
-                 refetchedVeridesignBy = {}; // Fallback
-             }
+        if (allReviewed) {
+            console.log("All reviewers have verified. Proceeding to update status, vericri, and history...");
+            // 4. Prepare Design IDs
+            const designIdsArray = designId.split(",").map(id => parseInt(id.trim(), 10)).filter(id => !isNaN(id));
+            if (designIdsArray.length === 0) {
+               // Swal.fire('Error', 'No valid design IDs to process.', 'error');
+               toast.error('No valid design IDs to process.'); // <--- เปลี่ยนแล้ว
+               setIsSubmitting(false);
+               return;
+            }
+            console.log("Design IDs to update:", designIdsArray);
 
-             // Ensure all values in the refetched veridesign_by object are true
-             const allReviewed = Object.keys(refetchedVeridesignBy).length > 0 && Object.values(refetchedVeridesignBy).every((status) => status === true);
-             console.log("Checking allReviewed:", allReviewed, "using refetched data:", refetchedVeridesignBy);
+            // Nested try-catch for the sequence: status update -> vericri save -> history save
+            try {
+                // 5. Update design status to VERIFIED
+                console.log("Updating design statuses to VERIFIED...");
+                const updateStatusResponse = await axios.put(`http://localhost:3001/update-design-status-verified`, { design_ids: designIdsArray, design_status: "VERIFIED" });
+                console.log("Update status response:", updateStatusResponse.data);
 
-             if (allReviewed) {
-                 console.log("All reviewers have verified. Proceeding to update status, vericri, and history...");
-                 // 4. Prepare Design IDs
-                 const designIdsArray = designId.split(",").map(id => parseInt(id.trim(), 10)).filter(id => !isNaN(id));
-                 if (designIdsArray.length === 0) { Swal.fire('Error', 'No valid design IDs to process.', 'error'); setIsSubmitting(false); return; }
-                 console.log("Design IDs to update:", designIdsArray);
+                if (updateStatusResponse.status === 200) {
+                    console.log("Status update successful. Starting VeriCri Design and history creation...");
 
-                 // Nested try-catch for the sequence: status update -> vericri save -> history save
-                 try {
-                     // 5. Update design status to VERIFIED
-                     console.log("Updating design statuses to VERIFIED...");
-                     const updateStatusResponse = await axios.put(`http://localhost:3001/update-design-status-verified`, { design_ids: designIdsArray, design_status: "VERIFIED" });
-                     console.log("Update status response:", updateStatusResponse.data);
+                    // ******** START: Save Verification Criteria Details (vericri_design) ********
+                    const vericriDesignPromises = [];
+                    const numericProjectId = parseInt(projectId, 10);
+                    let vericriWarnings = [];
 
-                     // Proceed only if status update was successful (typically 200 OK)
-                     if (updateStatusResponse.status === 200) { // Check for explicit success status/message if needed
-                         console.log("Status update successful. Starting VeriCri Design and history creation...");
+                    if (isNaN(numericProjectId)) {
+                        console.error("Invalid Project ID for VeriCri:", projectId);
+                        vericriWarnings.push("<li>VeriCri: Invalid Project ID.</li>");
+                    }
 
-                        // ******** START: Save Verification Criteria Details (vericri_design) ********
-                         const vericriDesignPromises = [];
-                         const numericProjectId = parseInt(projectId, 10);
-                         let vericriWarnings = [];
+                    if (!isNaN(numericProjectId) && Array.isArray(designcriList) && designcriList.length > 0 && typeof checkboxState === 'object' && checkboxState !== null && Array.isArray(designDetails)) {
+                        for (const currentDesignId of designIdsArray) {
+                            console.log(`[VeriCri] Processing design ID: ${currentDesignId}`);
+                            const designDetail = designDetails.find(d => d.design_id === currentDesignId);
 
-                         if (isNaN(numericProjectId)) {
-                             console.error("Invalid Project ID for VeriCri:", projectId);
-                             vericriWarnings.push("<li>VeriCri: Invalid Project ID.</li>");
-                         }
+                            if (!designDetail) {
+                                console.warn(`[VeriCri] Details not found for Design ID: ${currentDesignId}. Skipping vericri_design entries.`);
+                                vericriWarnings.push(`<li>VeriCri (Design ${currentDesignId}): Details not found.</li>`);
+                                continue;
+                            }
 
-                         // Ensure necessary data is available
-                         if (!isNaN(numericProjectId) && Array.isArray(designcriList) && designcriList.length > 0 && typeof checkboxState === 'object' && checkboxState !== null && Array.isArray(designDetails)) {
-                             for (const currentDesignId of designIdsArray) {
-                                 console.log(`[VeriCri] Processing design ID: ${currentDesignId}`);
-                                 const designDetail = designDetails.find(d => d.design_id === currentDesignId);
+                            for (const criteria of designcriList) {
+                                if (checkboxState[criteria.design_cri_id]) {
+                                    const criteriaName = criteria.design_cri_name ?? 'N/A';
+                                    if (criteriaName === 'N/A') {
+                                        console.warn(`[VeriCri] Criteria name missing for ID ${criteria.design_cri_id}. Saving as 'N/A'.`);
+                                    }
+                                    const vericriData = {
+                                        project_id: numericProjectId,
+                                        designcri_name: criteriaName,
+                                        design_id: currentDesignId,
+                                        design_type: designDetail.design_type ?? 'N/A',
+                                        diagram_type: designDetail.diagram_type ?? 'N/A',
+                                        diagram_name: designDetail.diagram_name ?? 'N/A',
+                                        design_description: designDetail.design_description ?? ''
+                                    };
+                                    console.log(`[VeriCri] Preparing POST for Design ${currentDesignId} / Criteria '${vericriData.designcri_name}'`, vericriData);
+                                    vericriDesignPromises.push(
+                                        axios.post("http://localhost:3001/vericri_design", vericriData)
+                                             .then(res => ({ status: 'fulfilled', designId: currentDesignId, criName: vericriData.designcri_name, response: res }))
+                                             .catch(err => ({ status: 'rejected', designId: currentDesignId, criName: vericriData.designcri_name, reason: err.response?.data?.error || err.message }))
+                                    );
+                                }
+                            }
+                        }
+                    } else {
+                        console.warn("[VeriCri] Skipping vericri_design saving due to missing data:");
+                        if (isNaN(numericProjectId)) console.warn("  - Invalid Project ID");
+                        if (!Array.isArray(designcriList) || designcriList.length === 0) console.warn("  - Design criteria list empty or not loaded.");
+                        if (typeof checkboxState !== 'object' || checkboxState === null) console.warn("  - Checkbox state not available.");
+                        if (!Array.isArray(designDetails)) console.warn("  - Design details not loaded.");
+                        if(vericriWarnings.length === 0) vericriWarnings.push("<li>VeriCri: Could not save criteria details (missing data).</li>");
+                    }
 
-                                 if (!designDetail) {
-                                     console.warn(`[VeriCri] Details not found for Design ID: ${currentDesignId}. Skipping vericri_design entries.`);
-                                     vericriWarnings.push(`<li>VeriCri (Design ${currentDesignId}): Details not found.</li>`);
-                                     continue;
-                                 }
+                    if (vericriDesignPromises.length > 0) {
+                        console.log(`[VeriCri] Waiting for ${vericriDesignPromises.length} vericri_design records...`);
+                        const vericriResults = await Promise.allSettled(vericriDesignPromises);
+                        console.log("[VeriCri] Saving process settled.");
+                        vericriResults.forEach(result => {
+                            if (result.status === 'rejected') {
+                                const reasonMsg = result.reason?.reason || 'Unknown error';
+                                console.error(`[VeriCri] ❌ Failed Design ${result.reason?.designId} / Criteria '${result.reason?.criName}':`, reasonMsg);
+                                vericriWarnings.push(`<li>VeriCri (Design ${result.reason?.designId} / Criteria '${result.reason?.criName}'): ${reasonMsg}</li>`);
+                            } else {
+                                console.log(`[VeriCri] ✅ Success Design ${result.value?.designId} / Criteria '${result.value?.criName}'`);
+                            }
+                        });
+                    } else if (vericriWarnings.length === 0) {
+                        console.log("[VeriCri] No verification criteria records needed (or none checked).");
+                    }
+                    // ******** END: Save Verification Criteria Details ********
 
-                                 // Iterate through criteria list to find CHECKED items
-                                 for (const criteria of designcriList) {
-                                     // Check if this criterion was checked using its ID
-                                     if (checkboxState[criteria.design_cri_id]) {
-                                        // Use the correct property for the name
-                                         const criteriaName = criteria.design_cri_name ?? 'N/A'; // Use design_cri_name
+                    // ******** START: History Recording Section ********
+                    const historyPromises = [];
+                    let historyWarnings = [];
+                    console.log('[History] Current designDetails state before history loop:', JSON.stringify(designDetails, null, 2));
 
-                                         if (criteriaName === 'N/A') {
-                                             console.warn(`[VeriCri] Criteria name missing for ID ${criteria.design_cri_id}. Saving as 'N/A'.`);
-                                         }
+                    for (const currentDesignId of designIdsArray) {
+                        console.log(`[History] Processing design ID: ${currentDesignId}`);
+                        const designDetail = designDetails.find(d => d.design_id === currentDesignId);
 
-                                         const vericriData = {
-                                             project_id: numericProjectId,
-                                             designcri_name: criteriaName, // Use the name
-                                             design_id: currentDesignId,
-                                             design_type: designDetail.design_type ?? 'N/A',
-                                             diagram_type: designDetail.diagram_type ?? 'N/A',
-                                             diagram_name: designDetail.diagram_name ?? 'N/A',
-                                             design_description: designDetail.design_description ?? ''
-                                         };
-                                         console.log(`[VeriCri] Preparing POST for Design ${currentDesignId} / Criteria '${vericriData.designcri_name}'`, vericriData);
-                                         vericriDesignPromises.push(
-                                             axios.post("http://localhost:3001/vericri_design", vericriData)
-                                                 .then(res => ({ status: 'fulfilled', designId: currentDesignId, criName: vericriData.designcri_name, response: res }))
-                                                 .catch(err => ({ status: 'rejected', designId: currentDesignId, criName: vericriData.designcri_name, reason: err.response?.data?.error || err.message }))
-                                         );
-                                     }
-                                 } // End criteria loop
-                             } // End design ID loop
-                         } else {
-                              // Log why VeriCri is skipped
-                             console.warn("[VeriCri] Skipping vericri_design saving due to missing data:");
-                             if (isNaN(numericProjectId)) console.warn("  - Invalid Project ID");
-                             if (!Array.isArray(designcriList) || designcriList.length === 0) console.warn("  - Design criteria list empty or not loaded.");
-                             if (typeof checkboxState !== 'object' || checkboxState === null) console.warn("  - Checkbox state not available.");
-                             if (!Array.isArray(designDetails)) console.warn("  - Design details not loaded.");
-                             // Add generic warning if specific reason unknown
-                             if(vericriWarnings.length === 0) vericriWarnings.push("<li>VeriCri: Could not save criteria details (missing data).</li>");
-                         }
+                        if (!designDetail) {
+                            console.error(`[History] Details not found for Design ID: ${currentDesignId}. Skipping history.`);
+                            historyWarnings.push(`<li>History (Design ${currentDesignId}): Details not found.</li>`);
+                            continue;
+                        }
 
-                         // Wait for vericri_design saves
-                         if (vericriDesignPromises.length > 0) {
-                             console.log(`[VeriCri] Waiting for ${vericriDesignPromises.length} vericri_design records...`);
-                             const vericriResults = await Promise.allSettled(vericriDesignPromises);
-                             console.log("[VeriCri] Saving process settled.");
-                             vericriResults.forEach(result => {
-                                 if (result.status === 'rejected') {
-                                     const reasonMsg = result.reason?.reason || 'Unknown error';
-                                     console.error(`[VeriCri] ❌ Failed Design ${result.reason?.designId} / Criteria '${result.reason?.criName}':`, reasonMsg);
-                                     vericriWarnings.push(`<li>VeriCri (Design ${result.reason?.designId} / Criteria '${result.reason?.criName}'): ${reasonMsg}</li>`);
-                                 } else {
-                                     console.log(`[VeriCri] ✅ Success Design ${result.value?.designId} / Criteria '${result.value?.criName}'`);
-                                 }
-                             });
-                         } else if (vericriWarnings.length === 0) {
-                             console.log("[VeriCri] No verification criteria records needed (or none checked).");
-                         }
-                        // ******** END: Save Verification Criteria Details ********
+                        const requirementIdsToLog = designDetail.requirement_id;
+                        console.log(`[History] requirement_id for ${currentDesignId}:`, requirementIdsToLog, `(Is Array: ${Array.isArray(requirementIdsToLog)})`);
 
+                        if (!Array.isArray(requirementIdsToLog) || requirementIdsToLog.length === 0) {
+                            console.warn(`[History] requirement_id is not an array or empty for Design ${currentDesignId}. Creating history with null req_id.`);
+                            const historyData = {
+                                design_id: currentDesignId, requirement_id: null,
+                                design_type: designDetail.design_type ?? 'N/A',
+                                diagram_name: designDetail.diagram_name ?? 'N/A',
+                                diagram_type: designDetail.diagram_type ?? 'N/A',
+                                design_description: designDetail.design_description ?? '',
+                                design_status: "VERIFIED"
+                            };
+                            console.log(`[History] Preparing POST for Design ${currentDesignId} (No specific Req ID)`, historyData);
+                            historyPromises.push(
+                                axios.post("http://localhost:3001/addHistoryDesign", historyData)
+                                     .then(res => ({ status: 'fulfilled', designId: currentDesignId, reqId: null, response: res }))
+                                     .catch(err => ({ status: 'rejected', designId: currentDesignId, reqId: null, reason: err.response?.data?.message || err.message }))
+                            );
+                        } else {
+                            requirementIdsToLog.forEach(reqId => {
+                                const singleReqId = parseInt(reqId, 10);
+                                if (isNaN(singleReqId)) { console.warn(`[History] Skipping non-numeric reqId '${reqId}' for Design ${currentDesignId}`); return; }
+                                const historyData = {
+                                    design_id: currentDesignId, requirement_id: singleReqId,
+                                    design_type: designDetail.design_type ?? 'N/A',
+                                    diagram_name: designDetail.diagram_name ?? 'N/A',
+                                    diagram_type: designDetail.diagram_type ?? 'N/A',
+                                    design_description: designDetail.design_description ?? '',
+                                    design_status: "VERIFIED"
+                                };
+                                console.log(`[History] Preparing POST for Design ${currentDesignId} / Req ${singleReqId}`, historyData);
+                                historyPromises.push(
+                                    axios.post("http://localhost:3001/addHistoryDesign", historyData)
+                                         .then(res => ({ status: 'fulfilled', designId: currentDesignId, reqId: singleReqId, response: res }))
+                                         .catch(err => ({ status: 'rejected', designId: currentDesignId, reqId: singleReqId, reason: err.response?.data?.message || err.message }))
+                                );
+                            });
+                        }
+                    }
 
-                         // ******** START: History Recording Section ********
-                         const historyPromises = [];
-                         let historyWarnings = [];
-                         console.log('[History] Current designDetails state before history loop:', JSON.stringify(designDetails, null, 2));
+                    if (historyPromises.length > 0) {
+                        console.log(`[History] Waiting for ${historyPromises.length} history records...`);
+                        const historyResults = await Promise.allSettled(historyPromises);
+                        console.log("[History] Saving process settled.");
+                        historyResults.forEach(result => {
+                            if (result.status === 'rejected') {
+                                const reasonMsg = result.reason?.reason || 'Unknown error';
+                                const reqIdText = result.reason?.reqId ?? 'N/A';
+                                console.error(`[History] ❌ Failed Design ${result.reason?.designId} / Req ${reqIdText}:`, reasonMsg);
+                                historyWarnings.push(`<li>History (Design ${result.reason?.designId} / Req ${reqIdText}): ${reasonMsg}</li>`);
+                            } else {
+                                console.log(`[History] ✅ Success Design ${result.value?.designId} / Req ${result.value?.reqId ?? 'N/A'}`);
+                            }
+                        });
+                    } else if(historyWarnings.length === 0) {
+                        console.log("[History] No history records needed to be created.");
+                    }
+                    // ******** END: History Recording Section ********
 
-                         for (const currentDesignId of designIdsArray) {
-                             console.log(`[History] Processing design ID: ${currentDesignId}`);
-                             const designDetail = designDetails.find(d => d.design_id === currentDesignId);
+                    // 7. Final Success/Warning & Navigation
+                    const allWarnings = [...vericriWarnings, ...historyWarnings];
 
-                             if (!designDetail) {
-                                 console.error(`[History] Details not found for Design ID: ${currentDesignId}. Skipping history.`);
-                                 historyWarnings.push(`<li>History (Design ${currentDesignId}): Details not found.</li>`);
-                                 continue;
-                             }
+                    if (allWarnings.length > 0) {
+                        // Swal.fire({ /* ... */ }).then(() => { navigate(...) });
 
-                             // Use requirement_id which should be an array now
-                             const requirementIdsToLog = designDetail.requirement_id;
-                             console.log(`[History] requirement_id for ${currentDesignId}:`, requirementIdsToLog, `(Is Array: ${Array.isArray(requirementIdsToLog)})`);
+                        // -- ใช้ toast.warn พร้อม custom content และ onClose --
+                        const WarningContent = ({ warnings }) => (
+                            <div style={{ textAlign: 'left' }}>
+                                Process Completed with Issues:
+                                <ul style={{ marginLeft: '15px', marginTop: '5px', maxHeight: '100px', overflowY: 'auto', fontSize: '0.9em' }}>
+                                    {warnings.map((warnHtml, index) => (
+                                        // Render HTML string safely (basic example)
+                                        <li key={index} dangerouslySetInnerHTML={{ __html: warnHtml.replace(/<li>|<\/li>/g, '') }} />
+                                    ))}
+                                </ul>
+                                Check console for details.
+                            </div>
+                        );
+                        toast.warn(<WarningContent warnings={allWarnings} />, {
+                            autoClose: false, // ให้ผู้ใช้กดปิดเองเหมือน Swal เดิม
+                            closeOnClick: false, // อาจจะปิดเมื่อคลิกยากถ้า list ยาว
+                            // --- เพิ่ม onClose ที่นี่ ---
+                            onClose: () => {
+                                console.log("Warning(Issues) toast closed, navigating...");
+                                navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } });
+                            }
+                        }); // <--- เปลี่ยนแล้ว
 
-                             // Handle if requirement_id is missing or not an array
-                             if (!Array.isArray(requirementIdsToLog)) {
-                                 console.warn(`[History] requirement_id is not an array for Design ${currentDesignId}. Skipping requirement-specific history.`);
-                                 // Decide: Do you create a history entry with null requirement_id?
-                                 // Example: Create one entry without req_id
-                                 const historyData = {
-                                     design_id: currentDesignId,
-                                     requirement_id: null, // Explicitly null
-                                     design_type: designDetail.design_type ?? 'N/A',
-                                     diagram_name: designDetail.diagram_name ?? 'N/A',
-                                     diagram_type: designDetail.diagram_type ?? 'N/A',
-                                     design_description: designDetail.design_description ?? '',
-                                     design_status: "VERIFIED"
-                                 };
-                                 console.log(`[History] Preparing POST for Design ${currentDesignId} (No specific Req ID)`, historyData);
-                                  historyPromises.push(
-                                     axios.post("http://localhost:3001/addHistoryDesign", historyData)
-                                         .then(res => ({ status: 'fulfilled', designId: currentDesignId, reqId: null, response: res }))
-                                         .catch(err => ({ status: 'rejected', designId: currentDesignId, reqId: null, reason: err.response?.data?.message || err.message }))
-                                  );
+                    } else {
+                        // Swal.fire({ icon: "success", ... }).then(() => navigate(...));
+                        toast.success("All Verified! Design status, criteria details, and history updated successfully.", {
+                            // --- เพิ่ม onClose ที่นี่ ---
+                            onClose: () => {
+                                console.log("All Verified toast closed, navigating...");
+                                navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } });
+                            }
+                            // autoClose: 2000, // ตั้งเวลาปิดได้ถ้าต้องการ
+                        }); // <--- เปลี่ยนแล้ว
+                    }
 
-                             } else if (requirementIdsToLog.length === 0) {
-                                  console.log(`[History] Empty requirement_id array for Design ${currentDesignId}. Skipping requirement-specific history.`);
-                                  // Decide: Create history entry with null req_id? (Similar to above)
-                                   const historyData = { /* ... same as above with req_id: null ... */ };
-                                   console.log(`[History] Preparing POST for Design ${currentDesignId} (No specific Req ID - empty array)`, historyData);
-                                    historyPromises.push(/* ... axios call ... */);
+                } else { // Status update call itself failed
+                    console.error("Status Update Failed - Response indicates failure:", updateStatusResponse.data);
+                    // Swal.fire({ icon: "error", title: "Status Update Failed", text: ... });
+                    toast.error(updateStatusResponse.data?.message || "Status Update Failed: Could not update design status. Check server logs."); // <--- เปลี่ยนแล้ว
+                }
+            } catch (processError) { // Catch errors during the VERIFIED sequence
+                console.error("Error in VERIFIED process (status/vericri/history):", processError);
+                const errMsg = processError.response?.data?.message || processError.response?.data?.error || processError.message || "An unexpected error occurred during the final processing steps.";
+                // Swal.fire({ icon: "error", title: "Process Error", text: errMsg });
+                toast.error(`Process Error: ${errMsg}`); // <--- เปลี่ยนแล้ว
+            }
 
-
-                             } else {
-                                 // Process each requirement ID in the array
-                                 requirementIdsToLog.forEach(reqId => {
-                                     const singleReqId = parseInt(reqId, 10);
-                                     if (isNaN(singleReqId)) { console.warn(`[History] Skipping non-numeric reqId '${reqId}' for Design ${currentDesignId}`); return; }
-
-                                     const historyData = {
-                                         design_id: currentDesignId,
-                                         requirement_id: singleReqId, // Single numeric ID
-                                         design_type: designDetail.design_type ?? 'N/A',
-                                         diagram_name: designDetail.diagram_name ?? 'N/A',
-                                         diagram_type: designDetail.diagram_type ?? 'N/A',
-                                         design_description: designDetail.design_description ?? '',
-                                         design_status: "VERIFIED" // Status is VERIFIED now
-                                     };
-                                     console.log(`[History] Preparing POST for Design ${currentDesignId} / Req ${singleReqId}`, historyData);
-                                     historyPromises.push(
-                                         axios.post("http://localhost:3001/addHistoryDesign", historyData)
-                                             .then(res => ({ status: 'fulfilled', designId: currentDesignId, reqId: singleReqId, response: res }))
-                                             .catch(err => ({ status: 'rejected', designId: currentDesignId, reqId: singleReqId, reason: err.response?.data?.message || err.message }))
-                                     );
-                                 });
-                             }
-                         } // End history loop
-
-                         // Wait for history saves
-                         if (historyPromises.length > 0) {
-                              console.log(`[History] Waiting for ${historyPromises.length} history records...`);
-                              const historyResults = await Promise.allSettled(historyPromises);
-                              console.log("[History] Saving process settled.");
-                               historyResults.forEach(result => {
-                                  if (result.status === 'rejected') {
-                                      const reasonMsg = result.reason?.reason || 'Unknown error';
-                                      const reqIdText = result.reason?.reqId ?? 'N/A';
-                                      console.error(`[History] ❌ Failed Design ${result.reason?.designId} / Req ${reqIdText}:`, reasonMsg);
-                                      historyWarnings.push(`<li>History (Design ${result.reason?.designId} / Req ${reqIdText}): ${reasonMsg}</li>`);
-                                  } else {
-                                       console.log(`[History] ✅ Success Design ${result.value?.designId} / Req ${result.value?.reqId ?? 'N/A'}`);
-                                  }
-                               });
-                          } else if(historyWarnings.length === 0) {
-                               console.log("[History] No history records needed to be created.");
-                          }
-                         // ******** END: History Recording Section ********
-
-
-                         // 7. Final Success/Warning & Navigation
-                         const allWarnings = [...vericriWarnings, ...historyWarnings];
-
-                         if (allWarnings.length > 0) {
-                             Swal.fire({
-                                 icon: 'warning',
-                                 title: 'Process Completed with Issues',
-                                 html: `Design status updated, but some records failed:<ul style="text-align:left; margin-left: 20px; max-height: 150px; overflow-y: auto;">${allWarnings.join('')}</ul>Check console for details.`,
-                                 showConfirmButton: true,
-                                 confirmButtonText: 'Go to Dashboard'
-                             }).then(() => {
-                                 // Navigate regardless, as status is VERIFIED
-                                 navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } });
-                             });
-                         } else {
-                              Swal.fire({ icon: "success", title: "All Verified!", text: "Design status, criteria details, and history updated successfully.", timer: 2000, showConfirmButton: false })
-                                 .then(() => navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } }));
-                          }
-
-                     } else { // Status update call itself failed (e.g., non-200 response not caught as error)
-                          console.error("Status Update Failed - Response indicates failure:", updateStatusResponse.data);
-                          Swal.fire({ icon: "error", title: "Status Update Failed", text: updateStatusResponse.data?.message || "Could not update design status. Check server logs." });
-                          // No need to proceed further
-                      }
-                 } catch (processError) { // Catch errors during the VERIFIED sequence (status update, vericri, history)
-                      console.error("Error in VERIFIED process (status/vericri/history):", processError);
-                      const errMsg = processError.response?.data?.message || processError.response?.data?.error || processError.message || "An unexpected error occurred during the final processing steps.";
-                      Swal.fire({ icon: "error", title: "Process Error", text: errMsg });
-                 }
-
-             } else { // Not all reviewers have verified yet (based on refetched data)
-                 console.log("Not all reviewers have verified yet. Current user's input saved.");
-                 Swal.fire({ icon: "info", title: "Verification Input Saved", text: "Your input is saved. Waiting for other reviewers to complete verification.", timer: 2500, showConfirmButton: false });
-                 // Navigate back to the list or dashboard
-                  // Consider where the user should go while waiting - dashboard might be better than the verification list itself
+        } else { // Not all reviewers have verified yet
+            console.log("Not all reviewers have verified yet. Current user's input saved.");
+            // Swal.fire({ icon: "info", title: "Verification Input Saved", ... });
+            // navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } });
+            toast.info("Verification Input Saved. Waiting for other reviewers.", {
+                 // --- เพิ่ม onClose ที่นี่ ---
+                onClose: () => {
+                   console.log("Info toast closed, navigating...");
                    navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } });
-                 // Alternatively, stay on the page but show a message? Depends on UX preference.
-                 // stay on page: setIsSubmitting(false); // Re-enable button if staying
-             }
-         } catch (error) { // Outer catch for initial update/refetch errors or unexpected issues
-              console.error("Error in main save process (update/refetch):", error);
-               const errMsg = error.response?.data?.message || error.response?.data?.error || error.message || "An unexpected error occurred during save.";
-              Swal.fire({ icon: "error", title: "Save Error", text: errMsg });
-         } finally {
-              setIsSubmitting(false); // <<< Re-enable button when process ends (success, failure, or partial success)
-          }
-     };
+                }
+                // autoClose: 2500, // ตั้งเวลาปิดได้ถ้าต้องการ
+            }); // <--- เปลี่ยนแล้ว
+        }
+    } catch (error) { // Outer catch for initial update/refetch errors
+        console.error("Error in main save process (update/refetch):", error);
+        const errMsg = error.response?.data?.message || error.response?.data?.error || error.message || "An unexpected error occurred during save.";
+        // Swal.fire({ icon: "error", title: "Save Error", text: errMsg });
+        toast.error(`Save Error: ${errMsg}`); // <--- เปลี่ยนแล้ว
+    } finally {
+        setIsSubmitting(false);
+    }
+};
 
   // --- Comment Handlers (Keep existing) ---
   const handleSubmit = async () => {
