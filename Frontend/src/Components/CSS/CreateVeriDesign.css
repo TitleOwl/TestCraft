@@ -18,14 +18,14 @@
   /* Text Colors */
   --de-text-primary: #1e293b; /* Dark Slate Gray */
   --de-text-secondary: #64748b; /* Medium Slate Gray */
-  --de-text-light: #94a3b8;    /* Light Slate Gray */
+  --de-text-light: #f9c7a3;    /* Light Slate Gray */
 
   /* Status Colors (Kept standard for clarity, adjust if needed) */
   --de-success: #10b981;        /* Emerald */
   --de-success-dark: #059669;
   --de-warning: #f59e0b;        /* Amber */
   --de-warning-dark: #b45309;
-  --de-error: #ef4444;         /* Red */
+  --de-error: #ef4444;   /* Red */
   --de-error-dark: #b91c1c;
   --de-info: #17A2B8;           /* Cyan */
   --de-working: #8b5cf6;        /* Purple (Keep distinct or change) */

@@ -2,13 +2,15 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select"; // นำเข้า react-select
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./CSS/CreateRequirement.css";
 
 // Import icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faCheckCircle, 
-  faTimes, 
+import {
+  faCheckCircle,
+  faTimes,
   faExclamationTriangle,
   faSpinner
 } from '@fortawesome/free-solid-svg-icons';
@@ -24,30 +26,7 @@ const CreateRequirement = () => {
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(window.location.search);
   const projectId = queryParams.get("project_id");
-  
-  // เพิ่ม state สำหรับ alert
-  const [showAlert, setShowAlert] = useState(false);
-  const [alertType, setAlertType] = useState("success");
-  const [alertMessage, setAlertMessage] = useState("");
 
-  // ฟังก์ชันสำหรับแสดง alert
-  const showAlertMessage = (type, message) => {
-    setAlertType(type);
-    setAlertMessage(message);
-    setShowAlert(true);
-    
-    // ซ่อน alert หลังจาก 5 วินาที
-    setTimeout(() => {
-      setShowAlert(false);
-      
-      // ถ้าเป็น success alert ให้ redirect หลังจากแสดงข้อความ
-      if (type === "success") {
-        navigate(`/Dashboard?project_id=${projectId}`, {
-          state: { selectedSection: "Requirement" },
-        });
-      }
-    }, 3000);
-  };
 
   // ใช้ useEffect เพื่อดึงข้อมูลไฟล์ที่อัปโหลด
   useEffect(() => {
@@ -64,21 +43,19 @@ const CreateRequirement = () => {
     }
   }, [projectId]);
 
-  
+
   // ฟังก์ชันสำหรับการส่งข้อมูล (อัปเดตแล้ว)
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     console.log("Form Data:", requirementStatement, requirementType, description, selectedFileIds);
 
-    // ตรวจสอบว่าฟอร์มมีข้อมูลครบหรือไม่
-    if (!requirementStatement || !requirementType || !description /*|| selectedFileIds.length === 0*/) { // อาจปรับเงื่อนไขไฟล์ตามต้องการ
+    if (!requirementStatement || !requirementType || !description) {
       setError("Please fill in all fields.");
-      showAlertMessage("warning", "Please fill in all required fields."); // ปรับข้อความตามต้องการ
+      toast.warning("Please fill in all required fields.");
       return;
     }
 
-    // 1. เตรียมข้อมูลสำหรับสร้าง requirement หลัก
     const newRequirement = {
       requirement_name: requirementStatement,
       requirement_type: requirementType,
@@ -92,15 +69,12 @@ const CreateRequirement = () => {
       setIsSubmitting(true);
       setError("");
 
-      // 2. ส่งคำขอไปยัง API เพื่อสร้าง requirement ใหม่
       const response = await axios.post("http://localhost:3001/requirement", newRequirement);
 
-      // 3. ตรวจสอบว่าการสร้าง requirement สำเร็จหรือไม่
-      if (response.status === 201 && response.data && response.data.requirement_id) {
+      if (response.status === 201 && response.data?.requirement_id) {
         console.log("Requirement created successfully:", response.data);
         const requirementId = response.data.requirement_id;
 
-        // 4. เตรียมข้อมูลสำหรับบันทึกประวัติ
         const historyReqData = {
           requirement_id: requirementId,
           requirement_name: newRequirement.requirement_name,
@@ -111,61 +85,42 @@ const CreateRequirement = () => {
 
         console.log("Sending history data:", historyReqData);
 
-        // 5. ส่งข้อมูลไปยัง API เพื่อบันทึกประวัติ
         const historyResponse = await axios.post("http://localhost:3001/historyReqWorking", historyReqData);
 
-        // 6. ตรวจสอบว่าการบันทึกประวัติสำเร็จหรือไม่
         if (historyResponse.status === 200) {
           console.log("History added successfully:", historyResponse.data);
 
-          // แสดง Alert
-          showAlertMessage("success", "Requirement created successfully!");
+          // ✅ Toast พร้อม onClose -> Redirect หลัง toast ปิด
+          toast.success("Requirement created successfully!", {
+            onClose: () => navigate(-1),
+          });
 
-          // รีเซ็ตค่าฟอร์ม (ทำก่อน redirect เพื่อเคลียร์ state)
+          // ✅ เคลียร์ฟอร์มก่อน redirect
           setRequirementStatement("");
           setRequirementType("");
           setDescription("");
           setSelectedFileIds([]);
-
-          // 3. หน่วงเวลาก่อนกลับไปหน้าเดิม
-          const redirectDelay = 1500; // หน่วงเวลา 1.5 วินาที (ปรับได้ตามต้องการ)
-          console.log(`Redirecting back in ${redirectDelay / 1000} seconds...`);
-
-          setTimeout(() => {
-            navigate(-1); // กลับไปยังหน้าก่อนหน้า
-          }, redirectDelay);
-
         } else {
-          // กรณี history ไม่สำเร็จ
           console.error("Failed to add history:", historyResponse);
-          showAlertMessage("warning", `Requirement created (ID: ${requirementId}), but failed to add initial history.`);
+          toast.warning(`Requirement created (ID: ${requirementId}), but failed to add initial history.`);
         }
       } else {
-        // กรณีสร้าง requirement หลักไม่สำเร็จ
         console.error("Failed to create requirement:", response);
         const errorMessage = response.data?.message || "Failed to create requirement.";
         setError(errorMessage);
-        showAlertMessage("error", errorMessage);
+        toast.error(errorMessage);
       }
     } catch (error) {
-      // จัดการกับ Error
       console.error("Error during submission process:", error);
       const errorMessage = error.response?.data?.message || error.message || "Something went wrong.";
       setError(errorMessage);
-      showAlertMessage("error", errorMessage);
+      toast.error(errorMessage);
     } finally {
-      // ไม่ว่าจะสำเร็จหรือล้มเหลว ให้เปิดปุ่ม Submit คืน
-      // แต่ถ้าสำเร็จและกำลังจะ redirect อาจจะไม่ต้องเปิดคืนทันที
-      // เพราะหน้ากำลังจะเปลี่ยนไปแล้ว
-      // ตรวจสอบก่อนว่าไม่ได้กำลังจะ redirect (ถ้าจำเป็น)
-      // ในกรณีนี้ การ redirect เกิดใน setTimeout ดังนั้น setIsSubmitting(false) ใน finally จะทำงานก่อน
-      // ซึ่งอาจทำให้ปุ่มกลับมาคลิกได้ชั่วครู่ก่อน redirect ถ้าผู้ใช้เร็วมาก
-      // อาจพิจารณาตั้ง isSubmitting เป็น false *หลังจาก* redirect หรือใน cleanup effect
-      // แต่สำหรับกรณีทั่วไป การตั้งใน finally ก็มักจะเพียงพอ
-       setIsSubmitting(false);
+      setIsSubmitting(false);
     }
   };
-  
+
+
 
   // ฟังก์ชันสำหรับการจัดการการเปลี่ยนแปลงของ react-select
   const handleFileChange = (selectedOptions) => {
@@ -254,8 +209,8 @@ const CreateRequirement = () => {
           >
             Back to Requirements
           </button>
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="create-requirement-btn-primary"
             disabled={isSubmitting}
           >
@@ -269,26 +224,6 @@ const CreateRequirement = () => {
           </button>
         </div>
       </form>
-      
-      {/* Custom Alert Notification */}
-      <div className={`create-requirement-alert ${showAlert ? 'show' : ''}`}>
-        <div className={`create-requirement-alert-${alertType}`}>
-          <div className="create-requirement-alert-content">
-            <div className="create-requirement-alert-icon">
-              {alertType === 'success' && <FontAwesomeIcon icon={faCheckCircle} />}
-              {alertType === 'error' && <FontAwesomeIcon icon={faTimes} />}
-              {alertType === 'warning' && <FontAwesomeIcon icon={faExclamationTriangle} />}
-            </div>
-            <div className="create-requirement-alert-message">
-              {alertMessage}
-            </div>
-          </div>
-          <button className="create-requirement-alert-close" onClick={() => setShowAlert(false)}>
-            <FontAwesomeIcon icon={faTimes} />
-          </button>
-        </div>
-        <div className="create-requirement-alert-progress"></div>
-      </div>
     </div>
   );
 };
