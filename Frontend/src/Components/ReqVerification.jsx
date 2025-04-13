@@ -264,7 +264,7 @@ const handleSave = async () => {
                           // อาจจะแจ้งเตือนผู้ใช้เพิ่มเติมถ้าจำเป็น
                       }
 
-                      // 2.2 บันทึกข้อมูล Requirement Verification Criteria (vericri_req)
+                      // 2.2 บันทึกข้อมูล Requirement Verifications Criteria
                       // กรอง reqcriList เพื่อเอาเฉพาะ Criteria ที่ถูกติ๊ก (มีใน checkboxState)
                       const checkedReqCriteriaNames = reqcriList
                           .filter((criteria) => checkboxState[criteria.reqcri_id])
