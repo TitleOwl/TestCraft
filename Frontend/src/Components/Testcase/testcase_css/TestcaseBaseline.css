@@ -1,0 +1,518 @@
+/* testcase_css/TestcaseBaseline.css */
+/* Adapted from Baseline.css with tcbl- prefix and green theme */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Updated :root variables with tcbl- prefix and new theme color */
+:root {
+  /* Prefixed and updated primary theme colors */
+  --tcbl-primary-color: #10b981; /* Main theme color set to green */
+  --tcbl-primary-hover: #0f9a6c; /* Darker shade for hover */
+  --tcbl-primary-light: #a7f3d0; /* Lighter shade */
+
+  /* Prefixed other colors */
+  --tcbl-secondary-color: #64748b;
+  --tcbl-text-color: #1e293b;
+  --tcbl-text-light: #64748b;
+  --tcbl-text-lighter: #94a3b8;
+  --tcbl-text-dark: #0f172a;
+  --tcbl-bg-color: #f8fafc;
+  --tcbl-bg-light: #ffffff;
+  --tcbl-bg-dark: #f1f5f9;
+  --tcbl-success-color: #10b981; /* Note: Same as new primary */
+  --tcbl-success-light: #d1fae5;
+  --tcbl-warning-color: #f59e0b;
+  --tcbl-warning-light: #fef3c7;
+  --tcbl-danger-color: #ef4444;
+  --tcbl-danger-light: #fee2e2;
+  --tcbl-info-color: #3b82f6;
+  --tcbl-info-light: #dbeafe;
+  --tcbl-border-color: #e2e8f0;
+
+  /* Prefixed layout variables */
+  --tcbl-border-radius: 8px;
+  --tcbl-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --tcbl-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --tcbl-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --tcbl-transition: all 0.2s ease-in-out;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--tcbl-bg-color); /* Use prefixed var */
+  color: var(--tcbl-text-color); /* Use prefixed var */
+  line-height: 1.5;
+}
+
+/* Main Container */
+.testcase-baseline-dashboard {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: var(--tcbl-bg-color); /* Use prefixed var */
+}
+
+/* Header Section */
+.testcase-baseline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--tcbl-border-color); /* Use prefixed var */
+}
+
+.testcase-baseline-header-left, .testcase-baseline-header-right {
+  flex: 1;
+}
+
+.testcase-baseline-header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.testcase-baseline-header-title h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--tcbl-text-dark); /* Use prefixed var */
+  margin: 0;
+}
+
+.testcase-baseline-header-title svg {
+  color: var(--tcbl-primary-color); /* Use prefixed var (new green theme) */
+}
+
+.testcase-baseline-back-button, .testcase-baseline-refresh-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--tcbl-bg-light); /* Use prefixed var */
+  color: var(--tcbl-text-color); /* Use prefixed var */
+  border: 1px solid var(--tcbl-border-color); /* Use prefixed var */
+  border-radius: var(--tcbl-border-radius); /* Use prefixed var */
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--tcbl-transition); /* Use prefixed var */
+  box-shadow: var(--tcbl-shadow-sm); /* Use prefixed var */
+}
+
+.testcase-baseline-back-button:hover, .testcase-baseline-refresh-button:hover {
+  background-color: var(--tcbl-bg-dark); /* Use prefixed var */
+}
+
+.testcase-baseline-header-right {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Controls Section */
+.testcase-baseline-controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1.5rem;
+}
+
+.testcase-baseline-create-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--tcbl-primary-color); /* Use prefixed var (new green theme) */
+  color: white; /* Keep white text for contrast */
+  border: none;
+  border-radius: var(--tcbl-border-radius); /* Use prefixed var */
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--tcbl-transition); /* Use prefixed var */
+  box-shadow: var(--tcbl-shadow-sm); /* Use prefixed var */
+}
+
+.testcase-baseline-create-button:hover {
+  background-color: var(--tcbl-primary-hover); /* Use prefixed var (new green theme hover) */
+}
+
+/* Content Section */
+.testcase-baseline-content {
+  flex: 1;
+  background-color: var(--tcbl-bg-light); /* Use prefixed var */
+  border-radius: var(--tcbl-border-radius); /* Use prefixed var */
+  box-shadow: var(--tcbl-shadow-md); /* Use prefixed var */
+  overflow: hidden;
+}
+
+/* Table Container */
+.testcase-baseline-table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.testcase-baseline-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 100%;
+}
+
+.testcase-baseline-table th {
+  background-color: var(--tcbl-bg-dark); /* Use prefixed var */
+  color: var(--tcbl-text-color); /* Use prefixed var */
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-align: left;
+  padding: 1rem;
+  position: sticky;
+  top: 0;
+  border-bottom: 1px solid var(--tcbl-border-color); /* Use prefixed var */
+}
+
+.testcase-baseline-table th.col-baseline,
+.testcase-baseline-table th.col-date {
+  cursor: pointer;
+  user-select: none;
+  transition: var(--tcbl-transition); /* Use prefixed var */
+}
+
+.testcase-baseline-table th.col-baseline:hover,
+.testcase-baseline-table th.col-date:hover {
+  background-color: #e9edf5; /* Keep this subtle hover or use a theme color if preferred */
+}
+
+.testcase-baseline-table th svg {
+  margin-left: 0.5rem;
+  opacity: 0;
+  transition: var(--tcbl-transition); /* Use prefixed var */
+}
+
+.testcase-baseline-table th:hover svg {
+  opacity: 0.5;
+}
+
+.testcase-baseline-table th.asc svg, .testcase-baseline-table th.desc svg {
+  opacity: 1;
+}
+
+.testcase-baseline-table th.asc svg {
+  transform: rotate(0deg);
+}
+
+.testcase-baseline-table th.desc svg {
+  transform: rotate(180deg);
+}
+
+.testcase-baseline-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--tcbl-border-color); /* Use prefixed var */
+  font-size: 0.875rem;
+}
+
+.testcase-baseline-row {
+  transition: var(--tcbl-transition); /* Use prefixed var */
+}
+
+.testcase-baseline-row:hover {
+  background-color: var(--tcbl-bg-dark); /* Use prefixed var */
+}
+
+.testcase-baseline-row:last-child td {
+  border-bottom: none;
+}
+
+/* Table Columns */
+.col-baseline {
+  width: 25%;
+}
+
+.col-date {
+  width: 50%;
+}
+
+.col-actions {
+  width: 25%;
+  text-align: center;
+}
+
+.testcase-baseline-id {
+  font-weight: 600;
+  color: var(--tcbl-primary-color); /* Use prefixed var (new green theme) */
+}
+
+.date-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* View Test Cases Button */
+.view-testcases-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--tcbl-border-radius); /* Use prefixed var */
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--tcbl-transition); /* Use prefixed var */
+  background-color: var(--tcbl-primary-color); /* Use prefixed var (new green theme) */
+  color: white; /* Keep white text */
+  border: none;
+}
+
+.view-testcases-button:hover {
+  background-color: var(--tcbl-primary-hover); /* Use prefixed var (new green theme hover) */
+}
+
+/* Modal */
+.testcase-baseline-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease-out;
+}
+
+.testcase-baseline-modal-content {
+  background-color: var(--tcbl-bg-light); /* Use prefixed var */
+  border-radius: var(--tcbl-border-radius); /* Use prefixed var */
+  max-width: 500px;
+  width: 90%;
+  box-shadow: var(--tcbl-shadow-lg); /* Use prefixed var */
+  display: flex;
+  flex-direction: column;
+  animation: scaleIn 0.2s ease-out;
+}
+
+.testcase-baseline-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem;
+  border-bottom: 1px solid var(--tcbl-border-color); /* Use prefixed var */
+}
+
+.testcase-baseline-modal-header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--tcbl-text-dark); /* Use prefixed var */
+  margin: 0;
+}
+
+.testcase-baseline-modal-close {
+  background: none;
+  border: none;
+  color: var(--tcbl-text-lighter); /* Use prefixed var */
+  cursor: pointer;
+  transition: var(--tcbl-transition); /* Use prefixed var */
+}
+
+.testcase-baseline-modal-close:hover {
+  color: var(--tcbl-text-color); /* Use prefixed var */
+}
+
+.testcase-baseline-modal-body {
+  padding: 1.25rem;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.testcase-baseline-testcases-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.testcase-baseline-testcase-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: var(--tcbl-border-radius); /* Use prefixed var */
+  background-color: var(--tcbl-bg-dark); /* Use prefixed var */
+  transition: var(--tcbl-transition); /* Use prefixed var */
+}
+
+.testcase-baseline-testcase-item:hover {
+  background-color: var(--tcbl-primary-light); /* Use prefixed var (new green theme light) */
+}
+
+.testcase-baseline-testcase-item svg {
+  color: var(--tcbl-primary-color); /* Use prefixed var (new green theme) */
+}
+
+.testcase-baseline-empty-testcases {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 0;
+  text-align: center;
+  color: var(--tcbl-text-lighter); /* Use prefixed var */
+}
+
+.testcase-baseline-modal-footer {
+  padding: 1.25rem;
+  border-top: 1px solid var(--tcbl-border-color); /* Use prefixed var */
+  display: flex;
+  justify-content: flex-end;
+}
+
+.testcase-baseline-modal-button {
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--tcbl-border-radius); /* Use prefixed var */
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--tcbl-transition); /* Use prefixed var */
+  background-color: var(--tcbl-primary-color); /* Use prefixed var (new green theme) */
+  border: none;
+  color: white; /* Keep white text */
+}
+
+.testcase-baseline-modal-button:hover {
+  background-color: var(--tcbl-primary-hover); /* Use prefixed var (new green theme hover) */
+}
+
+/* Empty State */
+.testcase-baseline-empty-state, .testcase-baseline-loading-state, .testcase-baseline-error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.testcase-baseline-empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.testcase-baseline-empty-state h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--tcbl-text-dark); /* Use prefixed var */
+  margin-bottom: 0.5rem;
+}
+
+.testcase-baseline-empty-state p {
+  color: var(--tcbl-text-lighter); /* Use prefixed var */
+  max-width: 400px;
+}
+
+/* Loading Spinner */
+.testcase-baseline-loading-spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: var(--tcbl-primary-color); /* Use prefixed var (new green theme) */
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+/* Error State */
+.testcase-baseline-error-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--tcbl-danger-color); /* Use prefixed var */
+}
+
+.testcase-baseline-error-state h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--tcbl-text-dark); /* Use prefixed var */
+  margin-bottom: 0.5rem;
+}
+
+.testcase-baseline-error-state p {
+  color: var(--tcbl-text-lighter); /* Use prefixed var */
+  max-width: 400px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .testcase-baseline-dashboard {
+    padding: 1rem;
+  }
+
+  .testcase-baseline-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .testcase-baseline-header-title {
+    order: -1;
+    margin-bottom: 1rem;
+  }
+
+  .testcase-baseline-header-left, .testcase-baseline-header-right {
+    width: 100%;
+  }
+
+  .testcase-baseline-header-right {
+    justify-content: flex-start;
+  }
+
+  .testcase-baseline-controls {
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+
+  .view-testcases-button span {
+    display: none;
+  }
+
+  .view-testcases-button {
+    padding: 0.5rem;
+  }
+
+  .col-baseline, .col-date, .col-actions {
+    width: auto;
+  }
+
+  .testcase-baseline-table td, .testcase-baseline-table th {
+    padding: 0.75rem 0.5rem;
+  }
+}
