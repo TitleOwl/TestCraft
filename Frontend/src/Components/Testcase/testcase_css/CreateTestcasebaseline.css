@@ -1,12 +1,41 @@
-/* CreateTestcasebaseline.css */
-/* Mirrors CreateBaseline.css with 'create-testcasebaseline-' prefix */
-/* and specific adjustments like .tc-id */
+/* testcase_css/CreateTestcasebaseline.css */
+/* Full CSS with 'createtestcasebaseline-' prefix and green theme */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* Assuming variables are defined globally or in another imported file */
-/* If not, copy the :root block from previous CSS examples */
-/* :root { ... copy variables here ... } */
+/* Define variables with 'createtestcasebaseline-' prefix and green theme */
+:root {
+  /* Primary theme colors (Green) */
+  --createtestcasebaseline-primary-color: #10b981;
+  --createtestcasebaseline-primary-hover: #0f9a6c;
+  --createtestcasebaseline-primary-light: #a7f3d0;
+
+  /* Other standard colors */
+  --createtestcasebaseline-secondary-color: #64748b;
+  --createtestcasebaseline-text-color: #1e293b;
+  --createtestcasebaseline-text-light: #64748b;
+  --createtestcasebaseline-text-lighter: #94a3b8;
+  --createtestcasebaseline-text-dark: #0f172a;
+  --createtestcasebaseline-bg-color: #f8fafc;
+  --createtestcasebaseline-bg-light: #ffffff;
+  --createtestcasebaseline-bg-dark: #f1f5f9;
+  --createtestcasebaseline-success-color: #10b981; /* Same as primary */
+  --createtestcasebaseline-success-light: #d1fae5;
+  --createtestcasebaseline-warning-color: #f59e0b;
+  --createtestcasebaseline-warning-light: #fef3c7;
+  --createtestcasebaseline-danger-color: #ef4444;
+  --createtestcasebaseline-danger-light: #fee2e2;
+  --createtestcasebaseline-info-color: #3b82f6;
+  --createtestcasebaseline-info-light: #dbeafe;
+  --createtestcasebaseline-border-color: #e2e8f0;
+
+  /* Layout variables */
+  --createtestcasebaseline-border-radius: 8px;
+  --createtestcasebaseline-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --createtestcasebaseline-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --createtestcasebaseline-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --createtestcasebaseline-transition: all 0.2s ease-in-out;
+}
 
 * {
   margin: 0;
@@ -16,271 +45,216 @@
 
 body {
   font-family: 'Inter', sans-serif;
-  /* Use CSS variables defined elsewhere (assuming --tcb- prefix) */
-  background-color: var(--tcb-bg-color);
-  color: var(--tcb-text-color);
+  background-color: var(--createtestcasebaseline-bg-color);
+  color: var(--createtestcasebaseline-text-color);
   line-height: 1.5;
 }
 
 /* Main Container */
-.create-testcasebaseline-dashboard {
-  /* Changed prefix */
+.createtestcasebaseline-dashboard {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   max-width: 1300px;
   margin: 0 auto;
   padding: 2rem;
-  background-color: var(--tcb-bg-color);
-  /* Use var */
+  background-color: var(--createtestcasebaseline-bg-color);
 }
 
 /* Header Section */
-.create-testcasebaseline-header {
-  /* Changed prefix */
+.createtestcasebaseline-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid var(--tcb-border-color);
-  /* Use var */
+  border-bottom: 1px solid var(--createtestcasebaseline-border-color);
 }
 
-.create-testcasebaseline-header-left,
-.create-testcasebaseline-header-right {
-  /* Changed prefix */
+.createtestcasebaseline-header-left,
+.createtestcasebaseline-header-right {
   flex: 1;
 }
 
-.create-testcasebaseline-header-title {
-  /* Changed prefix */
+.createtestcasebaseline-header-title {
   display: flex;
   align-items: center;
   gap: 0.75rem;
 }
 
-.create-testcasebaseline-header-title h1 {
-  /* Changed prefix */
+.createtestcasebaseline-header-title h1 {
   font-size: 1.75rem;
   font-weight: 700;
-  color: var(--tcb-text-dark);
-  /* Use var */
+  color: var(--createtestcasebaseline-text-dark);
   margin: 0;
 }
 
-.create-testcasebaseline-header-title svg {
-  /* Changed prefix */
-  color: var(--tcb-primary-color);
-  /* Use var */
+.createtestcasebaseline-header-title svg {
+  color: var(--createtestcasebaseline-primary-color); /* Green theme */
 }
 
-.create-testcasebaseline-back-button {
-  /* Changed prefix */
+.createtestcasebaseline-back-button {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background-color: var(--tcb-bg-light);
-  /* Use var */
-  color: var(--tcb-text-color);
-  /* Use var */
-  border: 1px solid var(--tcb-border-color);
-  /* Use var */
-  border-radius: var(--tcb-border-radius);
-  /* Use var */
+  background-color: var(--createtestcasebaseline-bg-light);
+  color: var(--createtestcasebaseline-text-color);
+  border: 1px solid var(--createtestcasebaseline-border-color);
+  border-radius: var(--createtestcasebaseline-border-radius);
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  transition: var(--tcb-transition);
-  /* Use var */
-  box-shadow: var(--tcb-shadow-sm);
-  /* Use var */
+  transition: var(--createtestcasebaseline-transition);
+  box-shadow: var(--createtestcasebaseline-shadow-sm);
 }
 
-.create-testcasebaseline-back-button:hover {
-  /* Changed prefix */
-  background-color: var(--tcb-bg-dark);
-  /* Use var */
+.createtestcasebaseline-back-button:hover {
+  background-color: var(--createtestcasebaseline-bg-dark);
 }
 
 /* Content Section */
-.create-testcasebaseline-content {
-  /* Changed prefix */
+.createtestcasebaseline-content {
   flex: 1;
   display: flex;
   flex-direction: column;
 }
 
 /* Card */
-.create-testcasebaseline-card {
-  /* Changed prefix */
-  background-color: var(--tcb-bg-light);
-  /* Use var */
-  border-radius: var(--tcb-border-radius);
-  /* Use var */
-  box-shadow: var(--tcb-shadow-md);
-  /* Use var */
+.createtestcasebaseline-card {
+  background-color: var(--createtestcasebaseline-bg-light);
+  border-radius: var(--createtestcasebaseline-border-radius);
+  box-shadow: var(--createtestcasebaseline-shadow-md);
   overflow: hidden;
   display: flex;
   flex-direction: column;
   flex: 1;
 }
 
-.create-testcasebaseline-card-header {
-  /* Changed prefix */
+.createtestcasebaseline-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem;
-  border-bottom: 1px solid var(--tcb-border-color);
-  /* Use var */
+  border-bottom: 1px solid var(--createtestcasebaseline-border-color);
 }
 
-.create-testcasebaseline-title-section {
-  /* Changed prefix */
+.createtestcasebaseline-title-section {
   display: flex;
   align-items: center;
   gap: 0.75rem;
 }
 
-.create-testcasebaseline-title-section h2 {
-  /* Changed prefix */
+.createtestcasebaseline-title-section h2 {
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--tcb-text-dark);
-  /* Use var */
+  color: var(--createtestcasebaseline-text-dark);
   margin: 0;
 }
 
-.create-testcasebaseline-title-section svg {
-  /* Changed prefix */
-  color: var(--tcb-primary-color);
-  /* Use var */
+.createtestcasebaseline-title-section svg {
+  color: var(--createtestcasebaseline-primary-color); /* Green theme */
 }
 
-.create-testcasebaseline-selection-info {
-  /* Changed prefix */
+.createtestcasebaseline-selection-info {
   font-size: 0.875rem;
-  color: var(--tcb-text-light);
-  /* Use var */
-  background-color: var(--tcb-bg-dark);
-  /* Use var */
+  color: var(--createtestcasebaseline-text-light);
+  background-color: var(--createtestcasebaseline-bg-dark);
   padding: 0.375rem 0.75rem;
   border-radius: 9999px;
 }
 
 /* Table Container */
-.create-testcasebaseline-table-container {
-  /* Changed prefix */
+.createtestcasebaseline-table-container {
   flex: 1;
   overflow-x: auto;
-  padding: 0;
-  /* Ensure no extra padding */
+  padding: 0; /* Ensure no extra padding */
 }
 
-.create-testcasebaseline-table {
-  /* Changed prefix */
+.createtestcasebaseline-table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
   min-width: 100%;
 }
 
-.create-testcasebaseline-table th {
-  /* Changed prefix */
-  background-color: var(--tcb-bg-dark);
-  /* Use var */
-  color: var(--tcb-text-color);
-  /* Use var */
+.createtestcasebaseline-table th {
+  background-color: var(--createtestcasebaseline-bg-dark);
+  color: var(--createtestcasebaseline-text-color);
   font-weight: 600;
   font-size: 0.875rem;
   text-align: left;
   padding: 0.75rem 1rem;
-  /* Keep padding consistent */
   position: sticky;
   top: 0;
   z-index: 1;
-  /* Ensure header stays above scrolling content */
-  border-bottom: 1px solid var(--tcb-border-color);
-  /* Use var */
+  border-bottom: 1px solid var(--createtestcasebaseline-border-color);
 }
 
-.create-testcasebaseline-table td {
-  /* Changed prefix */
+.createtestcasebaseline-table td {
   padding: 0.75rem 1rem;
-  /* Keep padding consistent */
-  border-bottom: 1px solid var(--tcb-border-color);
-  /* Use var */
+  border-bottom: 1px solid var(--createtestcasebaseline-border-color);
   font-size: 0.875rem;
 }
 
-.create-testcasebaseline-row {
-  /* Changed prefix */
-  transition: var(--tcb-transition);
-  /* Use var */
+.createtestcasebaseline-row {
+  transition: var(--createtestcasebaseline-transition);
   cursor: pointer;
 }
 
-.create-testcasebaseline-row:hover {
-  /* Changed prefix */
-  background-color: var(--tcb-bg-dark);
-  /* Use var */
+.createtestcasebaseline-row:hover {
+  background-color: var(--createtestcasebaseline-bg-dark);
 }
 
-.create-testcasebaseline-row.selected {
-  /* Changed prefix */
-  background-color: var(--tcb-primary-light);
-  /* Use var */
+.createtestcasebaseline-row.selected {
+  background-color: var(--createtestcasebaseline-primary-light); /* Green theme light */
 }
 
-.create-testcasebaseline-row:last-child td {
-  /* Changed prefix */
+.createtestcasebaseline-row:last-child td {
   border-bottom: none;
 }
 
-/* Table Columns (Keep generic names as they weren't changed in React) */
-.col-checkbox {
+/* Table Columns - Prefixed */
+.createtestcasebaseline-col-checkbox {
   width: 5%;
   text-align: center;
 }
 
-.col-id {
+.createtestcasebaseline-col-id {
   width: 15%;
 }
 
-.col-name {
+.createtestcasebaseline-col-name {
   width: 40%;
 }
 
-.col-type {
+.createtestcasebaseline-col-type {
   width: 20%;
 }
 
-.col-status {
+.createtestcasebaseline-col-status {
   width: 20%;
 }
 
-/* Changed ID class name */
-.tc-id {
+/* Prefixed ID class name */
+.createtestcasebaseline-tc-id {
   font-weight: 600;
-  color: var(--tcb-primary-color);
-  /* Use var */
+  color: var(--createtestcasebaseline-primary-color); /* Green theme */
 }
 
-/* Checkbox Styling (Keep generic name 'styled-checkbox') */
-.checkbox-container {
+/* Checkbox Styling - Prefixed */
+.createtestcasebaseline-checkbox-container {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.styled-checkbox {
+.createtestcasebaseline-styled-checkbox {
   position: absolute;
   opacity: 0;
 }
 
-.styled-checkbox+label {
+.createtestcasebaseline-styled-checkbox+label {
   position: relative;
   cursor: pointer;
   padding: 0;
@@ -288,26 +262,21 @@ body {
   width: 18px;
   height: 18px;
   background: white;
-  border: 1px solid var(--tcb-border-color);
-  /* Use var */
+  border: 1px solid var(--createtestcasebaseline-border-color);
   border-radius: 4px;
-  transition: var(--tcb-transition);
-  /* Use var */
+  transition: var(--createtestcasebaseline-transition);
 }
 
-.styled-checkbox:hover+label {
-  background: var(--tcb-bg-dark);
-  /* Use var */
+.createtestcasebaseline-styled-checkbox:hover+label {
+  background: var(--createtestcasebaseline-bg-dark);
 }
 
-.styled-checkbox:checked+label {
-  background: var(--tcb-primary-color);
-  /* Use var */
-  border-color: var(--tcb-primary-color);
-  /* Use var */
+.createtestcasebaseline-styled-checkbox:checked+label {
+  background: var(--createtestcasebaseline-primary-color); /* Green theme */
+  border-color: var(--createtestcasebaseline-primary-color); /* Green theme */
 }
 
-.styled-checkbox:checked+label:after {
+.createtestcasebaseline-styled-checkbox:checked+label:after {
   content: '';
   position: absolute;
   left: 5px;
@@ -320,8 +289,7 @@ body {
 }
 
 /* Status Badge */
-.create-testcasebaseline-status-badge {
-  /* Changed prefix */
+.createtestcasebaseline-status-badge {
   display: inline-block;
   padding: 0.25rem 0.5rem;
   border-radius: 9999px;
@@ -329,93 +297,67 @@ body {
   font-weight: 500;
 }
 
-/* Adjust status classes as needed for Test Cases */
-.create-testcasebaseline-status-badge.verified {
-  /* Class for 'VERIFIED' status */
-  background-color: var(--tcb-success-light);
-  /* Use var */
-  color: var(--tcb-success-color);
-  /* Use var */
+/* Status modifier classes */
+.createtestcasebaseline-status-badge.verified {
+  background-color: var(--createtestcasebaseline-success-light);
+  color: var(--createtestcasebaseline-success-color); /* Green theme */
 }
 
-.create-testcasebaseline-status-badge.baseline {
-  /* Class for 'BASELINE' status */
-  background-color: var(--tcb-info-light);
-  /* Use var */
-  color: var(--tcb-info-color);
-  /* Use var */
+.createtestcasebaseline-status-badge.baseline {
+  background-color: var(--createtestcasebaseline-info-light);
+  color: var(--createtestcasebaseline-info-color);
 }
 
-.create-testcasebaseline-status-badge.default {
-  /* Fallback class */
-  background-color: var(--tcb-secondary-color);
-  /* Use var */
+.createtestcasebaseline-status-badge.default {
+  background-color: var(--createtestcasebaseline-secondary-color);
   color: white;
 }
 
 /* Actions Container */
-.create-testcasebaseline-actions {
-  /* Changed prefix */
+.createtestcasebaseline-actions {
   display: flex;
   justify-content: flex-end;
   align-items: center;
   gap: 1rem;
   padding: 1.5rem;
-  border-top: 1px solid var(--tcb-border-color);
-  /* Use var */
-  background-color: var(--tcb-bg-light);
-  /* Use var */
-  /* Ensure actions are inside the card */
+  border-top: 1px solid var(--createtestcasebaseline-border-color);
+  background-color: var(--createtestcasebaseline-bg-light);
 }
 
-.create-testcasebaseline-cancel-button,
-.create-testcasebaseline-submit-button {
-  /* Changed prefix */
+.createtestcasebaseline-cancel-button,
+.createtestcasebaseline-submit-button {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.625rem 1.25rem;
-  border-radius: var(--tcb-border-radius);
-  /* Use var */
+  border-radius: var(--createtestcasebaseline-border-radius);
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  transition: var(--tcb-transition);
-  /* Use var */
+  transition: var(--createtestcasebaseline-transition);
 }
 
-.create-testcasebaseline-cancel-button {
-  /* Changed prefix */
-  background-color: var(--tcb-bg-dark);
-  /* Use var */
-  color: var(--tcb-text-color);
-  /* Use var */
-  border: 1px solid var(--tcb-border-color);
-  /* Use var */
+.createtestcasebaseline-cancel-button {
+  background-color: var(--createtestcasebaseline-bg-dark);
+  color: var(--createtestcasebaseline-text-color);
+  border: 1px solid var(--createtestcasebaseline-border-color);
 }
 
-.create-testcasebaseline-cancel-button:hover {
-  /* Changed prefix */
+.createtestcasebaseline-cancel-button:hover {
   background-color: #e2e8f0;
-  /* Consider using a var like --tcb-border-color-hover */
 }
 
-.create-testcasebaseline-submit-button {
-  /* Changed prefix */
-  background-color: var(--tcb-primary-color);
-  /* Use var */
+.createtestcasebaseline-submit-button {
+  background-color: var(--createtestcasebaseline-primary-color); /* Green theme */
   color: white;
   border: none;
 }
 
-.create-testcasebaseline-submit-button:hover {
-  /* Changed prefix */
-  background-color: var(--tcb-primary-hover);
-  /* Use var */
+.createtestcasebaseline-submit-button:hover {
+  background-color: var(--createtestcasebaseline-primary-hover); /* Green theme hover */
 }
 
-.create-testcasebaseline-submit-button:disabled {
-  /* Changed prefix */
+.createtestcasebaseline-submit-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   box-shadow: none;
@@ -423,29 +365,22 @@ body {
 }
 
 /* Loading State */
-.create-testcasebaseline-loading-state {
-  /* Changed prefix */
+.createtestcasebaseline-loading-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 4rem 2rem;
   text-align: center;
-  background-color: var(--tcb-bg-light);
-  /* Use var */
-  border-radius: var(--tcb-border-radius);
-  /* Use var */
-  box-shadow: var(--tcb-shadow-md);
-  /* Use var */
+  background-color: var(--createtestcasebaseline-bg-light);
+  border-radius: var(--createtestcasebaseline-border-radius);
+  box-shadow: var(--createtestcasebaseline-shadow-md);
   flex: 1;
-  /* Allow it to take space */
 }
 
-.create-testcasebaseline-loading-spinner {
-  /* Changed prefix */
+.createtestcasebaseline-loading-spinner {
   border: 4px solid rgba(0, 0, 0, 0.1);
-  border-left-color: var(--tcb-primary-color);
-  /* Use var */
+  border-left-color: var(--createtestcasebaseline-primary-color); /* Green theme */
   border-radius: 50%;
   width: 2.5rem;
   height: 2.5rem;
@@ -454,96 +389,74 @@ body {
 }
 
 /* Error State */
-.create-testcasebaseline-error-state {
-  /* Changed prefix */
+.createtestcasebaseline-error-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 4rem 2rem;
   text-align: center;
-  background-color: var(--tcb-bg-light);
-  /* Use var */
-  border-radius: var(--tcb-border-radius);
-  /* Use var */
-  box-shadow: var(--tcb-shadow-md);
-  /* Use var */
+  background-color: var(--createtestcasebaseline-bg-light);
+  border-radius: var(--createtestcasebaseline-border-radius);
+  box-shadow: var(--createtestcasebaseline-shadow-md);
   flex: 1;
-  /* Allow it to take space */
 }
 
-.create-testcasebaseline-error-icon {
-  /* Changed prefix */
+.createtestcasebaseline-error-icon {
   font-size: 2.5rem;
   margin-bottom: 1rem;
-  color: var(--tcb-danger-color);
-  /* Use var */
+  color: var(--createtestcasebaseline-danger-color);
 }
 
-.create-testcasebaseline-error-state h3 {
-  /* Changed prefix */
+.createtestcasebaseline-error-state h3 {
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--tcb-text-dark);
-  /* Use var */
+  color: var(--createtestcasebaseline-text-dark);
   margin-bottom: 0.5rem;
 }
 
-.create-testcasebaseline-error-state p {
-  /* Changed prefix */
-  color: var(--tcb-text-lighter);
-  /* Use var */
+.createtestcasebaseline-error-state p {
+  color: var(--createtestcasebaseline-text-lighter);
   max-width: 400px;
 }
 
 /* Empty State */
-.create-testcasebaseline-empty-state {
-  /* Changed prefix */
+.createtestcasebaseline-empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 4rem 2rem;
   text-align: center;
-  background-color: var(--tcb-bg-light);
-  /* Use var */
-  border-radius: var(--tcb-border-radius);
-  /* Use var */
-  box-shadow: var(--tcb-shadow-md);
-  /* Use var */
+  background-color: var(--createtestcasebaseline-bg-light);
+  border-radius: var(--createtestcasebaseline-border-radius);
+  box-shadow: var(--createtestcasebaseline-shadow-md);
   flex: 1;
-  /* Allow it to take space */
 }
 
-.create-testcasebaseline-empty-icon {
-  /* Changed prefix */
+.createtestcasebaseline-empty-icon {
   font-size: 3rem;
   margin-bottom: 1rem;
   opacity: 0.5;
 }
 
-.create-testcasebaseline-empty-state h3 {
-  /* Changed prefix */
+.createtestcasebaseline-empty-state h3 {
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--tcb-text-dark);
-  /* Use var */
+  color: var(--createtestcasebaseline-text-dark);
   margin-bottom: 0.5rem;
 }
 
-.create-testcasebaseline-empty-state p {
-  /* Changed prefix */
-  color: var(--tcb-text-lighter);
-  /* Use var */
+.createtestcasebaseline-empty-state p {
+  color: var(--createtestcasebaseline-text-lighter);
   max-width: 400px;
 }
 
-/* Animations (remain the same) */
+/* Animations */
 @keyframes spin {
   0% {
     transform: rotate(0deg);
   }
-
   100% {
     transform: rotate(360deg);
   }
@@ -551,72 +464,61 @@ body {
 
 /* Responsive Styles */
 @media (max-width: 768px) {
-  .create-testcasebaseline-dashboard {
-    /* Changed prefix */
+  .createtestcasebaseline-dashboard {
     padding: 1rem;
   }
 
-  .create-testcasebaseline-header {
-    /* Changed prefix */
+  .createtestcasebaseline-header {
     flex-direction: column;
     gap: 1rem;
     align-items: flex-start;
   }
 
-  .create-testcasebaseline-header-title {
-    /* Changed prefix */
+  .createtestcasebaseline-header-title {
     order: -1;
     margin-bottom: 1rem;
   }
 
-  .create-testcasebaseline-header-left,
-  .create-testcasebaseline-header-right {
-    /* Changed prefix */
+  .createtestcasebaseline-header-left,
+  .createtestcasebaseline-header-right {
     width: 100%;
   }
 
-  .create-testcasebaseline-card-header {
-    /* Changed prefix */
+  .createtestcasebaseline-card-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.75rem;
   }
 
-  .create-testcasebaseline-selection-info {
-    /* Changed prefix */
+  .createtestcasebaseline-selection-info {
     align-self: flex-start;
   }
 
-  .create-testcasebaseline-actions {
-    /* Changed prefix */
+  .createtestcasebaseline-actions {
     flex-direction: column-reverse;
     gap: 0.75rem;
   }
 
-  .create-testcasebaseline-cancel-button,
-  .create-testcasebaseline-submit-button {
-    /* Changed prefix */
+  .createtestcasebaseline-cancel-button,
+  .createtestcasebaseline-submit-button {
     width: 100%;
     justify-content: center;
   }
 
-  /* Hide less important columns on small screens if needed */
-  .col-type {
+  /* Adjust columns for responsiveness */
+  .createtestcasebaseline-col-type {
     display: none;
   }
 
-  /* Allow other columns to adjust */
-  .col-checkbox,
-  .col-id,
-  .col-name,
-  .col-status {
+  .createtestcasebaseline-col-checkbox,
+  .createtestcasebaseline-col-id,
+  .createtestcasebaseline-col-name,
+  .createtestcasebaseline-col-status {
     width: auto;
   }
 
-  .create-testcasebaseline-table th,
-  .create-testcasebaseline-table td {
-    /* Changed prefix */
+  .createtestcasebaseline-table th,
+  .createtestcasebaseline-table td {
     padding: 0.75rem 0.5rem;
-    /* Adjust padding for smaller screens */
   }
 }

@@ -4,7 +4,7 @@ import { toast, ToastContainer } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 // Import the specific CSS for CreateTestcasebaseline
-import "./testcase_css/CreateTestcasebaseline.css";
+import "./testcase_css/CreateTestcasebaseline.css"; // Ensure this points to the updated CSS
 
 // --- Icons (Reused - No changes needed) ---
 const BackIcon = () => (
@@ -48,53 +48,47 @@ const ListIcon = () => (
   </svg>
 );
 
-// --- Custom Status Badge Component (Adapted for Test Cases) ---
+// --- Custom Status Badge Component ---
 const StatusBadge = ({ status }) => {
   let statusClass = "";
-
-  // Adjust cases based on possible testcase statuses
-  switch (status?.toUpperCase()) { // Use optional chaining and uppercase for safety
+  switch (status?.toUpperCase()) {
     case "VERIFIED":
-      statusClass = "verified"; // Assuming a 'verified' class exists in the CSS
+      statusClass = "verified";
       break;
     case "BASELINE":
       statusClass = "baseline";
       break;
-    // Add more cases if needed (e.g., 'DRAFT', 'REVIEW')
     default:
       statusClass = "default";
   }
-
-  // Use create-testcasebaseline prefix for CSS class
-  return <span className={`create-testcasebaseline-status-badge ${statusClass}`}>{status || 'N/A'}</span>;
+  // Use the base class with the prefix
+  return <span className={`createtestcasebaseline-status-badge ${statusClass}`}>{status || 'N/A'}</span>;
 };
 
-// --- Loading Component (Adapted) ---
+// --- Loading Component ---
 const LoadingState = () => (
-  // Use create-testcasebaseline prefix for CSS classes
-  <div className="create-testcasebaseline-loading-state">
-    <div className="create-testcasebaseline-loading-spinner"></div>
-    {/* Update text */}
+  // Use the correct prefixed class names
+  <div className="createtestcasebaseline-loading-state">
+    <div className="createtestcasebaseline-loading-spinner"></div>
     <p>Loading test cases...</p>
   </div>
 );
 
-// --- Error Component (Adapted) ---
+// --- Error Component ---
 const ErrorState = ({ message }) => (
-  // Use create-testcasebaseline prefix for CSS classes
-  <div className="create-testcasebaseline-error-state">
-    <div className="create-testcasebaseline-error-icon">⚠️</div>
+  // Use the correct prefixed class names
+  <div className="createtestcasebaseline-error-state">
+    <div className="createtestcasebaseline-error-icon">⚠️</div>
     <h3>Error</h3>
     <p>{message}</p>
   </div>
 );
 
-// --- Empty State Component (Adapted) ---
+// --- Empty State Component ---
 const EmptyState = () => (
-  // Use create-testcasebaseline prefix for CSS classes
-  <div className="create-testcasebaseline-empty-state">
-    <div className="create-testcasebaseline-empty-icon">🧪</div> {/* Test tube icon */}
-    {/* Update text */}
+  // Use the correct prefixed class names
+  <div className="createtestcasebaseline-empty-state">
+    <div className="createtestcasebaseline-empty-icon">🧪</div>
     <h3>No Verified Test Cases</h3>
     <p>There are no verified test cases available to set as baseline.</p>
   </div>
@@ -102,13 +96,11 @@ const EmptyState = () => (
 
 // --- Main CreateTestcasebaseline Component ---
 const CreateTestcasebaseline = () => {
-  // State names adapted for Test Cases
   const [verifiedTestcases, setVerifiedTestcases] = useState([]);
   const [selectedTestcases, setSelectedTestcases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  // Keep selectAll state for the new layout
   const [selectAll, setSelectAll] = useState(false);
 
   const location = useLocation();
@@ -116,59 +108,49 @@ const CreateTestcasebaseline = () => {
   const projectId = queryParams.get("project_id");
   const navigate = useNavigate();
 
-  // --- Handle "Select All" checkbox (Adapted) ---
+  // --- Handle "Select All" checkbox ---
   const handleSelectAll = () => {
     if (selectAll) {
-      setSelectedTestcases([]); // Use adapted state setter
+      setSelectedTestcases([]);
     } else {
-      // Map over verifiedTestcases and get testcase_id
       const allIds = verifiedTestcases.map(tc => tc.testcase_id);
-      setSelectedTestcases(allIds); // Use adapted state setter
+      setSelectedTestcases(allIds);
     }
     setSelectAll(!selectAll);
   };
 
-  // --- Check if all test cases are selected (Adapted) ---
+  // --- Check if all test cases are selected ---
   useEffect(() => {
     if (verifiedTestcases.length > 0) {
-      setSelectAll(
-        // Compare lengths using adapted state variables
-        selectedTestcases.length === verifiedTestcases.length
-      );
+      setSelectAll(selectedTestcases.length === verifiedTestcases.length);
     } else {
-      setSelectAll(false); // Ensure selectAll is false if there are no items
+      setSelectAll(false);
     }
-  }, [selectedTestcases, verifiedTestcases]); // Use adapted state variables
+  }, [selectedTestcases, verifiedTestcases]);
 
-  // --- Fetch verified test cases (Adapted from original CreateTestcasebaseline) ---
+  // --- Fetch verified test cases ---
   useEffect(() => {
-    const fetchTestcases = async () => { // Renamed function
+    const fetchTestcases = async () => {
       if (!projectId) return;
-
       setLoading(true);
       setError(null);
-
       try {
         const response = await axios.get(
-          // Use the correct endpoint for verified test cases
           `http://localhost:3001/testcaseverified/${projectId}`
         );
-        // Assuming the endpoint directly returns only verified test cases
-        setVerifiedTestcases(response.data); // Use adapted state setter
-      } catch (err) { // Catch error specifically
-        console.error("Error fetching test cases:", err); // Log error
-        setError("Failed to load test cases. Please try again later."); // Set error message
+        setVerifiedTestcases(response.data);
+      } catch (err) {
+        console.error("Error fetching test cases:", err);
+        setError("Failed to load test cases. Please try again later.");
       } finally {
         setLoading(false);
       }
     };
-
     fetchTestcases();
   }, [projectId]);
 
-  // --- Handle individual selection (Adapted) ---
+  // --- Handle individual selection ---
   const handleSelect = (id) => {
-    // Use adapted state setter
     setSelectedTestcases((prev) =>
       prev.includes(id)
         ? prev.filter((itemId) => itemId !== id)
@@ -176,211 +158,171 @@ const CreateTestcasebaseline = () => {
     );
   };
 
-  // --- Handle Create Test Case Baseline (Combined Logic) ---
+  // --- Handle Create Test Case Baseline ---
   const handleCreateBaseline = async () => {
-    // Input validation
     if (!projectId) {
       toast.error("Invalid project ID.");
       return;
     }
-    if (selectedTestcases.length === 0) { // Use adapted state
-      toast.warning("Please select at least one test case."); // Update text
+    if (selectedTestcases.length === 0) {
+      toast.warning("Please select at least one test case.");
       return;
     }
     if (isSubmitting) {
       toast.warning("Submitting in progress. Please wait.");
       return;
     }
-
     setIsSubmitting(true);
-
-    // --- Payload for /createtestcasebaseline ---
-    const payload = {
-      testcase_id: selectedTestcases, // Use adapted state and key
-      // Add baseline_at if your backend expects it, like in CreateBaseline
-      // baseline_at: new Date().toISOString(),
-    };
+    const payload = { testcase_id: selectedTestcases };
     console.log("Creating test case baseline with payload:", payload);
 
     try {
-      // --- Call API /createtestcasebaseline ---
       const response = await axios.post(
         "http://localhost:3001/createtestcasebaseline",
         payload
       );
 
-      if (response.status === 201) { // Check for successful creation
+      if (response.status === 201) {
         console.log("Test case baseline created successfully:", response.data);
-        toast.success("Testcase Baseline set successfully!");
-
-        // --- Update status (optional - check if backend does this) ---
-        // The original CreateTestcasebaseline didn't explicitly call an update status endpoint
-        // It relied on the /createtestcasebaseline endpoint implicitly handling it OR updated frontend state only
-        // If you need to explicitly update status like in CreateBaseline, add an API call here.
-        // Example: await axios.post("http://localhost:3001/updatetestcasestatus", { testcase_id: selectedTestcases, testcase_status: 'BASELINE' });
-
-        // --- Record History for each selected test case ---
         console.log("Starting history creation loop for test case baseline...");
-        // Use Promise.all for potential parallel execution
         await Promise.all(
-          selectedTestcases.map(async (testcaseId) => { // Make inner function async
-            // Find full details (needed if history endpoint requires more than just ID/status)
+          selectedTestcases.map(async (testcaseId) => {
             const tcDetail = verifiedTestcases.find(tc => tc.testcase_id === testcaseId);
-
             if (!tcDetail) {
               console.error(`Could not find details for testcase ID: ${testcaseId}. Skipping history creation.`);
               toast.warn(`Could not find details for TC-${testcaseId}, history not recorded.`);
-              return; // Skip this iteration
+              return;
             }
-
             const historyPayload = {
               testcase_id: testcaseId,
               testcase_status: "BASELINE",
-              // Add other fields required by /addHistorytestcase if any, using tcDetail
-              // e.g., testcase_name: tcDetail.testcase_name,
             };
             console.log(`Sending history data for TC ID ${testcaseId}:`, historyPayload);
-
             try {
               await axios.post("http://localhost:3001/addHistorytestcase", historyPayload);
               console.log(`History added successfully for TC ID ${testcaseId}`);
             } catch (historyError) {
               console.error(`Error sending history for testcase ID: ${testcaseId}`, historyError.response?.data || historyError.message);
               toast.error(`Error recording history for TC-${testcaseId}. Check console.`);
-              // Decide if you want to throw error here to stop Promise.all or just warn
             }
           })
         );
         console.log("Finished history creation loop for test case baseline.");
-
-
-        // --- Update Frontend State ---
-        // Remove items that were baselined from the verified list
         setVerifiedTestcases((prev) =>
           prev.filter((tc) => !selectedTestcases.includes(tc.testcase_id))
         );
-        setSelectedTestcases([]); // Clear selection
+        setSelectedTestcases([]);
         console.log("Frontend state updated successfully.");
-
-
-        // --- Navigate after all operations ---
-        navigate(`/TestcaseBaseline?project_id=${projectId}`); // Navigate to TestcaseBaseline view
-
+        toast.success("Testcase Baseline set successfully!", {
+          onClose: () => {
+            console.log("Toast closed, navigating now...");
+            navigate(`/TestcaseBaseline?project_id=${projectId}`);
+          }
+        });
       } else {
-        // Handle unexpected success status
         throw new Error(response.data.message || "Failed to set test case baseline. Unexpected status.");
       }
     } catch (error) {
-      // Handle errors during API calls
       console.error("Error during test case baseline creation process:", error.response?.data || error.message);
       const errorMessage = error.response?.data?.message || "An error occurred during the baseline process.";
       toast.error(errorMessage);
     } finally {
-      setIsSubmitting(false); // End submitting state
+      setIsSubmitting(false);
     }
   };
 
-  // --- Handle Cancel (Adapted) ---
+  // --- Handle Cancel ---
   const handleCancel = () => {
-    // Navigate back to the TestcaseBaseline view
     navigate(`/TestcaseBaseline?project_id=${projectId}`);
   };
 
-  // --- JSX Structure based on CreateBaseline ---
+  // --- JSX Structure with updated class names ---
   return (
-    // Use create-testcasebaseline prefix for CSS classes
-    <div className="create-testcasebaseline-dashboard">
-      <div className="create-testcasebaseline-header">
-        <div className="create-testcasebaseline-header-left">
-          <button className="create-testcasebaseline-back-button" onClick={handleCancel}>
+    <div className="createtestcasebaseline-dashboard">
+      <div className="createtestcasebaseline-header">
+        <div className="createtestcasebaseline-header-left">
+          <button className="createtestcasebaseline-back-button" onClick={handleCancel}>
             <BackIcon />
             <span>Back</span>
           </button>
         </div>
-        <div className="create-testcasebaseline-header-title">
-          <TestcaseBaselineIcon /> {/* Use specific icon */}
-          <h1>Create New Testcase Baseline</h1> {/* Update text */}
+        <div className="createtestcasebaseline-header-title">
+          <TestcaseBaselineIcon />
+          <h1>Create New Testcase Baseline</h1>
         </div>
-        <div className="create-testcasebaseline-header-right"></div> {/* Keep for structure */}
+        <div className="createtestcasebaseline-header-right"></div>
       </div>
 
-      <div className="create-testcasebaseline-content">
+      <div className="createtestcasebaseline-content">
         {loading ? (
           <LoadingState />
         ) : error ? (
           <ErrorState message={error} />
-        ) : verifiedTestcases.length === 0 ? ( // Check adapted state
+        ) : verifiedTestcases.length === 0 ? (
           <EmptyState />
         ) : (
-          // Card structure from CreateBaseline
-          <div className="create-testcasebaseline-card">
-            <div className="create-testcasebaseline-card-header">
-              <div className="create-testcasebaseline-title-section">
+          <div className="createtestcasebaseline-card">
+            <div className="createtestcasebaseline-card-header">
+              <div className="createtestcasebaseline-title-section">
                 <ListIcon />
-                <h2>Verified Test Cases</h2> {/* Update text */}
+                <h2>Verified Test Cases</h2>
               </div>
-              {/* Selection info */}
-              <div className="create-testcasebaseline-selection-info">
+              <div className="createtestcasebaseline-selection-info">
                 <span>{selectedTestcases.length} of {verifiedTestcases.length} selected</span>
               </div>
             </div>
 
-            {/* Table container */}
-            <div className="create-testcasebaseline-table-container">
-              <table className="create-testcasebaseline-table">
+            <div className="createtestcasebaseline-table-container">
+              <table className="createtestcasebaseline-table">
                 <thead>
                   <tr>
-                    {/* Select All Checkbox Header */}
-                    <th className="col-checkbox">
-                      <div className="checkbox-container">
+                    {/* Use prefixed class names for columns */}
+                    <th className="createtestcasebaseline-col-checkbox">
+                      <div className="createtestcasebaseline-checkbox-container"> {/* Prefixed */}
                         <input
                           type="checkbox"
                           checked={selectAll}
                           onChange={handleSelectAll}
-                          id="select-all-tc" // Unique ID
-                          className="styled-checkbox" // Assuming same styling class
-                          disabled={verifiedTestcases.length === 0} // Disable if no items
+                          id="select-all-tc"
+                          className="createtestcasebaseline-styled-checkbox" // Prefixed
+                          disabled={verifiedTestcases.length === 0}
                         />
                         <label htmlFor="select-all-tc"></label>
                       </div>
                     </th>
-                    {/* Table Headers */}
-                    <th className="col-id">ID</th>
-                    <th className="col-name">Name</th>
-                    <th className="col-type">Type</th>
-                    <th className="col-status">Status</th>
+                    <th className="createtestcasebaseline-col-id">ID</th>
+                    <th className="createtestcasebaseline-col-name">Name</th>
+                    <th className="createtestcasebaseline-col-type">Type</th>
+                    <th className="createtestcasebaseline-col-status">Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {/* Map over verifiedTestcases */}
                   {verifiedTestcases.map((tc) => (
                     <tr
                       key={tc.testcase_id}
-                      // Apply selected class and click handler
-                      className={`create-testcasebaseline-row ${selectedTestcases.includes(tc.testcase_id) ? 'selected' : ''}`}
+                      className={`createtestcasebaseline-row ${selectedTestcases.includes(tc.testcase_id) ? 'selected' : ''}`}
                       onClick={() => handleSelect(tc.testcase_id)}
                     >
-                      <td className="col-checkbox">
-                        <div className="checkbox-container">
+                      {/* Use prefixed class names for columns */}
+                      <td className="createtestcasebaseline-col-checkbox">
+                        <div className="createtestcasebaseline-checkbox-container"> {/* Prefixed */}
                           <input
                             type="checkbox"
                             checked={selectedTestcases.includes(tc.testcase_id)}
                             onChange={() => handleSelect(tc.testcase_id)}
-                            id={`tc-${tc.testcase_id}`} // Unique ID per row
-                            className="styled-checkbox"
+                            id={`tc-${tc.testcase_id}`}
+                            className="createtestcasebaseline-styled-checkbox" // Prefixed
                           />
                           <label htmlFor={`tc-${tc.testcase_id}`}></label>
                         </div>
                       </td>
-                      {/* Display Test Case Data */}
-                      <td className="col-id">
-                        {/* Adapt ID formatting if needed */}
-                        <span className="tc-id">TC-{String(tc.testcase_id).padStart(3, '0')}</span>
+                      <td className="createtestcasebaseline-col-id">
+                        {/* Use prefixed class name for TC ID */}
+                        <span className="createtestcasebaseline-tc-id">TC-{String(tc.testcase_id).padStart(3, '0')}</span>
                       </td>
-                      <td className="col-name">{tc.testcase_name}</td>
-                      <td className="col-type">{tc.testcase_type || 'N/A'}</td>
-                      <td className="col-status">
-                        {/* Use StatusBadge component */}
+                      <td className="createtestcasebaseline-col-name">{tc.testcase_name}</td>
+                      <td className="createtestcasebaseline-col-type">{tc.testcase_type || 'N/A'}</td>
+                      <td className="createtestcasebaseline-col-status">
                         <StatusBadge status={tc.testcase_status} />
                       </td>
                     </tr>
@@ -389,30 +331,41 @@ const CreateTestcasebaseline = () => {
               </table>
             </div>
 
-            {/* Action buttons at the bottom of the card */}
-            <div className="create-testcasebaseline-actions">
+            <div className="createtestcasebaseline-actions">
               <button
-                className="create-testcasebaseline-cancel-button"
+                className="createtestcasebaseline-cancel-button"
                 onClick={handleCancel}
-                disabled={isSubmitting} // Also disable cancel during submit? Optional.
+                disabled={isSubmitting}
               >
                 <CancelIcon />
-                <span>Back</span>
+                <span>Back</span> {/* Changed from Cancel to Back */}
               </button>
               <button
-                className="create-testcasebaseline-submit-button"
+                className="createtestcasebaseline-submit-button"
                 onClick={handleCreateBaseline}
-                // Disable if submitting or nothing selected
                 disabled={isSubmitting || selectedTestcases.length === 0}
               >
                 <CheckIcon />
-                {/* Update button text */}
                 <span>{isSubmitting ? "Creating..." : "Set Testcase Baseline"}</span>
               </button>
             </div>
           </div>
         )}
       </div>
+
+      {/* Toast Container should be placed at the root level or high enough */}
+      <ToastContainer
+         position="top-right"
+         autoClose={3000}
+         hideProgressBar={false}
+         newestOnTop={false}
+         closeOnClick
+         rtl={false}
+         pauseOnFocusLoss
+         draggable
+         pauseOnHover
+         theme="light" // Match toast theme if needed
+      />
     </div>
   );
 };
