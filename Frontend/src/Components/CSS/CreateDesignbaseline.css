@@ -18,6 +18,8 @@
   --cdb-success-light: #d1fae5;
   --cdb-danger-color: #ef4444;
   --cdb-danger-light: #fee2e2;
+  --cdb-info-color: #3b82f6; /* Added for baseline status example */
+  --cdb-info-light: #dbeafe; /* Added for baseline status example */
   --cdb-border-color: #e2e8f0;
   --cdb-border-radius: 8px;
   --cdb-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
@@ -26,7 +28,7 @@
 }
 
 /* --- General Layout --- */
-.create-design-baseline-dashboard { /* Prefixed class */
+.create-design-baseline-dashboard {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -34,11 +36,11 @@
   margin: 0 auto;
   padding: 2rem;
   background-color: var(--cdb-bg-color);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', sans-serif; /* Assuming Inter font is loaded elsewhere */
 }
 
 /* --- Header --- */
-.create-design-baseline-header { /* Prefixed class */
+.create-design-baseline-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -48,33 +50,35 @@
 }
 
 .create-design-baseline-header-left,
-.create-design-baseline-header-right { /* Prefixed class */
+.create-design-baseline-header-right {
   flex: 1;
 }
 
-.create-design-baseline-header-title { /* Prefixed class */
+.create-design-baseline-header-title {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   color: var(--cdb-text-dark);
 }
-.create-design-baseline-header-title h1 { /* Prefixed class */
+.create-design-baseline-header-title h1 {
   font-size: 1.75rem;
   font-weight: 700;
   margin: 0;
 }
-.create-design-baseline-header-title svg { /* Prefixed class */
+.create-design-baseline-header-title svg {
   color: var(--cdb-primary-color);
 }
 
-.create-design-baseline-header-right { /* Prefixed class */
+.create-design-baseline-header-right {
     /* Empty div for alignment, no specific styles needed unless content added */
     min-width: 100px; /* Example to help balance */
+    display: flex; /* Added for potential future content alignment */
+    justify-content: flex-end; /* Align potential content to the right */
 }
 
 /* --- Back Button --- */
-.create-design-baseline-back-button { /* Prefixed class */
-  display: flex;
+.create-design-baseline-back-button {
+  display: inline-flex; /* Changed to inline-flex */
   align-items: center;
   gap: 0.5rem;
   background-color: var(--cdb-bg-light);
@@ -89,15 +93,14 @@
   box-shadow: var(--cdb-shadow-sm);
 }
 
-.create-design-baseline-back-button:hover { /* Prefixed class */
+.create-design-baseline-back-button:hover {
   background-color: var(--cdb-bg-dark);
 }
 
 /* --- Content Area --- */
-.create-design-baseline-content { /* Prefixed class */
+.create-design-baseline-content {
   flex: 1;
-  /* Remove card styles from here if using internal card */
-  display: flex; /* Center loading/error/empty states */
+  display: flex;
   justify-content: center;
   align-items: flex-start; /* Align card to top */
 }
@@ -105,7 +108,7 @@
 /* --- Loading, Error, Empty States --- */
 .create-design-baseline-loading-state,
 .create-design-baseline-error-state,
-.create-design-baseline-empty-state { /* Prefixed class */
+.create-design-baseline-empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -116,54 +119,56 @@
   background-color: var(--cdb-bg-light);
   border-radius: var(--cdb-border-radius);
   box-shadow: var(--cdb-shadow-md);
-  width: 100%; /* Take full width if no card */
+  width: 100%;
+  margin-top: 2rem; /* Add some margin */
 }
 
-.create-design-baseline-loading-spinner { /* Prefixed class */
+.create-design-baseline-loading-spinner {
   border: 4px solid rgba(0, 0, 0, 0.1);
   border-left-color: var(--cdb-primary-color);
   border-radius: 50%;
   width: 2.5rem;
   height: 2.5rem;
-  animation: cdb-spin 1s linear infinite; /* Unique animation name */
+  /* UPDATED animation name */
+  animation: create-design-baseline-spin 1s linear infinite;
   margin-bottom: 1rem;
 }
 
 .create-design-baseline-error-icon,
-.create-design-baseline-empty-icon { /* Prefixed class */
+.create-design-baseline-empty-icon {
     font-size: 2.5rem;
     margin-bottom: 1rem;
     color: var(--cdb-text-lighter);
 }
-.create-design-baseline-error-icon { /* Prefixed class */
+.create-design-baseline-error-icon {
     color: var(--cdb-danger-color);
 }
 .create-design-baseline-error-state h3,
-.create-design-baseline-empty-state h3 { /* Prefixed class */
+.create-design-baseline-empty-state h3 {
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--cdb-text-dark);
   margin-bottom: 0.5rem;
 }
 .create-design-baseline-error-state p,
-.create-design-baseline-empty-state p { /* Prefixed class */
+.create-design-baseline-empty-state p {
   color: var(--cdb-text-light);
   max-width: 400px;
 }
 
 
 /* --- Card Container --- */
-.create-design-baseline-card { /* Prefixed class */
+.create-design-baseline-card {
     background-color: var(--cdb-bg-light);
     border-radius: var(--cdb-border-radius);
     box-shadow: var(--cdb-shadow-md);
     overflow: hidden;
-    width: 100%; /* Take full width */
+    width: 100%;
     display: flex;
     flex-direction: column;
 }
 
-.create-design-baseline-card-header { /* Prefixed class */
+.create-design-baseline-card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -172,108 +177,123 @@
     background-color: var(--cdb-bg-dark); /* Light header background */
 }
 
-.create-design-baseline-title-section { /* Prefixed class */
+.create-design-baseline-title-section {
     display: flex;
     align-items: center;
     gap: 0.75rem;
 }
-.create-design-baseline-title-section h2 { /* Prefixed class */
+.create-design-baseline-title-section h2 {
     font-size: 1.25rem;
     font-weight: 600;
     color: var(--cdb-text-dark);
     margin: 0;
 }
-.create-design-baseline-title-section svg { /* Prefixed class */
+.create-design-baseline-title-section svg {
     color: var(--cdb-primary-color);
 }
 
-.create-design-baseline-selection-info { /* Prefixed class */
+.create-design-baseline-selection-info {
     font-size: 0.875rem;
     color: var(--cdb-text-light);
 }
 
 /* --- Table Styles --- */
-.create-design-baseline-table-container { /* Prefixed class */
+.create-design-baseline-table-container {
     overflow-x: auto;
-    padding: 0; /* Remove padding if card has it */
+    padding: 0;
 }
 
-.create-design-baseline-table { /* Prefixed class */
+.create-design-baseline-table {
     width: 100%;
-    border-collapse: collapse; /* Use collapse */
+    border-collapse: collapse;
 }
 
 .create-design-baseline-table th,
-.create-design-baseline-table td { /* Prefixed class */
-    padding: 1rem 1.5rem; /* Adjust padding */
+.create-design-baseline-table td {
+    padding: 1rem 1.5rem;
     text-align: left;
     border-bottom: 1px solid var(--cdb-border-color);
     font-size: 0.875rem;
     vertical-align: middle;
+    color: var(--cdb-text-color); /* Ensure consistent text color */
 }
 
-.create-design-baseline-table th { /* Prefixed class */
-    background-color: #f9fafb; /* Slightly different from card header */
-    color: var(--cdb-text-color);
+.create-design-baseline-table th {
+    background-color: #f9fafb;
+    color: var(--cdb-text-light); /* Lighter color for header text */
     font-weight: 600;
     white-space: nowrap;
+    text-transform: uppercase; /* Optional: uppercase headers */
+    font-size: 0.75rem; /* Optional: smaller header font */
+    letter-spacing: 0.5px; /* Optional: letter spacing */
 }
 
-.create-design-baseline-row { /* Prefixed class */
+.create-design-baseline-row {
     transition: var(--cdb-transition);
 }
 
-.create-design-baseline-row.is-baseline { /* Style for already baseline rows */
-    background-color: #f0f0f0; /* Example: grey out */
-    opacity: 0.7;
+/* Combined hover/selected/baseline logic */
+.create-design-baseline-row.is-baseline {
+  background-color: #f8f8f8; /* Slightly greyed out */
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
-.create-design-baseline-row:not(.is-baseline):hover { /* Prefixed class */
-    background-color: var(--cdb-primary-light); /* Highlight on hover */
+
+
+.create-design-baseline-row:not(.is-baseline):hover {
+  background-color: var(--cdb-primary-light);
+  cursor: pointer;
 }
 
-.create-design-baseline-row.selected { /* Prefixed class */
-    background-color: var(--cdb-primary-light) !important; /* Ensure selected style overrides hover */
-    /* border-left: 3px solid var(--cdb-primary-color); */ /* Optional indicator */
+.create-design-baseline-row.selected:not(.is-baseline) {
+  background-color: var(--cdb-primary-light) !important; /* Ensure selected style overrides hover */
+  box-shadow: inset 3px 0 0 var(--cdb-primary-color); /* Example indicator */
 }
 
-.create-design-baseline-row:last-child td { /* Prefixed class */
+.create-design-baseline-row:last-child td {
     border-bottom: none;
 }
 
-/* Table Columns */
+/* Table Columns (Keep as is or prefix if needed) */
 .col-checkbox { width: 5%; text-align: center; }
 .col-id { width: 15%; }
 .col-name { width: 40%; }
 .col-type { width: 20%; }
-.col-status { width: 20%; }
+.col-status { width: 20%; text-align: center; } /* Center status */
 
-.design-id { /* Style for design ID */
+/* RENAMED */
+.create-design-baseline-design-id {
     font-weight: 500;
-    color: var(--cdb-secondary-color); /* Example color */
+    color: var(--cdb-secondary-color);
 }
 
-/* Custom Checkbox Styles */
-.checkbox-container {
+/* Custom Checkbox Styles (RENAMED) */
+.create-design-baseline-checkbox-container { /* RENAMED */
     display: inline-flex;
     align-items: center;
-    justify-content: center; /* Center checkbox */
+    justify-content: center;
     position: relative;
-    height: 20px; /* Adjust size */
-    width: 20px; /* Adjust size */
+    height: 18px; /* Slightly smaller */
+    width: 18px; /* Slightly smaller */
 }
 
-.styled-checkbox {
+.create-design-baseline-styled-checkbox { /* RENAMED */
     opacity: 0; /* Hide default */
     position: absolute;
     cursor: pointer;
+    height: 100%;
+    width: 100%;
+    left: 0;
+    top: 0;
+    margin: 0;
 }
 
-.styled-checkbox + label {
+.create-design-baseline-styled-checkbox + label { /* UPDATED selector */
     position: relative;
     display: inline-block;
-    width: 20px; /* Match container */
-    height: 20px; /* Match container */
+    width: 18px; /* Match container */
+    height: 18px; /* Match container */
     background-color: var(--cdb-bg-light);
     border: 2px solid var(--cdb-border-color);
     border-radius: 4px;
@@ -281,105 +301,131 @@
     transition: var(--cdb-transition);
 }
 
+.create-design-baseline-styled-checkbox:hover + label { /* UPDATED selector */
+     border-color: var(--cdb-secondary-color); /* Hover effect */
+}
 
-.styled-checkbox:disabled + label {
+
+.create-design-baseline-styled-checkbox:checked + label { /* UPDATED selector */
+    background-color: var(--cdb-primary-color);
+    border-color: var(--cdb-primary-color);
+}
+
+.create-design-baseline-styled-checkbox:disabled + label { /* UPDATED selector */
     background-color: #e0e0e0;
     border-color: #c0c0c0;
     cursor: not-allowed;
 }
 
+.create-design-baseline-styled-checkbox:disabled:checked + label { /* UPDATED selector */
+     background-color: #b0b0b0; /* Darker grey when checked but disabled */
+     border-color: #a0a0a0;
+}
 
-.styled-checkbox:checked + label::after {
+
+.create-design-baseline-styled-checkbox:checked + label::after { /* UPDATED selector */
     content: '';
     position: absolute;
-    left: 6px;
-    top: 2px;
-    width: 5px;
-    height: 10px;
+    left: 5px; /* Adjust checkmark position */
+    top: 1px;  /* Adjust checkmark position */
+    width: 4px;
+    height: 9px;
     border: solid white;
     border-width: 0 2px 2px 0;
     transform: rotate(45deg);
 }
 
 /* --- Status Badge Styles --- */
-.create-design-baseline-status-badge { /* Prefixed class */
-  padding: 0.25em 0.6em;
-  border-radius: 1em; /* Pill shape */
+.create-design-baseline-status-badge {
+  padding: 0.25em 0.7em; /* Adjusted padding */
+  border-radius: var(--cdb-border-radius); /* Match other radius */
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  display: inline-block; /* Ensure it behaves like a block for padding */
+  display: inline-block;
   border: 1px solid transparent;
+  line-height: 1.2; /* Ensure consistent height */
 }
 
-.create-design-baseline-status-badge.verified { /* Prefixed class */
+.create-design-baseline-status-badge.verified {
   background-color: var(--cdb-success-light);
   color: var(--cdb-success-color);
   border-color: var(--cdb-success-color);
 }
 
-.create-design-baseline-status-badge.baseline { /* Prefixed class */
+.create-design-baseline-status-badge.baseline {
   background-color: var(--cdb-info-light);
   color: var(--cdb-info-color);
   border-color: var(--cdb-info-color);
 }
 
-.create-design-baseline-status-badge.default { /* Prefixed class */
+.create-design-baseline-status-badge.default {
   background-color: var(--cdb-bg-dark);
   color: var(--cdb-text-light);
+  border-color: var(--cdb-border-color); /* Add border for default */
 }
 
 
 /* --- Action Buttons --- */
-.create-design-baseline-actions { /* Prefixed class */
+.create-design-baseline-actions {
     display: flex;
     justify-content: flex-end;
     gap: 1rem;
     padding: 1.25rem 1.5rem;
     border-top: 1px solid var(--cdb-border-color);
-    background-color: var(--cdb-bg-light); /* Match card bg */
+    background-color: var(--cdb-bg-dark); /* Light background for actions */
 }
 
 .create-design-baseline-cancel-button,
-.create-design-baseline-submit-button { /* Prefixed class */
-    display: flex;
+.create-design-baseline-submit-button {
+    display: inline-flex; /* Use inline-flex */
     align-items: center;
+    justify-content: center; /* Center content */
     gap: 0.5rem;
     padding: 0.625rem 1.25rem;
     border-radius: var(--cdb-border-radius);
     font-size: 0.875rem;
-    font-weight: 500;
+    font-weight: 600; /* Slightly bolder */
     cursor: pointer;
     transition: var(--cdb-transition);
     border: 1px solid transparent;
+    line-height: 1.5; /* Ensure text is vertically centered */
 }
 
-.create-design-baseline-cancel-button { /* Prefixed class */
+.create-design-baseline-cancel-button {
     background-color: var(--cdb-bg-light);
     color: var(--cdb-text-color);
     border-color: var(--cdb-border-color);
+    box-shadow: var(--cdb-shadow-sm);
 }
-.create-design-baseline-cancel-button:hover { /* Prefixed class */
+.create-design-baseline-cancel-button:hover {
     background-color: var(--cdb-bg-dark);
+    border-color: var(--cdb-secondary-color);
 }
 
-.create-design-baseline-submit-button { /* Prefixed class */
+.create-design-baseline-submit-button {
     background-color: var(--cdb-primary-color);
     color: white;
+    box-shadow: var(--cdb-shadow-sm);
 }
-.create-design-baseline-submit-button:hover { /* Prefixed class */
+.create-design-baseline-submit-button:hover {
     background-color: var(--cdb-primary-hover);
+    box-shadow: var(--cdb-shadow-md); /* Slightly raise on hover */
 }
-.create-design-baseline-submit-button:disabled { /* Prefixed class */
-    background-color: var(--cdb-secondary-color);
-    opacity: 0.7;
+.create-design-baseline-submit-button:disabled {
+    opacity: 0.6; /* Adjust opacity */
     cursor: not-allowed;
+    box-shadow: none; /* No shadow when disabled */
+}
+.create-design-baseline-submit-button svg,
+.create-design-baseline-cancel-button svg {
+    margin-bottom: -2px; /* Fine-tune icon alignment */
 }
 
 
-/* Unique Spin Animations */
-@keyframes cdb-spin {
+/* Unique Spin Animations (RENAMED) */
+@keyframes create-design-baseline-spin { /* RENAMED */
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
@@ -388,11 +434,29 @@
 @media (max-width: 768px) {
   .create-design-baseline-dashboard { padding: 1rem; }
   .create-design-baseline-header { flex-direction: column; align-items: flex-start; gap: 1rem;}
-  .create-design-baseline-header-title { order: -1; margin-bottom: 1rem; }
-  .create-design-baseline-header-left, .create-design-baseline-header-right { width: 100%; }
-  .create-design-baseline-header-right { justify-content: flex-start; }
+  /* Keep title centered or left? Let's try left */
+  .create-design-baseline-header-title { order: 1; width: 100%; } /* Title below button */
+  .create-design-baseline-header-left { order: 0; margin-bottom: 0.5rem; width: auto;} /* Button top-left */
+  .create-design-baseline-header-right { display: none; } /* Hide empty right spacer */
+
   .create-design-baseline-card-header { flex-direction: column; align-items: flex-start; gap: 0.5rem;}
-  .create-design-baseline-actions { justify-content: center; }
+  .create-design-baseline-actions { flex-direction: column; gap: 0.5rem; align-items: stretch;} /* Stack buttons */
+  .create-design-baseline-cancel-button,
+  .create-design-baseline-submit-button {
+      width: 100%; /* Full width buttons */
+      justify-content: center; /* Center button text/icon */
+  }
+
   .create-design-baseline-table td, .create-design-baseline-table th { padding: 0.75rem 0.5rem; font-size: 0.8rem;}
-  .col-name { width: auto; } /* Allow name to wrap */
+  /* Hide less important columns or make them wrap */
+  .col-type { display: none; } /* Example: hide type column */
+  .col-name { width: auto; font-weight: 500; } /* Allow name to wrap, make slightly bolder */
+  .col-id { width: 25%; }
+  .col-status { width: 25%; }
+  .col-checkbox { width: 10%; }
+}
+
+@media (max-width: 480px) {
+    .create-design-baseline-header-title h1 { font-size: 1.5rem; }
+    /* Further adjustments for very small screens if needed */
 }

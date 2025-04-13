@@ -3,6 +3,7 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify"; // Use Toastify
 import { useLocation, useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
+// Corrected path assuming CSS is one level up in a 'CSS' folder
 import "./CSS/CreateDesignbaseline.css";
 
 // --- Icons (Copied from CreateBaseline) ---
@@ -31,16 +32,16 @@ const DesignStatusBadge = ({ status }) => {
 
 // --- Loading Component ---
 const CreateDesignBaselineLoadingState = () => (
-    <div className="create-design-baseline-loading-state"> {/* Prefix added */}
-        <div className="create-design-baseline-loading-spinner"></div> {/* Prefix added */}
-        <p>Loading verified designs...</p> {/* Text adapted */}
+    <div className="create-design-baseline-loading-state">
+        <div className="create-design-baseline-loading-spinner"></div>
+        <p>Loading verified designs...</p>
     </div>
 );
 
 // --- Error Component ---
 const CreateDesignBaselineErrorState = ({ message }) => (
-    <div className="create-design-baseline-error-state"> {/* Prefix added */}
-        <div className="create-design-baseline-error-icon">⚠️</div> {/* Prefix added */}
+    <div className="create-design-baseline-error-state">
+        <div className="create-design-baseline-error-icon">⚠️</div>
         <h3>Error</h3>
         <p>{message}</p>
     </div>
@@ -48,22 +49,21 @@ const CreateDesignBaselineErrorState = ({ message }) => (
 
 // --- Empty State Component ---
 const CreateDesignBaselineEmptyState = () => (
-    <div className="create-design-baseline-empty-state"> {/* Prefix added */}
-        <div className="create-design-baseline-empty-icon">📄</div> {/* Changed Icon, Prefix added */}
-        <h3>No Verified Designs</h3> {/* Text adapted */}
-        <p>There are no verified designs available to set as baseline.</p> {/* Text adapted */}
+    <div className="create-design-baseline-empty-state">
+        <div className="create-design-baseline-empty-icon">📄</div>
+        <h3>No Verified Designs</h3>
+        <p>There are no verified designs available to set as baseline.</p>
     </div>
 );
 
 
 const CreateDesignbaseline = () => {
-    // Renamed state for clarity and consistency
     const [verifiedDesigns, setVerifiedDesigns] = useState([]);
     const [selectedDesigns, setSelectedDesigns] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [selectAll, setSelectAll] = useState(false); // Added selectAll state
+    const [selectAll, setSelectAll] = useState(false);
 
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
@@ -75,45 +75,42 @@ const CreateDesignbaseline = () => {
         if (selectAll) {
             setSelectedDesigns([]);
         } else {
-            // Select only designs that are not already baseline
             const allVerifiedIds = verifiedDesigns
-                .filter(design => design.design_status !== "BASELINE") // Ensure we only select non-baseline ones
+                .filter(design => design.design_status !== "BASELINE")
                 .map(design => design.design_id);
             setSelectedDesigns(allVerifiedIds);
         }
         setSelectAll(!selectAll);
     };
 
-    // --- Check if all selectable requirements are selected ---
+    // --- Check if all selectable designs are selected ---
     useEffect(() => {
         const selectableDesigns = verifiedDesigns.filter(d => d.design_status !== "BASELINE");
         if (selectableDesigns.length > 0) {
             setSelectAll(selectedDesigns.length === selectableDesigns.length);
         } else {
-            setSelectAll(false); // No selectable items, so cannot be "all selected"
+            setSelectAll(false);
         }
     }, [selectedDesigns, verifiedDesigns]);
 
 
     // --- Fetch verified designs ---
     useEffect(() => {
-        const fetchDesigns = async () => { // Renamed function
+        const fetchDesigns = async () => {
             if (!projectId) return;
 
             setLoading(true);
             setError(null);
 
             try {
-                // Assuming this endpoint correctly returns ONLY verified designs OR designs suitable for baseline
                 const response = await axios.get(
-                    `http://localhost:3001/designverified/${projectId}` // Use the correct endpoint
+                    `http://localhost:3001/designverified/${projectId}`
                 );
-                // Ensure response data is an array
                 const designsData = Array.isArray(response.data) ? response.data : [];
                 setVerifiedDesigns(designsData);
 
-            } catch (err) { // Catch specific error
-                console.error("Error fetching verified designs:", err); // Log error
+            } catch (err) {
+                console.error("Error fetching verified designs:", err);
                 setError("Failed to load verified designs. Please try again later.");
             } finally {
                 setLoading(false);
@@ -126,7 +123,6 @@ const CreateDesignbaseline = () => {
 
     // --- Handle individual selection ---
     const handleSelect = (id) => {
-        // Prevent selection if the design is already BASELINE
         const design = verifiedDesigns.find(d => d.design_id === id);
         if (design?.design_status === "BASELINE") {
             toast.info("This design is already part of a baseline.");
@@ -140,7 +136,7 @@ const CreateDesignbaseline = () => {
         );
     };
 
-    // --- Handle Create Baseline ---
+    // --- Handle Create Baseline (with Toast onClose Navigation) ---
     const handleCreateBaseline = async () => {
         // --- Validation ---
         if (!projectId) {
@@ -166,26 +162,44 @@ const CreateDesignbaseline = () => {
             const responseCreateBaseline = await axios.post("http://localhost:3001/createdesignbaseline", payloadCreateBaseline);
 
             if (responseCreateBaseline.status === 201) {
-                toast.success("Baseline set successfully!");
+                // Store success message to show before history potentially adds warnings/info
+                const baselineSuccessMessage = "Baseline set successfully!";
 
-                // 2. Add History entries (using the logic from your original component)
+                // 2. Add History entries
+                console.log("Starting history creation...");
                 const historyPromises = selectedDesigns.map((designId) => {
                     const fullDesignData = verifiedDesigns.find(design => design.design_id === designId);
                     if (!fullDesignData) {
-                        console.error(`Could not find full data for design_id: ${designId}.`);
-                        return Promise.resolve({ status: 'skipped', designId, reason: 'Data not found' }); // Resolve instead of reject for Promise.allSettled
+                        console.error(`[History] Could not find full data for design_id: ${designId}.`);
+                        return Promise.resolve({ status: 'skipped', designId, reason: 'Data not found' });
                     }
 
                     let { design_id, requirement_id, design_type, diagram_name, diagram_type, design_description } = fullDesignData;
-                    const design_status = "BASELINE"; // Always BASELINE for this history entry
+                    const design_status = "BASELINE";
 
-                    // Ensure requirement_id is processed correctly (handle string JSON, array, single number, null)
                     let processedReqIds = [];
-                    try {
+                     try {
                        if (requirement_id) {
                            let parsedIds;
                            if (typeof requirement_id === 'string') {
-                               parsedIds = JSON.parse(requirement_id);
+                               // Handle JSON string, potentially malformed
+                               try {
+                                   parsedIds = JSON.parse(requirement_id);
+                               } catch (parseError) {
+                                   console.warn(`[History] Malformed JSON for requirement_id for designId: ${designId}:`, requirement_id, parseError);
+                                   // Attempt to extract numbers if it looks like "{0: '1', ...}" or just a number string
+                                   if (/^\{.*\}$/.test(requirement_id.trim()) || /^\d+$/.test(requirement_id.trim())) {
+                                      // Very basic extraction, might need refinement
+                                      const numbers = requirement_id.match(/\d+/g);
+                                      if (numbers) {
+                                          parsedIds = numbers.map(n => parseInt(n, 10));
+                                      } else {
+                                          parsedIds = [];
+                                      }
+                                   } else {
+                                       parsedIds = [];
+                                   }
+                               }
                            } else {
                                parsedIds = requirement_id; // Assume it's already array/object/number
                            }
@@ -193,8 +207,7 @@ const CreateDesignbaseline = () => {
                            if (Array.isArray(parsedIds)) {
                                processedReqIds = parsedIds.map(id => parseInt(id, 10)).filter(id => !isNaN(id));
                            } else if (typeof parsedIds === 'object' && parsedIds !== null) {
-                                // Handle case where it might be an object like {0: "1", 1: "2"}
-                                processedReqIds = Object.values(parsedIds).map(id => parseInt(id, 10)).filter(id => !isNaN(id));
+                               processedReqIds = Object.values(parsedIds).map(id => parseInt(id, 10)).filter(id => !isNaN(id));
                            } else if (typeof parsedIds === 'number' && !isNaN(parsedIds)) {
                                processedReqIds = [parsedIds];
                            } else {
@@ -202,81 +215,93 @@ const CreateDesignbaseline = () => {
                            }
                        }
                     } catch (error) {
-                         console.error(`[History] Error processing requirement_id for designId: ${designId}:`, error);
+                        console.error(`[History] Error processing requirement_id for designId: ${designId}:`, error);
                     }
-
                     console.log(`[History] Processed requirement_ids for designId: ${designId}:`, processedReqIds);
 
-                    // Create a history entry for each associated requirement_id
                     const reqHistoryPromises = processedReqIds.map(reqId => {
                          const historyPayload = {
-                              design_id: design_id?.toString() || '',
-                              requirement_id: reqId, // Use the processed ID
-                              design_type: design_type || '',
-                              diagram_name: diagram_name || '',
-                              diagram_type: diagram_type || '',
-                              design_description: design_description || '',
-                              design_status // BASELINE
-                          };
-                          console.log(`[History] Sending payload for designId: ${designId}, requirement_id: ${reqId}:`, historyPayload);
-                          return axios.post("http://localhost:3001/addHistoryDesign", historyPayload)
-                              .then(response => ({ status: 'fulfilled', designId, reqId, response }))
-                              .catch(error => {
-                                   const errorMessage = `[History] Error adding history for designId: ${designId}, requirement_id: ${reqId}: ${error.response?.data?.message || error.message}`;
-                                   console.error(errorMessage, error.response || error);
-                                   // Still resolve so Promise.allSettled works
-                                   return Promise.resolve({ status: 'rejected', designId, reqId, error: errorMessage });
-                              });
-                    });
-
-                    // If there are no processedReqIds, create one history entry without requirement_id or skip
-                     if (processedReqIds.length === 0) {
-                        console.warn(`[History] No valid requirement_id found for designId: ${designId}. Creating history entry without requirement_id.`);
-                         const historyPayload = {
                              design_id: design_id?.toString() || '',
-                             requirement_id: null, // Explicitly set to null or omit
+                             requirement_id: reqId,
                              design_type: design_type || '',
                              diagram_name: diagram_name || '',
                              diagram_type: diagram_type || '',
                              design_description: design_description || '',
-                             design_status // BASELINE
+                             design_status
                          };
-                         console.log(`[History] Sending payload for designId: ${designId} (no req_id):`, historyPayload);
+                         console.log(`[History] Sending payload for designId: ${designId}, requirement_id: ${reqId}:`, historyPayload);
                          return axios.post("http://localhost:3001/addHistoryDesign", historyPayload)
-                             .then(response => ({ status: 'fulfilled', designId, reqId: null, response }))
+                             .then(response => ({ status: 'fulfilled', designId, reqId, response }))
                              .catch(error => {
-                                 const errorMessage = `[History] Error adding history for designId: ${designId} (no req_id): ${error.response?.data?.message || error.message}`;
+                                 const errorMessage = `[History] Error adding history for designId: ${designId}, reqId: ${reqId}: ${error.response?.data?.message || error.message}`;
                                  console.error(errorMessage, error.response || error);
-                                 return Promise.resolve({ status: 'rejected', designId, reqId: null, error: errorMessage });
+                                 return Promise.resolve({ status: 'rejected', designId, reqId, error: errorMessage }); // Resolve for settled
                              });
+                     });
+
+                    if (processedReqIds.length === 0) {
+                       console.warn(`[History] No valid requirement_id for designId: ${designId}. Creating history entry without req_id.`);
+                       const historyPayload = {
+                            design_id: design_id?.toString() || '',
+                            requirement_id: null,
+                            design_type: design_type || '',
+                            diagram_name: diagram_name || '',
+                            diagram_type: diagram_type || '',
+                            design_description: design_description || '',
+                            design_status
+                       };
+                       console.log(`[History] Sending payload for designId: ${designId} (no req_id):`, historyPayload);
+                       reqHistoryPromises.push(
+                           axios.post("http://localhost:3001/addHistoryDesign", historyPayload)
+                                .then(response => ({ status: 'fulfilled', designId, reqId: null, response }))
+                                .catch(error => {
+                                    const errorMessage = `[History] Error adding history for designId: ${designId} (no req_id): ${error.response?.data?.message || error.message}`;
+                                    console.error(errorMessage, error.response || error);
+                                    return Promise.resolve({ status: 'rejected', designId, reqId: null, error: errorMessage });
+                                })
+                       );
                     }
 
-
-                    // Use Promise.allSettled to ensure all history attempts complete
-                    return Promise.allSettled(reqHistoryPromises);
+                    return Promise.allSettled(reqHistoryPromises); // Return settled promises for this design's reqs
                 });
 
-                // Wait for all history additions to settle
-                const historyResults = await Promise.allSettled(historyPromises);
-                console.log("History addition results:", historyResults);
-                // Check if any history additions failed and potentially notify user
-                 const failedHistory = historyResults.filter(result => result.status === 'rejected' || (result.value && result.value.some?.(v => v.value?.status === 'rejected')));
-                 if (failedHistory.length > 0) {
-                     console.error("Some history entries failed to be added:", failedHistory);
-                     toast.warning("Baseline set, but some history entries failed to record.");
-                 } else {
-                     toast.info("Design history updated."); // Separate success message for history
-                 }
+                // Wait for all history additions (for all selected designs) to settle
+                const results = await Promise.allSettled(historyPromises);
+                console.log("History addition results (settled):", results);
 
+                let historyWarning = false;
+                // Check detailed results if needed
+                results.forEach(designResult => {
+                   if (designResult.status === 'fulfilled' && Array.isArray(designResult.value)) {
+                       designResult.value.forEach(reqResult => {
+                           if (reqResult.status === 'rejected') {
+                               historyWarning = true;
+                               console.error(`History add failed for Design ID: ${reqResult.designId}, Req ID: ${reqResult.reqId}, Reason: ${reqResult.error}`);
+                           }
+                       });
+                   } else if (designResult.status === 'rejected' || designResult.value?.status === 'skipped') {
+                       historyWarning = true; // Mark warning if the promise for a design failed or was skipped
+                       console.error(`Processing failed/skipped for design ID: ${designResult.reason || designResult.value?.designId}`);
+                   }
+                });
 
-                // 3. Update Frontend State (Filter out processed designs)
-                 setVerifiedDesigns((prev) =>
-                     prev.filter((design) => !selectedDesigns.includes(design.design_id))
-                 );
-                 setSelectedDesigns([]); // Clear selection
+                // 3. Update Frontend State (BEFORE showing final toast and navigating)
+                setVerifiedDesigns((prev) =>
+                    prev.filter((design) => !selectedDesigns.includes(design.design_id))
+                );
+                setSelectedDesigns([]); // Clear selection
 
-                // 4. Navigate back to Design Baseline list
-                navigate(`/DesignBaseline?project_id=${projectId}`);
+                // 4. Show Final Toast and Navigate on Close
+                const finalMessage = baselineSuccessMessage + (historyWarning ? " (Some history entries may have failed)" : "");
+                const toastType = historyWarning ? toast.warning : toast.success; // Show warning if any history failed
+
+                toastType(finalMessage, {
+                    onClose: () => {
+                        console.log("Final toast closed, navigating now...");
+                        navigate(`/DesignBaseline?project_id=${projectId}`);
+                    }
+                });
+
 
             } else {
                 // Handle non-201 status from baseline creation
@@ -286,14 +311,19 @@ const CreateDesignbaseline = () => {
             console.error("Error creating baseline or adding history:", error.response?.data || error.message);
             const errorMessage = error.response?.data?.message || "An error occurred. Please try again.";
             toast.error(errorMessage);
+            setIsSubmitting(false); // Ensure submitting is reset on catch
         } finally {
-            setIsSubmitting(false);
+            // setIsSubmitting(false); // Resetting is now handled within success/error paths to allow navigation logic
+             if (!isSubmitting) { // Only reset if it wasn't reset in the try block (e.g., if initial API failed)
+                setIsSubmitting(false);
+             }
         }
     };
 
+
     // --- Handle Cancel ---
     const handleCancel = () => {
-        navigate(`/DesignBaseline?project_id=${projectId}`); // Navigate back to Design Baseline list
+        navigate(`/DesignBaseline?project_id=${projectId}`);
     };
 
     // --- Format Design ID ---
@@ -307,7 +337,6 @@ const CreateDesignbaseline = () => {
 
     // --- Render Logic ---
     return (
-        // Use specific prefixed class names
         <div className="create-design-baseline-dashboard">
             <div className="create-design-baseline-header">
                 <div className="create-design-baseline-header-left">
@@ -320,7 +349,7 @@ const CreateDesignbaseline = () => {
                     <DesignBaselineIcon />
                     <h1>Create New Design Baseline</h1>
                 </div>
-                <div className="create-design-baseline-header-right"></div> {/* Keep for alignment */}
+                <div className="create-design-baseline-header-right"></div>
             </div>
 
             <div className="create-design-baseline-content">
@@ -331,15 +360,13 @@ const CreateDesignbaseline = () => {
                 ) : verifiedDesigns.length === 0 ? (
                     <CreateDesignBaselineEmptyState />
                 ) : (
-                    // Card structure similar to CreateBaseline
                     <div className="create-design-baseline-card">
                         <div className="create-design-baseline-card-header">
                             <div className="create-design-baseline-title-section">
                                 <ListIcon />
-                                <h2>Verified Designs</h2> {/* Adapted Title */}
+                                <h2>Verified Designs</h2>
                             </div>
                             <div className="create-design-baseline-selection-info">
-                                {/* Filter out already baseline designs from total count */}
                                 <span>{selectedDesigns.length} of {verifiedDesigns.filter(d=>d.design_status !== 'BASELINE').length} selected</span>
                             </div>
                         </div>
@@ -349,15 +376,16 @@ const CreateDesignbaseline = () => {
                                 <thead>
                                     <tr>
                                         <th className="col-checkbox">
-                                            <div className="checkbox-container">
+                                            {/* RENAMED checkbox container class */}
+                                            <div className="create-design-baseline-checkbox-container">
                                                 <input
                                                     type="checkbox"
                                                     checked={selectAll}
                                                     onChange={handleSelectAll}
-                                                    id="select-all-designs" // Unique ID
-                                                    className="styled-checkbox"
-                                                    // Disable if no selectable designs
-                                                     disabled={verifiedDesigns.filter(d=>d.design_status !== 'BASELINE').length === 0}
+                                                    id="select-all-designs"
+                                                    // RENAMED styled checkbox class
+                                                    className="create-design-baseline-styled-checkbox"
+                                                    disabled={verifiedDesigns.filter(d=>d.design_status !== 'BASELINE').length === 0}
                                                 />
                                                 <label htmlFor="select-all-designs"></label>
                                             </div>
@@ -369,38 +397,36 @@ const CreateDesignbaseline = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {/* Map over designs */}
                                     {verifiedDesigns.map((design) => (
                                         <tr
                                             key={design.design_id}
-                                            // Add selected class, make row clickable only if not baseline
                                             className={`create-design-baseline-row ${selectedDesigns.includes(design.design_id) ? 'selected' : ''} ${design.design_status === 'BASELINE' ? 'is-baseline' : ''}`}
+                                            // Use onClick only if not baseline
                                             onClick={design.design_status !== 'BASELINE' ? () => handleSelect(design.design_id) : undefined}
-                                            style={design.design_status === 'BASELINE' ? { cursor: 'not-allowed', opacity: 0.6 } : {cursor: 'pointer'}} // Visual cue for non-clickable
+                                            // Remove inline style, rely on CSS class 'is-baseline' for cursor/opacity
                                         >
                                             <td className="col-checkbox">
-                                                <div className="checkbox-container">
+                                                 {/* RENAMED checkbox container class */}
+                                                <div className="create-design-baseline-checkbox-container">
                                                     <input
                                                         type="checkbox"
                                                         checked={selectedDesigns.includes(design.design_id)}
-                                                        // Disable checkbox if already baseline
                                                         disabled={design.design_status === 'BASELINE'}
-                                                        onChange={() => handleSelect(design.design_id)} // onChange still needed
-                                                        id={`design-${design.design_id}`} // Unique ID
-                                                        className="styled-checkbox"
+                                                        onChange={() => handleSelect(design.design_id)}
+                                                        id={`design-${design.design_id}`}
+                                                        // RENAMED styled checkbox class
+                                                        className="create-design-baseline-styled-checkbox"
                                                     />
                                                     <label htmlFor={`design-${design.design_id}`}></label>
                                                 </div>
                                             </td>
                                             <td className="col-id">
-                                                {/* Format ID */}
-                                                <span className="design-id">{formatDesignId(design.design_id)}</span>
+                                                {/* RENAMED design ID class */}
+                                                <span className="create-design-baseline-design-id">{formatDesignId(design.design_id)}</span>
                                             </td>
-                                            {/* Display design details */}
                                             <td className="col-name">{design.diagram_name || 'N/A'}</td>
                                             <td className="col-type">{design.diagram_type || 'N/A'}</td>
                                             <td className="col-status">
-                                                {/* Use DesignStatusBadge */}
                                                 <DesignStatusBadge status={design.design_status} />
                                             </td>
                                         </tr>
@@ -409,11 +435,11 @@ const CreateDesignbaseline = () => {
                             </table>
                         </div>
 
-                        {/* Action Buttons */}
                         <div className="create-design-baseline-actions">
                             <button
                                 className="create-design-baseline-cancel-button"
                                 onClick={handleCancel}
+                                disabled={isSubmitting} // Also disable cancel during submit
                             >
                                 <CancelIcon />
                                 <span>Cancel</span>
@@ -431,10 +457,10 @@ const CreateDesignbaseline = () => {
                 )}
             </div>
 
-            {/* Toast Container for notifications */}
+            {/* Ensure ToastContainer is rendered */}
             <ToastContainer
                 position="top-right"
-                autoClose={3000}
+                autoClose={3000} // Auto close after 3 seconds
                 hideProgressBar={false}
                 newestOnTop={false}
                 closeOnClick
@@ -442,7 +468,7 @@ const CreateDesignbaseline = () => {
                 pauseOnFocusLoss
                 draggable
                 pauseOnHover
-                theme="colored"
+                theme="colored" // Use colored theme for default styling
             />
         </div>
     );
