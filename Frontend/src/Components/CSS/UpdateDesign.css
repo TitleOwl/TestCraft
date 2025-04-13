@@ -485,14 +485,3 @@ legend {
        min-height: 400px;
    }
 }
-
-/* --- Toast notification styles (Keep library classes, use ude- variables) --- */
-.Toastify__toast { border-radius: var(--ude-radius-md) !important; box-shadow: var(--ude-shadow-lg) !important; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important; }
-.Toastify__toast-body { font-weight: 500 !important; font-size: 14px !important; }
-.Toastify__toast--success { background: var(--ude-success) !important; color: white !important; }
-.Toastify__toast--error { background: var(--ude-error) !important; color: white !important; }
-.Toastify__toast--warning { background: var(--ude-warning) !important; color: var(--ude-text-primary) !important; }
-.Toastify__toast--info { background: var(--ude-info) !important; color: white !important; }
-.Toastify__progress-bar { height: 4px !important; background: rgba(255, 255, 255, 0.6) !important; }
-.Toastify__close-button { color: inherit !important; opacity: 0.7 !important; }
-.Toastify__close-button:hover { opacity: 1 !important; }
