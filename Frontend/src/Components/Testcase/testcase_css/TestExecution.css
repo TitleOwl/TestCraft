@@ -5,6 +5,55 @@
 }
 
 /* === CSS for Test Execution Table (.test-execution-table) === */
+.test-exec {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #10b981;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  background-color: #ecfdf5;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  letter-spacing: 0.5px;
+}
+
+.test-exec::before {
+  content: "🧪";
+  font-size: 1.5rem;
+}
+
+.completion-exec {
+  display: inline-block;
+  /* ให้ความยาวพอดีกับข้อความ */
+  font-size: 1rem;
+  color: #374151;
+  background-color: #f3f4f6;
+  /* เทาอ่อน */
+  border-radius: 0.75rem;
+  padding: 0.5rem 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  position: relative;
+  padding-left: 2.5rem;
+  /* เผื่อไว้สำหรับไอคอน */
+}
+
+.completion-exec::before {
+  content: "📅";
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.1rem;
+  color: #6b7280;
+}
+
+
 
 /* --- Base Table Styling --- */
 .test-execution-table {
@@ -194,29 +243,23 @@
   padding-left: 12px;
 }
 
-.save-button {
-  background-color: black;
+.save-button-testexec {
+  background-color: #10b981;
   color: white;
   border: none;
-  padding: 3px 8px;
-  /* Reduced padding to make the button shorter */
-  font-size: 12px;
-  /* Smaller font size */
+  padding: 7px 8px;
+  font-size: 15px;
   cursor: pointer;
   float: right;
   margin-top: 10px;
   border-radius: 4px;
-  /* Slightly rounded corners */
   width: auto;
-  /* Ensure button is not stretched */
   min-width: 80px;
-  /* Set a minimum width */
   text-align: center;
-  /* Center the text inside the button */
 }
 
-.save-button:hover {
-  background-color: #333;
+.save-button-testexec:hover {
+  background-color: #059669;
 }
 
 /* ตั้งค่าพื้นฐานสำหรับ select */

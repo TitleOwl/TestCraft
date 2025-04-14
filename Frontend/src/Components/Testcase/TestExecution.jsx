@@ -226,9 +226,14 @@ const TestExecution = () => {
       <button className="back-test-execution" onClick={handleBackClick}>
         ← Back
       </button>
-      <button className="save-button" onClick={handleSave}>Save</button>
-      <h3>Test Execution : TC-0{testCase?.testcase_id || "-"} {testCase?.testcase_name || "Unknown"}</h3>
-      <p><strong>Completion Date:</strong> {testCase?.testcase_at ? new Date(testCase.testcase_at).toLocaleDateString("th-TH") : "-"}</p>
+      <button className="save-button-testexec" onClick={handleSave}>Save</button>
+      <h3 className="test-exec">
+        Test Execution : TC-0{testCase?.testcase_id || "-"} {testCase?.testcase_name || "Unknown"}
+      </h3>
+      <p className="completion-exec">
+        <strong>Completion Date:</strong> {testCase?.testcase_at ? new Date(testCase.testcase_at).toLocaleDateString("th-TH") : "-"}
+      </p>
+
 
       <table className="test-execution-table">
         <thead>
