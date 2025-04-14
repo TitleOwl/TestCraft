@@ -286,6 +286,7 @@ body {
 }
 
 .testcase-detail-procedures-section h3 {
+  text-align: start;
   font-size: 1rem;
   font-weight: 600;
   color: var(--testview-text-dark);
