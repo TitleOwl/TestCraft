@@ -232,7 +232,7 @@ body {
 .create-form-hint {
   display: block;
   font-size: 12px;
-  color: #ef4444;
+  color: var(--n90);
   margin-top: 6px;
 }
 

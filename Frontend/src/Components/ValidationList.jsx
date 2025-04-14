@@ -391,7 +391,6 @@ const ValidationList = () => {
       
       <div className="dashboard-controls">
         <div className="search-container">
-          <SearchIcon />
           <input
             type="text"
             className="search-input"

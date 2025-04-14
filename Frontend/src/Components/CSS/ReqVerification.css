@@ -6,48 +6,55 @@
   --bg-primary: #ffffff;
   --bg-secondary: #f8f9fc;
   --bg-tertiary: #eef1f8;
-  
+
   /* Text Colors */
   --text-primary: #1e293b;
   --text-secondary: #64748b;
   --text-light: #94a3b8;
-  
+
   /* Primary Brand Colors */
-  --primary: #4f46e5;      /* Deep indigo */
+  --primary: #4f46e5;
+  /* Deep indigo */
   --primary-light: #818cf8;
   --primary-dark: #3730a3;
-  
+
   /* Accent Colors */
-  --accent: #0ea5e9;       /* Sky blue */
+  --accent: #0ea5e9;
+  /* Sky blue */
   --accent-light: #7dd3fc;
   --accent-dark: #0369a1;
-  
+
   /* Status Colors */
-  --success: #10b981;      /* Emerald */
+  --success: #10b981;
+  /* Emerald */
   --success-dark: #059669;
-  --warning: #f59e0b;      /* Amber */
+  --warning: #f59e0b;
+  /* Amber */
   --warning-dark: #b45309;
-  --error: #ef4444;        /* Red */
+  --error: #ef4444;
+  /* Red */
   --error-dark: #b91c1c;
-  --info: #6366f1;         /* Indigo */
-  --working: #8b5cf6;      /* Purple */
-  
+  --info: #6366f1;
+  /* Indigo */
+  --working: #8b5cf6;
+  /* Purple */
+
   /* UI Elements */
   --border: #e2e8f0;
   --border-light: #f1f5f9;
   --border-colored: #c7d2fe;
-  
+
   /* Shadows */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.03);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
   --shadow-colored: 0 4px 12px rgba(79, 70, 229, 0.15);
-  
+
   /* Border Radius */
   --radius-sm: 4px;
   --radius-md: 6px;
   --radius-lg: 8px;
-  
+
   /* Transitions */
   --transition: all 0.2s ease;
 }
@@ -352,7 +359,9 @@ body {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Comment section */
@@ -409,6 +418,7 @@ body {
     transform: translate(-50%, -100%);
     opacity: 0;
   }
+
   to {
     transform: translate(-50%, 0);
     opacity: 1;
@@ -419,6 +429,7 @@ body {
   from {
     opacity: 1;
   }
+
   to {
     opacity: 0;
     pointer-events: none;
@@ -499,6 +510,7 @@ body {
   from {
     transform: scaleX(1);
   }
+
   to {
     transform: scaleX(0);
   }
@@ -515,22 +527,67 @@ body {
   .reqveri-container {
     padding: 20px 15px;
   }
-  
+
   .reqveri-title {
     font-size: 20px;
   }
-  
+
   .reqveri-button-container {
     flex-direction: column;
   }
-  
+
   .reqveri-save-button,
   .reqveri-cancel-button {
     width: 100%;
     justify-content: center;
   }
-  
+
   .reqveri-alert {
     max-width: 95%;
   }
+}
+
+/* ReqVerification.css หรือไฟล์ CSS ที่เกี่ยวข้อง */
+
+/* 1. ทำให้ Label ของ Checkbox ที่ Disabled ดูจางลงและเปลี่ยน Cursor */
+.reqveri-checklist li label.disabled {
+  opacity: 0.6;
+  /* ทำให้จางลง */
+  color: #888;
+  /* เปลี่ยนสีข้อความให้เทาลง (ปรับตามต้องการ) */
+  cursor: not-allowed;
+  /* เปลี่ยน Cursor */
+}
+
+/* 2. พยายามสไตล์ตัว Checkbox Input โดยตรง (อาจจะได้ผลไม่เหมือนกันทุก Browser) */
+/* ใช้ class ที่เรากำหนด และ state :disabled, :checked */
+.reqveri-checklist li input.checklistveri-design-checkbox:disabled:checked {
+  accent-color: #cccccc;
+
+}
+
+/* ตัวเลือกที่ 2: ใช้สีหลักที่ซีดลง */
+.reqveri-save-button:disabled {
+  background-color: #c7d2fe;
+  /* สีคราม/ม่วง อ่อนๆ (คล้าย Tailwind indigo-200) */
+  color: #6366f1;
+  /* สีคราม/ม่วง เข้มขึ้น (คล้าย Tailwind indigo-500) - ลองดู Contrast */
+  /* หรือใช้สีเทาแทน: color: #6b7280; */
+  border-color: #c7d2fe;
+  /* เส้นขอบสีเดียวกับพื้นหลัง (ถ้ามี) */
+  opacity: 0.7;
+  /* ทำให้จางลงเล็กน้อย (ปรับได้) */
+  cursor: not-allowed;
+}
+
+.reqveri-save-button:disabled:hover {
+  background-color: #c7d2fe;
+  /* สีเดิมตอน hover */
+}
+
+/* สไตล์สำหรับไอคอนในปุ่มตอน disabled (ถ้าต้องการให้จางลงด้วย) */
+.reqveri-save-button:disabled .svg-inline--fa {
+  /* ไม่จำเป็นต้องเปลี่ยนก็ได้ เพราะ opacity ของปุ่มโดยรวมมีผลอยู่แล้ว */
+  /* หรือจะเพิ่ม opacity เฉพาะไอคอนก็ได้ */
+  /* opacity: 0.8; */
 }

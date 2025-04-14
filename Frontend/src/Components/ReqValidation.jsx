@@ -388,7 +388,7 @@ const fetchUploadedFiles = async (requirementId) => {
       {/* Header */}
       <div className="Vali-header">
         <button className="Vali-back-button" onClick={() => navigate(`/Dashboard?project_id=${projectId}`)}>
-          <span>←</span> Back to Dashboard
+          <span>←</span> Back to Requirement
         </button>
         <h1 className="Vali-title">
           <span className="Vali-title-icon">📋</span> Requirement Validation
@@ -479,19 +479,7 @@ const fetchUploadedFiles = async (requirementId) => {
             <div className="Vali-summary-header">Validation Summary</div>
             <div className="Vali-summary-body">
               <div className="Vali-summary-item"><span className="Vali-summary-label">Requirements</span><span className="Vali-summary-value">{requirementsDetails.length}</span></div>
-              <div className="Vali-summary-item"><span className="Vali-summary-label">Project ID</span><span className="Vali-summary-value">{projectId}</span></div>
               <div className="Vali-summary-item"><span className="Vali-summary-label">Validation Round</span><span className="Vali-summary-value">{validationId}</span></div>
-            </div>
-          </div>
-          
-          {/* Progress Tracking */}
-          <div className="Vali-progress-card">
-            <div className="Vali-progress-header">Validation Progress</div>
-            <div className="Vali-progress-body">
-              <div className="Vali-progress-bar">
-                <div className="Vali-progress" style={{ width: `${calculateProgress()}%` }}></div>
-              </div>
-              <span className="Vali-progress-text">{calculateProgress()}% Complete</span>
             </div>
           </div>
           
