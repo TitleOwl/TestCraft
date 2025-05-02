@@ -388,14 +388,11 @@ const fetchUploadedFiles = async (requirementId) => {
       {/* Header */}
       <div className="Vali-header">
         <button className="Vali-back-button" onClick={() => navigate(`/Dashboard?project_id=${projectId}`)}>
-          <span>←</span> Back to Requirement
+          <span>←</span> Back to Dashboard
         </button>
         <h1 className="Vali-title">
           <span className="Vali-title-icon">📋</span> Requirement Validation
         </h1>
-        <button className="Vali-save-button" onClick={handleSave}>
-          Validate Requirements <span>✓</span>
-        </button>
       </div>
       
       {/* Main content - two column layout */}
@@ -479,9 +476,11 @@ const fetchUploadedFiles = async (requirementId) => {
             <div className="Vali-summary-header">Validation Summary</div>
             <div className="Vali-summary-body">
               <div className="Vali-summary-item"><span className="Vali-summary-label">Requirements</span><span className="Vali-summary-value">{requirementsDetails.length}</span></div>
+              <div className="Vali-summary-item"><span className="Vali-summary-label">Project ID</span><span className="Vali-summary-value">{projectId}</span></div>
               <div className="Vali-summary-item"><span className="Vali-summary-label">Validation Round</span><span className="Vali-summary-value">{validationId}</span></div>
             </div>
           </div>
+
           
           {/* File Upload Section */}
           <div className="Vali-document-card">
@@ -505,7 +504,6 @@ const fetchUploadedFiles = async (requirementId) => {
                       <li key={file.file_validation_id}>
                         <span className="filename">{file.filename}</span>
                         <span className="upload-time"> - Uploaded at: {formatDate(file.upload_at)}</span>
-                        <button onClick={() => handleFileDownload(file.file_validation_id, file.filename)} className="download-button">Download</button>
                       </li>
                     ))}
                   </ul>
@@ -513,6 +511,9 @@ const fetchUploadedFiles = async (requirementId) => {
               )}
             </div>
           </div>
+          <button className="Vali-save-button" onClick={handleSave}>
+          Validate<span>✓</span>
+        </button>
         </div>
       </div>
     </div>

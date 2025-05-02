@@ -391,6 +391,7 @@ const ValidationList = () => {
       
       <div className="dashboard-controls">
         <div className="search-container">
+          <SearchIcon />
           <input
             type="text"
             className="search-input"
@@ -475,7 +476,6 @@ const ValidationList = () => {
                         onClick={() => handleSearchClick(validation.requirements || [])}
                       >
                         <SearchIcon />
-                        <span>View</span>
                       </button>
                     </td>
                     <td className="col-actions">
@@ -484,8 +484,7 @@ const ValidationList = () => {
                         onClick={() => handleValidateClick(validation)}
                         disabled={validation.requirement_status !== "WAITING FOR VALIDATION"}
                       >
-                        <CheckIcon />
-                        <span>Validate</span>
+                        <span>View</span>
                       </button>
                     </td>
                   </tr>

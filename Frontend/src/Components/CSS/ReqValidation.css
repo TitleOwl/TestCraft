@@ -1,4 +1,4 @@
-/* ReqValidation.css - Optimized Layout */
+/* ReqValidation.css - Optimized Layout with Centered Title */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
@@ -6,48 +6,48 @@
   --Vali-bg-primary: #ffffff;
   --Vali-bg-secondary: #f8f9fc;
   --Vali-bg-tertiary: #eef1f8;
-  
+
   /* Text Colors */
   --Vali-text-primary: #1e293b;
   --Vali-text-secondary: #64748b;
   --Vali-text-light: #94a3b8;
-  
+
   /* Primary Brand Colors */
   --Vali-primary: #4f46e5;      /* Deep indigo */
   --Vali-primary-light: #818cf8;
   --Vali-primary-dark: #3730a3;
-  
+
   /* Accent Colors */
   --Vali-accent: #0ea5e9;       /* Sky blue */
   --Vali-accent-light: #7dd3fc;
   --Vali-accent-dark: #0369a1;
-  
+
   /* Status Colors */
-  --Vali-success: #10b981;      /* Emerald */
+  --Vali-success: #10b981;       /* Emerald */
   --Vali-success-dark: #059669;
-  --Vali-warning: #f59e0b;      /* Amber */
+  --Vali-warning: #f59e0b;       /* Amber */
   --Vali-warning-dark: #b45309;
-  --Vali-error: #ef4444;        /* Red */
+  --Vali-error: #ef4444;         /* Red */
   --Vali-error-dark: #b91c1c;
-  --Vali-info: #6366f1;         /* Indigo */
-  --Vali-working: #8b5cf6;      /* Purple */
-  
+  --Vali-info: #6366f1;          /* Indigo */
+  --Vali-working: #8b5cf6;       /* Purple */
+
   /* UI Elements */
   --Vali-border: #e2e8f0;
   --Vali-border-light: #f1f5f9;
   --Vali-border-colored: #c7d2fe;
-  
+
   /* Shadows */
   --Vali-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.03);
   --Vali-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
   --Vali-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
   --Vali-shadow-colored: 0 4px 12px rgba(79, 70, 229, 0.15);
-  
+
   /* Border Radius */
   --Vali-radius-sm: 4px;
   --Vali-radius-md: 6px;
   --Vali-radius-lg: 8px;
-  
+
   /* Transitions */
   --Vali-transition: all 0.2s ease;
 }
@@ -81,28 +81,37 @@ body {
   left: 0;
   width: 100%;
   height: 5px;
-  background: linear-gradient(to right, var(--Vali-primary));
+  background: linear-gradient(to right, var(--Vali-primary), var(--Vali-accent));
   z-index: 1;
 }
 
-/* Header */
+/* Header --- UPDATED --- */
 .Vali-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  /* justify-content: space-between;  <-- Removed this to allow margin:auto to work better */
+  align-items: center;             /* Keep vertical alignment */
   margin-bottom: 30px;
   padding-bottom: 20px;
   border-bottom: 1px solid var(--Vali-border);
+  position: relative; /* Good practice for positioning context */
 }
 
+/* Title --- UPDATED --- */
 .Vali-title {
+  /* Original Styles */
   font-size: 24px;
   font-weight: 600;
   color: var(--Vali-text-primary);
   display: flex;
-  align-items: center;
+  align-items: center; /* Keep this for icon/text vertical alignment */
   gap: 10px;
   letter-spacing: -0.02em;
+
+  /* Centering the element itself within the flex header */
+  margin-left: auto;
+  margin-right: auto;
+
+  /* justify-content: center; <-- Removed this, margin: auto centers the element */
 }
 
 .Vali-title-icon {
@@ -122,6 +131,7 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0; /* Prevent button from shrinking if title is long */
 }
 
 .Vali-back-button:hover {
@@ -395,29 +405,10 @@ body {
   align-items: center;
 }
 
-.Vali-upload-icon {
-  margin-bottom: 16px;
-}
-
-.Vali-file-icon {
-  display: inline-block;
-  width: 40px;
-  height: 50px;
-  background-color: var(--Vali-border-light);
-  position: relative;
-}
-
-.Vali-file-icon:before {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 0;
-  border-style: solid;
-  border-width: 0 10px 10px 0;
-  border-color: transparent var(--Vali-bg-primary) transparent transparent;
-}
+/* Removed .Vali-upload-icon and .Vali-file-icon as they weren't in the JSX */
 
 input[type="file"] {
+  /* Keep this hidden input styling */
   position: absolute;
   width: 0.1px;
   height: 0.1px;
@@ -433,8 +424,9 @@ input[type="file"] {
   background-color: var(--Vali-bg-secondary);
   padding: 12px 16px;
   border-radius: var(--Vali-radius-md);
-  margin-bottom: 16px;
+  margin-bottom: 16px; /* Changed from margin-top to margin-bottom */
 }
+
 
 .Vali-file-name {
   font-size: 14px;
@@ -442,7 +434,8 @@ input[type="file"] {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 200px;
+  max-width: 200px; /* Adjust as needed */
+  margin-right: 10px; /* Add some space before the button */
 }
 
 .Vali-upload-button {
@@ -455,6 +448,7 @@ input[type="file"] {
   font-weight: 500;
   cursor: pointer;
   transition: var(--Vali-transition);
+  flex-shrink: 0; /* Prevent shrinking */
 }
 
 .Vali-upload-button:hover:not(:disabled) {
@@ -478,38 +472,52 @@ input[type="file"] {
   margin-bottom: 12px;
 }
 
-.Vali-files-list {
-  list-style: none;
+/* Adjusted list style from JSX */
+.Vali-uploaded-files ul {
+  list-style: none; /* Ensure no bullets */
+  padding: 0;
+  margin: 0;
 }
 
-.Vali-file-item {
+.Vali-uploaded-files li {
   display: flex;
   align-items: center;
-  padding: 10px 12px;
+  justify-content: space-between; /* Push button to the right */
+  padding: 10px 0; /* Adjust padding */
   border-bottom: 1px solid var(--Vali-border-light);
   transition: var(--Vali-transition);
 }
 
-.Vali-file-item:hover {
+.Vali-uploaded-files li:hover {
   background-color: var(--Vali-bg-tertiary);
+  padding-left: 12px; /* Add padding on hover for visual feedback */
+  padding-right: 12px;
 }
 
-.Vali-file-item:last-child {
+
+.Vali-uploaded-files li:last-child {
   border-bottom: none;
 }
 
-.Vali-file-icon-small {
-  margin-right: 10px;
-  color: var(--Vali-accent);
-}
-
-.Vali-file-item-name {
-  flex: 1;
+.Vali-uploaded-files .filename {
+  flex-grow: 1; /* Allow filename to take available space */
   font-size: 13px;
   color: var(--Vali-text-primary);
+  margin-right: 8px; /* Space before time */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.Vali-uploaded-files .upload-time {
+   font-size: 12px;
+   color: var(--Vali-text-secondary);
+   margin-right: 16px; /* Space before download button */
+   white-space: nowrap;
+   flex-shrink: 0;
 }
 
-.Vali-download-button {
+
+.Vali-uploaded-files .download-button {
   background-color: transparent;
   color: var(--Vali-accent);
   border: 1px solid var(--Vali-accent);
@@ -518,16 +526,25 @@ input[type="file"] {
   border-radius: var(--Vali-radius-sm);
   cursor: pointer;
   transition: var(--Vali-transition);
+  flex-shrink: 0; /* Prevent button shrinking */
+  white-space: nowrap;
 }
 
-.Vali-download-button:hover {
+.Vali-uploaded-files .download-button:hover {
   background-color: var(--Vali-accent);
   color: white;
 }
 
+
 /* Comment Section */
 .Vali-comment-section {
+  /* No changes needed here for centering title */
   margin-bottom: 24px;
+  background: var(--Vali-bg-primary); /* Added background */
+  border-radius: var(--Vali-radius-lg); /* Added radius */
+  border: 1px solid var(--Vali-border); /* Added border */
+  box-shadow: var(--Vali-shadow-md); /* Added shadow */
+  overflow: hidden; /* Added overflow */
 }
 
 .Vali-comment-section h2 {
@@ -543,7 +560,7 @@ input[type="file"] {
 }
 
 .Vali-comments-list {
-  padding: 16px;
+  padding: 0 16px 16px 16px; /* Adjusted padding */
   max-height: 400px;
   overflow-y: auto;
 }
@@ -553,12 +570,13 @@ input[type="file"] {
   background-color: var(--Vali-bg-secondary);
   border-radius: var(--Vali-radius-md);
   border-left: 3px solid var(--Vali-primary-light);
-  margin-bottom: 16px;
+  margin-top: 16px; /* Changed from margin-bottom to margin-top */
 }
 
-.Vali-comment:last-child {
-  margin-bottom: 0;
+.Vali-comment:first-child {
+   margin-top: 0; /* Remove top margin for the first comment */
 }
+
 
 .Vali-comment-header {
   display: flex;
@@ -582,6 +600,8 @@ input[type="file"] {
   font-size: 14px;
   line-height: 1.5;
   margin-bottom: 12px;
+  white-space: pre-wrap; /* Preserve line breaks */
+  word-break: break-word; /* Break long words */
 }
 
 .Vali-comment-footer {
@@ -615,11 +635,11 @@ input[type="file"] {
   border: 1px solid var(--Vali-border);
   border-radius: var(--Vali-radius-md);
   padding: 12px;
-  resize: none;
+  resize: vertical; /* Allow vertical resize */
   font-family: inherit;
   font-size: 14px;
   color: var(--Vali-text-primary);
-  min-height: 120px;
+  min-height: 80px; /* Adjusted min-height */
   outline: none;
   transition: var(--Vali-transition);
   margin-bottom: 12px;
@@ -644,9 +664,15 @@ input[type="file"] {
   box-shadow: var(--Vali-shadow-colored);
 }
 
-.Vali-comment-input button:hover {
+.Vali-comment-input button:hover:not(:disabled) {
   background-color: var(--Vali-primary-dark);
   transform: translateY(-2px);
+}
+
+.Vali-comment-input button:disabled {
+   opacity: 0.6;
+   cursor: not-allowed;
+   transform: none;
 }
 
 /* Loading State */
@@ -679,18 +705,19 @@ input[type="file"] {
   color: var(--Vali-text-secondary);
   background-color: var(--Vali-bg-secondary);
   border-radius: var(--Vali-radius-md);
-  margin: 16px;
+  margin: 16px; /* Keep margin if used within padded containers */
 }
 
 /* Toast Notification Styling Override */
 .Toastify__toast {
-  border-radius: var(--Vali-radius-md);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  border-radius: var(--Vali-radius-md) !important; /* Use !important if needed */
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  box-shadow: var(--Vali-shadow-lg) !important;
 }
 
 .Toastify__progress-bar {
-  height: 3px;
-  background: rgba(255, 255, 255, 0.7);
+  height: 3px !important;
+  background: rgba(255, 255, 255, 0.7) !important;
 }
 
 /* Animations */
@@ -709,16 +736,17 @@ input[type="file"] {
   animation: Vali-fadeIn 0.3s ease;
 }
 
-/* Responsive Design */
+/* Responsive Design --- Check Header/Title rules --- */
 @media (max-width: 992px) {
   .Vali-content {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* Stack columns */
   }
-  
+
   .Vali-side-column {
-    order: -1;
+    order: -1; /* Move side column (summary, files) to top */
   }
-  
+
+  /* Progress steps might still be fine here */
   .Vali-progress-steps {
     padding: 0 10px;
   }
@@ -728,30 +756,53 @@ input[type="file"] {
   .Vali-container {
     padding: 20px 15px;
   }
-  
+
   .Vali-header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 16px;
+     /* Keep header as flex row even on smaller screens for now,
+        but allow wrapping if necessary */
+     flex-wrap: wrap;
+     justify-content: center; /* Center items when they wrap */
+     gap: 16px; /* Add gap for wrapped items */
+     padding-bottom: 10px; /* Reduce padding */
+     margin-bottom: 20px; /* Reduce margin */
   }
-  
+
   .Vali-title {
-    order: -1;
-    margin-bottom: 16px;
-    justify-content: center;
+     order: -1; /* Make title appear first if it wraps */
+     width: 100%; /* Allow title to take full width if it wraps */
+     justify-content: center; /* Center title text within its line */
+     margin-left: 0; /* Reset margins for centering */
+     margin-right: 0;
+     text-align: center; /* Ensure text itself is centered */
+     /* margin-bottom: 0; /* Remove bottom margin from original rule */
   }
-  
-  .Vali-back-button, .Vali-save-button {
-    width: 100%;
-    justify-content: center;
+
+  .Vali-back-button {
+     /* Allow button to not take full width unless necessary */
+     /* width: 100%; */
+     /* justify-content: center; */
+     order: 0; /* Ensure button comes after title if wrapped */
   }
-  
+
+  .Vali-save-button { /* Apply to main save button if needed */
+      /* width: 100%; */
+      /* justify-content: center; */
+  }
+
+
   .Vali-summary-item {
-    flex-direction: column;
+    flex-direction: column; /* Stack label and value */
+    align-items: flex-start; /* Align items left */
     gap: 4px;
   }
-  
+
   .Vali-progress-steps {
-    display: none;
+    display: none; /* Hide complex steps on small screens */
+  }
+
+  .Vali-comment-input textarea {
+      min-height: 60px; /* Reduce comment box height */
   }
 }
+
+/* --- End of Updated CSS --- */
