@@ -382,10 +382,6 @@ const ValidationList = () => {
           <h1>Validation List</h1>
         </div>
         <div className="header-right">
-          <button className="refresh-button" onClick={handleRefresh} disabled={refreshing}>
-            <RefreshIcon />
-            <span>Refresh</span>
-          </button>
         </div>
       </div>
       

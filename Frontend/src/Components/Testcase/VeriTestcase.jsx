@@ -244,14 +244,6 @@ const VeriTestcase = () => {
                                     </button>
                                 )}
                             </div>
-                            <button
-                                className={`refresh-button-veritestcase ${isRefreshing ? 'refreshing' : ''}`}
-                                onClick={handleRefresh}
-                                disabled={isRefreshing}
-                            >
-                                <FontAwesomeIcon icon={faSync} spin={isRefreshing} />
-                                {isRefreshing ? 'Refreshing...' : 'Refresh'}
-                            </button>
                         </div>
                     </div>
 
