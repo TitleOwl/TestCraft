@@ -15,17 +15,17 @@ import TraceabilityPage from './Traceability/traceabilityPage';
 
 // Import icons (ติดตั้งด้วย: npm install @fortawesome/react-fontawesome @fortawesome/free-solid-svg-icons @fortawesome/fontawesome-svg-core)
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faHome, 
-  faCog, 
-  faClipboardList, 
-  faPencilRuler, 
-  faCode, 
-  faFlask, 
-  faClipboardCheck, 
-  faCubes, 
-  faProjectDiagram, 
-  faBookOpen, 
+import {
+  faHome,
+  faCog,
+  faClipboardList,
+  faPencilRuler,
+  faCode,
+  faFlask,
+  faClipboardCheck,
+  faCubes,
+  faProjectDiagram,
+  faBookOpen,
   faDoorClosed,
   faChevronLeft,
   faChevronRight,
@@ -77,7 +77,7 @@ const Dashboard = () => {
   useEffect(() => {
     localStorage.setItem('selectedSection', selectedSection);
   }, [selectedSection]);
-  
+
   // เก็บสถานะ sidebar ใน localStorage
   useEffect(() => {
     localStorage.setItem('sidebarCollapsed', sidebarCollapsed);
@@ -110,7 +110,7 @@ const Dashboard = () => {
         <div className="dashboard-sidebar-section-title">
           {!sidebarCollapsed && "PROJECT"}
         </div>
-        
+
         <div
           className={`dashboard-nav-link ${selectedSection === 'Overview' ? 'active' : ''}`}
           onClick={() => setSelectedSection('Overview')}
@@ -118,7 +118,7 @@ const Dashboard = () => {
           <FontAwesomeIcon icon={faHome} />
           {!sidebarCollapsed && <span>Overview</span>}
         </div>
-        
+
         <div
           className={`dashboard-nav-link ${selectedSection === 'Configuration' ? 'active' : ''}`}
           onClick={() => setSelectedSection('Configuration')}
@@ -139,15 +139,17 @@ const Dashboard = () => {
         <div className="dashboard-sidebar-section-title">
           {!sidebarCollapsed && "WORK PRODUCT"}
         </div>
-        
+
         <div
           className={`dashboard-nav-link ${selectedSection === 'Requirement' ? 'active' : ''}`}
           onClick={() => setSelectedSection('Requirement')}
         >
           <FontAwesomeIcon icon={faClipboardList} />
-          {!sidebarCollapsed && <span>Requirement Specification</span>}
+          {!sidebarCollapsed && (
+            <span style={{ whiteSpace: 'nowrap' }}>Requirement Specification</span>
+          )}
         </div>
-        
+
         <div
           className={`dashboard-nav-link ${selectedSection === 'Design' ? 'active' : ''}`}
           onClick={() => setSelectedSection('Design')}
@@ -155,7 +157,7 @@ const Dashboard = () => {
           <FontAwesomeIcon icon={faPencilRuler} />
           {!sidebarCollapsed && <span>Software Design</span>}
         </div>
-        
+
         <div
           className={`dashboard-nav-link ${selectedSection === 'Implementation' ? 'active' : ''}`}
           onClick={() => setSelectedSection('Implementation')}
@@ -163,7 +165,7 @@ const Dashboard = () => {
           <FontAwesomeIcon icon={faCode} />
           {!sidebarCollapsed && <span>Code Component</span>}
         </div>
-        
+
         <div
           className={`dashboard-nav-link ${selectedSection === 'Testcase' ? 'active' : ''}`}
           onClick={() => setSelectedSection('Testcase')}
@@ -171,7 +173,7 @@ const Dashboard = () => {
           <FontAwesomeIcon icon={faFlask} />
           {!sidebarCollapsed && <span>Test case</span>}
         </div>
-        
+
         <div
           className={`dashboard-nav-link ${selectedSection === 'Traceability' ? 'active' : ''}`}
           onClick={() => setSelectedSection('Traceability')}
