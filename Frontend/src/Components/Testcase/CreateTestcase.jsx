@@ -203,7 +203,7 @@ const CreateTestcase = () => {
           isMulti
           options={implementFiles.map(item => ({
             value: item.implement_id,
-            label: `${item.implement_filename} (ID: ${item.implement_id})`
+            label: `📄 ${item.implement_filename} (ID: ${item.implement_id})`
           }))}
           value={selectedImplement}
           onChange={handleSelectChange}

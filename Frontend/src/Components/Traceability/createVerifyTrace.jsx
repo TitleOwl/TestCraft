@@ -5,12 +5,9 @@ import { toast } from "react-toastify";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faEye, faArrowLeft, faListCheck, faUsers, faSpinner,
-    faExclamationTriangle, faInfoCircle, faFloppyDisk, faBan
+    faExclamationTriangle, faInfoCircle, faCheckCircle, faBan
 } from '@fortawesome/free-solid-svg-icons';
 
-// --- CSS Import ---
-// Import ไฟล์ CSS ที่สร้างขึ้นสำหรับ Component นี้โดยเฉพาะ
-// (ตรวจสอบ Path และชื่อไฟล์ให้ถูกต้อง)
 import './CSS/createVerifyTrace.css'; // <<--- Import ไฟล์นี้เท่านั้น
 
 // --- Helper Function: flattenTraceabilityData (เหมือนเดิม) ---
@@ -68,6 +65,7 @@ const CreateVerifyTrace = () => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const projectId = queryParams.get("project_id");
+    const formatIdWithPrefix = (prefix, id) => `${prefix.toUpperCase()}-${String(id).padStart(3, '0')}`;
 
     // --- State ---
     const [members, setMembers] = useState([]);
@@ -245,8 +243,8 @@ const CreateVerifyTrace = () => {
                 </div>
             );
         }
-        if ( (type === 'trace' && (!traceabilityData || traceabilityData.length === 0)) ||
-             (type === 'members' && (!members || members.length === 0)) ) {
+        if ((type === 'trace' && (!traceabilityData || traceabilityData.length === 0)) ||
+            (type === 'members' && (!members || members.length === 0))) {
             return (
                 <div className={emptyClass}>
                     <FontAwesomeIcon icon={config.emptyIcon} size="lg" />
@@ -278,79 +276,70 @@ const CreateVerifyTrace = () => {
 
                 {/* Left Panel: Traceability Table */}
                 <div className="traceveri-left-panel">
-                    <div className="traceveri-panel-header">
-                        <h2>
-                            <FontAwesomeIcon icon={faListCheck} /> Baseline Traceability Links
-                            { !isLoadingTrace && !traceError && tableRows.length > 0 &&
-                                <span className="traceveri-count-badge">{tableRows.length}</span>
-                            }
-                        </h2>
-                    </div>
                     {/* Loading/Error/Empty State for Traceability */}
                     {renderInfoState(isLoadingTrace, traceError, tableRows, 'trace')}
 
                     {/* Table Container */}
                     {!isLoadingTrace && !traceError && tableRows.length > 0 && (
-                         <div className="traceveri-table-container">
-                             {/* เปลี่ยนชื่อ class ของ table ด้วย */}
-                             <table className="traceveri-table">
-                                 <thead>
-                                     <tr>
-                                         <th>Requirement</th>
-                                         <th>Design</th>
-                                         <th>Code Component</th>
-                                         <th>Test Case</th>
-                                     </tr>
-                                 </thead>
-                                 <tbody>
-                                     {tableRows.map((row) => (
-                                         <tr key={row.key}>
-                                             {row.isFirstReqRow && (
-                                                 <td rowSpan={row.reqRowSpan}>
-                                                     {/* เปลี่ยนชื่อ class หรือจะใช้ชื่อเดิมก็ได้ ถ้าไม่ซ้ำ */}
-                                                     <div className="traceveri-req-id">REQ-{row.reqId}</div>
-                                                      {row.reqName && row.reqName !== `Requirement ${row.reqId}` && (
-                                                          <div className="traceveri-item-detail">{row.reqName}</div>
-                                                      )}
-                                                     <a
-                                                         href={`/viewReqTrace?requirement_id=${row.reqId}`}
-                                                         target="_blank"
-                                                         rel="noopener noreferrer"
-                                                         title="View Requirement Details"
-                                                         className="traceveri-view-button" // เปลี่ยนชื่อ class button
-                                                         onClick={() => console.log("Viewing req:", row.reqId)}
-                                                     >
-                                                         <FontAwesomeIcon icon={faEye} /> View
-                                                     </a>
-                                                 </td>
-                                             )}
-                                             {row.isFirstDesignRow && (
-                                                 <td rowSpan={row.designRowSpan}>
-                                                     {row.designId !== "-" ? `DE-${row.designId}` : "-"}
-                                                     {row.designName && row.designName !== "-" && row.designName !== `Design ${row.designId}` && (
-                                                         <div className="traceveri-item-detail">{row.designName}</div> // ใช้ class กลางๆ
-                                                     )}
-                                                 </td>
-                                             )}
-                                             {row.isFirstImplRow && (
-                                                 <td rowSpan={row.implRowSpan}>
-                                                     {row.implId !== "-" ? `IMP-${row.implId}` : "-"}
-                                                     {row.implFile && row.implFile !== 'N/A' && (
-                                                         <div className="traceveri-item-detail">{row.implFile}</div> // ใช้ class กลางๆ
-                                                     )}
-                                                 </td>
-                                             )}
-                                             <td>
-                                                 {row.testCaseId !== "-" ? `TC-${row.testCaseId}` : "-"}
-                                                 {row.testCaseName && row.testCaseName !== "-" && row.testCaseName !== `Test Case ${row.testCaseId}` && (
-                                                     <div className="traceveri-item-detail">{row.testCaseName}</div> // ใช้ class กลางๆ
-                                                 )}
-                                             </td>
-                                         </tr>
-                                     ))}
-                                 </tbody>
-                             </table>
-                         </div>
+                        <div className="traceveri-table-container">
+                            {/* เปลี่ยนชื่อ class ของ table ด้วย */}
+                            <table className="traceveri-table">
+                                <thead>
+                                    <tr>
+                                        <th>Requirement</th>
+                                        <th>Design</th>
+                                        <th>Code Component</th>
+                                        <th>Test Case</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {tableRows.map((row) => (
+                                        <tr key={row.key}>
+                                            {row.isFirstReqRow && (
+                                                <td rowSpan={row.reqRowSpan}>
+                                                    {formatIdWithPrefix('REQ', row.reqId)}
+                                                    {row.reqName && row.reqName !== `Requirement ${row.reqId}` && (
+                                                        <div className="traceveri-item-detail">{row.reqName}</div>
+                                                    )}
+                                                    <a
+                                                        href={`/viewReqTrace?requirement_id=${row.reqId}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        title="View Requirement Details"
+                                                        className="traceveri-view-button"
+                                                        onClick={() => console.log("Viewing req:", row.reqId)}
+                                                    >
+                                                        <FontAwesomeIcon icon={faEye} /> View
+                                                    </a>
+                                                </td>
+                                            )}
+                                            {row.isFirstDesignRow && (
+                                                <td rowSpan={row.designRowSpan}>
+                                                    {row.designId !== "-" ? formatIdWithPrefix('SD', row.designId) : "-"}
+                                                    {row.designName && row.designName !== "-" && row.designName !== `Design ${row.designId}` && (
+                                                        <div className="traceveri-item-detail">{row.designName}</div>
+                                                    )}
+                                                </td>
+                                            )}
+                                            {row.isFirstImplRow && (
+                                                <td rowSpan={row.implRowSpan}>
+                                                    {row.implId !== "-" ? formatIdWithPrefix('SC', row.implId) : "-"}
+                                                    {row.implFile && row.implFile !== 'N/A' && (
+                                                        <div className="traceveri-item-detail">{row.implFile}</div>
+                                                    )}
+                                                </td>
+                                            )}
+                                            <td>
+                                                {row.testCaseId !== "-" ? formatIdWithPrefix('TC', row.testCaseId) : "-"}
+                                                {row.testCaseName && row.testCaseName !== "-" && row.testCaseName !== `Test Case ${row.testCaseId}` && (
+                                                    <div className="traceveri-item-detail">{row.testCaseName}</div>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     )}
                 </div>
 
@@ -358,24 +347,25 @@ const CreateVerifyTrace = () => {
                 <div className="traceveri-right-panel">
                     <div className="traceveri-panel-header">
                         <h2>
-                            <FontAwesomeIcon icon={faUsers} /> Select Verifiers
-                            { !isLoadingMembers && !membersError && members.length > 0 &&
+                            <FontAwesomeIcon icon={faUsers} /> Select Reviewer
+                            {!isLoadingMembers && !membersError && members.length > 0 &&
                                 <span className="traceveri-count-badge">{members.length}</span>
                             }
                         </h2>
                     </div>
 
                     {/* Loading/Error/Empty State for Members */}
-                     {renderInfoState(isLoadingMembers, membersError, members, 'members')}
+                    {renderInfoState(isLoadingMembers, membersError, members, 'members')}
 
                     {/* Member List */}
                     {!isLoadingMembers && !membersError && members.length > 0 && (
                         <div className="traceveri-reviewers-container">
-                             <div className="traceveri-reviewers-list">
+                            <div className="traceveri-reviewers-list">
                                 {members.map((member, index) => (
                                     <div key={index} className="traceveri-reviewer-item">
                                         <input
-                                            type="checkbox" classname="trace"
+                                            type="checkbox"
+                                            className="verifytrace-checkbox"
                                             id={`member-${index}`}
                                             onChange={() => handleMemberSelection(member.name)}
                                             checked={selectedMembers.includes(member.name)}
@@ -400,10 +390,10 @@ const CreateVerifyTrace = () => {
                             <span>Traceability Links Found:</span>
                             <span className="traceveri-summary-count">{isLoadingTrace ? '...' : tableRows.length}</span>
                         </div>
-                         <div className="traceveri-summary-item">
-                             <span>Verifiers Selected:</span>
-                             <span className="traceveri-summary-count">{selectedMembers.length}</span>
-                         </div>
+                        <div className="traceveri-summary-item">
+                            <span>Verifiers Selected:</span>
+                            <span className="traceveri-summary-count">{selectedMembers.length}</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -415,7 +405,7 @@ const CreateVerifyTrace = () => {
                     className="traceveri-btn-cancel" // เปลี่ยน Class
                     disabled={isSaving}
                 >
-                    <FontAwesomeIcon icon={faBan} /> Cancel
+                    <FontAwesomeIcon icon={faArrowLeft} /> Back
                 </button>
                 <button
                     onClick={handleSaveVerification}
@@ -427,8 +417,8 @@ const CreateVerifyTrace = () => {
                         selectedMembers.length === 0
                     }
                 >
-                    <FontAwesomeIcon icon={isSaving ? faSpinner : faFloppyDisk} spin={isSaving} />
-                    {isSaving ? "Saving..." : "Create Verification Records"}
+                    <FontAwesomeIcon icon={faCheckCircle} />
+                    {isSaving ? "Saving..." : "Create Verification"}
                 </button>
             </div>
         </div>

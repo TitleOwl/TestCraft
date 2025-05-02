@@ -39,60 +39,47 @@ const formatStatus = (status) => {
   return status.replace(/_/g, ' '); // <--- แก้ไขเป็นแบบนี้
 };
 
+// ปรับปรุง parseJsonSafe ให้รองรับ input หลายแบบและคืนค่า Default ที่ถูกต้อง
 const parseJsonSafe = (jsonString, defaultValue = []) => {
-  if (Array.isArray(jsonString)) return jsonString;
-  if (typeof jsonString !== 'string' || !jsonString) return defaultValue;
+  if (Array.isArray(jsonString)) { // ถ้า Input เป็น Array อยู่แล้ว
+    // ตรวจสอบ element แรกเพื่อเดาชนิดข้อมูล (ถ้ามี)
+    if (jsonString.length === 0) return [];
+    if (typeof jsonString[0] === 'object' && jsonString[0] !== null) return jsonString;
+    if (typeof jsonString[0] === 'number') return jsonString;
+    if (typeof jsonString[0] === 'string') return jsonString; // รองรับ Array of string ด้วย
+    console.warn("parseJsonSafe received an array with unexpected element type:", jsonString[0]);
+    return defaultValue; // คืนค่า Default ถ้าชนิดข้อมูลใน Array ไม่รู้จัก
+  }
+  if (typeof jsonString !== 'string' || !jsonString) { // ถ้าไม่ใช่ String หรือเป็น String ว่าง
+    return defaultValue;
+  }
   try {
     const parsed = JSON.parse(jsonString);
+    // คืนค่า parsed ถ้าเป็น Array, มิฉะนั้นคืนค่า Default
     return Array.isArray(parsed) ? parsed : defaultValue;
   } catch (e) {
     console.error("Error parsing JSON string:", e, "\nString was:", jsonString);
-    // ลองแปลงเป็นตัวเลขถ้า parse ไม่ได้
-    if (!isNaN(Number(jsonString))) return [Number(jsonString)];
-    return defaultValue;
+    return defaultValue; // คืนค่า Default ถ้า Parse ไม่สำเร็จ
   }
 };
 
 
-// --- Status Badge Component ---
+// --- Status Badge Component (วางนอก Component หลักได้) ---
 const StatusBadge = ({ status }) => {
-  let statusClass = ""; // ตัวแปรเก็บชื่อ class ที่จะใช้
-
-  // ใช้ switch case กับค่า status ที่รับเข้ามาโดยตรง (ซึ่งเป็นตัวพิมพ์ใหญ่)
+  let statusClass = "";
   switch (status) {
-    case "WORKING":
-      statusClass = "working"; // กำหนด class สำหรับ WORKING
-      break;
-    case "VERIFIED":
-      statusClass = "verified"; // กำหนด class สำหรับ VERIFIED
-      break;
-    case "VALIDATED":
-      statusClass = "validated"; // กำหนด class สำหรับ VALIDATED
-      break;
-    case "WAITING FOR VERIFICATION":
-      statusClass = "waiting-for-verification"; // กำหนด class สำหรับ WAITING FOR VERIFICATION
-      break;
-    case "WAITING FOR VALIDATION":
-      statusClass = "waiting-for-validation"; // กำหนด class สำหรับ WAITING FOR VALIDATION
-      break;
-    case "BASELINE":
-      statusClass = "baseline"; // กำหนด class สำหรับ BASELINE
-      break;
-    case "SUBMITTED":
-      statusClass = "submitted"; // กำหนด class สำหรับ SUBMITTED
-      break;
-    case "REJECTED":
-      statusClass = "rejected"; // กำหนด class สำหรับ REJECTED
-      break;
-    default:
-      statusClass = "default"; // class เริ่มต้น หรือสำหรับ status ที่ไม่รู้จัก
+    case "WORKING": statusClass = "working"; break;
+    case "VERIFIED": statusClass = "verified"; break;
+    case "VALIDATED": statusClass = "validated"; break;
+    case "WAITING FOR VERIFICATION": statusClass = "waiting-for-verification"; break;
+    case "WAITING FOR VALIDATION": statusClass = "waiting-for-validation"; break;
+    case "BASELINE": statusClass = "baseline"; break;
+    case "SUBMITTED": statusClass = "submitted"; break;
+    case "REJECTED": statusClass = "rejected"; break;
+    default: statusClass = "default";
   }
-
-  // คืนค่า span พร้อม class ที่ถูกต้อง และแสดงข้อความ status ดิบๆ (ตัวพิมพ์ใหญ่)
-  // ใช้ base class จากโค้ดบล็อกที่ 2 คือ 'testcase-detail-status-badge'
   return (
     <span className={`testcase-detail-status-badge ${statusClass}`}>
-      {/* แสดงค่า status ที่รับเข้ามาโดยตรง หรือ 'N/A' ถ้าไม่มีค่า */}
       {status || 'N/A'}
     </span>
   );
@@ -104,72 +91,131 @@ const TestcaseDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-
-  const testcase = location.state?.testcase || {};
-  const queryParams = new URLSearchParams(location.search);
-  let projectId = location.state?.projectId || testcase?.project_id || queryParams.get("project_id") || "";
-
-  // States (เหมือนเดิม)
+  // --- ⬇️ State ทั้งหมดอยู่ข้างใน Component ---
+  const [testcaseData, setTestcaseData] = useState(() => location.state?.testcase || {});
   const [history, setHistory] = useState([]);
-  const [loadingHistory, setLoadingHistory] = useState(false);
-  const [errorHistory, setErrorHistory] = useState(null);
   const [verificationResult, setVerificationResult] = useState(null);
-  const [loadingVerification, setLoadingVerification] = useState(false);
-  const [errorVerification, setErrorVerification] = useState(null);
-  const [loadingComponent, setLoadingComponent] = useState(true);
-  const [errorComponent, setErrorComponent] = useState(null);
-  const [testcaseData, setTestcaseData] = useState(location.state?.testcase || {}); // ใช้ testcase จาก state ดีกว่า
-  const [activeTab, setActiveTab] = useState('history');
+  const [allImplementFiles, setAllImplementFiles] = useState([]);
 
-  // Combined Fetch Effect (เหมือนเดิม)
+  // Loading States
+  const [loadingComponent, setLoadingComponent] = useState(true);
+  const [loadingHistory, setLoadingHistory] = useState(true);
+  const [loadingVerification, setLoadingVerification] = useState(true);
+
+  // Error States
+  const [errorComponent, setErrorComponent] = useState(null);
+  const [errorHistory, setErrorHistory] = useState(null);
+  const [errorVerification, setErrorVerification] = useState(null);
+
+  // UI State
+  const [activeTab, setActiveTab] = useState('history');
+  // --- ⬆️ สิ้นสุดการประกาศ State ---
+
+  // --- หา Test Case ID และ Project ID จาก URL/State ---
+  const { testcaseId, projectId } = useMemo(() => {
+    const queryParams = new URLSearchParams(location.search);
+    // หา testcaseId จาก query ก่อน ถ้าไม่มีค่อยเอาจาก state
+    const tcId = queryParams.get("testcase_id") || location.state?.testcase?.testcase_id;
+    // หา projectId จาก state ก่อน ถ้าไม่มีค่อยหาจาก query หรือจาก testcaseData ที่อาจจะโหลดมาแล้ว
+    const projId = location.state?.projectId || queryParams.get("project_id") || testcaseData?.project_id;
+    // console.log("Calculated IDs - TC:", tcId, "Proj:", projId); // Optional Debug
+    return { testcaseId: tcId, projectId: projId };
+  }, [location.search, location.state, testcaseData?.project_id]); // ใช้ testcaseData?.project_id ด้วยเผื่อมีการอัปเดตจาก Fetch
+
+  const formatSwComponent = (id) => `SC-${String(id).padStart(3, '0')}`;
+
+  // --- Effect สำหรับ Fetch ข้อมูลทั้งหมด ---
   useEffect(() => {
-    const currentTestcaseId = testcaseData?.testcase_id; // <<< อ้างอิงจาก testcaseData state
-    if (!currentTestcaseId) {
-      // หากไม่มี testcase_id ใน state ลองหาจาก location.state อีกครั้ง (เผื่อโหลดครั้งแรก)
-      const initialTestcaseId = location.state?.testcase?.testcase_id;
-      if (!initialTestcaseId) {
-        setErrorComponent("Test Case ID not found.");
-        setLoadingComponent(false);
-        return;
-      }
-      // ถ้าเจอใน location.state ให้ใช้ ID นั้น (แต่อาจจะไม่ต้อง fetch ใหม่ถ้าข้อมูลครบแล้ว)
-      // หรืออาจจะตั้งค่า testcaseData state ตรงนี้เลยถ้ายังไม่ได้ตั้ง
-      // setTestcaseData(location.state.testcase); // ถ้าจำเป็น
+    // ต้องมีทั้ง Test Case ID และ Project ID ก่อนเริ่ม Fetch
+    if (!testcaseId || !projectId) {
+      const missing = [];
+      if (!testcaseId) missing.push("Test Case ID");
+      if (!projectId) missing.push("Project ID");
+      setErrorComponent(`${missing.join(' and ')} is missing in URL or state.`);
+      setLoadingComponent(false);
+      setLoadingHistory(false);
+      setLoadingVerification(false);
+      // ไม่ต้อง set loading implement files ที่นี่
+      return;
     }
 
+    let isMounted = true; // ติดตาม Component Mount status
+
     const fetchData = async () => {
+      // ตั้งค่า Loading states ทั้งหมดเป็น true
       setLoadingComponent(true); setErrorComponent(null);
       setLoadingHistory(true); setErrorHistory(null);
       setLoadingVerification(true); setErrorVerification(null);
-      const idToFetch = testcaseData?.testcase_id || location.state?.testcase?.testcase_id; // ใช้ ID ล่าสุด
+      setAllImplementFiles([]); // เคลียร์ข้อมูล implement เก่า
 
-      if (!idToFetch) {
-        setErrorComponent("Test Case ID is missing for fetching data.");
-        setLoadingComponent(false);
-        return;
-      }
+      console.log(`Workspaceing all data for TC ID: ${testcaseId}, Project ID: ${projectId}`);
 
       try {
-        const [historyRes, verificationRes] = await Promise.all([
-          axios.get('http://localhost:3001/getHistoryByTestcaseId', { params: { testcase_id: idToFetch } })
-            .catch(err => { console.error("❌ Error fetching history:", err); setErrorHistory("Failed to load history."); return { data: { data: [] } }; }),
-          axios.get('http://localhost:3001/get-testcase-verification-result', { params: { testcase_id: idToFetch } })
-            .catch(err => { console.error("❌ Error fetching verification result:", err); setErrorVerification("Failed to load verification result."); return { data: { data: null } }; })
+        // ดึงข้อมูล 4 อย่างพร้อมกัน
+        const [mainDataRes, historyRes, verificationRes, implementRes] = await Promise.all([
+          axios.get(`http://localhost:3001/testcaseedit/${testcaseId}`)
+            .catch(err => { console.error("❌ Error fetching main test case data:", err); throw new Error("Failed to load main test case data."); }), // ถ้าหลักไม่ได้ ให้โยน Error
+          axios.get('http://localhost:3001/getHistoryByTestcaseId', { params: { testcase_id: testcaseId } })
+            .catch(err => { console.error("❌ Error fetching history:", err); if (isMounted) setErrorHistory("Failed to load history."); return { data: { data: [] } }; }), // จัดการ Error แยกส่วน
+          axios.get('http://localhost:3001/get-testcase-verification-result', { params: { testcase_id: testcaseId } })
+            .catch(err => { console.error("❌ Error fetching verification result:", err); if (isMounted) setErrorVerification("Failed to load verification result."); return { data: { data: null } }; }), // จัดการ Error แยกส่วน
+          axios.get('http://localhost:3001/implementrelation', { params: { project_id: projectId } })
+            .catch(err => { console.error("❌ Error fetching all implement files:", err); /* อาจแสดง Error รวม */ return { data: { data: [] } }; }) // จัดการ Error แยกส่วน
         ]);
-        setHistory(historyRes.data?.data || []);
-        setVerificationResult(verificationRes.data?.data || null);
 
-        // Optional: อัปเดต testcaseData state หากต้องการข้อมูลล่าสุดเสมอ
-        // const testcaseRes = await axios.get('API_TO_GET_TESTCASE_BY_ID', { params: { testcase_id: idToFetch } });
-        // setTestcaseData(testcaseRes.data?.data || {});
+        if (isMounted) {
+          // 1. อัปเดตข้อมูล Test Case หลัก
+          if (mainDataRes.data) {
+            console.log("Fetched main data:", mainDataRes.data);
+            setTestcaseData(mainDataRes.data);
+          } else {
+            throw new Error("Main test case data received is empty or invalid.");
+          }
 
-      } catch (err) { console.error("❌ Error fetching test case details:", err); setErrorComponent("Failed to load test case data."); }
-      finally { setLoadingHistory(false); setLoadingVerification(false); setLoadingComponent(false); }
+          // 2. อัปเดต History
+          console.log("Fetched history:", historyRes.data?.data);
+          setHistory(historyRes.data?.data || []);
+          setLoadingHistory(false); // ปิด Loading History
+
+          // 3. อัปเดต Verification
+          console.log("Fetched verification:", verificationRes.data?.data);
+          setVerificationResult(verificationRes.data?.data || null);
+          setLoadingVerification(false); // ปิด Loading Verification
+
+          // 4. อัปเดต Implement Files
+          console.log("Fetched implements:", implementRes.data?.data);
+          setAllImplementFiles(implementRes.data?.data || []);
+          // ไม่ต้องมี loadingAllImplementFiles แล้ว ใช้ loadingComponent แทน
+
+        }
+
+      } catch (err) {
+        console.error("❌ Error during data fetching:", err);
+        if (isMounted) {
+          setErrorComponent(err.message || "Failed to load test case details.");
+          // ปิด Loading states อื่นๆ ด้วยหากเกิด Error ที่ fetch หลัก
+          setLoadingHistory(false);
+          setLoadingVerification(false);
+        }
+      } finally {
+        // ปิด Loading หลักเมื่อทุกอย่างเสร็จสิ้น (ไม่ว่าจะ success หรือ error ที่ Promise.all)
+        if (isMounted) {
+          setLoadingComponent(false);
+        }
+      }
     };
-    fetchData();
-  }, [testcaseData?.testcase_id, location.state?.testcase?.testcase_id]); // Dependency ควรจะ stable
 
-  // Format Date/Time Function (เหมือนเดิม)
+    fetchData();
+
+    // Cleanup function
+    return () => {
+      isMounted = false;
+    };
+    // Dependency คือ testcaseId และ projectId ที่คำนวณจาก useMemo ซึ่งจะเปลี่ยนเมื่อ URL หรือ state เปลี่ยน
+  }, [testcaseId, projectId]);
+
+
+  // Format Date/Time Function
   const formatDateTime = (datetime) => {
     if (!datetime) return { date: "N/A", time: "N/A" };
     const dateObj = new Date(datetime);
@@ -183,49 +229,87 @@ const TestcaseDetail = () => {
     return { date: `${day}/${month}/${year}`, time: `${hours}:${minutes}:${seconds}` };
   };
 
-  // Processed History Data (เหมือนเดิม)
+  // Processed History Data
   const sortedHistory = useMemo(() => {
+    if (!Array.isArray(history)) return [];
     return [...history].sort((a, b) => new Date(a.testcase_at) - new Date(b.testcase_at));
   }, [history]);
 
-  const sortedImplementData = useMemo(() => {
-    const data = parseJsonSafe(testcaseData.implement_id || "[]", []);
-    return data.sort((a, b) => {
-      const idA = Number(a.id);
-      const idB = Number(b.id);
-      if (isNaN(idA) || isNaN(idB)) return 0;
-      return idA - idB;
-    });
-  }, [testcaseData.implement_id]);
+  // Memoized Value for Linked Implement Details
+  const linkedImplementDetails = useMemo(() => {
+    // parseJsonSafe จะคืน Array เสมอ
+    const linkedData = parseJsonSafe(testcaseData.implement_id || "[]", []);
 
-  // Loading / Error / No Data States (เหมือนเดิม)
-  if (loadingComponent) return <LoadingSpinner />;
-  if (errorComponent) return <div className="testcase-detail-error-message">{errorComponent}</div>;
-  // ใช้ testcaseData state ในการเช็คข้อมูลหลัก
-  if (!testcaseData || !testcaseData.testcase_id) return <div className="testcase-detail-not-found-message">Test Case data is unavailable.</div>;
+    // ถ้ายังโหลดข้อมูลหลักไม่เสร็จ หรือไม่มีข้อมูล Implement ทั้งหมดเลย ให้คืนค่าตามสถานะ
+    if (loadingComponent && allImplementFiles.length === 0) {
+      if (Array.isArray(linkedData) && linkedData.length > 0 && typeof linkedData[0] === 'number') {
+        // ถ้ามี ID แต่ยังไม่มี filename ให้แสดงชั่วคราว
+        return linkedData.map(id => ({ id: id, filename: '(Loading...)' })).sort((a, b) => a.id - b.id);
+      }
+      return []; // ถ้าไม่มีข้อมูล ID เลย หรือ implement_id ไม่ใช่ array ตัวเลข
+    }
 
-  // --- ลบ statusClassMap และการคำนวณ statusClassName ตรงนี้ ---
-  // const statusClassMap = { ... }; // <--- ลบออก
-  // const statusClassName = statusClassMap[testcaseData?.testcase_status] || ''; // <--- ลบออก
+    // ถ้าโหลดเสร็จแล้ว แต่ไม่มีข้อมูล Implement ทั้งหมด (API คืนค่าว่าง)
+    if (!loadingComponent && allImplementFiles.length === 0) {
+      if (Array.isArray(linkedData) && linkedData.length > 0 && typeof linkedData[0] === 'number') {
+        // ถ้ามี ID แต่หา filename ไม่เจอ
+        return linkedData.map(id => ({ id: id, filename: '(Not Found)' })).sort((a, b) => a.id - b.id);
+      }
+      return []; // ถ้าไม่มีข้อมูล ID เลย
+    }
 
+    // --- กรณีมี allImplementFiles แล้ว ---
+    const details = linkedData.map(itemOrId => {
+      const idToFind = typeof itemOrId === 'object' && itemOrId !== null ? itemOrId.id : itemOrId;
+      // ตรวจสอบ ID ให้เข้มงวดขึ้น
+      if (typeof idToFind !== 'number' || isNaN(idToFind) || idToFind <= 0) {
+        console.warn("Invalid or non-positive ID found in linked data:", itemOrId);
+        return null;
+      }
+      const foundFile = allImplementFiles.find(file => file.implement_id === idToFind);
+      if (foundFile) {
+        return { id: foundFile.implement_id, filename: foundFile.implement_filename || '(No Filename)' }; // ให้มี default filename
+      } else {
+        // แสดงว่า ID ที่ Link ไว้ ไม่มีอยู่ในรายการ Implement ของ Project นี้
+        return { id: idToFind, filename: `(File not found for ID: ${idToFind})` };
+      }
+    }).filter(Boolean); // กรอง null ที่เกิดจาก ID ไม่ถูกต้อง
+
+    details.sort((a, b) => a.id - b.id);
+    return details;
+    // Dependency คือ implement_id จาก testcaseData และ รายการ implement files ทั้งหมด
+  }, [testcaseData.implement_id, allImplementFiles, loadingComponent]); // เพิ่ม loadingComponent
+
+
+  // --- Loading / Error / No Data States ---
+  // ถ้ายังโหลด Component หลักอยู่ ให้แสดง Loading Spinner
+  if (loadingComponent) {
+    return <LoadingSpinner />;
+  }
+  // ถ้ามี Error หลัก ให้แสดง Error
+  if (errorComponent) {
+    return <div className="testcase-detail-error-message">{errorComponent}</div>;
+  }
+  // ถ้าโหลดเสร็จแล้ว แต่ไม่มีข้อมูล Test Case (เช่น ID ผิด)
+  if (!testcaseData || !testcaseData.testcase_id) {
+    return <div className="testcase-detail-not-found-message">Test Case data could not be loaded or is invalid.</div>;
+  }
+
+
+  // --- Render ส่วนที่เหลือ ---
   return (
     <div className="testcase-detail-dashboard">
 
-      {/* Header (เหมือนเดิม) */}
+      {/* Header */}
       <div className="testcase-detail-header">
         <div className="testcase-detail-header-left">
           <button
             className="testcase-detail-back-button"
             onClick={() => {
-              if (window.history.length > 2) {
-                navigate(-1);
-              } else {
-                navigate(`/Dashboard?project_id=${projectId}`, {
-                  state: { selectedSection: "Testcase" },
-                });
-              }
-            }}
-          >
+              const targetProjectId = projectId || testcaseData.project_id; // ใช้ ID ที่แน่นอนที่สุด
+              if (window.history.length > 2) { navigate(-1); }
+              else { navigate(`/Dashboard?project_id=${targetProjectId}`, { state: { selectedSection: "Testcase" } }); }
+            }} >
             <BackIcon />
             <span>Back</span>
           </button>
@@ -244,16 +328,12 @@ const TestcaseDetail = () => {
 
         {/* Details Card (Left Column) */}
         <div className="testcase-detail-card">
-          {/* --- ใช้ Component StatusBadge --- */}
-          <div className="testcase-detail-card-header"> {/* ใช้ className เดิม หรือจะเติม -testcasedetail ก็ได้ */}
+          <div className="testcase-detail-card-header">
             <h2>{testcaseData.testcase_name || "Untitled Test Case"}</h2>
-            {/* ใช้ StatusBadge component แทน span เดิม */}
             <StatusBadge status={testcaseData.testcase_status} />
           </div>
-          {/* --- สิ้นสุดการใช้ StatusBadge --- */}
-
           <div className="testcase-detail-info-grid">
-            {/* Info Items */}
+            {/* แสดง Info Items โดยใช้ testcaseData */}
             <div className="testcase-detail-info-item">
               <div className="testcase-detail-info-label"> <IdIcon /> <span>Test Case ID</span> </div>
               <div className="testcase-detail-info-value">TC-{String(testcaseData.testcase_id).padStart(3, '0')}</div>
@@ -271,12 +351,11 @@ const TestcaseDetail = () => {
               <div className="testcase-detail-info-value">{testcaseData.testcase_by || 'Unknown'}</div>
             </div>
             <div className="testcase-detail-info-item">
-              <div className="testcase-detail-info-label"> <CalendarIcon /> <span>Created Date</span> </div>
-              <div className="testcase-detail-info-value">{formatDateTime(testcaseData.testcase_at).date}</div>
+              <div className="testcase-detail-info-label"> <CalendarIcon /> <span>Test Case Creation Date</span> </div>
+              <div className="testcase-detail-info-value">{formatDateTime(testcaseData.create_at).date}</div>
             </div>
             <div className="testcase-detail-info-item">
               <div className="testcase-detail-info-label"> <StatusIcon /> <span>Current Status</span> </div>
-              {/* แสดง Status แบบข้อความธรรมดาใน info grid */}
               <div className="testcase-detail-info-value">{formatStatus(testcaseData.testcase_status)}</div>
             </div>
           </div>
@@ -286,27 +365,32 @@ const TestcaseDetail = () => {
               {testcaseData.testcase_des || 'No description provided.'}
             </div>
           </div>
+
+          {/* Linked Code Component Files Section */}
           <div className="testcase-detail-linked-ids-section">
-            <h3><LinkIcon /> Linked Implement Files</h3>
+            <h3><LinkIcon /> Linked Code Component Files</h3>
             <div className="testcase-detail-linked-ids-list">
-              {sortedImplementData.length > 0 ? (
-                <ul>
-                  {sortedImplementData.map(item => (
-                    <li key={item.id}>
-                      <span className="implement-id-tag">IMP-{String(item.id).padStart(3, '0')}</span>
-                      <span className="implement-separator"> : </span>
-                      <span className="implement-filename">📄{item.filename}</span>
-                    </li>
-                  ))}
-                </ul>
+              {/* ใช้ loadingComponent เพราะข้อมูล Implement มาพร้อมข้อมูลหลัก */}
+              {loadingComponent ? (
+                <p>Loading linked files...</p>
+              ) : linkedImplementDetails.length > 0 ? (
+                linkedImplementDetails.map((file) => (
+                  <div key={file.id} className="testcase-detail-implement-item">
+                    <span className="file-id">{formatSwComponent(file.id)}</span> -{" "}
+                    <span className="file-name">📄 {file.filename}</span>
+                  </div>
+                ))
               ) : (
-                <p>None</p>
+                <div>No linked files found.</div>
               )}
             </div>
           </div>
+
+          {/* Test Procedures Section */}
           <div className="testcase-detail-procedures-section">
             <div className="test-procedures-wrapper">
-              <TestProcedures testcaseId={testcaseData.testcase_id} />
+              {/* ตรวจสอบว่ามี testcase_id ก่อนส่งต่อ */}
+              {testcaseData.testcase_id && <TestProcedures testcaseId={testcaseData.testcase_id} />}
             </div>
           </div>
         </div> {/* End Details Card */}
@@ -316,31 +400,13 @@ const TestcaseDetail = () => {
           <div className="testcase-detail-card-header">
             <div className="testcase-detail-history-title">
               <HistoryIcon />
-              <h1 className="testcase-detail-history-topic">
-                History
-              </h1>
+              <h1 className="testcase-detail-history-topic"> History </h1>
             </div>
           </div>
-
-          {/* History Tabs */}
           <div className="testcase-detail-history-tabs">
-            <button
-              className={`testcase-detail-tab ${activeTab === 'history' ? 'active' : ''}`}
-              onClick={() => setActiveTab('history')}
-            >
-              <HistoryIcon />
-              Status Change Log ({sortedHistory.length})
-            </button>
-            <button
-              className={`testcase-detail-tab ${activeTab === 'verification' ? 'active' : ''}`}
-              onClick={() => setActiveTab('verification')}
-            >
-              <CheckCircleIcon />
-              Verification
-            </button>
+            <button className={`testcase-detail-tab ${activeTab === 'history' ? 'active' : ''}`} onClick={() => setActiveTab('history')} > <HistoryIcon /> Status Change Log ({/* ป้องกัน Error ถ้า sortedHistory ไม่ใช่ Array */ Array.isArray(sortedHistory) ? sortedHistory.length : 0}) </button>
+            <button className={`testcase-detail-tab ${activeTab === 'verification' ? 'active' : ''}`} onClick={() => setActiveTab('verification')} > <CheckCircleIcon /> Verification </button>
           </div>
-
-          {/* Tab Content */}
           <div className="testcase-detail-history-tab-content">
             {/* History Tab Content */}
             {activeTab === 'history' && (
@@ -349,62 +415,32 @@ const TestcaseDetail = () => {
                 {errorHistory && <p className="testcase-detail-error-message">{errorHistory}</p>}
                 {!loadingHistory && !errorHistory && sortedHistory.length > 0 ? (
                   <table className="testcase-detail-history-table">
-                    <thead>
-                      <tr>
-                        <th><StatusIcon /> Status</th>
-                        <th><CalendarIcon /> Date</th>
-                        <th><TimeIcon /> Time</th>
-                      </tr>
-                    </thead>
+                    <thead><tr><th><StatusIcon /> Status</th><th><CalendarIcon /> Date</th><th><TimeIcon /> Time</th></tr></thead>
                     <tbody>
                       {sortedHistory.map((item) => {
+                        // เพิ่มการตรวจสอบ item ก่อนใช้งาน
+                        if (!item || !item.historytestcase_id) return null;
                         const { date, time } = formatDateTime(item.testcase_at);
-                        // *** ไม่ต้องคำนวณ statusClassName ตรงนี้แล้ว ***
-                        return (
-                          <tr key={item.historytestcase_id}>
-                            <td>
-                              {/* --- ใช้ Component StatusBadge --- */}
-                              <StatusBadge status={item.testcase_status} />
-                            </td>
-                            <td>{date}</td>
-                            <td>{time}</td>
-                          </tr>
-                        );
+                        return (<tr key={item.historytestcase_id}><td><StatusBadge status={item.testcase_status} /></td><td>{date}</td><td>{time}</td></tr>);
                       })}
                     </tbody>
                   </table>
-                ) : (
-                  !loadingHistory && !errorHistory && <p>No history recorded.</p>
-                )}
+                ) : (!loadingHistory && !errorHistory && <p>No history recorded.</p>)}
               </div>
             )}
-
-            {/* Verification Tab Content */}
+            {/* Verification Tab Content (คงไว้ตามโค้ดเดิมที่คุณให้มา) */}
             {activeTab === 'verification' && (
               <div className="testcase-detail-verification-tab-container">
                 <div className="testcase-detail-verification-content">
                   {loadingVerification && <p>Loading verification data...</p>}
                   {errorVerification && <p className="testcase-detail-error-message">{errorVerification}</p>}
-                  {!loadingVerification && !errorVerification && (
-                    verificationResult ? (
-                      <div className="testcase-detail-verification-details">
-                        <p><strong>Verified At:</strong> {formatDateTime(verificationResult.verify_at).date} {formatDateTime(verificationResult.verify_at).time}</p>
-                        <div className="testcase-detail-verification-sub-item">
-                          <strong><UserCheckIcon /> Verified By:</strong>
-                          <ul className="testcase-detail-reviewer-list">
-                            {parseJsonSafe(verificationResult.verify_by, []).map((reviewer, index) => (<li key={index}>{reviewer}</li>))}
-                            {parseJsonSafe(verificationResult.verify_by, []).length === 0 && <li>N/A</li>}
-                          </ul>
-                        </div>
-                        <div className="testcase-detail-verification-sub-item">
-                          <strong><ListCheckIcon /> Checklist Used:</strong>
-                          <ul className="testcase-detail-checklist-list">
-                            {parseJsonSafe(verificationResult.verification_checklist, []).map((item, index) => (<li key={index}>{item}</li>))}
-                            {parseJsonSafe(verificationResult.verification_checklist, []).length === 0 && <li>N/A</li>}
-                          </ul>
-                        </div>
-                      </div>
-                    ) : (<p>No verification information found.</p>)
+                  {!loadingVerification && !errorVerification && (verificationResult ? (
+                    <div className="testcase-detail-verification-details">
+                      <p><strong>Verified At:</strong> {formatDateTime(verificationResult.verify_at).date} {formatDateTime(verificationResult.verify_at).time}</p>
+                      <div className="testcase-detail-verification-sub-item"><strong><UserCheckIcon /> Verified By:</strong><ul className="testcase-detail-reviewer-list">{parseJsonSafe(verificationResult.verify_by, []).map((reviewer, index) => (<li key={index}>{reviewer}</li>))}{parseJsonSafe(verificationResult.verify_by, []).length === 0 && <li>N/A</li>}</ul></div>
+                      <div className="testcase-detail-verification-sub-item"><strong><ListCheckIcon /> Checklist Used:</strong><ul className="testcase-detail-checklist-list">{parseJsonSafe(verificationResult.verification_checklist, []).map((item, index) => (<li key={index}>{item}</li>))}{parseJsonSafe(verificationResult.verification_checklist, []).length === 0 && <li>N/A</li>}</ul></div>
+                    </div>
+                  ) : (<p>No verification information found.</p>)
                   )}
                 </div>
               </div>
@@ -414,7 +450,7 @@ const TestcaseDetail = () => {
 
       </div> {/* End Content Area */}
 
-    </div > // End Main Container: testcase-detail-dashboard
+    </div > // End Main Container
   );
 };
 

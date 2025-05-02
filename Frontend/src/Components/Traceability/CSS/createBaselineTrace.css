@@ -105,9 +105,16 @@ body {
   padding-left: 120px; /* Space for back button */
 }
 .cb-header h1 {
-  font-size: 20px; font-weight: 600; color: var(--cb-text-primary); /* Dark gray text */ margin: 0;
-  display: flex; align-items: center; gap: 10px; letter-spacing: -0.02em;
-  flex-grow: 1; margin-right: 1rem;
+  font-size: 20px; 
+  font-weight: 600; 
+  color: var(--cb-text-primary); /* Dark gray text */ 
+  margin: 0;
+  display: flex; 
+  align-items: center; 
+  gap: 10px; 
+  letter-spacing: -0.02em;
+  flex-grow: 1; 
+  margin-left: 22rem;
 }
 .cb-title-icon { color: var(--cb-primary); /* Primary gray icon */ font-size: 1.1em; }
 .cb-back-btn {

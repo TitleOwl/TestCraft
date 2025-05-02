@@ -22,7 +22,6 @@ const UpdateTestcase = () => {
   const testcaseId = searchParams.get("testcase_id");
   const projectId = searchParams.get("project_id");
 
-  // State for the currently edited test case data
   const [testcase, setTestcase] = useState({
     testcase_name: "",
     testcase_des: "",
@@ -32,22 +31,18 @@ const UpdateTestcase = () => {
     testcase_at: "",
     testcase_status: "WORKING",
     project_id: projectId || "",
-    // implement_id will be populated from initialTestcase, but we won't directly modify it on select change anymore
+    // implement_id will be populated from initialTestcase later
   });
 
-  // State to store the initial data for comparison
   const [initialTestcase, setInitialTestcase] = useState({});
-  // State to store all available implement files fetched from API
   const [implementFiles, setImplementFiles] = useState([]);
-  // State to store the currently selected options in the react-select component
-  // This holds objects like { value: id, label: '📄 filename (ID: id)' }
-  const [selectedImplement, setSelectedImplement] = useState([]);
+  const [selectedImplement, setSelectedImplement] = useState([]); // Holds { value: id, label: '...' }
 
   const [loading, setLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-
+  const formatTestcaseId = (id) => `TC-${String(id).padStart(3, '0')}`;
   // --- Fetch Test Case Data AND Implement Files ---
   useEffect(() => {
     const fetchData = async () => {
@@ -69,23 +64,20 @@ const UpdateTestcase = () => {
         const fetchedTestcase = testcaseResponse.data;
         const formattedDate = fetchedTestcase.testcase_at ? new Date(fetchedTestcase.testcase_at).toISOString().split("T")[0] : "";
 
-        // --- Implement ID Parsing Logic (Revised for Clarity) ---
-        let initialSelectedImplementData = []; // Array for [{id: ..., filename: ...}]
+        // --- Parsing logic for implement_id (keep as is for reading existing data) ---
+        let initialSelectedImplementData = []; // This will hold the [{id:..., filename:...}] format *read* from DB
         try {
-          // Assume implement_id from DB is the correct format: '[{"id":1,"filename":"..."},...]'
           if (typeof fetchedTestcase.implement_id === 'string' && fetchedTestcase.implement_id.startsWith('[')) {
             initialSelectedImplementData = JSON.parse(fetchedTestcase.implement_id);
             if (!Array.isArray(initialSelectedImplementData)) {
-              initialSelectedImplementData = []; // Fallback if parsing fails
+              initialSelectedImplementData = [];
             }
           } else if (Array.isArray(fetchedTestcase.implement_id)) {
-            // Handle if DB driver already parsed it (less likely if stored as JSON string)
             initialSelectedImplementData = fetchedTestcase.implement_id;
           }
-          // Add more specific parsing if needed based on actual DB values
         } catch (parseError) {
           console.error("Error parsing initial implement_id JSON string:", parseError, "Value was:", fetchedTestcase.implement_id);
-          initialSelectedImplementData = []; // Fallback on error
+          initialSelectedImplementData = [];
         }
         // --- End Parsing ---
 
@@ -93,32 +85,43 @@ const UpdateTestcase = () => {
         const currentTestcaseData = {
           ...fetchedTestcase,
           testcase_at: formattedDate,
-          // Store the original *parsed* data (or default) for comparison later
-          implement_id: initialSelectedImplementData,
+          // Store the original *parsed* object format for comparison later
+          implement_id: initialSelectedImplementData, // Store as [{id:..., filename:...}]
           project_id: fetchedTestcase.project_id || projectId || ""
         };
 
         setTestcase(currentTestcaseData);
-        // Deep copy for initial state comparison might be safer if implement_id is complex
-        setInitialTestcase(JSON.parse(JSON.stringify(currentTestcaseData)));
+        setInitialTestcase(JSON.parse(JSON.stringify(currentTestcaseData))); // Deep copy
 
         // Fetch all available implement files for the dropdown
         const fetchedImplementFiles = implementResponse.data.data || [];
         setImplementFiles(fetchedImplementFiles);
 
-        // Set the initial selected options for react-select based on parsed data
-        if (fetchedImplementFiles.length > 0 && initialSelectedImplementData.length > 0) {
+        // Set the initial selected options for react-select based on parsed data [{id:..., filename:...}]
+        // Set the initial selected options for react-select
+        if (fetchedImplementFiles.length > 0 && initialSelectedImplementData && initialSelectedImplementData.length > 0) {
           const initialSelectedOptions = initialSelectedImplementData
-            .map(savedItem => {
-              // Find the full details from the fetched list
-              const fullImplementFile = fetchedImplementFiles.find(f => f.implement_id === savedItem.id);
+            .map(savedItemOrId => { // เปลี่ยนชื่อตัวแปรเพื่อความชัดเจน
+              // --- ⬇️ เพิ่ม Logic ตรวจสอบชนิดข้อมูล ⬇️ ---
+              // ตรวจสอบว่าข้อมูลที่อ่านมา (savedItemOrId) เป็น object หรือเป็นแค่ id (ตัวเลข)
+              const idToFind = typeof savedItemOrId === 'object' && savedItemOrId !== null
+                ? savedItemOrId.id // ถ้าเป็น object ให้ใช้ .id
+                : savedItemOrId;   // ถ้าเป็นตัวเลข ให้ใช้ตัวเลขนั้นเลย
+              // --- ⬆️ สิ้นสุด Logic ตรวจสอบ ⬆️ ---
+
+              // ใช้ idToFind ที่ได้มาในการค้นหาข้อมูล implement เต็มๆ
+              const fullImplementFile = fetchedImplementFiles.find(f => f.implement_id === idToFind);
+
               if (fullImplementFile) {
                 return {
-                  value: savedItem.id,
-                  // Construct label with emoji (for display consistency)
-                  label: `📄 ${fullImplementFile.implement_filename} (ID: ${savedItem.id})`
+                  // ใช้ idToFind เป็น value
+                  value: idToFind,
+                  // สร้าง label เหมือนเดิม
+                  label: `📄 ${fullImplementFile.implement_filename} (ID: ${idToFind})`
                 };
               }
+              // Log หาก ID ที่บันทึกไว้หาไม่เจอใน List ทั้งหมด (อาจช่วย Debug)
+              console.warn(`Could not find implement details for saved ID: ${idToFind}`);
               return null; // Handle case where saved ID doesn't exist in fetched list
             })
             .filter(Boolean); // Remove nulls if any ID wasn't found
@@ -137,19 +140,17 @@ const UpdateTestcase = () => {
       }
     };
     fetchData();
-  }, [testcaseId, projectId]); // Rerun if IDs change
+  }, [testcaseId, projectId]);
 
   // --- Handlers ---
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // Update regular form fields directly
     setTestcase((prev) => ({ ...prev, [name]: value }));
   };
 
   // Update only the state for react-select's display
   const handleSelectChange = (selectedOptions) => {
     setSelectedImplement(selectedOptions || []);
-    // *** Removed the direct update to testcase.implement_id here ***
   };
 
   // --- Function to perform the actual update ---
@@ -157,39 +158,35 @@ const UpdateTestcase = () => {
     setIsUpdating(true);
     setError(null);
 
-    // --- ⬇️ Construct the correct implement_id payload HERE ⬇️ ---
-    const implementDataForStorage = selectedImplement.map(option => {
-      const selectedId = option.value;
-      // Find the original filename from the initially fetched list
-      const originalFile = implementFiles.find(file => file.implement_id === selectedId);
-      let cleanFilename = originalFile ? originalFile.implement_filename : 'Unknown Filename';
-      // Clean the filename (remove potential leading emoji and trim)
-      if (typeof cleanFilename === 'string') {
-        cleanFilename = cleanFilename.replace(/^📄\s*/, '').trim(); // Remove emoji + potential space, then trim
-      }
-      return {
-        id: selectedId,
-        filename: cleanFilename // Store clean filename
-      };
-    });
-    // Stringify the correct structure for the database
-    const implementIdJsonString = JSON.stringify(implementDataForStorage);
+    // --- ⬇️ Construct implement_id payload as an array of IDs ⬇️ ---
+    // 1. Get only the IDs from the selected options in react-select state
+    const implementIdsOnly = selectedImplement.map(option => option.value); // option.value holds the implement_id
+
+    // 2. Stringify this array of IDs
+    //    This will create a JSON string like "[1, 2]"
+    const implementIdJsonString = JSON.stringify(implementIdsOnly);
     // --- ⬆️ End implement_id construction ⬆️ ---
 
-
-    // Create the final payload, ensuring implement_id has the correct format
+    // Create the final payload for the API
     const payloadToUpdate = {
-      ...testcase, // Spread the rest of the testcase state
-      implement_id: implementIdJsonString, // <<< Use the correctly formatted JSON string
-      testcase_status: "WORKING" // Always set status on update (as per original logic)
+      ...testcase, // Spread other testcase fields (name, desc, etc.)
+      // *** Use the new JSON string (array of IDs) for implement_id ***
+      implement_id: implementIdJsonString,
+      testcase_status: "WORKING" // Always set status on update
     };
 
+    // --- ❗ Important Note ---
+    // Make sure your backend API endpoint (PUT /testcaseedit/:testcaseId)
+    // is updated to expect and correctly handle the implement_id field
+    // being sent as a JSON string representing an array of numbers (e.g., "[1, 2]").
+    // It needs to parse this string and store it appropriately.
+    // ---
 
-    console.log("⬆️ Updating Test Case with data:", payloadToUpdate);
+    console.log("⬆️ Updating Test Case with data:", payloadToUpdate); // Log the payload being sent
     try {
       await axios.put(`http://localhost:3001/testcaseedit/${testcaseId}`, payloadToUpdate);
 
-      // Save History
+      // Save History (Keep this logic)
       try {
         await axios.post('http://localhost:3001/addHistoryTestcase', {
           testcase_id: parseInt(testcaseId),
@@ -203,7 +200,6 @@ const UpdateTestcase = () => {
 
       toast.success("Test case updated successfully.", {
         autoClose: 2000,
-        // Navigate using the project_id from the final payload
         onClose: () => navigate(`/Dashboard?project_id=${payloadToUpdate.project_id}`, { state: { selectedSection: "Testcase" } }),
       });
 
@@ -219,21 +215,18 @@ const UpdateTestcase = () => {
 
   // --- Handle Update Button Click ---
   const handleUpdateTestCase = async () => {
-    // Basic Validation
+    // Basic Validation (remains the same)
     if (!testcase.testcase_name.trim() || !testcase.testcase_des.trim() || !testcase.testcase_type || !testcase.testcase_priority || !testcase.testcase_at) {
       toast.warning("Please fill in all required fields."); return;
     }
-    // ** Validate based on selectedImplement state, not testcase.implement_id **
     if (!selectedImplement || selectedImplement.length === 0) {
       toast.warning("Please select at least one implement."); return;
     }
 
-    // --- Check for changes (Compare against initialTestcase) ---
+    // --- Check for changes (Comparison logic should still work) ---
     let hasFieldChanges = false;
-    // Compare regular fields
     const fieldsToCheck = ['testcase_name', 'testcase_des', 'testcase_type', 'testcase_priority', 'testcase_at'];
     for (const field of fieldsToCheck) {
-      // Trim string fields before comparison
       const currentValue = typeof testcase[field] === 'string' ? testcase[field].trim() : testcase[field];
       const initialValue = typeof initialTestcase[field] === 'string' ? initialTestcase[field].trim() : initialTestcase[field];
       if (currentValue !== initialValue) {
@@ -243,21 +236,19 @@ const UpdateTestcase = () => {
       }
     }
 
-    // Compare implement selection separately using selectedImplement state
+    // Compare implement selection (This part compares the selected content, not the storage format)
     if (!hasFieldChanges) {
-      // Construct the current selection in the format {id, filename} for comparison
+      // Reconstruct current selection as [{id, filename}] for comparison
       const currentImplementData = selectedImplement.map(option => {
         const originalFile = implementFiles.find(file => file.implement_id === option.value);
         let cleanFilename = originalFile ? originalFile.implement_filename : 'Unknown Filename';
         if (typeof cleanFilename === 'string') { cleanFilename = cleanFilename.replace(/^📄\s*/, '').trim(); }
         return { id: option.value, filename: cleanFilename };
-      }).sort((a, b) => a.id - b.id); // Sort by ID for consistent comparison
+      }).sort((a, b) => a.id - b.id);
 
-      // Get the initial implement data (already stored in initialTestcase.implement_id)
-      // Ensure it's sorted too
+      // Get the initial implement data (already stored in initialTestcase.implement_id as [{id, filename}])
       const initialImplementData = [...(initialTestcase.implement_id || [])].sort((a, b) => a.id - b.id);
 
-      // Compare the stringified versions
       if (JSON.stringify(currentImplementData) !== JSON.stringify(initialImplementData)) {
         hasFieldChanges = true;
         console.log(`Change detected in implement selection.`);
@@ -265,19 +256,16 @@ const UpdateTestcase = () => {
     }
     // --- End Change Detection ---
 
-
     if (!hasFieldChanges) {
       toast.info("No changes were detected."); return;
     }
 
-    // Open the confirmation modal
     setIsConfirmModalOpen(true);
   };
 
-  // --- Function called when Confirm button in Modal is clicked ---
   const handleConfirmUpdate = () => {
-    setIsConfirmModalOpen(false); // Close modal
-    proceedWithUpdate();        // Call update logic
+    setIsConfirmModalOpen(false);
+    proceedWithUpdate();
   };
 
   // --- Render Logic ---
@@ -287,12 +275,11 @@ const UpdateTestcase = () => {
     <div className="tc-create-container">
       <h2 className="tc-create-header">
         <FontAwesomeIcon icon={faVial} className="tc-create-header-icon" />
-        Edit Test Case (ID: {testcaseId})
+        Edit Test Case (ID: {formatTestcaseId(testcaseId)})
       </h2>
 
       {error && <div className="tc-create-error">{error}</div>}
 
-      {/* --- Form Fields --- */}
       {/* Title */}
       <div className="tc-create-form-group">
         <label className="tc-create-label"><FontAwesomeIcon icon={faFileAlt} className="tc-create-label-icon" /> Title</label>
@@ -303,11 +290,29 @@ const UpdateTestcase = () => {
         <label className="tc-create-label"><FontAwesomeIcon icon={faFileAlt} className="tc-create-label-icon" /> Description</label>
         <textarea name="testcase_des" className="tc-create-textarea" value={testcase.testcase_des || ''} onChange={handleChange} placeholder="Enter detailed test case description" rows="4" required />
       </div>
+
+      {/* Implement Select */}
+      <div className="tc-create-form-group">
+        <label className="tc-create-label"><FontAwesomeIcon icon={faFileAlt} className="tc-create-label-icon" /> Select Code Component</label>
+        <Select
+          className="tc-create-select-multi"
+          classNamePrefix="tc-select"
+          isMulti
+          options={implementFiles.map(item => ({
+            value: item.implement_id,
+            label: `📄 ${item.implement_filename} (ID: ${item.implement_id})`
+          }))}
+          value={selectedImplement} // Use state for react-select
+          onChange={handleSelectChange}
+          placeholder="Select one or more implements..."
+          closeMenuOnSelect={false}
+        />
+      </div>
       {/* Test Type */}
       <div className="tc-create-form-group">
         <label className="tc-create-label"><FontAwesomeIcon icon={faTag} className="tc-create-label-icon" /> Test Type</label>
         <select name="testcase_type" className="tc-create-select" value={testcase.testcase_type || ''} onChange={handleChange} required>
-          <option value="">Select Test Type</option><option value="Unit Test">Unit Test</option><option value="Integration Test">Integration Test</option><option value="System Test">System Test</option><option value="Acceptance Test">Acceptance Test</option><option value="Other">Other</option>
+          <option value="">Select Test Type</option><option value="Unit Test">Unit Test</option><option value="Integration Test">Integration Test</option><option value="System Test">System Test</option><option value="Acceptance Test">Acceptance Test</option><option value="Regression Test">Regression Test</option><option value="Other">Other</option>
         </select>
       </div>
       {/* Priority */}
@@ -322,26 +327,8 @@ const UpdateTestcase = () => {
         <label className="tc-create-label"><FontAwesomeIcon icon={faCalendarAlt} className="tc-create-label-icon" /> Test Completion Date</label>
         <input type="date" name="testcase_at" className="tc-create-input" value={testcase.testcase_at || ''} onChange={handleChange} required />
       </div>
-      {/* Implement Select */}
-      <div className="tc-create-form-group">
-        <label className="tc-create-label"><FontAwesomeIcon icon={faFileAlt} className="tc-create-label-icon" /> Select Implement (Multiple)</label>
-        <Select
-          className="tc-create-select-multi"
-          classNamePrefix="tc-select"
-          isMulti
-          options={implementFiles.map(item => ({
-            value: item.implement_id,
-            // Ensure emoji is here for dropdown consistency
-            label: `📄 ${item.implement_filename} (ID: ${item.implement_id})`
-          }))}
-          value={selectedImplement} // Directly use the state controlling the select
-          onChange={handleSelectChange}
-          placeholder="Select one or more implements..."
-          closeMenuOnSelect={false}
-        />
-      </div>
 
-      {/* --- Buttons --- */}
+      {/* Buttons */}
       <div className="tc-create-button-group">
         <button
           onClick={() => {
@@ -364,7 +351,7 @@ const UpdateTestcase = () => {
         </button>
       </div>
 
-      {/* --- Render Custom Modal --- */}
+      {/* Render Custom Modal */}
       <ConfirmUpdateTestcase
         isOpen={isConfirmModalOpen}
         onClose={() => setIsConfirmModalOpen(false)}

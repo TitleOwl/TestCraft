@@ -24,32 +24,32 @@ const CurrentBaselineTrace = () => {
     const projectId = queryParams.get("project_id");
 
     // --- Fetch Data Effect (Logic remains the same) ---
-     const fetchLatestBaseline = useCallback(async () => {
-         setLoading(true); setError(''); setLatestBaselineEntry(null); setProjectName('');
-         if (!projectId) { setError('Project ID missing.'); setLoading(false); return; }
-         try {
-              try {
-                  const nameResponse = await axios.get(`http://localhost:3001/projectname?project_id=${projectId}`);
-                  setProjectName((nameResponse.data && nameResponse.data.length > 0) ? nameResponse.data[0].project_name : `Project ${projectId}`);
-              } catch (nameError) { setProjectName(`Project ${projectId}`); }
-              const response = await axios.get(`http://localhost:3001/viewBaselineTrace?project_id=${projectId}`);
-              if (response.data && response.data.success) {
-                  const allBaselineData = Array.isArray(response.data.data) ? response.data.data : [];
-                  if (allBaselineData.length > 0) {
-                      const sortedBaselines = [...allBaselineData].sort((a, b) => b.baselinetrace_round - a.baselinetrace_round);
-                      setLatestBaselineEntry(sortedBaselines[0]); setError('');
-                  } else { setError('No baseline configured.'); setLatestBaselineEntry(null); }
-              } else { throw new Error(response.data?.message || 'Unexpected data structure.'); }
-          } catch (fetchError) {
-              let errorMessage = '';
-               if (fetchError.response) { errorMessage = `Error: ${fetchError.response.data?.message || `Status ${fetchError.response.status}`}`; }
-               else if (fetchError.request) { errorMessage = 'Error: No response from server.'; }
-               else { errorMessage = `Error: ${fetchError.message}`; }
-               setError(errorMessage); setLatestBaselineEntry(null);
-          } finally { setLoading(false); }
-      }, [projectId]);
+    const fetchLatestBaseline = useCallback(async () => {
+        setLoading(true); setError(''); setLatestBaselineEntry(null); setProjectName('');
+        if (!projectId) { setError('Project ID missing.'); setLoading(false); return; }
+        try {
+            try {
+                const nameResponse = await axios.get(`http://localhost:3001/projectname?project_id=${projectId}`);
+                setProjectName((nameResponse.data && nameResponse.data.length > 0) ? nameResponse.data[0].project_name : `Project ${projectId}`);
+            } catch (nameError) { setProjectName(`Project ${projectId}`); }
+            const response = await axios.get(`http://localhost:3001/viewBaselineTrace?project_id=${projectId}`);
+            if (response.data && response.data.success) {
+                const allBaselineData = Array.isArray(response.data.data) ? response.data.data : [];
+                if (allBaselineData.length > 0) {
+                    const sortedBaselines = [...allBaselineData].sort((a, b) => b.baselinetrace_round - a.baselinetrace_round);
+                    setLatestBaselineEntry(sortedBaselines[0]); setError('');
+                } else { setError('No baseline configured.'); setLatestBaselineEntry(null); }
+            } else { throw new Error(response.data?.message || 'Unexpected data structure.'); }
+        } catch (fetchError) {
+            let errorMessage = '';
+            if (fetchError.response) { errorMessage = `Error: ${fetchError.response.data?.message || `Status ${fetchError.response.status}`}`; }
+            else if (fetchError.request) { errorMessage = 'Error: No response from server.'; }
+            else { errorMessage = `Error: ${fetchError.message}`; }
+            setError(errorMessage); setLatestBaselineEntry(null);
+        } finally { setLoading(false); }
+    }, [projectId]);
 
-      useEffect(() => { fetchLatestBaseline(); }, [fetchLatestBaseline]);
+    useEffect(() => { fetchLatestBaseline(); }, [fetchLatestBaseline]);
 
     // --- Handlers (Logic remains the same) ---
     const handleViewRound = (round) => { navigate(`/viewBaselineCurrent?project_id=${projectId}&round=${round}`); };
@@ -66,13 +66,13 @@ const CurrentBaselineTrace = () => {
         <div className="cbt-container">
             {/* Header */}
             <div className="cbt-header">
-                 <button className="cbt-back-btn" onClick={handleBack} aria-label="Go back">
+                <button className="cbt-back-btn" onClick={handleBack} aria-label="Go back">
                     <FontAwesomeIcon icon={faArrowLeft} /> Back
-                 </button>
-                 <h1 className="cbt-title">
+                </button>
+                <h1 className="cbt-title">
                     <FontAwesomeIcon icon={faStar} className="cbt-title-icon" />
-                     Current Baseline: {projectName || 'Loading...'}
-                 </h1>
+                    Current Traceability Baseline
+                </h1>
             </div>
 
             {/* Content Area */}
@@ -91,39 +91,39 @@ const CurrentBaselineTrace = () => {
                 ) : latestBaselineEntry ? (
                     <div className="cbt-summary-box"> {/* Use cbt- prefix */}
                         <div className="cbt-summary-item">
-                             <span className="cbt-summary-label">
-                                 <FontAwesomeIcon icon={faLayerGroup} /> Baseline Round:
-                             </span>
-                             <span className="cbt-summary-value cbt-round-value">
-                                 {`BL-${latestBaselineEntry.baselinetrace_round}`}
-                             </span>
-                         </div>
-                         <div className="cbt-summary-item">
-                             <span className="cbt-summary-label">
-                                 <FontAwesomeIcon icon={faUser} /> Set By:
-                             </span>
-                             <span className="cbt-summary-value">
-                                 {latestBaselineEntry.baselinetrace_by || 'N/A'}
-                             </span>
-                         </div>
-                         <div className="cbt-summary-item">
-                             <span className="cbt-summary-label">
-                                 <FontAwesomeIcon icon={faCalendarCheck} /> Set At:
-                             </span>
-                             <span className="cbt-summary-value">
-                                 {formatDate(latestBaselineEntry.baselinetrace_at)}
-                             </span>
-                         </div>
-                         <div className="cbt-summary-actions">
-                             <button
-                                 className="cbt-action-button cbt-view-button" /* Use cbt- prefix */
-                                 onClick={() => handleViewRound(latestBaselineEntry.baselinetrace_round)}
-                                 title={`View details for baseline round ${latestBaselineEntry.baselinetrace_round}`}
-                                 aria-label={`View baseline round ${latestBaselineEntry.baselinetrace_round}`} >
-                                 <FontAwesomeIcon icon={faEye} /> View Details
-                             </button>
-                         </div>
-                     </div>
+                            <span className="cbt-summary-label">
+                                <FontAwesomeIcon icon={faLayerGroup} /> Baseline Round:
+                            </span>
+                            <span className="cbt-summary-value cbt-round-value">
+                                {`BL-${latestBaselineEntry.baselinetrace_round}`}
+                            </span>
+                        </div>
+                        <div className="cbt-summary-item">
+                            <span className="cbt-summary-label">
+                                <FontAwesomeIcon icon={faUser} /> Set Baseline By:
+                            </span>
+                            <span className="cbt-summary-value">
+                                {latestBaselineEntry.baselinetrace_by || 'N/A'}
+                            </span>
+                        </div>
+                        <div className="cbt-summary-item">
+                            <span className="cbt-summary-label">
+                                <FontAwesomeIcon icon={faCalendarCheck} /> Set Baseline At:
+                            </span>
+                            <span className="cbt-summary-value">
+                                {formatDate(latestBaselineEntry.baselinetrace_at)}
+                            </span>
+                        </div>
+                        <div className="cbt-summary-actions">
+                            <button
+                                className="cbt-action-button cbt-view-button" /* Use cbt- prefix */
+                                onClick={() => handleViewRound(latestBaselineEntry.baselinetrace_round)}
+                                title={`View details for baseline round ${latestBaselineEntry.baselinetrace_round}`}
+                                aria-label={`View baseline round ${latestBaselineEntry.baselinetrace_round}`} >
+                                <FontAwesomeIcon icon={faEye} /> View Details
+                            </button>
+                        </div>
+                    </div>
                 ) : (
                     <div className="cbt-no-data"><p>Could not determine the current baseline.</p></div> /* Use cbt- prefix */
                 )}

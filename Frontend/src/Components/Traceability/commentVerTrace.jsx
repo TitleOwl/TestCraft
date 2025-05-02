@@ -88,10 +88,6 @@ const CommentVerTrace = ({ projectId, round }) => {
     return (
         // ใช้ comment-traceability-section เป็น Class นอกสุด
         <div className="comment-traceability-section" style={{ marginTop: '30px', paddingTop: '20px', borderTop: '1px solid #eee' }}>
-            <h3>Comments for Round {round}</h3>
-
-            {/* ส่วนแสดง Comment ที่มีอยู่ */}
-            {/* ใช้ comment-traceability-list-container */}
             <div className="comment-traceability-list-container" style={{ marginBottom: '15px', maxHeight: '250px', overflowY: 'auto', border: '1px solid #ccc', padding: '15px', borderRadius: '4px', background: '#f9f9f9' }}>
                 {/* ใช้ comment-traceability-loading */}
                 {isLoadingComments && <p className="comment-traceability-loading">Loading comments...</p>}
@@ -111,13 +107,12 @@ const CommentVerTrace = ({ projectId, round }) => {
                                 <p className="comment-traceability-text" style={{ margin: '0 0 5px 0', whiteSpace: 'pre-wrap' }}>{comment.comment_text}</p>
                                 {/* ใช้ comment-traceability-meta */}
                                 <span className="comment-traceability-meta" style={{ fontSize: '0.85em', color: '#555' }}>
-                                    {/* ใช้ comment-traceability-author */}
                                     By: <strong className="comment-traceability-author" style={{ color: '#333' }}>{comment.comment_by}</strong> at {comment.comment_at ? format(new Date(comment.comment_at), 'yyyy-MM-dd HH:mm:ss') : 'N/A'}
                                     <button
                                         onClick={() => handleDeleteComment(comment.comment_id, comment.comment_by)}
                                         title="Delete Comment"
                                         className="comment-traceability-delete-btn"
-                                        style={{ marginLeft: '10px', color: '#dc3545', background: 'none', border: 'none', cursor: 'pointer', padding: '0 2px', fontSize: '0.9em' }}
+                                        style={{ marginLeft: '10px', color: '#dc3545', background: 'none', border: 'none', cursor: 'pointer', padding: '0 1px', fontSize: '1.2em' }}
                                     >
                                         <FontAwesomeIcon icon={faTrashAlt} size="xs" />
                                     </button>

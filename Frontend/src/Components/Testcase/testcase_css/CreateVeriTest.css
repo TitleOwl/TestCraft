@@ -493,6 +493,11 @@ body {
     /* Fresh Green */
 }
 
+.type-regression-test {
+    background-color: #fa5555;
+    /* Orange */
+}
+
 .type-system-test {
     background-color: #FFA726;
     /* Orange */

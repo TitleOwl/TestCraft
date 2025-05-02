@@ -91,16 +91,16 @@ const ViewBaselineRound = () => {
                 })
                 .catch(errorInstance => {
                     console.error('Error fetching baseline trace detail:', errorInstance);
-                     let errorMessage = '';
-                     if (errorInstance.response) {
-                         errorMessage = `Error: ${errorInstance.response.data?.message || `Status ${errorInstance.response.status}`}`;
-                     } else if (errorInstance.request) {
-                         errorMessage = 'Error: No response from server.';
-                     } else {
-                         errorMessage = `Error: ${errorInstance.message}`;
-                     }
-                     setError(errorMessage);
-                     setNestedData([]);
+                    let errorMessage = '';
+                    if (errorInstance.response) {
+                        errorMessage = `Error: ${errorInstance.response.data?.message || `Status ${errorInstance.response.status}`}`;
+                    } else if (errorInstance.request) {
+                        errorMessage = 'Error: No response from server.';
+                    } else {
+                        errorMessage = `Error: ${errorInstance.message}`;
+                    }
+                    setError(errorMessage);
+                    setNestedData([]);
                 })
                 .finally(() => {
                     setLoading(false);
@@ -115,8 +115,12 @@ const ViewBaselineRound = () => {
     const displayRows = useMemo(() => flattenNestedDataForTable(nestedData), [nestedData]);
 
     const handleBack = () => {
-        navigate(`/viewBaselineTrace?project_id=${projectId}`);
-    }
+        if (window.history.length > 1) {
+            navigate(-1);
+        } else {
+            navigate(`/viewBaselineTrace?project_id=${projectId}`);
+        }
+    };
 
     // --- Render Logic ---
     return (
@@ -128,7 +132,7 @@ const ViewBaselineRound = () => {
                 </button>
                 <h1 className="vbr-title">
                     <FontAwesomeIcon icon={faFileLines} className="vbr-title-icon" />
-                    Baseline Traceability Details - Round {round || 'N/A'}
+                    Baseline Traceability Record - Round {round || 'N/A'}
                 </h1>
                 {/* No extra buttons needed in this header */}
             </div>
@@ -142,10 +146,10 @@ const ViewBaselineRound = () => {
                     </div>
                 ) : error ? (
                     <div className="vbr-error-message">
-                         <FontAwesomeIcon icon={faExclamationTriangle} size="2x" />
-                         <p>Error Loading Data</p>
-                         <span className="vbr-error-details">{error}</span>
-                         {/* Optionally add retry button */}
+                        <FontAwesomeIcon icon={faExclamationTriangle} size="2x" />
+                        <p>Error Loading Data</p>
+                        <span className="vbr-error-details">{error}</span>
+                        {/* Optionally add retry button */}
                     </div>
                 ) : displayRows.length === 0 ? (
                     // Specific message for no data *after* successful load
@@ -196,7 +200,7 @@ const ViewBaselineRound = () => {
                                                             <div className="vbr-item-detail">{row.implFile}</div>
                                                         )}
                                                     </>
-                                                ) : ( "-" )}
+                                                ) : ("-")}
                                             </td>
                                         )}
                                         {/* Test Case Cell */}

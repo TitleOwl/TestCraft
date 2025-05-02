@@ -44,7 +44,6 @@ const TestcasePage = () => {
     const [activeTab, setActiveTab] = useState("testcases");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [testCaseToDeleteId, setTestCaseToDeleteId] = useState(null);
-
     // --- Tutorial State ---
     const [runTutorial, setRunTutorial] = useState(false);
     const [tutorialSteps] = useState([
@@ -54,7 +53,7 @@ const TestcasePage = () => {
             placement: 'bottom',
             disableBeacon: true,
         },
-         {
+        {
             // Target the view button of the first row
             // Ensure table has data for this selector to work
             target: '.testcase-table tbody tr:first-child .testcase-view',
@@ -92,10 +91,10 @@ const TestcasePage = () => {
             placement: 'bottom',
         },
         {
-          target: '.testcase-execution-button',
-          content: 'ไปที่หน้า Test Execution เพื่อเริ่มหรือดูผลการทดสอบ Test Case',
-          placement: 'bottom',
-      },
+            target: '.testcase-execution-button',
+            content: 'ไปที่หน้า Test Execution เพื่อเริ่มหรือดูผลการทดสอบ Test Case',
+            placement: 'bottom',
+        },
     ]);
 
     const handleRestartTutorial = () => {
@@ -107,10 +106,10 @@ const TestcasePage = () => {
         // Check if tutorial has been shown before
         const tutorialShown = localStorage.getItem('testcasePageTutorialShown');
         if (!tutorialShown) {
-             const timer = setTimeout(() => {
+            const timer = setTimeout(() => {
                 setRunTutorial(true); // Start tutorial on first visit
-             }, 500); // Delay slightly
-             return () => clearTimeout(timer);
+            }, 500); // Delay slightly
+            return () => clearTimeout(timer);
         }
 
         fetchProjectDetails();
@@ -239,7 +238,7 @@ const TestcasePage = () => {
             // --- Use Toastify for Success ---
             toast.success("Test Case deleted successfully.", {
                 // position: "top-right", // Optional: configure position
-                 autoClose: 3000,     // Optional: auto close after 3 seconds
+                autoClose: 3000,     // Optional: auto close after 3 seconds
             });
 
         } catch (error) {
@@ -247,7 +246,7 @@ const TestcasePage = () => {
             // --- Use Toastify for Error ---
             toast.error("ลบ Test Case ไม่สำเร็จ ลองใหม่อีกครั้ง", {
                 // position: "top-right",
-                 autoClose: 5000,
+                autoClose: 5000,
             });
         }
     };
@@ -288,12 +287,26 @@ const TestcasePage = () => {
                         <div className="testcase-project-title">
                             <h1 className="testcase-project-name">{projectName || "Project"}</h1>
                             <span className="testcase-badge">TEST CASE MANAGEMENT</span>
-                             {/* Tutorial Trigger Button */}
-                             <button
+                            {/* Tutorial Trigger Button */}
+                            <button
                                 onClick={handleRestartTutorial}
-                                className="tutorial-help-button tutorial-help-button-corner" // Add appropriate classes
+                                className="tutorial-help-button tutorial-help-button-corner"
                                 title="Show Tutorial"
-                                style={{ marginLeft: '15px', background: 'none', border: 'none', cursor: 'pointer', color: '#007bff', fontSize: '1.2em' }} // Basic inline style example
+                                style={{
+                                    marginLeft: '15px',
+                                    border: 'none',
+                                    color: 'white',
+                                    padding: '8px 12px',
+                                    fontSize: '1.7em',
+                                    cursor: 'pointer',
+                                    transition: 'transform 0.2s ease',
+                                }}
+                                onMouseOver={(e) => {
+                                    e.currentTarget.style.transform = 'scale(1.05)';
+                                }}
+                                onMouseOut={(e) => {
+                                    e.currentTarget.style.transform = 'scale(1)';
+                                }}
                             >
                                 <FontAwesomeIcon icon={faQuestionCircle} />
                             </button>
@@ -390,12 +403,12 @@ const TestcasePage = () => {
                     </select>
 
                     {/* Moved Add Test Case button to the right for consistency? Or keep it here? Let's keep it here as per the code */}
-                     <button className="testcase-create-button" onClick={handleCreateTestcase}>
+                    <button className="testcase-create-button" onClick={handleCreateTestcase}>
                         <FontAwesomeIcon icon={faPlus} style={{ marginRight: '8px' }} />
                         Add Test Case
                     </button>
                 </div>
-                 {/* If Add button should be on right, move it here
+                {/* If Add button should be on right, move it here
                  <div className="testcase-toolbar-right">
                     <button className="testcase-create-button" onClick={handleCreateTestcase}>
                         <FontAwesomeIcon icon={faPlus} style={{ marginRight: '8px' }} />

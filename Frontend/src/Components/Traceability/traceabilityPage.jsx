@@ -13,16 +13,8 @@ import {
     faEyeSlash, faChevronUp, faChevronDown, faSlidersH
     // REMOVED: faDownload, faFileExport, faFileCsv (as per original removal)
 } from "@fortawesome/free-solid-svg-icons";
-
-// --- CSS Import ---
-// <<< ตรวจสอบ Path ของไฟล์ CSS ให้ถูกต้อง >>>
 import './CSS/traceabilityPage.css';
 
-// ========================================================================
-// Constants & Configuration
-// ========================================================================
-
-/** Mapping for column data keys, labels, and sorting */
 const columnKeyMap = {
     req: { id: 'reqId', name: 'reqName', status: 'reqStatus', sortKey: 'reqId', label: 'Requirement' },
     design: { id: 'designId', name: 'designName', status: 'designStatus', sortKey: 'designId', label: 'Design' },
@@ -54,32 +46,18 @@ const tutorialSteps = [
     { target: '.TRACE-tutorial-button', content: 'เริ่ม Tutorial นี้ใหม่ได้ทุกเมื่อ', placement: 'left' },
 ];
 
-
-// ========================================================================
-// Helper Functions (Data Processing)
-// ========================================================================
-
-/**
- * Filters traceability data based on search term and target type.
- */
 const filterTraceabilityData = (data, searchTerm, searchTargetType) => {
     if (!data) return []; const lowerSearchTerm = searchTerm?.trim().toLowerCase() || ''; if (!lowerSearchTerm || !searchTargetType) { return data; }
     const checkMatch = (item, term, idKey, nameKey, prefix = '') => { if (!item || !term) return false; const termWithoutPrefix = prefix && term.startsWith(prefix.toLowerCase()) ? term.substring(prefix.length) : term; const idString = item[idKey]?.toString() || ''; const idMatch = idString === term || (termWithoutPrefix && idString === termWithoutPrefix); const nameString = item[nameKey]?.toLowerCase() || ''; const nameMatch = nameString.includes(term); return idMatch || nameMatch; };
     return data.filter(r => { switch (searchTargetType) { case 'req': return checkMatch(r, lowerSearchTerm, 'RequirementID', 'RequirementName', 'req-'); case 'design': return r.Designs?.some(d => checkMatch(d, lowerSearchTerm, 'DesignID', 'DiagramName', 'de-')); case 'impl': return r.Designs?.some(d => d.Implementations?.some(i => checkMatch(i, lowerSearchTerm, 'ImplementID', 'ImplementFilename', 'imp-'))); case 'test': return r.Designs?.some(d => d.Implementations?.some(i => i.TestCases?.some(t => checkMatch(t, lowerSearchTerm, 'TestCaseID', 'TestCaseName', 'tc-')))); default: return true; } });
 };
 
-/**
- * Generates flattened rows for forward traceability display (Req -> Test).
- */
 const generateForwardDisplayRows = (nestedData) => {
     const flatRows = []; if (!nestedData || nestedData.length === 0) return flatRows; let keyCounter = 0;
     nestedData.forEach(req => { let reqStartIndex = flatRows.length; let reqRowCount = 0; const reqId = req.RequirementID; const reqName = req.RequirementName || `Requirement ${reqId}`; const reqStatus = req.RequirementStatus || '-'; const baseKeyPrefix = `fwd-req-${reqId}`; if (!req.Designs || req.Designs.length === 0) { reqRowCount = 1; flatRows.push({ key: `${baseKeyPrefix}-no-design-${keyCounter++}`, reqId, reqName, reqStatus, designId: "-", designName: "-", designStatus: "-", implId: "-", implFile: "-", testCaseId: "-", testCaseName: "-", testCaseStatus: "-", isFirstReqRow: true, reqRowSpan: 1, isFirstDesignRow: true, designRowSpan: 1, isFirstImplRow: true, implRowSpan: 1, isFirstTestRow: true, testRowSpan: 1 }); } else { req.Designs.forEach((design) => { let designStartIndex = flatRows.length; let designRowCount = 0; const designId = design.DesignID; const designName = design.DiagramName || `Design ${designId}`; const designStatus = design.DesignStatus || '-'; const designKeyPrefix = `${baseKeyPrefix}-design-${designId}`; if (!design.Implementations || design.Implementations.length === 0) { designRowCount = 1; flatRows.push({ key: `${designKeyPrefix}-no-impl-${keyCounter++}`, reqId, reqName, reqStatus, designId, designName, designStatus, implId: "-", implFile: "-", testCaseId: "-", testCaseName: "-", testCaseStatus: "-", isFirstReqRow: reqRowCount === 0, reqRowSpan: 0, isFirstDesignRow: true, designRowSpan: 1, isFirstImplRow: true, implRowSpan: 1, isFirstTestRow: true, testRowSpan: 1 }); reqRowCount++; } else { design.Implementations.forEach((impl) => { let implStartIndex = flatRows.length; let implRowCount = 0; const implId = impl.ImplementID; const implFile = impl.ImplementFilename || 'N/A'; const implKeyPrefix = `${designKeyPrefix}-impl-${implId}`; if (!impl.TestCases || impl.TestCases.length === 0) { implRowCount = 1; flatRows.push({ key: `${implKeyPrefix}-no-tc-${keyCounter++}`, reqId, reqName, reqStatus, designId, designName, designStatus, implId, implFile, testCaseId: "-", testCaseName: "-", testCaseStatus: "-", isFirstReqRow: reqRowCount === 0, reqRowSpan: 0, isFirstDesignRow: designRowCount === 0, designRowSpan: 0, isFirstImplRow: true, implRowSpan: 1, isFirstTestRow: true, testRowSpan: 1 }); reqRowCount++; designRowCount++; } else { impl.TestCases.forEach((tc, tcIdx) => { const tcId = tc.TestCaseID; const tcName = tc.TestCaseName || `Test Case ${tcId}`; const testCaseStatus = tc.TestCaseStatus || '-'; flatRows.push({ key: `${implKeyPrefix}-tc-${tcId}-${keyCounter++}`, reqId, reqName, reqStatus, designId, designName, designStatus, implId, implFile, testCaseId: tcId, testCaseName: tcName, testCaseStatus, isFirstReqRow: reqRowCount === 0 && tcIdx === 0, reqRowSpan: 0, isFirstDesignRow: designRowCount === 0 && tcIdx === 0, designRowSpan: 0, isFirstImplRow: implRowCount === 0 && tcIdx === 0, implRowSpan: 0, isFirstTestRow: true, testRowSpan: 1 }); reqRowCount++; designRowCount++; implRowCount++; }); if (implStartIndex < flatRows.length && implRowCount > 0) { flatRows[implStartIndex].implRowSpan = implRowCount; flatRows[implStartIndex].isFirstImplRow = true; } } }); if (designStartIndex < flatRows.length && designRowCount > 0) { flatRows[designStartIndex].designRowSpan = designRowCount; flatRows[designStartIndex].isFirstDesignRow = true; } } }); if (reqStartIndex < flatRows.length && reqRowCount > 0) { flatRows[reqStartIndex].reqRowSpan = reqRowCount; flatRows[reqStartIndex].isFirstReqRow = true; } } if (reqStartIndex < flatRows.length && !flatRows[reqStartIndex].isFirstReqRow) { flatRows[reqStartIndex].isFirstReqRow = true; } });
     return flatRows;
 };
 
-/**
- * Generates flattened rows for backward traceability display (Test -> Req).
- */
 const generateBackwardDisplayRows = (nestedData) => {
     const backwardMap = new Map(); if (!nestedData || nestedData.length === 0) return [];
     nestedData.forEach(req => { const reqId = req.RequirementID; const reqName = req.RequirementName || `Requirement ${reqId}`; const reqStatus = req.RequirementStatus || '-'; req.Designs?.forEach(design => { const designId = design.DesignID; const designName = design.DiagramName || `Design ${designId}`; const designStatus = design.DesignStatus || '-'; design.Implementations?.forEach(impl => { const implId = impl.ImplementID; const implFile = impl.ImplementFilename || 'N/A'; impl.TestCases?.forEach(tc => { const tcId = tc.TestCaseID; const tcName = tc.TestCaseName || `Test Case ${tcId}`; const testCaseStatus = tc.TestCaseStatus || '-'; if (!backwardMap.has(tcId)) { backwardMap.set(tcId, { testCaseName: tcName, testCaseStatus, implementations: new Map() }); } const testEntry = backwardMap.get(tcId); testEntry.testCaseStatus = testCaseStatus; if (!testEntry.implementations.has(implId)) { testEntry.implementations.set(implId, { implFile, designs: new Map() }); } const implEntry = testEntry.implementations.get(implId); if (!implEntry.designs.has(designId)) { implEntry.designs.set(designId, { designName, designStatus, requirements: new Map() }); } const designEntry = implEntry.designs.get(designId); designEntry.designStatus = designStatus; if (!designEntry.requirements.has(reqId)) { designEntry.requirements.set(reqId, { reqName, reqStatus }); } designEntry.requirements.get(reqId).reqStatus = reqStatus; }); }); }); });
@@ -88,13 +66,7 @@ const generateBackwardDisplayRows = (nestedData) => {
     return flatRows;
 };
 
-
-// ========================================================================
-// RenderTraceabilityTable Sub-Component
-// Responsible for rendering the interactive traceability table.
-// ========================================================================
 const RenderTraceabilityTable = ({
-    // title prop removed as it wasn't used in final layout
     rawData, // The raw nested data for this table (baseline or WIP)
     showActionButtons, // Whether to show view/edit buttons in cells
     projectId, // Current project ID
@@ -118,6 +90,7 @@ const RenderTraceabilityTable = ({
     const [tableDensity, setTableDensity] = useState('normal');
     const [showCellDetails, setShowCellDetails] = useState(true);
     const [isControlsCollapsed, setIsControlsCollapsed] = useState(false);
+    const formatIdWithPrefix = (prefix, id) => `${prefix}-${String(id).padStart(3, '0')}`;
 
     // --- Derived State & Memoized Values ---
     const defaultViewOptions = useMemo(() => ({
@@ -276,18 +249,133 @@ const RenderTraceabilityTable = ({
     };
 
     const renderCellContent = (row, colKey) => {
-        const cfg = columnKeyMap[colKey]; if (!cfg) return <span className="TRACE-placeholder">-</span>; const id = row[cfg.id]; const name = row[cfg.name]; const status = cfg.status ? row[cfg.status] : undefined;
-        if (id === "-" || id == null) { return <span className="TRACE-placeholder">-</span>; } let prefix = ''; if (colKey === 'req') prefix = 'REQ-'; else if (colKey === 'design') prefix = 'DE-'; else if (colKey === 'impl') prefix = 'IMP-'; else if (colKey === 'test') prefix = 'TC-';
-        let displayName = ''; if (showCellDetails) { if (colKey === 'impl') { displayName = name && name !== 'N/A' ? name : ''; } else { const defaultNamePattern = `${colKey.charAt(0).toUpperCase() + colKey.slice(1)} ${id}`; displayName = name && name !== defaultNamePattern && name !== '-' ? name : ''; } }
-        const renderStatusBadge = (st) => { if (!st || st === "-") return null; let statusClass = 'TRACE-status-neutral'; const lowerStatus = String(st).toLowerCase(); if (['approved', 'passed', 'complete', 'verified', 'validated', 'baseline', 'done', 'closed'].includes(lowerStatus)) { statusClass = 'TRACE-status-positive'; } else if (['rejected', 'failed', 'error', 'blocked', 'cancelled', 'invalid'].includes(lowerStatus)) { statusClass = 'TRACE-status-negative'; } return (<span className={`TRACE-status-badge ${statusClass}`}>{st}</span>); };
-        return (<> <div className="TRACE-item-id">{`${prefix}${id}`}</div> {displayName && <div className="TRACE-item-name">{displayName}</div>} {showCellDetails && status !== undefined && renderStatusBadge(status)}
-            {showActionButtons && id !== "-" && (<div className="TRACE-inline-actions">
-                {colKey === 'req' && (<> <button onClick={() => navigate(`/ViewEditReq?requirement_id=${id}`)} title={`View ${prefix}${id}`} className="TRACE-action-button TRACE-action-view"><FontAwesomeIcon icon={faEye} /></button> <button onClick={() => navigate(`/UpdateRequirement?project_id=${projectId}&requirement_id=${id}`)} title={`Edit ${prefix}${id}`} className="TRACE-action-button TRACE-action-edit"><FontAwesomeIcon icon={faPen} /></button> </>)}
-                {colKey === 'design' && (<> <button onClick={() => navigate(`/ViewDesign?project_id=${projectId}&design_id=${id}`)} title={`View ${prefix}${id}`} className="TRACE-action-button TRACE-action-view"><FontAwesomeIcon icon={faEye} /></button> <button onClick={() => navigate(`/UpdateDesign?project_id=${projectId}&design_id=${id}`)} title={`Edit ${prefix}${id}`} className="TRACE-action-button TRACE-action-edit"><FontAwesomeIcon icon={faPen} /></button> </>)}
-                {colKey === 'impl' && (<span className="TRACE-placeholder" style={{ fontSize: '0.8em', color: 'var(--trace-text-light)' }}></span>)}
-                {colKey === 'test' && (<> <button className="TRACE-action-button TRACE-action-view" onClick={() => navigate(`/TestcaseDetail?testcase_id=${id}&project_id=${projectId}`, { state: { testcase: { testcase_id: id, testcase_name: name, testcase_status: status, project_id: projectId }, projectId } })} title={`View ${prefix}${id}`}><FontAwesomeIcon icon={faEye} /></button> <button className="TRACE-action-button TRACE-action-edit" onClick={() => navigate(`/UpdateTestcase?testcase_id=${id}&project_id=${projectId}`)} title={`Edit ${prefix}${id}`}><FontAwesomeIcon icon={faPen} /></button> </>)}
-            </div>)} </>);
+        const cfg = columnKeyMap[colKey];
+        if (!cfg) return <span className="TRACE-placeholder">-</span>;
+
+        const id = row[cfg.id];
+        const name = row[cfg.name];
+        const status = cfg.status ? row[cfg.status] : undefined;
+
+        if (id === "-" || id == null) {
+            return <span className="TRACE-placeholder">-</span>;
+        }
+
+        // ใช้ฟังก์ชัน formatIdWithPrefix เพื่อแสดง id ในรูปแบบที่ต้องการ
+        let prefix = '';
+        if (colKey === 'req') prefix = 'REQ';
+        else if (colKey === 'design') prefix = 'SD';
+        else if (colKey === 'impl') prefix = 'SC';
+        else if (colKey === 'test') prefix = 'TC';
+
+        const formattedId = formatIdWithPrefix(prefix, id);
+
+        let displayName = '';
+        if (showCellDetails) {
+            if (colKey === 'impl') {
+                displayName = name && name !== 'N/A' ? name : '';
+            } else {
+                const defaultNamePattern = `${colKey.charAt(0).toUpperCase() + colKey.slice(1)} ${id}`;
+                displayName = name && name !== defaultNamePattern && name !== '-' ? name : '';
+            }
+        }
+
+        const renderStatusBadge = (st) => {
+            if (!st || st === "-") return null;
+
+            let statusClass = 'TRACE-status-neutral';
+            const lowerStatus = String(st).toLowerCase();
+            if (['approved', 'passed', 'complete', 'verified', 'validated', 'baseline', 'done', 'closed'].includes(lowerStatus)) {
+                statusClass = 'TRACE-status-positive';
+            } else if (['rejected', 'failed', 'error', 'blocked', 'cancelled', 'invalid'].includes(lowerStatus)) {
+                statusClass = 'TRACE-status-negative';
+            }
+
+            return <span className={`TRACE-status-badge ${statusClass}`}>{st}</span>;
+        };
+
+        return (
+            <>
+                <div className="TRACE-item-id">{formattedId}</div>
+                {displayName && <div className="TRACE-item-name">{displayName}</div>}
+                {showCellDetails && status !== undefined && renderStatusBadge(status)}
+
+                {showActionButtons && id !== "-" && (
+                    <div className="TRACE-inline-actions">
+                        {colKey === 'req' && (
+                            <>
+                                <button
+                                    onClick={() => navigate(`/ViewEditReq?requirement_id=${id}`)}
+                                    title={`View ${formattedId}`}
+                                    className="TRACE-action-button TRACE-action-view"
+                                >
+                                    <FontAwesomeIcon icon={faEye} />
+                                </button>
+                                <button
+                                    onClick={() => navigate(`/UpdateRequirement?project_id=${projectId}&requirement_id=${id}`)}
+                                    title={`Edit ${formattedId}`}
+                                    className="TRACE-action-button TRACE-action-edit"
+                                >
+                                    <FontAwesomeIcon icon={faPen} />
+                                </button>
+                            </>
+                        )}
+
+                        {colKey === 'design' && (
+                            <>
+                                <button
+                                    onClick={() => navigate(`/ViewDesign?project_id=${projectId}&design_id=${id}`)}
+                                    title={`View ${formattedId}`}
+                                    className="TRACE-action-button TRACE-action-view"
+                                >
+                                    <FontAwesomeIcon icon={faEye} />
+                                </button>
+                                <button
+                                    onClick={() => navigate(`/UpdateDesign?project_id=${projectId}&design_id=${id}`)}
+                                    title={`Edit ${formattedId}`}
+                                    className="TRACE-action-button TRACE-action-edit"
+                                >
+                                    <FontAwesomeIcon icon={faPen} />
+                                </button>
+                            </>
+                        )}
+
+                        {colKey === 'impl' && (
+                            <span
+                                className="TRACE-placeholder"
+                                style={{ fontSize: '0.8em', color: 'var(--trace-text-light)' }}
+                            ></span>
+                        )}
+
+                        {colKey === 'test' && (
+                            <>
+                                <button
+                                    className="TRACE-action-button TRACE-action-view"
+                                    onClick={() => navigate(`/TestcaseDetail?testcase_id=${id}&project_id=${projectId}`, {
+                                        state: {
+                                            testcase: { testcase_id: id, testcase_name: name, testcase_status: status, project_id: projectId },
+                                            projectId,
+                                        }
+                                    })}
+                                    title={`View ${formattedId}`}
+                                >
+                                    <FontAwesomeIcon icon={faEye} />
+                                </button>
+                                <button
+                                    className="TRACE-action-button TRACE-action-edit"
+                                    onClick={() => navigate(`/UpdateTestcase?testcase_id=${id}&project_id=${projectId}`)}
+                                    title={`Edit ${formattedId}`}
+                                >
+                                    <FontAwesomeIcon icon={faPen} />
+                                </button>
+                            </>
+                        )}
+                    </div>
+                )}
+            </>
+        );
     };
+
+
 
     const renderTableBody = () => {
         if (!processedRows || processedRows.length === 0) { return (<tr> <td colSpan={visibleColumnCount || 1} className="TRACE-no-data"> {isFiltering ? "No items match the current filters." : (rawData?.length === 0 ? "No traceability data found for this project." : "No data available for the current view.")} </td> </tr>); }
@@ -434,7 +522,7 @@ const TraceabilityPage = () => {
                 {/* Tab Bar with Baseline Actions */}
                 <div className="TRACE-header-tab-bar">
                     <div className={`TRACE-header-tab ${activeTab === 'baseline' ? 'TRACE-active' : ''}`} onClick={() => !isLoading && !isRefreshing && setActiveTab('baseline')} role="tab" aria-selected={activeTab === 'baseline'} tabIndex={0} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && !isLoading && !isRefreshing && setActiveTab('baseline')}>
-                        <FontAwesomeIcon icon={faTable} className="TRACE-tab-icon" /> Traceability Record 
+                        <FontAwesomeIcon icon={faTable} className="TRACE-tab-icon" /> Traceability Record
                     </div>
                     <div className={`TRACE-header-tab ${activeTab === 'wip' ? 'TRACE-active' : ''}`} onClick={() => !isLoading && !isRefreshing && setActiveTab('wip')} role="tab" aria-selected={activeTab === 'wip'} tabIndex={0} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && !isLoading && !isRefreshing && setActiveTab('wip')}>
                         <FontAwesomeIcon icon={faProjectDiagram} className="TRACE-tab-icon" /> Work Product Tracking

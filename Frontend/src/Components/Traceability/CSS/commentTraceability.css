@@ -5,7 +5,7 @@
     background-color: #fdfdfd;
     padding: 15px;
     border-radius: 5px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .comment-traceability-section h3 {
@@ -43,44 +43,44 @@
 }
 
 .comment-traceability-text {
-   /* Style สำหรับข้อความ comment */
+    font-size: 1.3em;
     line-height: 1.4;
 }
 
 .comment-traceability-meta {
-   /* Style สำหรับข้อมูล by/at */
+    /* Style สำหรับข้อมูล by/at */
 }
 
 .comment-traceability-author {
-   /* Style สำหรับชื่อผู้ comment */
+    /* Style สำหรับชื่อผู้ comment */
 }
 
 .comment-traceability-form {
-  /* Style สำหรับฟอร์มเพิ่ม comment */
-   margin-top: 15px;
+    /* Style สำหรับฟอร์มเพิ่ม comment */
+    margin-top: 15px;
 }
 
 .comment-traceability-textarea {
-   /* Style สำหรับ textarea */
-   /* สามารถปรับ style ที่ inline ออกมาใส่ที่นี่ได้ */
+    /* Style สำหรับ textarea */
+    /* สามารถปรับ style ที่ inline ออกมาใส่ที่นี่ได้ */
 }
 
 .comment-traceability-button {
-  /* Style สำหรับปุ่ม Add Comment */
-  padding: 8px 15px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s;
+    /* Style สำหรับปุ่ม Add Comment */
+    padding: 8px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
 .comment-traceability-button:hover {
-  background-color: #0056b3;
+    background-color: #0056b3;
 }
 
 .comment-traceability-button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
+    background-color: #cccccc;
+    cursor: not-allowed;
 }

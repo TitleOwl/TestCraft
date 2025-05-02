@@ -45,8 +45,8 @@ const SetBaselineTrace = () => {
                     const uniqueRoundsMap = new Map();
                     filteredData.forEach(item => {
                         if (item && item.create_round !== null && item.create_round !== undefined) {
-                             if (!uniqueRoundsMap.has(item.create_round)) { uniqueRoundsMap.set(item.create_round, item); }
-                         }
+                            if (!uniqueRoundsMap.has(item.create_round)) { uniqueRoundsMap.set(item.create_round, item); }
+                        }
                     });
                     setVerifiedData(Array.from(uniqueRoundsMap.values()).sort((a, b) => a.create_round - b.create_round));
                     setError('');
@@ -54,10 +54,10 @@ const SetBaselineTrace = () => {
             })
             .catch(fetchError => {
                 let errorMessage = '';
-                 if (fetchError.response) { errorMessage = `Error: ${fetchError.response.data?.message || `Status ${fetchError.response.status}`}`; }
-                 else if (fetchError.request) { errorMessage = 'Error: No response from server.'; }
-                 else { errorMessage = `Error: ${fetchError.message}`; }
-                 setError(errorMessage); setVerifiedData([]);
+                if (fetchError.response) { errorMessage = `Error: ${fetchError.response.data?.message || `Status ${fetchError.response.status}`}`; }
+                else if (fetchError.request) { errorMessage = 'Error: No response from server.'; }
+                else { errorMessage = `Error: ${fetchError.message}`; }
+                setError(errorMessage); setVerifiedData([]);
             })
             .finally(() => { setLoading(false); });
     }, [projectId]);
@@ -78,26 +78,26 @@ const SetBaselineTrace = () => {
     };
 
     const handleSetBaseline = (round) => { navigate(`/createBaselineTrace?project_id=${projectId}&round=${round}`); };
-    const handleBack = () => { navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Traceability" } }); };
+    const handleBack = () => {
+        navigate(`/Dashboard?project_id=${projectId}`, {
+            state: { selectedSection: "Traceability" }
+        });
+    };
 
     // --- Render Logic ---
     return (
         <div className="sbt-container"> {/* Use sbt- prefix */}
             {/* Header */}
             <div className="sbt-header">
-                 <button className="sbt-back-btn" onClick={handleBack} aria-label="Go back">
+                <button className="sbt-back-btn" onClick={handleBack} aria-label="Go back">
                     <FontAwesomeIcon icon={faArrowLeft} /> Back
-                 </button>
-                 <h1 className="sbt-title">
-                    <FontAwesomeIcon icon={faCheckSquare} className="sbt-title-icon" />
-                     Select Verified Round to Set as Baseline
-                 </h1>
-                 <span className="sbt-project-name">Project: {projectName || '...'}</span>
-                 {/* Move Set Baseline button here if desired */}
-                 {/* <button className="sbt-set-baseline-btn" onClick={handleSetBaseline} title="Set New Baseline"><FontAwesomeIcon icon={faPlus} /> Set New Baseline </button> */}
+                </button>
+                <h1 className="sbt-title">
+                    Select Verified Round to Create Baseline Traceability Record
+                </h1>
             </div>
 
-             {/* Content Area */}
+            {/* Content Area */}
             <div className="sbt-content">
                 {loading ? ( /* Loading State */
                     <div className="sbt-loading"> <FontAwesomeIcon icon={faSpinner} spin size="2x" /><p>Loading verified records...</p> </div>
@@ -108,7 +108,7 @@ const SetBaselineTrace = () => {
                         <table className="sbt-table">
                             <thead>
                                 <tr>
-                                    <th>Round</th><th>Verified By (Creator)</th><th>Verification Date</th>
+                                    <th>Verification Round</th><th>Verified By</th><th>Verification Date</th>
                                     <th>Status</th><th>Reviewers</th><th className="sbt-action-header">Action</th>
                                 </tr>
                             </thead>
@@ -118,39 +118,39 @@ const SetBaselineTrace = () => {
                                 ) : ( /* Verified Data Rows */
                                     verifiedData.map((item) => {
                                         let formattedDate = 'N/A';
-                                         if(item.verification_at) {
-                                             try {
-                                                 const date = parseISO(item.verification_at);
-                                                 if(isValid(date)) { formattedDate = format(date, 'PP H:mm'); }
-                                             } catch (e) { console.error("Date fmt error", e); }
-                                         }
-                                          let reviewersDisplay = <span className="sbt-no-reviewers">-</span>;
-                                          let reviewerCount = 0;
-                                          if (item.verification_by) {
-                                              try {
-                                                  const parsed = JSON.parse(item.verification_by);
-                                                  reviewerCount = Object.keys(parsed).length;
-                                                  if (reviewerCount > 0) {
-                                                      reviewersDisplay = (
-                                                          <button
-                                                              className="sbt-action-button sbt-view-reviewers-button"
-                                                              onClick={() => handleShowReviewers(item.verification_by)} // Corrected onClick
-                                                              title="View Reviewer Status"
-                                                              aria-label={`View reviewers for round ${item.create_round}`} >
-                                                              <FontAwesomeIcon icon={faUsers} /> ({reviewerCount})
-                                                          </button>
-                                                      );
-                                                  }
-                                              } catch (e) { reviewersDisplay = <span className="sbt-error-text">Err</span>; }
-                                          }
+                                        if (item.verification_at) {
+                                            try {
+                                                const date = parseISO(item.verification_at);
+                                                if (isValid(date)) { formattedDate = format(date, 'PP H:mm'); }
+                                            } catch (e) { console.error("Date fmt error", e); }
+                                        }
+                                        let reviewersDisplay = <span className="sbt-no-reviewers">-</span>;
+                                        let reviewerCount = 0;
+                                        if (item.verification_by) {
+                                            try {
+                                                const parsed = JSON.parse(item.verification_by);
+                                                reviewerCount = Object.keys(parsed).length;
+                                                if (reviewerCount > 0) {
+                                                    reviewersDisplay = (
+                                                        <button
+                                                            className="sbt-action-button sbt-view-reviewers-button"
+                                                            onClick={() => handleShowReviewers(item.verification_by)} // Corrected onClick
+                                                            title="View Reviewer Status"
+                                                            aria-label={`View reviewers for round ${item.create_round}`} >
+                                                            <FontAwesomeIcon icon={faUsers} /> ({reviewerCount})
+                                                        </button>
+                                                    );
+                                                }
+                                            } catch (e) { reviewersDisplay = <span className="sbt-error-text">Err</span>; }
+                                        }
 
-                                         return (
+                                        return (
                                             <tr key={item.create_round}>
                                                 <td data-label="Round" className="sbt-td-round">{`Round ${item.create_round}`}</td>
                                                 <td data-label="Verified By">{item.create_by || 'N/A'}</td>
                                                 <td data-label="Date">{formattedDate}</td>
                                                 <td data-label="Status">
-                                                     <span className="sbt-status-badge sbt-status-verified"><FontAwesomeIcon icon={faCheckCircle} /> VERIFIED</span>
+                                                    <span className="sbt-status-badge sbt-status-verified"><FontAwesomeIcon icon={faCheckCircle} /> VERIFIED</span>
                                                 </td>
                                                 <td data-label="Reviewers" className="sbt-td-center">{reviewersDisplay}</td>
                                                 <td data-label="Action" className="sbt-td-actions">
@@ -177,9 +177,9 @@ const SetBaselineTrace = () => {
             <div className={`sbt-popup-overlay ${showPopup ? 'show' : ''}`} onClick={() => setShowPopup(false)}>
                 <div className="sbt-popup-content sbt-reviewer-popup-content" onClick={(e) => e.stopPropagation()}>
                     <div className="sbt-popup-header">
-                         <h3>Reviewer Status</h3>
-                         <button className="sbt-popup-close" onClick={() => setShowPopup(false)} title="Close" aria-label="Close popup">
-                             <FontAwesomeIcon icon={faTimes} />
+                        <h3>Reviewer Status</h3>
+                        <button className="sbt-popup-close" onClick={() => setShowPopup(false)} title="Close" aria-label="Close popup">
+                            <FontAwesomeIcon icon={faTimes} />
                         </button>
                     </div>
                     <div className="sbt-popup-body">
@@ -195,7 +195,7 @@ const SetBaselineTrace = () => {
                                                 <span className="sbt-reviewer-name">{reviewer}</span>
                                                 <span className="sbt-reviewer-status-text">{status ? 'Verified' : 'Pending/Not Verified'}</span>
                                             </div>
-                                            <FontAwesomeIcon icon={status ? faCheckCircle : faHourglassHalf} className="sbt-status-icon" aria-label={status ? 'Verified' : 'Pending'}/>
+                                            <FontAwesomeIcon icon={status ? faCheckCircle : faHourglassHalf} className="sbt-status-icon" aria-label={status ? 'Verified' : 'Pending'} />
                                         </div>
                                     ))}
                                 </div>
@@ -204,7 +204,7 @@ const SetBaselineTrace = () => {
                     </div>
                 </div>
             </div>
-             {/* สิ้นสุด Popup Conditional Rendering */}
+            {/* สิ้นสุด Popup Conditional Rendering */}
 
         </div> // End sbt-container
     );

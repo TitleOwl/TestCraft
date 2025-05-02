@@ -111,9 +111,16 @@ body {
   padding-left: 110px; /* Space for back button */
 }
 .bh-header h1 {
-  font-size: 20px; font-weight: 600; color: var(--bh-text-primary); /* Dark gray text */
-  margin: 0; display: flex; align-items: center; gap: 10px; letter-spacing: -0.02em;
+  font-size: 20px; 
+  font-weight: 600; 
+  color: var(--bh-text-primary); /* Dark gray text */
+  margin: 0; 
+  display: flex; 
+  align-items: center; 
+  gap: 10px; 
+  letter-spacing: -0.02em;
   flex-grow: 1;
+  margin-left: 20em;
 }
 .bh-title-icon { color: var(--bh-primary); /* Primary gray icon */ font-size: 1.1em; }
 .bh-back-btn {
