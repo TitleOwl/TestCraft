@@ -48,7 +48,7 @@ const ImplementPage = () => {
   const [activeTab, setActiveTab] = useState("mapping");
   const [projectName, setProjectName] = useState("");
   const [runTutorial, setRunTutorial] = useState(false);
-  
+  const formatDesignId = (id) => `SD-${String(id).padStart(3, '0')}`;
   const apiToken = process.env.REACT_APP_API_TOKEN;
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -430,16 +430,16 @@ const ImplementPage = () => {
         // but you could manually trigger fetchRelations() here for immediate feedback if needed.
         // fetchRelations();
       } else {
-         // Handle cases where the backend returns a success status code other than 200 if applicable
-         console.warn("Relation deletion returned status:", response.status, response.data);
-         alert("Relation deleted, but received an unexpected status code.");
+        // Handle cases where the backend returns a success status code other than 200 if applicable
+        console.warn("Relation deletion returned status:", response.status, response.data);
+        alert("Relation deleted, but received an unexpected status code.");
       }
     } catch (error) {
       console.error("Error deleting relation:", error.response ? error.response.data : error.message);
       alert(`Failed to delete relation. ${error.response?.data?.message || error.message}`);
     }
   };
-  
+
   useEffect(() => {
     const fetchRelations = async () => {
       try {
@@ -589,8 +589,8 @@ const ImplementPage = () => {
               </div>
               <div className="imp-button-group">
                 <button onClick={fetchFilesFromRepo} disabled={loading} className="imp-fetch-btn">
-                      <FontAwesomeIcon icon={faSyncAlt} />
-                      Fetch Files
+                  <FontAwesomeIcon icon={faSyncAlt} />
+                  Fetch Files
                 </button>
                 <button onClick={handleRefresh} className="imp-refresh-btn">
                   <FontAwesomeIcon icon={faTimes} />
@@ -655,7 +655,7 @@ const ImplementPage = () => {
                             className="imp-checkbox"
                           />
                           <div className="imp-design-info">
-                            <span className="imp-design-id">SD{design.design_id}</span>
+                            <span className="imp-design-id">{formatDesignId(design.design_id)}</span>
                             <span className="imp-design-name">{design.diagram_name}</span>
                             <span className={`imp-design-type-badge imp-type-${design.design_type.toLowerCase().replace(/\s+/g, '-')}`}>
                               {design.design_type}
@@ -671,8 +671,8 @@ const ImplementPage = () => {
                     </div>
                   )}
                   <div className="imp-actions-container">
-                    <button 
-                      onClick={handleSave} 
+                    <button
+                      onClick={handleSave}
                       className="imp-save-btn"
                       disabled={!selectedFilePath || selectedFiles.filter(file => typeof file === 'number').length === 0}
                     >
@@ -779,7 +779,9 @@ const ImplementPage = () => {
                           </td>
                           <td data-label="Design IDs">
                             {relation.design_ids.split(',').map(id => (
-                              <span key={id} className="imp-design-chip">SD{id}</span>
+                              <span key={id} className="imp-design-chip">
+                                {formatDesignId(id)}
+                              </span>
                             ))}
                           </td>
                           <td data-label="Created At" className="imp-date-cell">
@@ -827,7 +829,7 @@ const FileTree = ({ files, onSelect, expandedFolders, toggleFolder, parentPath =
           <li key={fullPath} className="imp-file-item">
             {item.type === "folder" ? (
               <>
-                <div 
+                <div
                   className="imp-folder-label"
                   onClick={() => toggleFolder(fullPath)}
                   aria-expanded={expandedFolders && expandedFolders.includes(fullPath)}
