@@ -181,7 +181,7 @@ const ProjectConfig = () => {
             setReqcriList(response.data || []); // Ensure it's an array
         } catch (error) {
             console.error("Error fetching requirement criteria:", error);
-            toast.error("Failed to load requirement criteria.");
+
              setReqcriList([]); // Set empty on error
         } finally {
             setLoadingReq(false);
@@ -196,7 +196,6 @@ const ProjectConfig = () => {
             setDesignCriList(response.data || []); // Ensure it's an array
         } catch (error) {
             console.error("Error fetching design criteria:", error);
-            toast.error("Failed to load design criteria.");
              setDesignCriList([]); // Set empty on error
         } finally {
             setLoadingDesign(false);
@@ -212,7 +211,6 @@ const ProjectConfig = () => {
             setTestcaseCriList(response.data || []); // Ensure it's an array
         } catch (error) {
             console.error("Error fetching testcase criteria:", error);
-             toast.error("Failed to load testcase criteria.");
              setTestcaseCriList([]); // Set empty on error
         } finally {
             setLoadingTestcase(false);
@@ -236,7 +234,6 @@ const ProjectConfig = () => {
             }
         } catch (error) {
             console.error("Error fetching traceability criteria:", error);
-             toast.error("Failed to load traceability criteria.");
             setTraceabilityCriList([]); // Set empty on error
         } finally {
             setLoadingTraceability(false);
