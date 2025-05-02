@@ -414,7 +414,7 @@ const handleSave = async () => {
         </button>
         <button className="reqveri-save-button" onClick={handleSave}>
           <FontAwesomeIcon icon={faCheck} />
-          Save
+          Verify
         </button>
       </div>
       

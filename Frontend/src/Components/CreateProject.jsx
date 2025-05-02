@@ -313,10 +313,10 @@ const CreateProject = () => {
 
   // Define role options
   const roleOptions = [
-    { value: 'Customer', label: 'Customer' },
     { value: 'Analyst', label: 'Analyst' },
     { value: 'Designer', label: 'Designer' },
     { value: 'Developer', label: 'Developer' },
+    { value: 'Tester', label: 'Tester' },
     { value: 'Technical Leader', label: 'Technical Leader' },
     { value: 'Work Team', label: 'Work Team' },
   ];
@@ -332,8 +332,6 @@ const CreateProject = () => {
       return 'designer';
     } else if (roleLower.includes('analyst')) {
       return 'analyst';
-    } else if (roleLower.includes('customer')) {
-      return 'customer';
     } else if (roleLower.includes('team')) {
       return 'team';
     }

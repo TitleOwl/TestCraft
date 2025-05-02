@@ -15,7 +15,6 @@ const VericriReqDetails = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // ... (useEffect, useMemo, navigateBack, formatDate functions remain the same) ...
     useEffect(() => {
         if (projectId && requirementId) {
             const fetchVericriReqData = async () => {
@@ -25,6 +24,8 @@ const VericriReqDetails = () => {
                     const response = await axios.get('http://localhost:3001/vericri_req', {
                         params: { project_id: projectId, requirement_id: requirementId },
                     });
+                    // Sorting by verification_at first helps ensure consistency
+                    // in which record (e.g., the earliest) is kept after filtering duplicates.
                     const sortedData = response.data.sort((a, b) =>
                         new Date(a.verification_at) - new Date(b.verification_at)
                     );
@@ -44,78 +45,76 @@ const VericriReqDetails = () => {
         }
     }, [projectId, requirementId]);
 
+    // --- UPDATED useMemo ---
+    // Now filters for uniqueness based ONLY on reqcri_name and verification_by
     const uniqueVericriReqData = useMemo(() => {
         if (!vericriReqData) return [];
         return vericriReqData.filter((item, index, self) =>
             index === self.findIndex((t) =>
+                // Compare only the fields that are currently displayed to define uniqueness
                 t.reqcri_name === item.reqcri_name &&
-                t.verification_by === item.verification_by &&
-                t.verification_at === item.verification_at
+                t.verification_by === item.verification_by
+                // Removed the check for verification_at: && t.verification_at === item.verification_at
             )
         );
     }, [vericriReqData]);
+    // --- END UPDATED useMemo ---
 
     const navigateBack = () => {
         navigate(-1);
     };
 
-    const formatDate = (dateString) => {
-        if (!dateString) return 'N/A';
-        try {
-            const date = new Date(dateString);
-            if (isNaN(date.getTime())) {
-              return 'Invalid Date';
-            }
-            return date.toLocaleDateString('th-TH', {
-                year: 'numeric',
-                month: 'long',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false
-            });
-        } catch (e) {
-            console.error("Error formatting date:", dateString, e);
-            return 'Invalid Date';
+    // ... (Render Loading State, Error State, No Data State remain the same) ...
+        // --- Render Loading State ---
+        if (loading) {
+            return (
+                <div className="verification-req-details-container loading-message">
+                     <FontAwesomeIcon icon={faClipboardList} spin /> Loading Details...
+                </div>
+            );
         }
-    };
 
+        // --- Render Error State ---
+        if (error) {
+            return (
+                <div className="verification-req-details-container error-message">
+                    <div className="verification-req-header">
+                         <button className="verification-req-back-btn" onClick={navigateBack}>
+                             <FontAwesomeIcon icon={faArrowLeft} /> Back
+                         </button>
+                         <h1 className="verification-req-title">
+                             <FontAwesomeIcon icon={faClipboardList} className="verification-req-title-icon" />
+                             Error
+                         </h1>
+                    </div>
+                    <p>Could not load verification details: {error}</p>
+                </div>
+            );
+        }
 
-    // --- Render Loading State ---
-    if (loading) {
-        // ... (loading JSX same as before) ...
-         return (
-            <div className="verification-req-details-container loading-message">
-                 <FontAwesomeIcon icon={faClipboardList} spin /> Loading Details...
-            </div>
-        );
-    }
-
-    // --- Render Error State ---
-    if (error) {
-        // ... (error JSX same as before) ...
-         return (
-            <div className="verification-req-details-container error-message">
+        // --- Render No Data State ---
+        if (!uniqueVericriReqData || uniqueVericriReqData.length === 0) {
+           return (
+            <div className="verification-req-details-container">
                 <div className="verification-req-header">
                      <button className="verification-req-back-btn" onClick={navigateBack}>
                          <FontAwesomeIcon icon={faArrowLeft} /> Back
                      </button>
                      <h1 className="verification-req-title">
                          <FontAwesomeIcon icon={faClipboardList} className="verification-req-title-icon" />
-                         Error
+                         Verification Criteria Requirements Details
                      </h1>
-                </div>
-                <p>Could not load verification details: {error}</p>
+                   </div>
+                   <h2 className="requirement-id-header">Requirement ID: {requirementId || 'N/A'}</h2>
+                   <p className="no-data-message">No unique verification criteria details found for this requirement.</p>
             </div>
-        );
-    }
+           );
+        }
 
-    // --- Render No Data State ---
-    if (!uniqueVericriReqData || uniqueVericriReqData.length === 0) {
-      // ... (no data JSX same as before) ...
-       return (
+    // --- Render Main Content (Table with Data) ---
+    return (
         <div className="verification-req-details-container">
+            {/* Header Section */}
             <div className="verification-req-header">
                  <button className="verification-req-back-btn" onClick={navigateBack}>
                      <FontAwesomeIcon icon={faArrowLeft} /> Back
@@ -124,26 +123,6 @@ const VericriReqDetails = () => {
                      <FontAwesomeIcon icon={faClipboardList} className="verification-req-title-icon" />
                      Verification Criteria Requirements Details
                  </h1>
-             </div>
-             <h2 className="requirement-id-header">Requirement ID: {requirementId || 'N/A'}</h2>
-             <p className="no-data-message">No unique verification criteria details found for this requirement.</p>
-        </div>
-      );
-    }
-
-    // --- Render Main Content (Table with Data) ---
-    return (
-        <div className="verification-req-details-container">
-            {/* Header Section */}
-            <div className="verification-req-header">
-                {/* ... (Header content same as before) ... */}
-                 <button className="verification-req-back-btn" onClick={navigateBack}>
-                    <FontAwesomeIcon icon={faArrowLeft} /> Back
-                </button>
-                <h1 className="verification-req-title">
-                    <FontAwesomeIcon icon={faClipboardList} className="verification-req-title-icon" />
-                    Verification Criteria Requirements Details
-                </h1>
             </div>
 
             {/* Display Requirement ID */}
@@ -154,21 +133,18 @@ const VericriReqDetails = () => {
                 <table className="verification-req-table">
                     <thead>
                         <tr>
-                            {/* ----- เพิ่มคอลัมน์ลำดับ ----- */}
                             <th className="row-number-header">#</th>
-                            {/* -------------------------- */}
                             <th>Criteria Name</th>
                             <th>Verification By</th>
-                            <th>Verification At</th>
+                            {/* Verification At header is already removed */}
                         </tr>
                     </thead>
                     <tbody>
                         {uniqueVericriReqData.map((item, index) => (
-                            <tr key={item.verification_at ? `${item.reqcri_name}-${item.verification_at}-${index}` : index}>
-                                {/* ----- เพิ่ม Cell แสดงเลขลำดับ ----- */}
+                            // Key generation can be simplified now, or kept robust using original fields if needed.
+                            // Using index combined with displayed fields is usually safe after filtering.
+                            <tr key={`${item.reqcri_name}-${item.verification_by}-${index}`}>
                                 <td className="row-number-cell">{index + 1}</td>
-                                {/* -------------------------------- */}
-                                {/* Criteria Name Cell */}
                                 <td className="criteria-name-cell">
                                     {typeof item.reqcri_name === 'string' ? (
                                         item.reqcri_name.split(',').map((part, partIndex) => (
@@ -180,21 +156,45 @@ const VericriReqDetails = () => {
                                         'N/A'
                                     )}
                                 </td>
-                                {/* Verification By Cell */}
                                 <td className="verification-by-cell">
-                                    {item.verification_by || 'N/A'}
+                                  {(() => {
+                                    const rawValue = item.verification_by;
+                                    if (typeof rawValue === 'string' && rawValue.startsWith('[') && rawValue.endsWith(']')) {
+                                      try {
+                                        const parsedArray = JSON.parse(rawValue);
+                                        if (Array.isArray(parsedArray)) {
+                                          const names = parsedArray.map(entry => {
+                                            if (typeof entry === 'string') {
+                                              const namePart = entry.split(':')[0].trim();
+                                              if (namePart.startsWith('"') && namePart.endsWith('"')) {
+                                                   return namePart.substring(1, namePart.length - 1);
+                                              }
+                                              return namePart;
+                                            }
+                                            return null;
+                                          }).filter(name => name);
+                                          if (names.length > 0) {
+                                            return names.join(', ');
+                                          }
+                                        }
+                                      } catch (e) {
+                                        console.error("Error parsing verification_by JSON or processing names:", e, rawValue);
+                                        if (rawValue.length > 2) {
+                                            return rawValue.substring(1, rawValue.length - 1);
+                                        }
+                                        return rawValue;
+                                      }
+                                    }
+                                    return rawValue || 'N/A';
+                                  })()}
                                 </td>
-                                {/* Verification At Cell */}
-                                <td className="verification-at-cell">
-                                    {formatDate(item.verification_at)}
-                                </td>
+                                {/* Verification At cell is already removed */}
                             </tr>
                         ))}
                     </tbody>
                 </table>
-                {/* Optionally, display the count */}
                 <p className="item-count-footer">
-                    Showing {uniqueVericriReqData.length} unique record(s).
+                    Showing {uniqueVericriReqData.length} unique record(s) based on Criteria Name and Verification By.
                 </p>
             </div>
         </div>

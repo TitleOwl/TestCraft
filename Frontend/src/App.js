@@ -15,6 +15,7 @@ import Project from './Components/Project';
 import CreateProject from './Components/CreateProject';
 import UpdateProject from './Components/UpdateProject';
 import ProjectConfig from './Components/ProjectConfig';
+import LinkGit from './Components/LinkGit';
 
 // Dashboard
 import Dashboard from './Components/Dashboard';
@@ -80,7 +81,7 @@ import CreateTestcasebaseline from './Components/Testcase/CreateTestcasebaseline
 
 //Alert Delete Testcase
 import ConfirmationModal from './Components/Testcase/ConfirmationModal';
-import ConfirmUpdateTestcase from './Components/Testcase/ConfirmUpdateTestcase';
+
 
 //Traceability
 import TraceabilityPage from './Components/Traceability/traceabilityPage';
@@ -145,6 +146,8 @@ const App = () => {
 
         {/* Routes สำหรับการตั้งค่า Project */}
         <Route path="/ProjectConfig" element={<ProjectConfig />} />
+        <Route path="/LinkGit" element={<LinkGit />} />
+
 
         {/* Routes สำหรับ Verification and Validation */}
         <Route path="/CreateVeri" element={<CreateVeri />} />
@@ -162,7 +165,7 @@ const App = () => {
         <Route path="/ViewFile" element={<ViewFile />} />
         <Route path="/VeriVaView" element={<VeriVaView />} />
         <Route path="/VericriReqDetails" element={<VericriReqDetails />} />
-        <Route path="/HistoryValidationReq" element={<HistoryValidationReq />} />
+        <Route path="/HistoryValidationReq/:requirementId" element={<HistoryValidationReq/>} />
 
         {/* Routes สำหรับ Login */}
         <Route path="/" element={<Login setUsername={setUsername} />} />
@@ -214,7 +217,6 @@ const App = () => {
 
         {/* Alert Delete Testcase */}
         <Route path="/ConfirmationModal" element={<ConfirmationModal />} />
-        <Route path="/ConfirmUpdateTestcase" element={<ConfirmUpdateTestcase />} />
 
         {/* ทำ Implement */}
         <Route path="/implementPage" element={<ImplementPage />} />

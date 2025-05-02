@@ -405,6 +405,41 @@ const ImplementPage = () => {
     }
   };
 
+  const handleDeleteRelation = async (filename, timestamp) => {
+    // Confirmation dialog
+    if (!window.confirm(`Are you sure you want to delete the relation for "${filename}" created at ${new Date(timestamp).toLocaleString('th-TH')}? This will remove all design mappings associated with this specific instance.`)) {
+      return; // Stop if user cancels
+    }
+
+    console.log(`Attempting to delete relation for file: ${filename}, timestamp: ${timestamp}, project: ${projectId}`);
+
+    try {
+      // Construct the API endpoint. Adjust if your backend expects different parameters or structure.
+      // This example assumes deletion based on filename, timestamp, and project_id.
+      const response = await axios.delete('http://localhost:3001/implementrelation', {
+        params: {
+          implement_filename: filename,
+          relation_at: timestamp, // Send the exact timestamp string
+          project_id: projectId
+        }
+      });
+
+      if (response.status === 200) {
+        alert("Relation deleted successfully!");
+        // The useEffect with setInterval should refresh the list automatically,
+        // but you could manually trigger fetchRelations() here for immediate feedback if needed.
+        // fetchRelations();
+      } else {
+         // Handle cases where the backend returns a success status code other than 200 if applicable
+         console.warn("Relation deletion returned status:", response.status, response.data);
+         alert("Relation deleted, but received an unexpected status code.");
+      }
+    } catch (error) {
+      console.error("Error deleting relation:", error.response ? error.response.data : error.message);
+      alert(`Failed to delete relation. ${error.response?.data?.message || error.message}`);
+    }
+  };
+  
   useEffect(() => {
     const fetchRelations = async () => {
       try {
@@ -489,7 +524,7 @@ const ImplementPage = () => {
             </div>
             <div className="imp-project-title">
               <h1 className="imp-project-name">{projectName || "Loading..."}</h1>
-              <span className="imp-badge">IMPLEMENTATION MAPPING</span>
+              <span className="imp-badge">CODE COMPONENT</span>
               <button
                 onClick={handleRestartTutorial}
                 className="imp-tutorial-help-button imp-tutorial-help-button-corner"
@@ -507,7 +542,7 @@ const ImplementPage = () => {
             onClick={() => setActiveTab('mapping')}
           >
             <FontAwesomeIcon icon={faCodeBranch} className="imp-tab-icon" />
-            File-Design Mapping
+            Code Component And Design Mapping
           </div>
           <div
             className={`imp-header-tab ${activeTab === 'relations' ? 'imp-active' : ''}`}
@@ -570,54 +605,6 @@ const ImplementPage = () => {
         {activeTab === 'mapping' && (
           <div className="imp-mapping-container">
             {/* Left Column - File Tree */}
-            <div className="imp-left-column">
-              <div className="imp-files-card">
-                <div className="imp-card-header">
-                  <h2 className="imp-card-title">
-                    <FontAwesomeIcon icon={faFileAlt} className="imp-card-icon" />
-                    Repository Files
-                  </h2>
-                  <p className="imp-card-description">
-                    Select files from your repository to map to design components
-                  </p>
-                </div>
-                <div className="imp-content-area">
-                  {loading ? (
-                    <div className="imp-loading-state">
-                      <div className="imp-loading-spinner"></div>
-                      <p>Loading files...</p>
-                      <div className="imp-progress-container">
-                        <div
-                          className="imp-progress-bar"
-                          style={{ width: `${loadingPercentage}%` }}
-                        ></div>
-                      </div>
-                      <p>{loadingPercentage.toFixed(2)}%</p>
-                    </div>
-                  ) : fileNames.length > 0 ? (
-                    <div className="imp-file-explorer">
-                      <FileTree
-                        files={fileNames}
-                        onSelect={handleFileSelection}
-                        expandedFolders={expandedFolders}
-                        toggleFolder={toggleFolder}
-                        fileStatuses={fileStatuses}
-                        selectedFiles={selectedFiles}
-                      />
-                    </div>
-                  ) : (
-                    <div className="imp-empty-state">
-                      <FontAwesomeIcon icon={faFileAlt} className="imp-empty-icon" />
-                      <p>No files loaded. Click "Fetch Files" to load repository files.</p>
-                      <button onClick={fetchFilesFromRepo} className="imp-empty-button">
-                        <FontAwesomeIcon icon={faSyncAlt} />
-                        Fetch Files
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
 
             {/* Right Column - Design Selection */}
             <div className="imp-right-column">
@@ -696,8 +683,58 @@ const ImplementPage = () => {
                 </div>
               </div>
             </div>
+            <div className="imp-left-column">
+              <div className="imp-files-card">
+                <div className="imp-card-header">
+                  <h2 className="imp-card-title">
+                    <FontAwesomeIcon icon={faFileAlt} className="imp-card-icon" />
+                    Repository Files
+                  </h2>
+                  <p className="imp-card-description">
+                    Select files from your repository to map to design components
+                  </p>
+                </div>
+                <div className="imp-content-area">
+                  {loading ? (
+                    <div className="imp-loading-state">
+                      <div className="imp-loading-spinner"></div>
+                      <p>Loading files...</p>
+                      <div className="imp-progress-container">
+                        <div
+                          className="imp-progress-bar"
+                          style={{ width: `${loadingPercentage}%` }}
+                        ></div>
+                      </div>
+                      <p>{loadingPercentage.toFixed(2)}%</p>
+                    </div>
+                  ) : fileNames.length > 0 ? (
+                    <div className="imp-file-explorer">
+                      <FileTree
+                        files={fileNames}
+                        onSelect={handleFileSelection}
+                        expandedFolders={expandedFolders}
+                        toggleFolder={toggleFolder}
+                        fileStatuses={fileStatuses}
+                        selectedFiles={selectedFiles}
+                      />
+                    </div>
+                  ) : (
+                    <div className="imp-empty-state">
+                      <FontAwesomeIcon icon={faFileAlt} className="imp-empty-icon" />
+                      <p>No files loaded. Click "Fetch Files" to load repository files.</p>
+                      <button onClick={fetchFilesFromRepo} className="imp-empty-button">
+                        <FontAwesomeIcon icon={faSyncAlt} />
+                        Fetch Files
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
           </div>
         )}
+
 
         {activeTab === 'relations' && (
           <div className="imp-relations-card">
@@ -719,6 +756,7 @@ const ImplementPage = () => {
                       <th>Filename</th>
                       <th>Design IDs</th>
                       <th>Created At</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -733,13 +771,13 @@ const ImplementPage = () => {
                       }).format(new Date(relation.relation_at));
 
                       return (
-                        <tr key={index}>
+                        <tr key={`${relation.implement_filename}-${relation.relation_at}`}> {/* Use a more stable key */}
                           <td data-label="#">{index + 1}</td>
                           <td data-label="Filename" className="imp-filename-cell">
                             <span className="imp-file-icon">📄</span>
                             {relation.implement_filename}
                           </td>
-                          <td data-label="Design IDs"> 
+                          <td data-label="Design IDs">
                             {relation.design_ids.split(',').map(id => (
                               <span key={id} className="imp-design-chip">SD{id}</span>
                             ))}
@@ -747,6 +785,18 @@ const ImplementPage = () => {
                           <td data-label="Created At" className="imp-date-cell">
                             {formattedDate}
                           </td>
+                          {/* --- Action Column --- */}
+                          <td data-label="Action" className="imp-action-cell">
+                            <button
+                              className="imp-delete-btn" // Specific class name for styling
+                              onClick={() => handleDeleteRelation(relation.implement_filename, relation.relation_at)}
+                              title={`Delete relation for ${relation.implement_filename} created at ${formattedDate}`}
+                            >
+                              <FontAwesomeIcon icon={faTrash} />
+                              {/* Optional: Add text like " Delete" */}
+                            </button>
+                          </td>
+                          {/* --- End Action Column --- */}
                         </tr>
                       );
                     })}

@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faMagnifyingGlass, 
-  faPenToSquare, 
-  faTrash, 
-  faEye, 
-  faPlus, 
-  faFilter, 
-  faCalendarAlt, 
+import {
+  faMagnifyingGlass,
+  faPenToSquare,
+  faTrash,
+  faEye,
+  faPlus,
+  faFilter,
+  faCalendarAlt,
   faCheckCircle,
   faSpinner,
   faExclamationTriangle,
@@ -21,18 +21,18 @@ import {
 import { Modal, Button } from 'react-bootstrap';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import './CSS/Project.css';
+import './CSS/Project.css'; // Make sure to update this CSS file too!
 
 const Project = () => {
   const [projectList, setProjectList] = useState([]);
   const [filteredProjects, setFilteredProjects] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false); // Renamed for clarity
   const [projectToDelete, setProjectToDelete] = useState(null);
-  const [selectedProject, setSelectedProject] = useState(null);
+  const [selectedProject, setSelectedProject] = useState(null); // For Details Modal
   const navigate = useNavigate();
-  
+
   // Filter states
   const [statusFilter, setStatusFilter] = useState('All');
   const [dateFilter, setDateFilter] = useState('All');
@@ -59,7 +59,7 @@ const Project = () => {
       const response = await axios.get('http://localhost:3001/project');
       setProjectList(response.data);
       setFilteredProjects(response.data);
-      
+
       // Calculate analytics
       const now = new Date();
       const stats = {
@@ -69,7 +69,7 @@ const Project = () => {
         completedProjects: response.data.filter(p => p.project_status === 'CLOSE').length
       };
       setAnalytics(stats);
-      
+
       setLoading(false);
     } catch (error) {
       console.error('Error fetching project data:', error);
@@ -80,25 +80,26 @@ const Project = () => {
   // Apply all filters and sorting
   useEffect(() => {
     let filtered = [...projectList];
-    
+
     // Apply search filter
     if (searchQuery) {
       filtered = filtered.filter((project) =>
         project.project_name.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
-    
+
     // Apply status filter
     if (statusFilter !== 'All') {
       filtered = filtered.filter((project) => project.project_status === statusFilter);
     }
-    
+
     // Apply date filter
     const today = new Date();
     if (dateFilter === 'Active') {
-      filtered = filtered.filter((project) => new Date(project.end_date) >= today);
+      filtered = filtered.filter((project) => new Date(project.end_date) >= today && project.project_status !== 'CLOSE'); // Adjusted active logic slightly
     } else if (dateFilter === 'Expired') {
-      filtered = filtered.filter((project) => new Date(project.end_date) < today);
+      // Consider Expired to also mean projects that are closed
+      filtered = filtered.filter((project) => new Date(project.end_date) < today || project.project_status === 'CLOSE');
     } else if (dateFilter === 'Last30Days') {
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(today.getDate() - 30);
@@ -115,28 +116,36 @@ const Project = () => {
     filtered.sort((a, b) => {
       let valueA = a[sortBy];
       let valueB = b[sortBy];
-      
+
       // Handle special case for date comparison
       if (sortBy === 'start_date' || sortBy === 'end_date') {
         valueA = new Date(valueA);
         valueB = new Date(valueB);
       }
-      
+
       if (sortDirection === 'asc') {
-        return valueA > valueB ? 1 : -1;
+        // Handle potential null or undefined values if necessary
+        if (valueA > valueB) return 1;
+        if (valueA < valueB) return -1;
+        return 0;
       } else {
-        return valueA < valueB ? 1 : -1;
+        if (valueA < valueB) return 1;
+        if (valueA > valueB) return -1;
+        return 0;
       }
     });
-    
+
     setFilteredProjects(filtered);
   }, [searchQuery, projectList, statusFilter, dateFilter, sortBy, sortDirection]);
+
 
   // Reset all filters
   const resetFilters = () => {
     setSearchQuery('');
     setStatusFilter('All');
     setDateFilter('All');
+    setSortBy('start_date'); // Reset sort as well? Optional.
+    setSortDirection('desc');
   };
 
   // Update project
@@ -147,7 +156,7 @@ const Project = () => {
   // Show delete confirmation modal
   const handleDeleteConfirmation = (project) => {
     setProjectToDelete(project);
-    setShowModal(true);
+    setShowDeleteModal(true); // Use specific state setter
   };
 
   // Delete project
@@ -157,11 +166,12 @@ const Project = () => {
     try {
       await axios.delete(`http://localhost:3001/project/${projectToDelete.project_id}`);
       const updatedProjectList = projectList.filter((project) => project.project_id !== projectToDelete.project_id);
+      // Recalculate based on the *new* list
       setProjectList(updatedProjectList);
-      setFilteredProjects(updatedProjectList);
-      setShowModal(false);
+      // setFilteredProjects(updatedProjectList); // Let the filter useEffect handle this
+      setShowDeleteModal(false); // Use specific state setter
       setProjectToDelete(null);
-      
+
       // Update analytics after deletion
       const now = new Date();
       const stats = {
@@ -171,25 +181,37 @@ const Project = () => {
         completedProjects: updatedProjectList.filter(p => p.project_status === 'CLOSE').length
       };
       setAnalytics(stats);
-      
-      alert(`Delete Project "${projectToDelete.project_name}" Success`);
+
+      alert(`Delete Project "${projectToDelete.project_name}" Success`); // Consider using Toastify for consistency
     } catch (err) {
-      alert(`Error deleting project: ${err.message}`);
+      alert(`Error deleting project: ${err.message}`); // Consider using Toastify
     }
   };
 
   // Calculate remaining days for the project
-  const calculateDaysRemaining = (endDate) => {
-    const today = new Date();
-    const end = new Date(endDate);
-    const difference = Math.ceil((end - today) / (1000 * 60 * 60 * 24));
-    
-    if (difference > 0) {
-      return { value: difference, label: `${difference} days`, status: difference <= 7 ? 'warning' : 'normal' };
-    } else {
-      return { value: difference, label: 'Expired', status: 'expired' };
-    }
+  const calculateDaysRemaining = (endDate, status) => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // Normalize today's date to start of day
+      const end = new Date(endDate);
+      end.setHours(0, 0, 0, 0); // Normalize end date to start of day
+
+      if (status === 'CLOSE') {
+          return { value: 0, label: 'Completed', status: 'completed' };
+      }
+
+      const difference = Math.ceil((end - today) / (1000 * 60 * 60 * 24));
+
+      if (difference < 0) {
+          return { value: difference, label: 'Expired', status: 'expired' };
+      } else if (difference === 0) {
+          return { value: difference, label: 'Ends Today', status: 'warning' };
+      } else if (difference <= 7) {
+          return { value: difference, label: `${difference} day${difference > 1 ? 's' : ''}`, status: 'warning' };
+      } else {
+          return { value: difference, label: `${difference} days`, status: 'normal' };
+      }
   };
+
 
   // Show project details in a modal
   const handleShowDetails = (project) => {
@@ -202,7 +224,7 @@ const Project = () => {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
     } else {
       setSortBy(field);
-      setSortDirection('asc');
+      setSortDirection('asc'); // Default to ascending when changing field
     }
   };
 
@@ -211,22 +233,37 @@ const Project = () => {
     if (sortBy === field) {
       return <FontAwesomeIcon icon={faSortDown} className={`sort-indicator ${sortDirection === 'desc' ? 'desc' : 'asc'}`} />;
     }
+    // Optional: add a subtle indicator for sortable but not sorted columns
+    // return <FontAwesomeIcon icon={faSort} className="sort-indicator-default" />;
     return null;
   };
+
 
   // Get status icon
   const getStatusIcon = (status) => {
     switch (status) {
       case 'CLOSE':
-        return <FontAwesomeIcon icon={faCheckCircle} className="status-icon status-completed" />;
+        return <FontAwesomeIcon icon={faCheckCircle} className="status-icon status-completed" title="Completed"/>;
       case 'IN PROGRESS':
-        return <FontAwesomeIcon icon={faSpinner} className="status-icon status-inprogress" />;
+        return <FontAwesomeIcon icon={faSpinner} className="status-icon status-inprogress" title="In Progress"/>;
       case 'DELAYED':
-        return <FontAwesomeIcon icon={faExclamationTriangle} className="status-icon status-delayed" />;
+        return <FontAwesomeIcon icon={faExclamationTriangle} className="status-icon status-delayed" title="Delayed"/>;
       default:
-        return null;
+        return null; // Or a default icon like faClipboardList
     }
   };
+
+  // Format Date Helper
+  const formatDate = (dateString) => {
+      if (!dateString) return 'N/A';
+      // Example: Thai locale, short date style
+      return new Date(dateString).toLocaleDateString('th-TH', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric'
+      });
+  };
+
 
   return (
     <div className="enterprise-page-container">
@@ -241,28 +278,27 @@ const Project = () => {
         draggable={false}
         pauseOnHover
       />
-      
+
       <div className="enterprise-header">
-        <div className="enterprise-title-section">
+        {/* ... Header content remains the same ... */}
+         <div className="enterprise-title-section">
           <h1 className="enterprise-page-title">
             <FontAwesomeIcon icon={faClipboardList} className="enterprise-page-icon" />
             Project Dashboard
           </h1>
           <p className="enterprise-page-subtitle">Manage Implementation Work Products</p>
         </div>
-        
+
         <div className="enterprise-actions">
           <button onClick={() => navigate('/CreateProject')} className="enterprise-btn enterprise-btn-primary">
             <FontAwesomeIcon icon={faPlus} /> New Project
           </button>
-          <button onClick={fetchProjects} className="enterprise-btn enterprise-btn-outline">
-            <FontAwesomeIcon icon={faArrowsRotate} /> Refresh
-          </button>
         </div>
       </div>
-      
+
       <div className="enterprise-stats-cards">
-        <div className="enterprise-stat-card">
+        {/* ... Stats cards remain the same ... */}
+         <div className="enterprise-stat-card">
           <div className="enterprise-stat-icon total">
             <FontAwesomeIcon icon={faClipboardList} />
           </div>
@@ -271,7 +307,7 @@ const Project = () => {
             <p className="enterprise-stat-label">Total Projects</p>
           </div>
         </div>
-        
+
         <div className="enterprise-stat-card">
           <div className="enterprise-stat-icon active">
             <FontAwesomeIcon icon={faSpinner} />
@@ -281,7 +317,7 @@ const Project = () => {
             <p className="enterprise-stat-label">Active Projects</p>
           </div>
         </div>
-        
+
         <div className="enterprise-stat-card">
           <div className="enterprise-stat-icon delayed">
             <FontAwesomeIcon icon={faExclamationTriangle} />
@@ -291,7 +327,7 @@ const Project = () => {
             <p className="enterprise-stat-label">Delayed Projects</p>
           </div>
         </div>
-        
+
         <div className="enterprise-stat-card">
           <div className="enterprise-stat-icon completed">
             <FontAwesomeIcon icon={faCheckCircle} />
@@ -304,7 +340,8 @@ const Project = () => {
       </div>
 
       <div className="enterprise-controls-container">
-        <div className="enterprise-search-section">
+         {/* ... Search and Filter controls remain the same ... */}
+         <div className="enterprise-search-section">
           <div className="enterprise-search-box">
             <FontAwesomeIcon icon={faMagnifyingGlass} className="enterprise-search-icon" />
             <input
@@ -315,106 +352,80 @@ const Project = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
             {searchQuery && (
-              <button 
-                className="enterprise-search-clear" 
+              <button
+                className="enterprise-search-clear"
                 onClick={() => setSearchQuery('')}
+                aria-label="Clear search"
               >
                 <FontAwesomeIcon icon={faXmark} />
               </button>
             )}
           </div>
         </div>
-        
+
         <div className="enterprise-filter-section">
-          <button 
+          <button
             className="enterprise-btn enterprise-btn-secondary"
             onClick={() => setShowFilters(!showFilters)}
+            aria-expanded={showFilters}
+            aria-controls="project-filters-dropdown"
           >
-            <FontAwesomeIcon icon={faFilter} /> 
+            <FontAwesomeIcon icon={faFilter} />
             <span>Filters</span>
-            {(statusFilter !== 'All' || dateFilter !== 'All') && 
+            {(statusFilter !== 'All' || dateFilter !== 'All') &&
               <span className="enterprise-filter-badge">Active</span>
             }
           </button>
-          
+
           {showFilters && (
-            <div className="enterprise-filter-dropdown">
+            <div className="enterprise-filter-dropdown" id="project-filters-dropdown">
               <div className="enterprise-filter-dropdown-header">
                 <h4>Filter Projects</h4>
-                <button 
+                <button
                   className="enterprise-filter-dropdown-close"
                   onClick={() => setShowFilters(false)}
+                  aria-label="Close filters"
                 >
                   <FontAwesomeIcon icon={faXmark} />
                 </button>
               </div>
-              
+
               <div className="enterprise-filter-group">
                 <label className="enterprise-filter-label">Project Status</label>
                 <div className="enterprise-filter-options">
-                  <button 
-                    className={`enterprise-filter-option ${statusFilter === 'All' ? 'active' : ''}`}
-                    onClick={() => setStatusFilter('All')}
-                  >
-                    All
-                  </button>
-                  <button 
-                    className={`enterprise-filter-option ${statusFilter === 'IN PROGRESS' ? 'active' : ''}`}
-                    onClick={() => setStatusFilter('IN PROGRESS')}
-                  >
-                    In Progress
-                  </button>
-                  <button 
-                    className={`enterprise-filter-option ${statusFilter === 'DELAYED' ? 'active' : ''}`}
-                    onClick={() => setStatusFilter('DELAYED')}
-                  >
-                    Delayed
-                  </button>
-                  <button 
-                    className={`enterprise-filter-option ${statusFilter === 'CLOSE' ? 'active' : ''}`}
-                    onClick={() => setStatusFilter('CLOSE')}
-                  >
-                    Completed
-                  </button>
+                  {['All', 'IN PROGRESS', 'DELAYED', 'CLOSE'].map(status => (
+                    <button
+                      key={status}
+                      className={`enterprise-filter-option ${statusFilter === status ? 'active' : ''}`}
+                      onClick={() => setStatusFilter(status)}
+                    >
+                      {status === 'CLOSE' ? 'Completed' : status}
+                    </button>
+                  ))}
                 </div>
               </div>
-              
+
               <div className="enterprise-filter-group">
                 <label className="enterprise-filter-label">Timeline</label>
                 <div className="enterprise-filter-options">
-                  <button 
-                    className={`enterprise-filter-option ${dateFilter === 'All' ? 'active' : ''}`}
-                    onClick={() => setDateFilter('All')}
-                  >
-                    All Time
-                  </button>
-                  <button 
-                    className={`enterprise-filter-option ${dateFilter === 'Active' ? 'active' : ''}`}
-                    onClick={() => setDateFilter('Active')}
-                  >
-                    Active
-                  </button>
-                  <button 
-                    className={`enterprise-filter-option ${dateFilter === 'Last30Days' ? 'active' : ''}`}
-                    onClick={() => setDateFilter('Last30Days')}
-                  >
-                    Started in Last 30 Days
-                  </button>
-                  <button 
-                    className={`enterprise-filter-option ${dateFilter === 'Next30Days' ? 'active' : ''}`}
-                    onClick={() => setDateFilter('Next30Days')}
-                  >
-                    Ending in Next 30 Days
-                  </button>
-                  <button 
-                    className={`enterprise-filter-option ${dateFilter === 'Expired' ? 'active' : ''}`}
-                    onClick={() => setDateFilter('Expired')}
-                  >
-                    Expired
-                  </button>
+                   {[
+                      { value: 'All', label: 'All Time' },
+                      { value: 'Active', label: 'Active' },
+                      { value: 'Last30Days', label: 'Started Last 30 Days' },
+                      { value: 'Next30Days', label: 'Ending Next 30 Days' },
+                      { value: 'Expired', label: 'Expired/Completed' }
+                   ].map(filter => (
+                      <button
+                         key={filter.value}
+                         className={`enterprise-filter-option ${dateFilter === filter.value ? 'active' : ''}`}
+                         onClick={() => setDateFilter(filter.value)}
+                      >
+                         {filter.label}
+                      </button>
+                   ))}
                 </div>
               </div>
-              
+
               <div className="enterprise-filter-actions">
                 {(statusFilter !== 'All' || dateFilter !== 'All') && (
                   <button
@@ -424,49 +435,55 @@ const Project = () => {
                     Reset Filters
                   </button>
                 )}
+                {/* Apply button might not be needed if filters apply instantly via useEffect */}
                 <button
                   className="enterprise-btn enterprise-btn-secondary"
                   onClick={() => setShowFilters(false)}
                 >
-                  Apply Filters
+                  Done
                 </button>
               </div>
             </div>
           )}
         </div>
       </div>
-      
+
+      {/* ... Active Filters display remains the same ... */}
       {(statusFilter !== 'All' || dateFilter !== 'All') && (
         <div className="enterprise-active-filters">
           <div className="enterprise-active-filters-header">
             <FontAwesomeIcon icon={faFilter} className="enterprise-active-filters-icon" />
             <span>Active Filters:</span>
           </div>
-          
+
           <div className="enterprise-active-filters-tags">
             {statusFilter !== 'All' && (
               <div className="enterprise-filter-tag">
-                Status: {statusFilter}
-                <button className="enterprise-filter-tag-remove" onClick={() => setStatusFilter('All')}>
+                Status: {statusFilter === 'CLOSE' ? 'Completed' : statusFilter}
+                <button className="enterprise-filter-tag-remove" onClick={() => setStatusFilter('All')} aria-label={`Remove filter Status: ${statusFilter}`}>
                   <FontAwesomeIcon icon={faXmark} />
                 </button>
               </div>
             )}
-            
+
             {dateFilter !== 'All' && (
-              <div className="enterprise-filter-tag">
-                Timeline: {dateFilter === 'Active' ? 'Active Projects' : 
-                          dateFilter === 'Expired' ? 'Expired Projects' : 
-                          dateFilter === 'Last30Days' ? 'Started in Last 30 Days' : 
-                          'Ending in Next 30 Days'}
-                <button className="enterprise-filter-tag-remove" onClick={() => setDateFilter('All')}>
-                  <FontAwesomeIcon icon={faXmark} />
-                </button>
-              </div>
+               <div className="enterprise-filter-tag">
+                  Timeline: {
+                     dateFilter === 'Active' ? 'Active' :
+                     dateFilter === 'Expired' ? 'Expired/Completed' :
+                     dateFilter === 'Last30Days' ? 'Started Last 30 Days' :
+                     dateFilter === 'Next30Days' ? 'Ending Next 30 Days' :
+                     'All Time' // Fallback, though shouldn't be needed here
+                  }
+                  <button className="enterprise-filter-tag-remove" onClick={() => setDateFilter('All')} aria-label={`Remove filter Timeline: ${dateFilter}`}>
+                     <FontAwesomeIcon icon={faXmark} />
+                  </button>
+               </div>
             )}
+
           </div>
-          
-          <button 
+
+          <button
             className="enterprise-btn enterprise-btn-text enterprise-active-filters-clear"
             onClick={resetFilters}
           >
@@ -476,6 +493,7 @@ const Project = () => {
       )}
 
       <div className="enterprise-table-container">
+        {/* ... Loading state remains the same ... */}
         {loading ? (
           <div className="enterprise-loading">
             <FontAwesomeIcon icon={faSpinner} className="enterprise-loading-icon fa-spin" />
@@ -483,122 +501,142 @@ const Project = () => {
           </div>
         ) : (
           <>
-            <div className="enterprise-table-header">
+            {/* ... Table header remains the same ... */}
+             <div className="enterprise-table-header">
               <h2 className="enterprise-table-title">Projects List</h2>
               <div className="enterprise-table-meta">
                 Showing {filteredProjects.length} of {projectList.length} projects
               </div>
             </div>
-            
             <div className="enterprise-table-responsive">
               <table className="enterprise-table">
                 <thead>
                   <tr>
-                    <th className="sortable" onClick={() => handleSort('project_name')}>
+                    <th className="sortable" onClick={() => handleSort('project_name')} scope="col">
                       <div className="th-content">
                         Project Name {getSortIndicator('project_name')}
                       </div>
                     </th>
-                    <th>Description</th>
-                    <th className="sortable" onClick={() => handleSort('start_date')}>
+                    <th scope="col">Description</th>
+                    <th className="sortable" onClick={() => handleSort('start_date')} scope="col">
                       <div className="th-content">
                         Start Date {getSortIndicator('start_date')}
                       </div>
                     </th>
-                    <th className="sortable" onClick={() => handleSort('end_date')}>
+                    <th className="sortable" onClick={() => handleSort('end_date')} scope="col">
                       <div className="th-content">
                         End Date {getSortIndicator('end_date')}
                       </div>
                     </th>
-                    <th className="sortable" onClick={() => handleSort('end_date')}>
+                    <th className="sortable" onClick={() => handleSort('end_date')} scope="col"> {/* Consider sorting by remaining days value? */}
                       <div className="th-content">
                         Remaining {getSortIndicator('end_date')}
                       </div>
                     </th>
-                    <th className="sortable" onClick={() => handleSort('project_status')}>
+                    <th className="sortable" onClick={() => handleSort('project_status')} scope="col">
                       <div className="th-content">
                         Status {getSortIndicator('project_status')}
                       </div>
                     </th>
-                    <th>Actions</th>
+                    <th scope="col">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredProjects.length === 0 ? (
                     <tr>
-                      <td colSpan="7" className="enterprise-no-data">
+                       {/* ... No data row remains the same ... */}
+                        <td colSpan="7" className="enterprise-no-data">
                         <div className="enterprise-no-data-content">
                           <FontAwesomeIcon icon={faClipboardList} className="enterprise-no-data-icon" />
-                          <p className="enterprise-no-data-text">No projects found matching your criteria</p>
+                          <p className="enterprise-no-data-text">
+                            {searchQuery || statusFilter !== 'All' || dateFilter !== 'All'
+                              ? 'No projects found matching your criteria'
+                              : 'No projects available'}
+                          </p>
                           {(statusFilter !== 'All' || dateFilter !== 'All' || searchQuery) && (
                             <button className="enterprise-btn enterprise-btn-outline" onClick={resetFilters}>
-                              Reset Filters
+                              Reset Filters & Search
                             </button>
                           )}
+                           {!(searchQuery || statusFilter !== 'All' || dateFilter !== 'All') && (
+                             <button className="enterprise-btn enterprise-btn-primary" onClick={() => navigate('/CreateProject')}>
+                               Create New Project
+                            </button>
+                           )}
                         </div>
                       </td>
                     </tr>
                   ) : (
                     filteredProjects.map((project) => {
-                      const remainingDays = calculateDaysRemaining(project.end_date);
-                      
+                      const remainingDays = calculateDaysRemaining(project.end_date, project.project_status);
+
                       return (
                         <tr key={project.project_id}>
-                          <td className="enterprise-project-name" onClick={() => navigate(`/Dashboard?project_id=${project.project_id}`)}>
-                            {project.project_name}
+                          <td className="enterprise-project-name" data-label="Project Name">
+                             {/* Make name clickable to navigate */}
+                             <button
+                                className="enterprise-project-link-button"
+                                onClick={() => navigate(`/Dashboard?project_id=${project.project_id}`)}
+                                title={`Go to dashboard for ${project.project_name}`}
+                             >
+                                {project.project_name}
+                             </button>
                           </td>
-                          <td>
-                            <div className="enterprise-description-cell">
-                              {project.project_description.length > 30 
-                                ? `${project.project_description.substring(0, 30)}...` 
-                                : project.project_description}
+                           <td data-label="Description">
+                            <div className="enterprise-description-cell" title={project.project_description}>
+                              {project.project_description?.length > 30
+                                ? `${project.project_description.substring(0, 30)}...`
+                                : project.project_description || '-'}
                             </div>
                           </td>
-                          <td>
+                          <td data-label="Start Date">
                             <div className="enterprise-date-cell">
-                              <FontAwesomeIcon icon={faCalendarAlt} className="enterprise-date-icon" />
-                              {new Date(project.start_date).toLocaleDateString('th-TH')}
+                              <FontAwesomeIcon icon={faCalendarAlt} className="enterprise-date-icon" aria-hidden="true"/>
+                              {formatDate(project.start_date)}
                             </div>
                           </td>
-                          <td>
+                           <td data-label="End Date">
                             <div className="enterprise-date-cell">
-                              <FontAwesomeIcon icon={faCalendarAlt} className="enterprise-date-icon" />
-                              {new Date(project.end_date).toLocaleDateString('th-TH')}
+                              <FontAwesomeIcon icon={faCalendarAlt} className="enterprise-date-icon" aria-hidden="true"/>
+                              {formatDate(project.end_date)}
                             </div>
                           </td>
-                          <td>
+                          <td data-label="Remaining">
                             <div className={`enterprise-days-remaining enterprise-days-${remainingDays.status}`}>
                               {remainingDays.label}
                             </div>
                           </td>
-                          <td>
+                          <td data-label="Status">
                             <div className="enterprise-status-cell">
                               {getStatusIcon(project.project_status)}
                               <span className={`enterprise-status enterprise-status-${project.project_status.replace(' ', '-').toLowerCase()}`}>
-                                {project.project_status}
+                                 {project.project_status === 'CLOSE' ? 'Completed' : project.project_status}
                               </span>
                             </div>
                           </td>
-                          <td>
+                          <td data-label="Actions">
                             <div className="enterprise-actions-cell">
-                              <button 
-                                className="enterprise-action-btn enterprise-view-btn" 
+                              <button
+                                className="enterprise-action-btn enterprise-view-btn"
                                 onClick={() => handleShowDetails(project)}
                                 title="View Details"
+                                aria-label={`View details for ${project.project_name}`}
                               >
                                 <FontAwesomeIcon icon={faEye} />
                               </button>
-                              <button 
-                                className="enterprise-action-btn enterprise-edit-btn" 
+                              <button
+                                className="enterprise-action-btn enterprise-edit-btn"
                                 onClick={() => handleUpdateProject(project.project_id)}
                                 title="Edit Project"
+                                aria-label={`Edit project ${project.project_name}`}
                               >
                                 <FontAwesomeIcon icon={faPenToSquare} />
                               </button>
-                              <button 
-                                className="enterprise-action-btn enterprise-delete-btn" 
+                              <button
+                                className="enterprise-action-btn enterprise-delete-btn"
                                 onClick={() => handleDeleteConfirmation(project)}
                                 title="Delete Project"
+                                aria-label={`Delete project ${project.project_name}`}
                               >
                                 <FontAwesomeIcon icon={faTrash} />
                               </button>
@@ -615,198 +653,166 @@ const Project = () => {
         )}
       </div>
 
-      {/* Delete Confirmation Modal */}
-      <Modal 
-        show={showModal} 
-        onHide={() => setShowModal(false)} 
-        centered
-        dialogClassName="modal-dialog-centered enterprise-modal-dialog"
-        className="enterprise-modal"
-      >
-        <div className="enterprise-modal-content">
-          <div className="enterprise-modal-header">
-            <h5 className="enterprise-modal-title">Confirm Delete</h5>
-            <button 
-              className="enterprise-modal-close" 
-              onClick={() => setShowModal(false)}
-            >
-              <FontAwesomeIcon icon={faXmark} />
-            </button>
-          </div>
-          <div className="enterprise-modal-body">
-            {projectToDelete && (
-              <>
-                <div className="enterprise-modal-icon enterprise-modal-icon-warning">
-                  <FontAwesomeIcon icon={faExclamationTriangle} />
-                </div>
-                <div className="enterprise-modal-message">
-                  <p>Are you sure you want to delete the project <strong>{projectToDelete.project_name}</strong>?</p>
-                  <p className="enterprise-modal-warning-text">This action cannot be undone.</p>
-                </div>
-              </>
-            )}
-          </div>
-          <div className="enterprise-modal-footer">
-            <button 
-              className="enterprise-btn enterprise-btn-outline"
-              onClick={() => setShowModal(false)}
-            >
-              Cancel
-            </button>
-            <button 
-              className="enterprise-btn enterprise-btn-danger"
-              onClick={handleDeleteProject}
-            >
-              Delete Project
-            </button>
-          </div>
-        </div>
-      </Modal>
+       {/* Delete Confirmation Modal - Using specific state */}
+       <Modal
+         show={showDeleteModal} // Use specific state variable
+         onHide={() => setShowDeleteModal(false)}
+         centered
+         dialogClassName="modal-dialog-centered project-modal-dialog" // UPDATED CLASS
+         contentClassName="project-modal-content" // UPDATED CLASS
+         className="project-modal" // UPDATED CLASS
+       >
+         <Modal.Header closeButton>
+           <Modal.Title className="project-modal-title">Confirm Delete</Modal.Title> {/* UPDATED CLASS */}
+         </Modal.Header>
+         <Modal.Body>
+           {projectToDelete && (
+             <div className="project-modal-body-content"> {/* Optional: Wrapper for layout */}
+               <div className="project-modal-icon project-modal-icon-warning"> {/* UPDATED CLASS */}
+                 <FontAwesomeIcon icon={faExclamationTriangle} />
+               </div>
+               <div className="project-modal-message"> {/* UPDATED CLASS */}
+                 <p>Are you sure you want to delete the project <strong>{projectToDelete.project_name}</strong>?</p>
+                 <p className="project-modal-warning-text">This action cannot be undone.</p> {/* UPDATED CLASS */}
+               </div>
+             </div>
+           )}
+         </Modal.Body>
+         <Modal.Footer className="project-modal-footer"> {/* UPDATED CLASS */}
+           <Button
+             variant="outline-secondary"
+             onClick={() => setShowDeleteModal(false)}
+             className="enterprise-btn enterprise-btn-outline" // Keep general button style? Or create project-modal-btn?
+           >
+             Cancel
+           </Button>
+           <Button
+             variant="danger"
+             onClick={handleDeleteProject}
+             className="enterprise-btn enterprise-btn-danger" // Keep general button style?
+           >
+             Delete Project
+           </Button>
+         </Modal.Footer>
+       </Modal>
 
-      {/* Project Details Modal */}
-      <Modal 
-  show={!!selectedProject} 
-  onHide={() => setSelectedProject(null)} 
-  centered
-  dialogClassName="modal-dialog-centered enterprise-modal-dialog"
-  contentClassName="enterprise-modal-content"
-  className="enterprise-modal enterprise-modal-lg"
->
-  <Modal.Header closeButton>
-    <Modal.Title className="enterprise-modal-title">Project Details</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    {selectedProject && (
-      <div className="enterprise-project-details">
-        <div className="enterprise-project-overview">
-          <h4 className="enterprise-project-name">{selectedProject.project_name}</h4>
-          <div className={`enterprise-status enterprise-status-${selectedProject.project_status.replace(' ', '-').toLowerCase()}`}>
-            {getStatusIcon(selectedProject.project_status)}
-            {selectedProject.project_status}
-          </div>
-        </div>
-        
-        <div className="enterprise-project-section">
-          <h5 className="enterprise-section-title">Description</h5>
-          <p className="enterprise-project-description">{selectedProject.project_description}</p>
-        </div>
-        
-        <div className="enterprise-project-timeline">
-          <div className="enterprise-project-date">
-            <div className="enterprise-date-label">Start Date</div>
-            <div className="enterprise-date-value">
-              <FontAwesomeIcon icon={faCalendarAlt} className="enterprise-date-icon" />
-              {new Date(selectedProject.start_date).toLocaleDateString('th-TH')}
-            </div>
-          </div>
-          <div className="enterprise-timeline-divider"></div>
-          <div className="enterprise-project-date">
-            <div className="enterprise-date-label">End Date</div>
-            <div className="enterprise-date-value">
-              <FontAwesomeIcon icon={faCalendarAlt} className="enterprise-date-icon" />
-              {new Date(selectedProject.end_date).toLocaleDateString('th-TH')}
-            </div>
-          </div>
-        </div>
-        
-        {selectedProject.project_member && (
-          <div className="enterprise-project-section">
-            <h5 className="enterprise-section-title">Team Members</h5>
-            {JSON.parse(selectedProject.project_member).length > 0 ? (
-              <div className="enterprise-team-members">
-                {JSON.parse(selectedProject.project_member).map((member, index) => (
-                  <div key={index} className="enterprise-team-member">
-                    <div className="enterprise-member-avatar">
-                      {member.name.charAt(0).toUpperCase()}
-                    </div>
-                    <div className="enterprise-member-info">
-                      <div className="enterprise-member-name">{member.name}</div>
-                      {member.roles && (
-                        <div className="enterprise-member-roles">
-                          {member.roles.map((role, roleIndex) => (
-                            <span key={roleIndex} className="enterprise-member-role">
-                              {role}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="enterprise-no-members">No team members assigned</p>
-            )}
-          </div>
-        )}
-      </div>
-    )}
-  </Modal.Body>
-  <Modal.Footer>
-    <Button 
-      variant="outline-secondary"
-      onClick={() => setSelectedProject(null)}
-      className="enterprise-btn enterprise-btn-outline"
-    >
-      Close
-    </Button>
-    {selectedProject && (
-      <Button 
-        variant="primary"
-        onClick={() => {
-          setSelectedProject(null);
-          navigate(`/UpdateProject/${selectedProject.project_id}`);
-        }}
-        className="enterprise-btn enterprise-btn-primary"
-      >
-        Edit Project
-      </Button>
-    )}
-  </Modal.Footer>
-</Modal>
+       {/* Project Details Modal */}
+       <Modal
+         show={!!selectedProject}
+         onHide={() => setSelectedProject(null)}
+         centered
+         dialogClassName="modal-dialog-centered project-modal-dialog" // UPDATED CLASS
+         contentClassName="project-modal-content" // UPDATED CLASS
+         className="project-modal project-modal-lg" // UPDATED CLASS (added size class)
+         size="lg" // Use react-bootstrap size prop for lg modal
+       >
+         <Modal.Header closeButton>
+           <Modal.Title className="project-modal-title">Project Details</Modal.Title> {/* UPDATED CLASS */}
+         </Modal.Header>
+         <Modal.Body className="project-modal-body"> {/* UPDATED CLASS */}
+           {selectedProject && (
+             <div className="project-details-content"> {/* Use a more specific class for inner details */}
+               <div className="project-details-overview"> {/* Specific class */}
+                 <h4 className="project-details-name">{selectedProject.project_name}</h4> {/* Specific class */}
+                 <div className={`enterprise-status enterprise-status-${selectedProject.project_status.replace(' ', '-').toLowerCase()}`}>
+                   {getStatusIcon(selectedProject.project_status)}
+                   {selectedProject.project_status === 'CLOSE' ? 'Completed' : selectedProject.project_status}
+                 </div>
+               </div>
 
-{/* Delete Confirmation Modal - ใช้รูปแบบเดียวกัน */}
-<Modal 
-  show={showModal} 
-  onHide={() => setShowModal(false)} 
-  centered
-  dialogClassName="modal-dialog-centered enterprise-modal-dialog"
-  contentClassName="enterprise-modal-content"
-  className="enterprise-modal"
->
-  <Modal.Header closeButton>
-    <Modal.Title className="enterprise-modal-title">Confirm Delete</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    {projectToDelete && (
-      <>
-        <div className="enterprise-modal-icon enterprise-modal-icon-warning">
-          <FontAwesomeIcon icon={faExclamationTriangle} />
-        </div>
-        <div className="enterprise-modal-message">
-          <p>Are you sure you want to delete the project <strong>{projectToDelete.project_name}</strong>?</p>
-          <p className="enterprise-modal-warning-text">This action cannot be undone.</p>
-        </div>
-      </>
-    )}
-  </Modal.Body>
-  <Modal.Footer>
-    <Button 
-      variant="outline-secondary"
-      onClick={() => setShowModal(false)}
-      className="enterprise-btn enterprise-btn-outline"
-    >
-      Cancel
-    </Button>
-    <Button 
-      variant="danger"
-      onClick={handleDeleteProject}
-      className="enterprise-btn enterprise-btn-danger"
-    >
-      Delete Project
-    </Button>
-  </Modal.Footer>
-</Modal>
+               <div className="project-details-section"> {/* Specific class */}
+                 <h5 className="project-details-section-title">Description</h5> {/* Specific class */}
+                 <p className="project-details-description">{selectedProject.project_description || 'No description provided.'}</p> {/* Specific class */}
+               </div>
+
+               <div className="project-details-timeline"> {/* Specific class */}
+                 <div className="project-details-date"> {/* Specific class */}
+                   <div className="project-details-date-label">Start Date</div> {/* Specific class */}
+                   <div className="project-details-date-value"> {/* Specific class */}
+                     <FontAwesomeIcon icon={faCalendarAlt} className="enterprise-date-icon" /> {/* Keep existing icon class? */}
+                     {formatDate(selectedProject.start_date)}
+                   </div>
+                 </div>
+                 <div className="project-details-timeline-divider"></div> {/* Specific class */}
+                 <div className="project-details-date"> {/* Specific class */}
+                   <div className="project-details-date-label">End Date</div> {/* Specific class */}
+                   <div className="project-details-date-value"> {/* Specific class */}
+                     <FontAwesomeIcon icon={faCalendarAlt} className="enterprise-date-icon" /> {/* Keep existing icon class? */}
+                     {formatDate(selectedProject.end_date)}
+                   </div>
+                 </div>
+               </div>
+
+               {/* Team Members Section - Already seems specific */}
+               {selectedProject.project_member && (
+                <div className="project-details-section"> {/* Specific class */}
+                  <h5 className="project-details-section-title">Team Members</h5> {/* Specific class */}
+                  {(() => { // IIFE to handle parsing safely
+                      try {
+                          const members = JSON.parse(selectedProject.project_member);
+                          if (Array.isArray(members) && members.length > 0) {
+                              return (
+                                <div className="enterprise-team-members"> {/* Keep if styled globally? Or change? */}
+                                  {members.map((member, index) => (
+                                    <div key={index} className="enterprise-team-member">
+                                      <div className="enterprise-member-avatar" title={member.name}>
+                                        {member.name?.charAt(0).toUpperCase() || '?'}
+                                      </div>
+                                      <div className="enterprise-member-info">
+                                        <div className="enterprise-member-name">{member.name || 'Unnamed Member'}</div>
+                                        {member.roles && Array.isArray(member.roles) && (
+                                          <div className="enterprise-member-roles">
+                                            {member.roles.map((role, roleIndex) => (
+                                              <span key={roleIndex} className="enterprise-member-role">
+                                                {role}
+                                              </span>
+                                            ))}
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              );
+                          } else {
+                              return <p className="enterprise-no-members">No team members assigned</p>; // Keep or change?
+                          }
+                      } catch (e) {
+                          console.error("Error parsing project members:", e);
+                          return <p className="enterprise-no-members">Error loading team members</p>; // Keep or change?
+                      }
+                  })()}
+                </div>
+               )}
+             </div>
+           )}
+         </Modal.Body>
+         <Modal.Footer className="project-modal-footer"> {/* UPDATED CLASS */}
+           <Button
+             variant="outline-secondary"
+             onClick={() => setSelectedProject(null)}
+             className="enterprise-btn enterprise-btn-outline" // Keep general button style?
+           >
+             Close
+           </Button>
+           {selectedProject && (
+             <Button
+               variant="primary"
+               onClick={() => {
+                 const id = selectedProject.project_id; // Capture id before clearing state
+                 setSelectedProject(null);
+                 navigate(`/UpdateProject/${id}`);
+               }}
+               className="enterprise-btn enterprise-btn-primary" // Keep general button style?
+             >
+               Edit Project
+             </Button>
+           )}
+         </Modal.Footer>
+       </Modal>
+
+       {/* Removed the duplicate Delete Confirmation Modal structure */}
+
     </div>
   );
 };

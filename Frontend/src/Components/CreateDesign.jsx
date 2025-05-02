@@ -146,24 +146,21 @@ const CreateDesign = () => {
 
             // 5. Success Notification and Redirect based on diagram save status
             if (diagramSaveSuccess) {
-                toast.success("Design saved successfully.", {
-                    // --- เพิ่ม onClose ที่นี่ ---
-                    onClose: () => {
-                        console.log("Success toast closed, navigating..."); // Optional: for debugging
-                        navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } });
-                    }
-                    // สามารถกำหนด autoClose เพิ่มเติมได้ถ้าต้องการ เช่น autoClose: 2000
-                });
-                // --- ลบ navigate เดิมออกจากตรงนี้ ---
-                // navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } });
+                toast.success("Design created successfully.");
+                // Reset form fields here
+                setDesignStatement('');
+                setDesignType('');
+                setDiagramType('');
+                setDescription('');
+                setRequirementsId([]); // Reset the selected requirements
+                setSelectedFiles([]);     // Reset the selected files
+                setUploadedFiles([]);   // Reset the displayed uploaded files
+                setError('');         // Clear any previous errors
+                setShowDiagram(false); // Optionally hide the diagram editor
             } else {
                 const partialSuccessMsg = 'Design metadata created, but failed to save the diagram. Please try editing the design to save the diagram again.';
                 toast.warn(partialSuccessMsg, {
-                     // --- เพิ่ม onClose ที่นี่ ---
-                    onClose: () => {
-                        console.log("Warning toast closed, navigating..."); // Optional: for debugging
-                        navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Design" } });
-                    }
+
                      // สามารถกำหนด autoClose เพิ่มเติมได้ถ้าต้องการ
                 });
                 setError("Failed to save diagram content.");
@@ -190,6 +187,7 @@ const CreateDesign = () => {
             <h1 className="create-design-header">Create Software Design</h1>
             {error && <p className="create-design-error"><FontAwesomeIcon icon={faExclamationTriangle}/> {error}</p>}
 
+
             <div className="create-design-layout">
                 <div className="create-design-form-container">
                     <form className="create-design-form" onSubmit={handleSubmit}>
@@ -199,6 +197,21 @@ const CreateDesign = () => {
                             <input type="text" id="designStatement" value={designStatement} onChange={(e) => setDesignStatement(e.target.value)} placeholder="Enter Diagram Name" required className="create-design-input"/>
                         </div>
 
+                        {/* Requirement ID Selection */}
+                        <div className="create-design-form-groups">
+                            <label htmlFor="requirementId">Select Requirement Specification</label>
+                            <Select
+                                isMulti
+                                options={baselineRequirements.map((req) => ({ value: req.requirement_id, label: `REQ-${String(req.requirement_id).padStart(3, '0')}: ${req.requirement_name}` }))}
+                                value={baselineRequirements.filter(req => selectedRequirementsId.includes(req.requirement_id)).map(req => ({ value: req.requirement_id, label: `REQ-${String(req.requirement_id).padStart(3, '0')}: ${req.requirement_name}` }))}
+                                onChange={(selectedOptions) => setRequirementsId(selectedOptions ? selectedOptions.map((option) => option.value) : [])}
+                                placeholder="Select Related Baseline Requirement Specification..."
+                                className="create-design-select-files"
+                                classNamePrefix="react-select"
+                                isLoading={loading && baselineRequirements.length === 0}
+                                isDisabled={loading}
+                            />
+                        </div>
                         {/* Design Type */}
                         <div className="create-design-form-group">
                             <label htmlFor="designType">Design Type</label>
@@ -221,21 +234,6 @@ const CreateDesign = () => {
                             </select>
                         </div>
 
-                        {/* Requirement ID Selection */}
-                        <div className="create-design-form-groups">
-                            <label htmlFor="requirementId">Requirement ID</label>
-                            <Select
-                                isMulti
-                                options={baselineRequirements.map((req) => ({ value: req.requirement_id, label: `REQ-${String(req.requirement_id).padStart(3, '0')}: ${req.requirement_name}` }))}
-                                value={baselineRequirements.filter(req => selectedRequirementsId.includes(req.requirement_id)).map(req => ({ value: req.requirement_id, label: `REQ-${String(req.requirement_id).padStart(3, '0')}: ${req.requirement_name}` }))}
-                                onChange={(selectedOptions) => setRequirementsId(selectedOptions ? selectedOptions.map((option) => option.value) : [])}
-                                placeholder="Select Related Baseline Requirement(s)"
-                                className="create-design-select-files"
-                                classNamePrefix="react-select"
-                                isLoading={loading && baselineRequirements.length === 0}
-                                isDisabled={loading}
-                            />
-                        </div>
 
                         {/* Add or Draw Diagram Section */}
                         <div className="create-design-form-group">

@@ -1,0 +1,242 @@
+/* viewBaselineRound.css - Professional Gray Theme */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* --- Variables (vbr-) --- */
+
+  /* Grayscale Palette */
+  --vbr-gray-50: #F7FAFC;
+  --vbr-gray-100: #EDF2F7;
+  --vbr-gray-200: #E2E8F0;
+  --vbr-gray-300: #CBD5E0;
+  --vbr-gray-400: #A0AEC0;
+  --vbr-gray-500: #718096;
+  --vbr-gray-600: #4A5568;
+  --vbr-gray-700: #2D3748;
+  --vbr-gray-800: #1A202C;
+  --vbr-gray-900: #171923;
+  --vbr-white: #ffffff;
+  --vbr-black: #000000;
+
+  /* Base Colors - Using Grays */
+  --vbr-bg-primary: var(--vbr-white);
+  --vbr-bg-secondary: var(--vbr-gray-100);
+  --vbr-bg-tertiary: var(--vbr-gray-200);
+
+  /* Text Colors - Using Grays */
+  --vbr-text-primary: var(--vbr-gray-800);
+  --vbr-text-secondary: var(--vbr-gray-600);
+  --vbr-text-light: var(--vbr-gray-500);
+  --vbr-text-on-primary: var(--vbr-white); /* Text on dark gray buttons */
+  --vbr-text-placeholder: var(--vbr-gray-400);
+
+  /* Primary "Brand" Colors - Using Grays */
+  --vbr-primary: var(--vbr-gray-700);       /* Dark Gray as Primary */
+  --vbr-primary-light: var(--vbr-gray-500);   /* Mid Gray as Light Primary */
+  --vbr-primary-dark: var(--vbr-gray-800);    /* Very Dark Gray as Dark Primary */
+
+  /* Accent Colors - Using Grays */
+  --vbr-accent: var(--vbr-gray-600);        /* Mid-Dark Gray as Accent */
+
+  /* Status Colors (Keeping original main colors for clarity, added light variants) */
+  --vbr-success: #10b981;        /* Emerald 500 */
+  --vbr-success-dark: #059669;   /* Emerald 600 */
+  --vbr-success-light: #D1FAE5;  /* Emerald 100 */
+  --vbr-warning: #f59e0b;        /* Amber 500 */
+  --vbr-warning-dark: #d97706;   /* Amber 600 */
+  --vbr-warning-light: #FEF3C7;  /* Amber 100 */
+  --vbr-error: #ef4444;          /* Red 500 */
+  --vbr-error-dark: #dc2626;      /* Red 600 */
+  --vbr-error-light: #FEE2E2;    /* Red 100 */
+  --vbr-info: #3B82F6;           /* Blue 500 */
+  --vbr-info-dark: #1D4ED8;      /* Darker Blue */
+  --vbr-info-light: #DBEAFE;     /* Blue 100 */
+
+  /* UI Elements - Using Grays */
+  --vbr-border: var(--vbr-gray-300);        /* Light gray border */
+  --vbr-border-light: var(--vbr-gray-200);  /* Very light gray border */
+  --vbr-border-dark: var(--vbr-gray-400);   /* Slightly darker gray border */
+  --vbr-border-focus: var(--vbr-primary);   /* Dark gray focus border */
+
+  /* Shadows - Standard Gray */
+  --vbr-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  --vbr-shadow-md: 0 3px 5px -1px rgba(0, 0, 0, 0.08), 0 2px 3px -1px rgba(0, 0, 0, 0.05);
+  --vbr-shadow-lg: 0 8px 12px -3px rgba(0, 0, 0, 0.08), 0 4px 5px -2px rgba(0, 0, 0, 0.04);
+
+  /* Border Radius */
+  --vbr-radius-sm: 0.25rem; /* 4px */
+  --vbr-radius-md: 0.375rem;/* 6px */
+  --vbr-radius-lg: 0.5rem;  /* 8px */
+  --vbr-radius-full: 9999px;
+
+  /* Transitions */
+  --vbr-transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --vbr-transition-fast: all 0.15s ease;
+}
+
+/* --- Global Reset --- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background-color: var(--vbr-bg-secondary); /* Very light gray */
+  font-family: 'Inter', sans-serif;
+  color: var(--vbr-text-primary); /* Dark gray text */
+  line-height: 1.6;
+  font-size: 14px; /* Default font size */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- Main Container --- */
+.vbr-container {
+  max-width: 1600px;
+  margin: 30px auto;
+  padding: 30px 35px;
+  background-color: var(--vbr-bg-primary); /* White */
+  border-radius: var(--vbr-radius-lg);
+  box-shadow: var(--vbr-shadow-md);
+  position: relative;
+}
+
+/* --- Header --- */
+.vbr-header {
+  display: flex; align-items: center; justify-content: flex-start;
+  margin-bottom: 25px;
+  position: relative;
+  padding-top: 0;
+  border-bottom: 1px solid var(--vbr-border-light); /* Very light gray border */ padding-bottom: 20px;
+  padding-left: 120px; /* Space for back button */
+}
+.vbr-header h1 {
+  font-size: 20px; font-weight: 600; color: var(--vbr-text-primary); /* Dark gray text */
+  margin: 0;
+  display: flex; align-items: center; gap: 10px; letter-spacing: -0.02em;
+}
+.vbr-title-icon { color: var(--vbr-primary); /* Primary gray icon */ font-size: 1.1em; }
+
+/* --- Back button --- */
+.vbr-back-btn {
+  position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  background-color: transparent; color: var(--vbr-primary); /* Primary gray text */ border: none;
+  font-size: 14px; font-weight: 500;
+  display: inline-flex; align-items: center; gap: 6px;
+  cursor: pointer; transition: var(--vbr-transition);
+  padding: 8px 12px; border-radius: var(--vbr-radius-md);
+}
+.vbr-back-btn:hover {
+  color: var(--vbr-primary-dark); /* Darker gray text */ background-color: var(--vbr-bg-tertiary); /* Light gray bg */
+  transform: translateY(-50%) translateX(-3px);
+}
+
+/* --- Content Area --- */
+.vbr-content { margin-top: 1.5rem; }
+
+/* --- Loading / Error / No Data States --- */
+.vbr-loading,
+.vbr-error-message,
+.vbr-no-data {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 3rem 2rem; text-align: center; color: var(--vbr-text-secondary); /* Mid gray text */ gap: 1rem;
+  background-color: var(--vbr-bg-secondary); /* Very light gray bg */ border-radius: var(--vbr-radius-lg);
+  border: 1px solid var(--vbr-border-light); /* Very light gray border */ min-height: 200px;
+}
+.vbr-loading svg { font-size: 2.5rem; color: var(--vbr-primary); /* Primary gray icon */ margin-bottom: 0.5rem; }
+.vbr-error-message svg { font-size: 2.5rem; color: var(--vbr-error); margin-bottom: 0.5rem; } /* Keep error color */
+.vbr-loading p { font-size: 1rem; font-weight: 500; }
+.vbr-error-message p { font-size: 1rem; font-weight: 500; color: var(--vbr-error-dark); } /* Keep error text color */
+.vbr-error-details { font-size: 0.85rem; color: var(--vbr-text-secondary); margin-top: 0.5rem; }
+.vbr-no-data p { font-size: 1rem; font-weight: 500; margin-bottom: 0.5rem; }
+.vbr-no-data-subtle { font-size: 0.9rem; color: var(--vbr-text-light); /* Light gray text */ }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.vbr-loading svg { animation: spin 1s linear infinite; }
+
+
+/* --- Table Container & Table --- */
+.vbr-table-container {
+  overflow-x: auto;
+  border: 1px solid var(--vbr-border); /* Light gray border */
+  border-radius: var(--vbr-radius-lg);
+  background-color: var(--vbr-bg-primary); /* White bg */
+  box-shadow: var(--vbr-shadow-sm);
+}
+.vbr-table {
+  width: 100%; border-collapse: collapse; font-size: 0.875rem;
+}
+.vbr-table th,
+.vbr-table td {
+  padding: 0.875rem 1.25rem; text-align: left;
+  border-bottom: 1px solid var(--vbr-border-light); /* Very light gray border */ white-space: normal; vertical-align: top;
+}
+.vbr-table th {
+  background-color: var(--vbr-bg-secondary); /* Very light gray header bg */ font-weight: 600; font-size: 0.75rem;
+  color: var(--vbr-text-secondary); /* Mid gray text */ text-transform: uppercase; letter-spacing: 0.05em;
+  position: sticky; top: 0; z-index: 1; white-space: nowrap; user-select: none;
+}
+.vbr-table tbody tr:hover { background-color: var(--vbr-bg-tertiary); /* Light gray hover */ }
+.vbr-table td { color: var(--vbr-text-primary); /* Dark gray text */ }
+.vbr-table tr:last-child td { border-bottom: none; }
+.vbr-req-id {
+    font-weight: 500; color: var(--vbr-primary-dark); /* Very dark gray */ margin-bottom: 0.2rem; display: inline-block;
+    font-family: "SF Mono", "Roboto Mono", Consolas, monospace; /* Monospace font */
+    font-size: 0.9em;
+}
+.vbr-item-detail {
+    font-size: 0.8rem; color: var(--vbr-text-secondary); /* Mid gray text */ margin-top: 0.1rem; display: block; line-height: 1.4;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+  body { font-size: 13px; }
+  .vbr-container { padding: 20px 15px; margin: 10px; }
+  .vbr-header { padding-left: 90px; flex-wrap: nowrap; }
+  .vbr-header h1 { font-size: 1rem; margin-left: 10px; }
+  .vbr-back-btn { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); padding: 6px 10px; }
+
+  /* Responsive Table */
+  .vbr-table { min-width: auto; border: none; }
+  .vbr-table-container { border: none; box-shadow: none; background-color: transparent; }
+  .vbr-table thead { display: none; }
+  .vbr-table tbody, .vbr-table tr, .vbr-table td { display: block; width: 100%; }
+  .vbr-table tr {
+      border: 1px solid var(--vbr-border);
+      border-radius: var(--vbr-radius-md);
+      margin-bottom: 1rem;
+      padding: 0.8rem;
+      background-color: var(--vbr-white); /* White card background */
+  }
+  .vbr-table td {
+      display: flex; flex-direction: column; align-items: flex-start;
+      justify-content: center; text-align: left; padding: 0.6rem 0;
+      border-bottom: 1px dashed var(--vbr-border-light);
+  }
+  .vbr-table td:last-child { border-bottom: none; }
+  /* Labels for responsive table cells */
+  .vbr-table td[data-label]::before,
+  .vbr-table td:nth-of-type(1)::before,
+  .vbr-table td:nth-of-type(2)::before,
+  .vbr-table td:nth-of-type(3)::before,
+  .vbr-table td:nth-of-type(4)::before {
+      content: attr(data-label); /* Use JS-provided label if available */
+      font-weight: 600; font-size: 0.75rem; text-align: left;
+      color: var(--vbr-text-secondary); /* Mid gray label */ padding-right: 10px; white-space: nowrap;
+      margin-bottom: 0.25rem; display: block; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+   /* Fallback labels if data-label is not set (adjust content as needed) */
+  .vbr-table td:nth-of-type(1):not([data-label])::before { content: 'Requirement:'; }
+  .vbr-table td:nth-of-type(2):not([data-label])::before { content: 'Design:'; }
+  .vbr-table td:nth-of-type(3):not([data-label])::before { content: 'Code:'; }
+  .vbr-table td:nth-of-type(4):not([data-label])::before { content: 'Test Case:'; }
+
+
+  .vbr-item-detail { margin-left: 0; }
+}
+
+/* Custom scrollbar */
+.vbr-table-container {
+    scrollbar-width: thin;
+    scrollbar-color: var(--vbr-gray-300) var(--vbr-bg-secondary);
+}
+.vbr-table-container::-webkit-scrollbar { width: 6px; height: 6px; }
+.vbr-table-container::-webkit-scrollbar-track { background: var(--vbr-bg-tertiary); border-radius: 10px; }
+.vbr-table-container::-webkit-scrollbar-thumb { background-color: var(--vbr-gray-300); border-radius: 10px; }
+.vbr-table-container::-webkit-scrollbar-thumb:hover { background-color: var(--vbr-gray-400); }

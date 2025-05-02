@@ -6,9 +6,9 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./testcase_css/CreateTestcase.css"; // Make sure this path is correct
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faCheckCircle,
-  faTimes,
+import { 
+  faCheckCircle, 
+  faTimes, 
   faExclamationTriangle,
   faSpinner,
   faVial,
@@ -26,142 +26,133 @@ const CreateTestcase = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [testType, setTestType] = useState("");
-  // const [customTestType, setCustomTestType] = useState(""); // ลบออกถ้าไม่ได้ใช้แล้ว
+  const [customTestType, setCustomTestType] = useState("");
   const [priority, setPriority] = useState("");
   const [completionDate, setCompletionDate] = useState("");
   const [loggedInUser, setLoggedInUser] = useState("");
   const [implementFiles, setImplementFiles] = useState([]);
-  const [selectedImplement, setSelectedImplement] = useState([]); // State นี้จะเก็บ array of selected option objects
+  const [selectedImplement, setSelectedImplement] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  
+  // Alert state
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertType, setAlertType] = useState("success");
+  const [alertMessage, setAlertMessage] = useState("");
 
   // Fetch username
   useEffect(() => {
     const storedUsername = localStorage.getItem("username");
-    if (storedUsername) {
-      setLoggedInUser(storedUsername);
+    if (storedUsername) { 
+      setLoggedInUser(storedUsername); 
     }
   }, []);
 
   // Fetch implement files
   useEffect(() => {
     const fetchImplementFiles = async () => {
-      if (!projectId) {
-        console.log("No Project ID found, cannot fetch implementation files.");
-        setImplementFiles([]);
-        return;
-      }
       try {
-        console.log(`Workspaceing implements for project_id: ${projectId}`);
-        const response = await axios.get("http://localhost:3001/implementrelation", {
-          params: { project_id: projectId }
-        });
+        const response = await axios.get("http://localhost:3001/implementrelation");
         setImplementFiles(response.data.data || []);
-        if (!response.data.data || response.data.data.length === 0) {
-          console.log("No implementation files found for this project.");
-        }
-      } catch (error) {
+      } catch (error) { 
         console.error("Error fetching implementation files:", error);
-        // *** แก้ไข: showAlertMessage อาจจะไม่มีอยู่จริง ใช้ toast แทน ***
-        toast.error("Failed to load implementation files. Please try again.");
-        setImplementFiles([]);
+        showAlertMessage("error", "Failed to load implementation files. Please try again.");
       }
     };
     fetchImplementFiles();
-  }, [projectId]);
+  }, []);
 
+  // Alert function
+  const showAlertMessage = (type, message) => {
+    setAlertType(type);
+    setAlertMessage(message);
+    setShowAlert(true);
+    
+    // Hide alert after 5 seconds
+    setTimeout(() => {
+      setShowAlert(false);
+      
+      // If success alert, redirect after showing message
+      if (type === "success") {
+        navigate(`/CreateTestcase?project_id=${projectId}`);
+      }
+    }, 1500);
+  };
 
   const handleCreateTestCase = async () => {
-    // --- Form validation ---
-    if (!title.trim() || !description.trim() || !testType || !priority || !completionDate) {
-      toast.warning("Please fill in all required fields.");
+    // Form validation
+    if (!title || !description || !testType || !priority) {
+      setError("Please fill in all required fields.");
+      showAlertMessage("warning", "Please fill in all required fields.");
       return;
     }
+
+    // Implement validation
     if (!selectedImplement || selectedImplement.length === 0) {
-      toast.warning("Please select at least one implement.");
+      setError("Please select at least one implement.");
+      showAlertMessage("warning", "Please select at least one implement.");
       return;
     }
 
-    // --- *** แก้ไข: ดึงข้อมูล ID และ Filename จาก selectedImplement *** ---
-    const selectedImplementData = selectedImplement.map(option => ({
-      id: option.value,           // implement_id อยู่ใน value
-      filename: option.filename   // implement_filename ที่เราเพิ่มเข้าไปใน option object
-    }));
-    const implementDataJsonString = JSON.stringify(selectedImplementData); // แปลง array of objects เป็น JSON string
-    // --- *** สิ้นสุดการแก้ไข *** ---
+    // Extract implement IDs from selected options
+    const selectedIds = selectedImplement.map(option => option.value);
+    const implementIdJsonString = JSON.stringify(selectedIds);
 
-    // --- Prepare testcase data ---
+    // Prepare testcase data
     const testCaseData = {
-      testcase_name: title.trim(),
-      testcase_des: description.trim(),
-      testcase_type: testType,
+      testcase_name: title,
+      testcase_des: description,
+      testcase_type: testType === "Other" ? customTestType : testType,
       testcase_priority: priority,
       testcase_by: loggedInUser,
       testcase_at: completionDate,
       testcase_status: "WORKING",
       project_id: projectId,
-      implement_id: implementDataJsonString, // <<< ส่ง JSON string ของ [{id, filename}, ...]
+      implement_id: implementIdJsonString,
     };
 
     setIsSubmitting(true);
-    setError(""); // Clear previous errors
+    setError("");
 
     try {
-      console.log("Sending Test Case Data:", testCaseData);
       const response = await axios.post("http://localhost:3001/testcases", testCaseData);
 
       if (response.status === 201) {
         const { testcase_id } = response.data;
-        console.log(`✅ Testcase ID Created: ${testcase_id}`);
-
+        
         // Add history record
         await axios.post("http://localhost:3001/addHistoryTestcase", {
           testcase_id,
           testcase_status: "WORKING",
         });
 
-        // --- Reset form fields ---
+        // Reset form
         setTitle("");
         setDescription("");
         setTestType("");
+        setCustomTestType("");
         setPriority("");
         setCompletionDate("");
-        setSelectedImplement([]); // Reset Select component
+        setSelectedImplement([]);
 
-        // --- Show success toast ---
-        toast.success("Test Case created successfully!", {
-          position: "top-right",
-          autoClose: 2000,
-          onClose: () => {
-            navigate(`/Dashboard?project_id=${projectId}`, {
-              state: { selectedSection: "Testcase" },
-            });
-          }
-        });
+        // Show success message and redirect
+        showAlertMessage("success", "Test Case created successfully!");
       } else {
         console.warn("Test case creation responded with status:", response.status);
-        toast.warning(`Test case created, but received unexpected status: ${response.status}`);
-        navigate(`/Dashboard?project_id=${projectId}`, {
-          state: { selectedSection: "Testcase" },
-        });
+        showAlertMessage("warning", `Test case created, but received unexpected status: ${response.status}`);
       }
     } catch (error) {
-      console.error("Error creating test case:", error.response || error);
-      const errMsg = error.response?.data?.error || // ใช้ error จาก backend ถ้ามี
-                     error.response?.data?.message ||
-                     "Failed to create test case. Please try again.";
-      setError(errMsg); // แสดง error บน UI (ถ้าต้องการ)
-      toast.error(`Failed to create test case: ${errMsg}`, {
-         toastId: "create-error-toast"
-      });
+      console.error("Error creating test case:", error);
+      setError(error.response?.data?.message || "Failed to create test case. Please try again.");
+      showAlertMessage("error", `Failed to create test case: ${error.response?.data?.message || error.message}`);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Handler for Select component (รับค่า selectedOptions ซึ่งเป็น array of option objects)
+  // Handler for Select component
   const handleSelectChange = (selectedOptions) => {
-    setSelectedImplement(selectedOptions || []); // เก็บ array of selected option objects ลง state
+    setSelectedImplement(selectedOptions || []);
   };
 
   return (
@@ -170,73 +161,94 @@ const CreateTestcase = () => {
         <FontAwesomeIcon icon={faVial} className="tc-create-header-icon" />
         Create Test Case
       </h2>
-
-      {error && <div className="tc-create-error">{error}</div>} {/* แสดง Error ถ้ามี */}
-
-      {/* Form Group: Title */}
+      
+      {error && <div className="tc-create-error">{error}</div>}
+      
       <div className="tc-create-form-group">
         <label className="tc-create-label">
           <FontAwesomeIcon icon={faFileAlt} className="tc-create-label-icon" />
           Title
         </label>
-        <input
+        <input 
           type="text"
-          className="tc-create-input"
-          value={title}
+          className="tc-create-input" 
+          value={title} 
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Enter test case title"
-          required // เพิ่ม required เพื่อการ validate ของ browser เบื้องต้น
         />
       </div>
-
-      {/* Form Group: Description */}
+      
       <div className="tc-create-form-group">
         <label className="tc-create-label">
           <FontAwesomeIcon icon={faFileAlt} className="tc-create-label-icon" />
           Description
         </label>
-        <textarea
+        <textarea 
           className="tc-create-textarea"
-          value={description}
+          value={description} 
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Enter detailed test case description"
           rows="4"
-          required
         />
       </div>
-
-      {/* Form Group: Test Type */}
+      
+      <div className="tc-create-form-group">
+        <label className="tc-create-label">
+          <FontAwesomeIcon icon={faFileAlt} className="tc-create-label-icon" />
+          Select Code Component
+        </label>
+        <Select
+          className="tc-create-select-multi"
+          classNamePrefix="tc-select"
+          isMulti
+          options={implementFiles.map(item => ({
+            value: item.implement_id,
+            label: `${item.implement_filename} (ID: ${item.implement_id})`
+          }))}
+          value={selectedImplement}
+          onChange={handleSelectChange}
+          placeholder="Select one or more Code Component..."
+          closeMenuOnSelect={false}
+        />
+      </div>
       <div className="tc-create-form-group">
         <label className="tc-create-label">
           <FontAwesomeIcon icon={faTag} className="tc-create-label-icon" />
           Test Type
         </label>
-        <select
+        <select 
           className="tc-create-select"
-          value={testType}
+          value={testType} 
           onChange={(e) => setTestType(e.target.value)}
-          required
         >
           <option value="">Select Test Type</option>
           <option value="Unit Test">Unit Test</option>
           <option value="Integration Test">Integration Test</option>
           <option value="System Test">System Test</option>
           <option value="Acceptance Test">Acceptance Test</option>
+          <option value="Regression Test">Regression Test</option>
           <option value="Other">Other</option>
         </select>
+        {testType === "Other" && (
+          <input
+            type="text"
+            className="tc-create-input tc-create-other-input"
+            placeholder="Specify other test type"
+            value={customTestType}
+            onChange={(e) => setCustomTestType(e.target.value)}
+          />
+        )}
       </div>
-
-      {/* Form Group: Priority */}
+      
       <div className="tc-create-form-group">
         <label className="tc-create-label">
           <FontAwesomeIcon icon={faLevelUpAlt} className="tc-create-label-icon" />
           Priority
         </label>
-        <select
+        <select 
           className="tc-create-select"
-          value={priority}
+          value={priority} 
           onChange={(e) => setPriority(e.target.value)}
-          required
         >
           <option value="">Select Priority</option>
           <option value="High">High</option>
@@ -244,72 +256,62 @@ const CreateTestcase = () => {
           <option value="Low">Low</option>
         </select>
       </div>
-
-      {/* Form Group: Completion Date */}
+      
       <div className="tc-create-form-group">
         <label className="tc-create-label">
           <FontAwesomeIcon icon={faCalendarAlt} className="tc-create-label-icon" />
           Test Completion Date
         </label>
-        <input
+        <input 
           type="date"
-          className="tc-create-input"
+          className="tc-create-input" 
           value={completionDate}
-          onChange={(e) => setCompletionDate(e.target.value)}
-          required
+          onChange={(e) => setCompletionDate(e.target.value)} 
         />
       </div>
 
-      {/* Form Group: Select Implement */}
-      <div className="tc-create-form-group">
-        <label className="tc-create-label">
-          <FontAwesomeIcon icon={faFileAlt} className="tc-create-label-icon" />
-          Select Implement (Multiple)
-        </label>
-        <Select
-          className="tc-create-select-multi"
-          classNamePrefix="tc-select"
-          isMulti
-          // --- *** แก้ไข: สร้าง options ให้มี value, label, และ filename *** ---
-          options={implementFiles.map(item => ({
-            value: item.implement_id,                          // ID สำหรับ value
-            label: `${item.implement_filename} (ID: ${item.implement_id})`, // ข้อความสำหรับแสดงผล
-            filename: item.implement_filename                   // <<< เพิ่ม filename เข้าไปใน object ของ option
-          }))}
-          // --- *** สิ้นสุดการแก้ไข *** ---
-          value={selectedImplement}
-          onChange={handleSelectChange} // onChange จะได้ array of selected option objects
-          placeholder="Select one or more implements..."
-          closeMenuOnSelect={false}
-          required // เพิ่ม required (แต่อาจต้อง validate ด้วย JS เพิ่มเติมสำหรับ react-select)
-        />
-      </div>
-
-      {/* Button Group */}
+      
       <div className="tc-create-button-group">
-        <button
-          type="button" // กำหนด type="button" สำหรับปุ่มที่ไม่ใช่ submit หลัก
-          onClick={() => navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Testcase" } })}
+        <button 
+          onClick={() => navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Testcase" } })} 
           className="tc-create-button tc-create-button-cancel"
         >
-          Back to Test Case
+          Cancel
         </button>
-        <button
-          type="button" // เปลี่ยนเป็น type="button" และเรียก handleCreateTestCase ผ่าน onClick
-          onClick={handleCreateTestCase}
+        <button 
+          onClick={handleCreateTestCase} 
           className="tc-create-button tc-create-button-submit"
           disabled={isSubmitting}
         >
           {isSubmitting ? (
             <>
-              <FontAwesomeIcon icon={faSpinner} spin className="tc-create-spinner" /> Creating... {/* แก้ spin เล็กน้อย */}
+              <FontAwesomeIcon icon={faSpinner} className="tc-create-spinner" /> Creating...
             </>
           ) : (
             "Create"
           )}
         </button>
       </div>
-
+      
+      {/* Custom Alert Notification */}
+      <div className={`tc-create-alert ${showAlert ? 'show' : ''}`}>
+        <div className={`tc-create-alert-${alertType}`}>
+          <div className="tc-create-alert-content">
+            <div className="tc-create-alert-icon">
+              {alertType === 'success' && <FontAwesomeIcon icon={faCheckCircle} />}
+              {alertType === 'error' && <FontAwesomeIcon icon={faTimes} />}
+              {alertType === 'warning' && <FontAwesomeIcon icon={faExclamationTriangle} />}
+            </div>
+            <div className="tc-create-alert-message">
+              {alertMessage}
+            </div>
+          </div>
+          <button className="tc-create-alert-close" onClick={() => setShowAlert(false)}>
+            <FontAwesomeIcon icon={faTimes} />
+          </button>
+        </div>
+        <div className="tc-create-alert-progress"></div>
+      </div>
     </div>
   );
 };

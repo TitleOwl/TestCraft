@@ -129,10 +129,7 @@ const OverviewProject = () => {
     <div className="dashboard-overview-container">
       <header className="overview-header">
         <h1>{projectName} Overview</h1>
-        <div className="overview-profile">
-          <img src="https://via.placeholder.com/40" alt="Profile" className="overview-profile-img" />
-          <span>Welcome, User</span>
-        </div>
+
       </header>
 
       <div className="overview-cards-grid">

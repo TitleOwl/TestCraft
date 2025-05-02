@@ -511,16 +511,6 @@ const VeriDesign = () => {
                                     </button>
                                 )}
                             </div>
-
-                            {/* Refresh Button (New) */}
-                            <button
-                                className={`veridesign-refresh-btn ${isRefreshing ? 'refreshing' : ''}`}
-                                onClick={handleRefresh}
-                                disabled={isRefreshing}
-                            >
-                                <FontAwesomeIcon icon={faSync} spin={isRefreshing} />
-                                {isRefreshing ? 'Refreshing...' : 'Refresh'}
-                            </button>
                         </div>
                     </div>
 
@@ -559,7 +549,7 @@ const VeriDesign = () => {
                                             )}
                                         </th>
                                         <th>Status</th> {/* Status is filtered, so no sorting needed here */}
-                                        <th>Reviewer</th>
+                                        <th>Details</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -611,8 +601,7 @@ const VeriDesign = () => {
                                                         className="veridesign-verify-btn"
                                                         onClick={() => handleVerifyClick(design)} // Use updated handler
                                                     >
-                                                        <FontAwesomeIcon icon={faCheck} className="veridesign-button-icon" />
-                                                        Verify
+                                                        View
                                                     </button>
                                             </td>
                                         </tr>

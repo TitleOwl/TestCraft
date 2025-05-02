@@ -1,0 +1,242 @@
+/* viewBaselineCurrent.css - Professional Gray Theme */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* --- Variables (vbc-) --- */
+
+  /* Grayscale Palette */
+  --vbc-gray-50: #F7FAFC;
+  --vbc-gray-100: #EDF2F7;
+  --vbc-gray-200: #E2E8F0;
+  --vbc-gray-300: #CBD5E0;
+  --vbc-gray-400: #A0AEC0;
+  --vbc-gray-500: #718096;
+  --vbc-gray-600: #4A5568;
+  --vbc-gray-700: #2D3748;
+  --vbc-gray-800: #1A202C;
+  --vbc-gray-900: #171923;
+  --vbc-white: #ffffff;
+  --vbc-black: #000000;
+
+  /* Base Colors - Using Grays */
+  --vbc-bg-primary: var(--vbc-white);
+  --vbc-bg-secondary: var(--vbc-gray-100);
+  --vbc-bg-tertiary: var(--vbc-gray-200);
+
+  /* Text Colors - Using Grays */
+  --vbc-text-primary: var(--vbc-gray-800);
+  --vbc-text-secondary: var(--vbc-gray-600);
+  --vbc-text-light: var(--vbc-gray-500);
+  --vbc-text-on-primary: var(--vbc-white); /* Text on dark gray buttons */
+  --vbc-text-placeholder: var(--vbc-gray-400);
+
+  /* Primary "Brand" Colors - Using Grays */
+  --vbc-primary: var(--vbc-gray-700);       /* Dark Gray as Primary */
+  --vbc-primary-light: var(--vbc-gray-500);   /* Mid Gray as Light Primary */
+  --vbc-primary-dark: var(--vbc-gray-800);    /* Very Dark Gray as Dark Primary */
+
+  /* Accent Colors - Using Grays */
+  --vbc-accent: var(--vbc-gray-600);        /* Mid-Dark Gray as Accent */
+
+  /* Status Colors (Keeping original main colors for clarity, added light variants) */
+  --vbc-success: #10b981;        /* Emerald 500 */
+  --vbc-success-dark: #059669;   /* Emerald 600 */
+  --vbc-success-light: #D1FAE5;  /* Emerald 100 */
+  --vbc-warning: #f59e0b;        /* Amber 500 */
+  --vbc-warning-dark: #d97706;   /* Amber 600 */
+  --vbc-warning-light: #FEF3C7;  /* Amber 100 */
+  --vbc-error: #ef4444;          /* Red 500 */
+  --vbc-error-dark: #dc2626;      /* Red 600 */
+  --vbc-error-light: #FEE2E2;    /* Red 100 */
+  --vbc-info: #3B82F6;           /* Blue 500 */
+  --vbc-info-dark: #1D4ED8;      /* Darker Blue */
+  --vbc-info-light: #DBEAFE;     /* Blue 100 */
+
+  /* UI Elements - Using Grays */
+  --vbc-border: var(--vbc-gray-300);        /* Light gray border */
+  --vbc-border-light: var(--vbc-gray-200);  /* Very light gray border */
+  --vbc-border-dark: var(--vbc-gray-400);   /* Slightly darker gray border */
+  --vbc-border-focus: var(--vbc-primary);   /* Dark gray focus border */
+
+  /* Shadows - Standard Gray */
+  --vbc-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  --vbc-shadow-md: 0 3px 5px -1px rgba(0, 0, 0, 0.08), 0 2px 3px -1px rgba(0, 0, 0, 0.05);
+  --vbc-shadow-lg: 0 8px 12px -3px rgba(0, 0, 0, 0.08), 0 4px 5px -2px rgba(0, 0, 0, 0.04);
+
+  /* Border Radius */
+  --vbc-radius-sm: 0.25rem; /* 4px */
+  --vbc-radius-md: 0.375rem;/* 6px */
+  --vbc-radius-lg: 0.5rem;  /* 8px */
+  --vbc-radius-full: 9999px;
+
+  /* Transitions */
+  --vbc-transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --vbc-transition-fast: all 0.15s ease;
+}
+
+/* --- Global Reset --- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background-color: var(--vbc-bg-secondary); /* Very light gray */
+  font-family: 'Inter', sans-serif;
+  color: var(--vbc-text-primary); /* Dark gray text */
+  line-height: 1.6;
+  font-size: 14px; /* Default font size */
+}
+
+/* --- Main Container --- */
+.vbc-container {
+  max-width: 1600px;
+  margin: 30px auto;
+  padding: 30px 35px;
+  background-color: var(--vbc-bg-primary); /* White */
+  border-radius: var(--vbc-radius-lg);
+  box-shadow: var(--vbc-shadow-md);
+  position: relative;
+}
+
+/* --- Header --- */
+.vbc-header {
+  display: flex; align-items: center; justify-content: flex-start;
+  margin-bottom: 25px; position: relative; padding-top: 0;
+  border-bottom: 1px solid var(--vbc-border-light); /* Very light gray border */ padding-bottom: 20px;
+  padding-left: 120px; /* Space for back button */
+}
+.vbc-header h1 {
+  font-size: 20px; font-weight: 600; color: var(--vbc-text-primary); /* Dark gray text */
+  margin: 0; display: flex; align-items: center; gap: 10px; letter-spacing: -0.02em;
+  flex-grow: 1; margin-right: 1rem;
+}
+.vbc-title-icon { color: var(--vbc-primary); /* Primary gray icon */ font-size: 1.1em; }
+.vbc-back-btn {
+  position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  background-color: transparent; color: var(--vbc-primary); /* Primary gray text */ border: none;
+  font-size: 14px; font-weight: 500; display: inline-flex; align-items: center;
+  gap: 6px; cursor: pointer; transition: var(--vbc-transition);
+  padding: 8px 12px; border-radius: var(--vbc-radius-md);
+}
+.vbc-back-btn:hover {
+  color: var(--vbc-primary-dark); /* Darker gray text */ background-color: var(--vbc-bg-tertiary); /* Light gray bg */
+  transform: translateY(-50%) translateX(-3px);
+}
+.vbc-project-name { /* Style for project name in header */
+    font-size: 0.9rem; font-weight: 500; color: var(--vbc-text-secondary); /* Mid gray text */
+    background-color: var(--vbc-bg-tertiary); /* Light gray bg */ padding: 4px 10px;
+    border-radius: var(--vbc-radius-sm); border: 1px solid var(--vbc-border); /* Light gray border */
+    margin-left: auto; white-space: nowrap;
+}
+
+/* --- Content Area --- */
+.vbc-content { margin-top: 1.5rem; }
+
+/* --- Loading / Error / No Data States --- */
+.vbc-loading,
+.vbc-error-message,
+.vbc-no-data {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 3rem 2rem; text-align: center; color: var(--vbc-text-secondary); /* Mid gray text */ gap: 1rem;
+  background-color: var(--vbc-bg-secondary); /* Very light gray bg */ border-radius: var(--vbc-radius-lg);
+  border: 1px solid var(--vbc-border-light); /* Very light gray border */ min-height: 200px;
+}
+.vbc-loading svg { font-size: 2.5rem; color: var(--vbc-primary); /* Primary gray icon */ margin-bottom: 0.5rem; }
+.vbc-error-message svg { font-size: 2.5rem; color: var(--vbc-error); margin-bottom: 0.5rem; } /* Keep error color */
+.vbc-loading p { font-size: 1rem; font-weight: 500; }
+.vbc-error-message p { font-size: 1rem; font-weight: 500; color: var(--vbc-error-dark); } /* Keep error text color */
+.vbc-error-details { font-size: 0.85rem; color: var(--vbc-text-secondary); margin-top: 0.5rem; }
+.vbc-no-data p { font-size: 1rem; font-weight: 500; margin-bottom: 0.5rem; }
+.vbc-no-data-subtle { font-size: 0.9rem; color: var(--vbc-text-light); /* Light gray text */ }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.vbc-loading svg { animation: spin 1s linear infinite; }
+
+
+/* --- Table Container & Table --- */
+.vbc-table-container {
+  overflow-x: auto;
+  border: 1px solid var(--vbc-border); /* Light gray border */
+  border-radius: var(--vbc-radius-lg);
+  background-color: var(--vbc-bg-primary); /* White bg */
+  box-shadow: var(--vbc-shadow-sm);
+}
+.vbc-table {
+  width: 100%; border-collapse: collapse; font-size: 0.875rem;
+}
+.vbc-table th,
+.vbc-table td {
+  padding: 0.875rem 1.25rem; text-align: left;
+  border-bottom: 1px solid var(--vbc-border-light); /* Very light gray border */ white-space: normal; vertical-align: top;
+}
+.vbc-table th {
+  background-color: var(--vbc-bg-secondary); /* Very light gray header bg */ font-weight: 600; font-size: 0.75rem;
+  color: var(--vbc-text-secondary); /* Mid gray text */ text-transform: uppercase; letter-spacing: 0.05em;
+  position: sticky; top: 0; z-index: 1; white-space: nowrap; user-select: none;
+}
+.vbc-table tbody tr:hover { background-color: var(--vbc-bg-tertiary); /* Light gray hover */ }
+.vbc-table td { color: var(--vbc-text-primary); /* Dark gray text */ }
+.vbc-table tr:last-child td { border-bottom: none; }
+.vbc-req-id {
+    font-weight: 500; color: var(--vbc-primary-dark); /* Very dark gray */ margin-bottom: 0.2rem; display: inline-block;
+    font-family: "SF Mono", "Roboto Mono", Consolas, monospace; /* Monospace font */
+    font-size: 0.9em;
+}
+.vbc-item-detail {
+    font-size: 0.8rem; color: var(--vbc-text-secondary); /* Mid gray text */ margin-top: 0.1rem; display: block; line-height: 1.4;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+  body { font-size: 13px; }
+  .vbc-container { padding: 20px 15px; margin: 10px; }
+  .vbc-header { flex-wrap: wrap; gap: 10px; padding-bottom: 15px; padding-left: 15px; padding-right: 15px; }
+  .vbc-header h1 { font-size: 1rem; order: 2; width: 100%; text-align: center; padding: 0; margin: 0.5rem 0 0 0; }
+  .vbc-back-btn { position: static; transform: none; order: 1; }
+  .vbc-project-name { order: 3; width: 100%; text-align: center; margin-top: 0.5rem; }
+
+  /* Responsive Table */
+  .vbc-table { min-width: auto; border: none; }
+  .vbc-table-container { border: none; box-shadow: none; background-color: transparent; }
+  .vbc-table thead { display: none; }
+  .vbc-table tbody, .vbc-table tr, .vbc-table td { display: block; width: 100%; }
+  .vbc-table tr {
+      border: 1px solid var(--vbc-border);
+      border-radius: var(--vbc-radius-md);
+      margin-bottom: 1rem;
+      padding: 0.8rem;
+      background-color: var(--vbc-white); /* White card background */
+  }
+  .vbc-table td {
+      display: flex; flex-direction: column; align-items: flex-start;
+      justify-content: center; text-align: left; padding: 0.6rem 0;
+      border-bottom: 1px dashed var(--vbc-border-light);
+  }
+  .vbc-table td:last-child { border-bottom: none; }
+  /* Labels for responsive table cells */
+  .vbc-table td[data-label]::before,
+  .vbc-table td:nth-of-type(1)::before,
+  .vbc-table td:nth-of-type(2)::before,
+  .vbc-table td:nth-of-type(3)::before,
+  .vbc-table td:nth-of-type(4)::before {
+      content: attr(data-label); /* Use JS-provided label if available */
+      font-weight: 600; font-size: 0.75rem; text-align: left;
+      color: var(--vbc-text-secondary); /* Mid gray label */ padding-right: 10px; white-space: nowrap;
+      margin-bottom: 0.25rem; display: block; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+   /* Fallback labels if data-label is not set (adjust content as needed) */
+  .vbc-table td:nth-of-type(1):not([data-label])::before { content: 'Requirement:'; }
+  .vbc-table td:nth-of-type(2):not([data-label])::before { content: 'Design:'; }
+  .vbc-table td:nth-of-type(3):not([data-label])::before { content: 'Code:'; }
+  .vbc-table td:nth-of-type(4):not([data-label])::before { content: 'Test Case:'; }
+
+
+  .vbc-item-detail { margin-left: 0; }
+}
+
+/* Custom scrollbar */
+.vbc-table-container {
+    scrollbar-width: thin;
+    scrollbar-color: var(--vbc-gray-300) var(--vbc-bg-secondary);
+}
+.vbc-table-container::-webkit-scrollbar { width: 6px; height: 6px; }
+.vbc-table-container::-webkit-scrollbar-track { background: var(--vbc-bg-tertiary); border-radius: 10px; }
+.vbc-table-container::-webkit-scrollbar-thumb { background-color: var(--vbc-gray-300); border-radius: 10px; }
+.vbc-table-container::-webkit-scrollbar-thumb:hover { background-color: var(--vbc-gray-400); }

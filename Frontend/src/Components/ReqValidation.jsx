@@ -294,7 +294,7 @@ const fetchUploadedFiles = async (requirementId) => {
   const handleCommentDelete = async (commentId) => {
     if (window.confirm("Are you sure you want to delete this comment?")) {
       try {
-        const response = await axios.delete(`http://localhost:3001/deletecomment/${commentId}`);
+        const response = await axios.delete(`http://localhost:3001/deletecomments/${commentId}`);
         if (response.status === 200) {
           toast.success("Comment deleted.");
           fetchComments(); // โหลดคอมเมนต์ใหม่
@@ -387,8 +387,8 @@ const fetchUploadedFiles = async (requirementId) => {
     <div className="Vali-container">
       {/* Header */}
       <div className="Vali-header">
-        <button className="Vali-back-button" onClick={() => navigate(`/Dashboard?project_id=${projectId}`)}>
-          <span>←</span> Back to Dashboard
+        <button className="Vali-back-button" onClick={() => navigate(`/ValidationList?project_id=${projectId}`)}>
+          <span>←</span> Back to Validation List
         </button>
         <h1 className="Vali-title">
           <span className="Vali-title-icon">📋</span> Requirement Validation
@@ -448,7 +448,7 @@ const fetchUploadedFiles = async (requirementId) => {
                     <div className="Vali-comment-footer">
                     <button
     className="Vali-delete-comment-button"
-    onClick={() => handleCommentDelete(comment.comment_id)}
+    onClick={() => handleCommentDelete(comment.comment_var_id)}
 >
     Delete
 </button>

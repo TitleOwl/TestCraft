@@ -1,0 +1,471 @@
+/* ProjectConfig.css - Implementation Section Focus - Elegant Refinement */
+
+/* Base styles and variables - Refined for Elegance */
+:root {
+    /* Palette: Sophisticated blues, neutral grays, soft backgrounds */
+    --primary-color: #375a7f; /* Dark Slate Blue */
+    --primary-hover: #2c4866; /* Deeper Slate Blue */
+    --primary-light: #f1f5f9; /* Very Light Slate/Gray - for subtle backgrounds/hovers */
+
+    --secondary-color: #64748b; /* Neutral Slate Gray 500 */
+    --secondary-hover: #475569; /* Neutral Slate Gray 600 */
+
+    --success-color: #10b981; /* Keep for potential success messages */
+    --danger-color: #ef4444;  /* Keep for potential error messages */
+    --warning-color: #f59e0b; /* Keep for potential warnings */
+
+    --text-primary: #1e293b;   /* Dark Slate 800 - For main text */
+    --text-secondary: #475569; /* Slate 600 - For labels, hints */
+    --text-light: #ffffff;      /* White text for buttons */
+
+    --bg-main: #f8fafc;        /* Very Light Gray/Off-white (Slate 50) */
+    --bg-card: #ffffff;        /* White for cards/sections */
+    --bg-subtle: #f1f5f9;     /* Subtle background (Slate 100) */
+
+    --border-color: #e2e8f0;   /* Light border (Slate 200) */
+    --border-focus: var(--primary-color); /* Use primary for focus border */
+
+    /* Shadows - Very Subtle */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.03); /* Softer */
+    --shadow-md: 0 2px 4px -1px rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.03); /* Softer */
+    --shadow-lg: 0 5px 10px -3px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.04); /* Softer */
+
+    --transition: all 0.25s ease-in-out; /* Smooth transition */
+    --radius: 6px; /* Slightly rounded */
+    --radius-lg: 8px; /* Larger radius */
+
+    /* Typography */
+    --font-main: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    --font-header: var(--font-main); /* Use same font for consistency */
+}
+
+/* Base Layout Styles */
+.project-config {
+    font-family: var(--font-main);
+    color: var(--text-primary);
+    background-color: var(--bg-main);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.config-header {
+    background-color: var(--bg-card);
+    padding: 1.25rem 2.5rem; /* Generous padding */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: none; /* Remove shadow */
+    border-bottom: 1px solid var(--border-color); /* Clean border */
+    z-index: 10;
+}
+
+.config-header h1 {
+    margin: 0;
+    font-family: var(--font-header);
+    font-size: 1.4rem;
+    font-weight: 500; /* Medium weight for elegance */
+    color: var(--text-primary);
+}
+
+.header-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+/* Content Area */
+.config-content {
+    padding: 2.5rem; /* More whitespace */
+    flex: 1;
+}
+
+/* Implementation Section Container */
+.implementation-section {
+    background-color: var(--bg-card);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color); /* Subtle border */
+    box-shadow: var(--shadow-md); /* Subtle shadow */
+    padding: 2.5rem; /* Generous inner padding */
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem; /* Increased space between subsections */
+}
+
+/* Section Header */
+.section-header {
+    margin-bottom: 0;
+}
+
+.section-header h2 {
+    font-family: var(--font-header);
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.divider {
+    height: 2px; /* Thinner divider */
+    width: 40px;
+    background-color: var(--primary-color);
+    border-radius: 1px;
+}
+
+/* GitHub Configuration Box */
+.github-config {
+    background-color: transparent; /* Blend with card background */
+    border: 1px solid var(--border-color); /* Keep border for definition */
+    border-radius: var(--radius);
+    padding: 2rem; /* Increased padding */
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group:last-of-type { /* Target last form group before buttons */
+     margin-bottom: 2rem; /* More space before action buttons */
+}
+
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.6rem;
+    font-weight: 500;
+    font-size: 0.875rem;
+    color: var(--text-secondary); /* Use secondary text color */
+}
+
+.github-input, .branch-select {
+    width: 100%;
+    padding: 0.75rem 1rem; /* Comfortable padding */
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    font-size: 0.95rem;
+    transition: var(--transition);
+    background-color: var(--bg-card); /* Match card background */
+    box-shadow: none; /* Remove inner shadow */
+    color: var(--text-primary);
+}
+.github-input::placeholder, .branch-select option[value=""] {
+    color: #94a3b8; /* Lighter placeholder (Slate 400) */
+}
+
+
+.github-input:focus, .branch-select:focus {
+    outline: none;
+    border-color: var(--border-focus); /* Change border color */
+    box-shadow: 0 0 0 2px rgba(55, 90, 127, 0.2); /* Subtle focus ring */
+}
+
+.select-wrapper {
+    position: relative;
+}
+
+.branch-select {
+    appearance: none;
+    /* Refined dropdown arrow SVG */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%2394a3b8' viewBox='0 0 20 20'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 010-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.8rem center;
+    background-size: 1.1em;
+    padding-right: 2.8rem;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 0; /* Reset margin as spacing is handled by last form-group */
+}
+
+.save-button, .update-button {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    border: 1px solid transparent; /* Add border for structure */
+    border-radius: var(--radius);
+    padding: 0.7rem 1.5rem; /* Adjusted padding */
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.save-button:hover, .update-button:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    box-shadow: var(--shadow-md); /* Slightly elevate on hover */
+}
+
+/* File Explorer */
+.file-explorer {
+    background-color: transparent; /* Blend with parent card */
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.explorer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem; /* Generous header padding */
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--bg-subtle); /* Subtle header background */
+}
+
+.explorer-header h3 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.search-container {
+    position: relative;
+}
+
+.search-input {
+    padding: 0.5rem 0.8rem 0.5rem 2.25rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    font-size: 0.875rem;
+    background-color: var(--bg-card); /* White background */
+    /* Refined search icon SVG */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2394a3b8'%3E%3Cpath fill-rule='evenodd' d='M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z' clip-rule='evenodd'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 0.75rem center;
+    background-size: 1em; /* Adjust size */
+    transition: var(--transition);
+    min-width: 220px;
+    box-shadow: none;
+}
+.search-input::placeholder {
+    color: #94a3b8; /* Lighter placeholder */
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 2px rgba(55, 90, 127, 0.2);
+    background-color: var(--bg-card); /* Ensure bg stays white on focus */
+}
+
+.fetch-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    background-color: transparent; /* Make it less prominent */
+    color: var(--primary-color);
+    border: none;
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.85rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: var(--transition);
+    width: 100%; /* Make it full width */
+}
+
+.fetch-button:hover:not(:disabled) {
+    background-color: var(--primary-light); /* Subtle hover */
+    color: var(--primary-hover);
+}
+
+.fetch-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    color: var(--text-secondary);
+    background-color: var(--bg-subtle);
+}
+
+.fetch-icon {
+    width: 16px;
+    height: 16px;
+    opacity: 0.8;
+}
+
+.file-container {
+    max-height: 400px; /* Adjust as needed */
+    overflow-y: auto;
+    padding: 1rem; /* Padding around the tree */
+    flex-grow: 1;
+    background-color: var(--bg-card); /* Ensure white background */
+}
+
+.file-tree {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+/* Subtle indentation guide */
+.file-item > .file-tree {
+    padding-left: 1.25rem; /* Indentation */
+    border-left: 1px solid #f1f5f9; /* Very faint guide line (Slate 100) */
+    margin-left: 0.625rem; /* Align with icon center */
+}
+
+
+.file-item {
+    margin: 0; /* Remove vertical margin for tighter list */
+}
+
+.folder-label, .file-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem; /* Adjusted padding */
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background-color 0.15s ease-out; /* Faster hover transition */
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.folder-label:hover {
+    background-color: var(--primary-light);
+    /* color: var(--primary-hover); */ /* Optional: change text color too */
+}
+
+.file-label {
+    cursor: default;
+    color: var(--text-secondary); /* Use secondary text */
+}
+/* Optional file hover if needed */
+/* .file-label:hover { background-color: var(--bg-subtle); } */
+
+.folder-icon, .file-icon {
+    display: inline-flex; /* Use flex for centering if needed */
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    font-size: 1em; /* Match text size */
+    color: var(--secondary-color); /* Default subtle icon color */
+    margin-right: 0.25rem; /* Slight space after icon */
+}
+.folder-label .folder-icon {
+    color: var(--primary-color); /* Keep folder icons colored */
+}
+
+
+.folder-name, .file-name {
+   /* Inherit size and color */
+   /* Ellipsis handled in parent */
+}
+
+/* Loading and Empty States */
+.loading-container, .no-files {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+    color: var(--text-secondary);
+    text-align: center;
+    min-height: 180px;
+    background-color: transparent; /* Blend with container background */
+    border-radius: var(--radius);
+    margin: 0;
+}
+
+.loading-spinner {
+    border: 2px solid var(--border-color); /* Thinner spinner border */
+    border-top: 2px solid var(--primary-color);
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.no-files p {
+    margin: 0.25rem 0;
+    font-size: 0.95rem;
+}
+
+.no-files-hint {
+    font-size: 0.85rem;
+    max-width: 90%;
+    margin-top: 0.75rem;
+    color: var(--secondary-color); /* Use standard secondary color */
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .config-content {
+      padding: 2rem; /* Maintain good padding */
+    }
+    .implementation-section {
+      padding: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .config-header {
+      padding: 1rem 1.5rem;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+     .config-header h1 {
+         font-size: 1.3rem;
+     }
+
+    .config-content {
+      padding: 1.5rem; /* Adjust padding */
+    }
+
+    .implementation-section {
+      padding: 1.5rem;
+      gap: 2rem;
+    }
+     .github-config {
+        padding: 1.5rem;
+     }
+
+    .action-buttons {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.75rem;
+    }
+
+    .save-button, .update-button {
+      width: 100%;
+      justify-content: center;
+    }
+
+     .explorer-header {
+        padding: 0.75rem 1rem;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+     .explorer-header h3 {
+         text-align: center;
+     }
+
+    .search-input {
+        width: 100%;
+        min-width: auto;
+    }
+    .file-container {
+        padding: 0.75rem;
+    }
+}

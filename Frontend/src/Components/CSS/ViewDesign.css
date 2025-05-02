@@ -1006,3 +1006,52 @@ body {
       grid-column: 1 / -1; /* Diagram spans full width below columns */
    }
 }
+
+/* ใน ViewDesign.css หรือไฟล์ CSS ที่เกี่ยวข้อง */
+
+.related-files-modal-list {
+  list-style: none; /* เอา bullet point ออก */
+  padding: 0;
+  margin: 0;
+}
+
+.related-file-item {
+  display: flex; /* ใช้ Flexbox ช่วยจัดวาง */
+  align-items: center; /* จัดให้อยู่กึ่งกลางแนวตั้ง */
+  padding: 8px 5px; /* ระยะห่างภายใน */
+  margin-bottom: 5px; /* ระยะห่างระหว่างรายการ */
+  border-bottom: 1px solid #eee; /* เส้นคั่นบางๆ */
+}
+
+.related-file-item:last-child {
+  border-bottom: none; /* รายการสุดท้ายไม่มีเส้นคั่น */
+}
+
+.related-file-thumbnail {
+  width: 200px; /* กำหนดขนาด Thumbnail */
+  height: 150px;
+  object-fit: cover; /* ให้รูปภาพเต็มพื้นที่โดยอาจมีการ crop */
+  /* object-fit: contain; */ /* อีกทางเลือก: ให้เห็นรูปภาพทั้งหมด อาจมีขอบขาว */
+  margin-right: 15px; /* ระยะห่างระหว่างรูปกับลิงก์ */
+  border: 1px solid #ddd; /* กรอบบางๆ */
+  border-radius: 4px; /* ทำให้มุมมนเล็กน้อย */
+  flex-shrink: 0; /* ไม่ให้รูปภาพหดตัวเมื่อพื้นที่น้อย */
+}
+
+/* จัดสไตล์ไอคอน FileIcon (กรณีไม่ใช่รูปภาพ) */
+.related-file-item svg {
+  width: 24px; /* ขนาดไอคอน */
+  height: 24px;
+  margin-right: 15px; /* ระยะห่างเท่ากับรูปภาพ */
+  fill: #6c757d; /* สีไอคอน */
+  flex-shrink: 0;
+}
+
+.related-file-item a {
+  text-decoration: none;
+  word-break: break-all; /* ถ้าชื่อไฟล์ยาวมากให้ตัดคำ */
+}
+
+.related-file-item a:hover {
+  text-decoration: underline;
+}

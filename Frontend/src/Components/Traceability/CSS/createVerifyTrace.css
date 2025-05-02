@@ -1,132 +1,721 @@
-/* ----- Global styles for the specific component ----- */
-.create-verify-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f6f9;
-    color: #333;
-    margin: 0;
-    padding: 0;
-  }
-  
-  /* ----- Main container ----- */
-  .create-verify-container {
-    max-width: 1200px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .create-verify-container h1 {
-    font-size: 24px;
-    color: #2a2a2a;
-    margin-bottom: 20px;
-  }
-  
-  .create-verify-container h3 {
-    font-size: 20px;
-    color: #3e3e3e;
-    margin-bottom: 10px;
-  }
-  
-  /* ----- Table Styles ----- */
-  .create-verify-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-  }
-  
-  .create-verify-table th,
-  .create-verify-table td {
-    padding: 12px;
-    text-align: left;
-    border: 1px solid #ddd;
-  }
-  
-  .create-verify-table th {
-    background-color: #007bff;
-    color: white;
-    font-weight: bold;
-  }
-  
-  .create-verify-table tr:nth-child(even) {
-    background-color: #f9f9f9;
-  }
-  
-  .create-verify-table td input[type="checkbox"] {
-    margin-right: 10px;
-  }
-  
-  /* ----- Members Selection Section ----- */
-  .create-verify-members-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .create-verify-member-item {
-    display: flex;
+/* createVerifyTrace.css - Professional Gray Theme (Traceability Version) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* --- المتغيرات Variables (มี Prefix cvt-) --- */
+
+  /* Grayscale Palette */
+  --cvt-gray-50: #F7FAFC;
+  --cvt-gray-100: #EDF2F7;
+  --cvt-gray-200: #E2E8F0;
+  --cvt-gray-300: #CBD5E0;
+  --cvt-gray-400: #A0AEC0;
+  --cvt-gray-500: #718096;
+  --cvt-gray-600: #4A5568;
+  --cvt-gray-700: #2D3748;
+  --cvt-gray-800: #1A202C;
+  --cvt-gray-900: #171923;
+  --cvt-white: #ffffff;
+  --cvt-black: #000000;
+
+  /* Base Colors - Using Grays */
+  --cvt-bg-primary: var(--cvt-white); /* White background */
+  --cvt-bg-secondary: var(--cvt-gray-100); /* Very light gray */
+  --cvt-bg-tertiary: var(--cvt-gray-200); /* Light gray for hover/alt */
+
+  /* Text Colors - Using Grays */
+  --cvt-text-primary: var(--cvt-gray-800);   /* Dark gray for main text */
+  --cvt-text-secondary: var(--cvt-gray-600); /* Mid-gray for secondary text */
+  --cvt-text-light: var(--cvt-gray-500);     /* Lighter gray for hints */
+  --cvt-text-on-primary: var(--cvt-white);   /* Text on dark gray buttons */
+  --cvt-text-on-accent: var(--cvt-gray-800); /* Text on light gray accents */
+  --cvt-text-placeholder: var(--cvt-gray-400); /* Placeholder text color */
+
+  /* Primary "Brand" Colors - Using Grays */
+  --cvt-primary: var(--cvt-gray-700);       /* Dark Gray as Primary */
+  --cvt-primary-light: var(--cvt-gray-500);   /* Mid Gray as Light Primary */
+  --cvt-primary-dark: var(--cvt-gray-800);    /* Very Dark Gray as Dark Primary */
+
+  /* Accent Colors - Using Grays */
+  --cvt-accent: var(--cvt-gray-600);        /* Mid-Dark Gray as Accent */
+  --cvt-accent-light: var(--cvt-gray-400);    /* Lighter Gray as Light Accent */
+  --cvt-accent-dark: var(--cvt-gray-700);     /* Dark Gray as Dark Accent (Same as primary) */
+
+  /* Status Colors (Kept original for clarity - modify if pure gray needed) */
+  --cvt-success: #10b981;        /* Emerald 500 */
+  --cvt-success-dark: #059669;   /* Emerald 600 */
+  --cvt-success-light: #D1FAE5;  /* Emerald 100 (Example light shade) */
+  --cvt-warning: #f59e0b;        /* Amber 500 */
+  --cvt-warning-dark: #b45309;   /* Amber 700 */
+  --cvt-warning-light: #FEF3C7;  /* Amber 100 (Example light shade) */
+  --cvt-error: #ef4444;          /* Red 500 */
+  --cvt-error-dark: #b91c1c;      /* Red 700 */
+  --cvt-error-light: #FEE2E2;    /* Red 100 (Example light shade) */
+  --cvt-info: #3B82F6;           /* Blue 500 (Example Info) */
+  --cvt-info-light: #DBEAFE;     /* Blue 100 (Example Info Light) */
+  --cvt-working: #8b5cf6;        /* Purple 500 */
+
+  /* UI Elements - Using Grays */
+  --cvt-border: var(--cvt-gray-300);        /* Light gray border */
+  --cvt-border-light: var(--cvt-gray-200);  /* Very light gray border */
+  --cvt-border-colored: var(--cvt-gray-400);/* Mid-gray colored border */
+  --cvt-border-focus: var(--cvt-primary);   /* Dark gray focus border */
+
+  /* Shadows - Using standard grays */
+  --cvt-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --cvt-shadow-md: 0 3px 5px -1px rgba(0, 0, 0, 0.08), 0 2px 3px -1px rgba(0, 0, 0, 0.05);
+  --cvt-shadow-lg: 0 8px 12px -3px rgba(0, 0, 0, 0.08), 0 4px 5px -2px rgba(0, 0, 0, 0.04);
+  --cvt-shadow-colored: 0 4px 12px rgba(45, 55, 72, 0.15); /* Shadow based on primary gray */
+
+  /* Border Radius */
+  --cvt-radius-sm: 4px;
+  --cvt-radius-md: 6px;
+  --cvt-radius-lg: 8px;
+  --cvt-radius-full: 9999px;
+
+  /* Transitions */
+  --cvt-transition: all 0.2s ease;
+  --cvt-transition-fast: all 0.15s ease;
+}
+
+/* --- الإعادة التعيين العالمية Global Reset --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--cvt-bg-secondary); /* Very light gray */
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--cvt-text-primary); /* Dark gray */
+  line-height: 1.5;
+  font-size: 14px; /* Default body font size */
+}
+
+/* --- الحاوية الرئيسية Main container --- */
+.traceveri-container {
+  max-width: 1400px;
+  margin: 20px auto;
+  padding: 30px;
+  background-color: var(--cvt-bg-primary); /* White */
+  border-radius: var(--cvt-radius-lg);
+  box-shadow: var(--cvt-shadow-lg);
+  min-height: calc(100vh - 40px);
+  position: relative;
+  overflow: hidden;
+}
+
+.traceveri-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  /* Gray gradient using primary and accent grays */
+  background: linear-gradient(to right, var(--cvt-primary), var(--cvt-accent));
+  z-index: 1;
+}
+
+/* --- الرأس Header --- */
+.traceveri-header {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center title */
+  margin-bottom: 30px;
+  position: relative;
+  padding-top: 10px;
+}
+
+.traceveri-header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--cvt-text-primary); /* Dark gray */
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+
+.traceveri-title-icon {
+  color: var(--cvt-primary); /* Primary gray */
+}
+
+/* --- زر العودة Back button --- */
+.traceveri-back-btn {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: transparent;
+  color: var(--cvt-primary); /* Primary gray */
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: var(--cvt-transition);
+  padding: 8px 12px;
+  border-radius: var(--cvt-radius-md);
+}
+
+.traceveri-back-btn:hover {
+  color: var(--cvt-primary-dark); /* Darker primary gray */
+  background-color: var(--cvt-bg-tertiary); /* Light gray background */
+  transform: translateY(-50%) translateX(-3px);
+}
+
+/* --- تخطيط المحتوى Content layout --- */
+.traceveri-content {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 30px;
+}
+
+.traceveri-left-panel,
+.traceveri-right-panel {
+  background: var(--cvt-bg-primary); /* White */
+  border-radius: var(--cvt-radius-lg);
+  border: 1px solid var(--cvt-border); /* Light gray border */
+  box-shadow: var(--cvt-shadow-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.traceveri-left-panel { flex: 3; }
+.traceveri-right-panel { flex: 2; }
+
+/* --- رؤوس اللوحات Panel headers --- */
+.traceveri-panel-header {
+  background-color: var(--cvt-bg-secondary); /* Very light gray */
+  border-bottom: 1px solid var(--cvt-border); /* Light gray border */
+  padding: 16px 20px;
+  flex-shrink: 0;
+}
+
+.traceveri-panel-header h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--cvt-text-primary); /* Dark gray text */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.traceveri-panel-header h2 svg {
+  color: var(--cvt-primary); /* Primary gray icon */
+  width: 18px;
+  height: 18px;
+}
+
+.traceveri-count-badge {
+  background-color: var(--cvt-gray-200); /* Light gray background */
+  color: var(--cvt-gray-700); /* Dark gray text */
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: var(--cvt-radius-full); /* Make it a pill */
+  margin-left: 8px;
+}
+
+/* --- جدول التتبع Traceability table --- */
+.traceveri-table-container {
+  overflow-y: auto;
+  flex-grow: 1;
+  min-height: 200px;
+}
+
+.traceveri-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 14px;
+}
+
+.traceveri-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: var(--cvt-bg-secondary); /* Very light gray */
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cvt-text-secondary); /* Mid-gray text */
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-bottom: 2px solid var(--cvt-border); /* Light gray border */
+}
+
+.traceveri-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--cvt-border-light); /* Very light gray border */
+  color: var(--cvt-text-primary); /* Dark gray text */
+  vertical-align: top;
+}
+
+.traceveri-table tr:last-child td {
+  border-bottom: none;
+}
+
+.traceveri-table tbody tr:hover {
+  background-color: var(--cvt-bg-tertiary); /* Light gray hover */
+}
+
+/* --- تنسيق معرف المتطلب Requirement ID styling --- */
+.traceveri-req-id {
+  font-family: "SF Mono", "Roboto Mono", Consolas, monospace;
+  font-size: 13px;
+  color: var(--cvt-primary); /* Primary gray */
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+/* --- تفاصيل العنصر Item Detail styling (for names/files) --- */
+.traceveri-item-detail {
+    font-size: 0.9em;
+    color: var(--cvt-text-secondary); /* Mid-gray text */
+    margin-top: 2px;
+    line-height: 1.3;
+}
+
+/* --- تنسيق زر العرض View button styling --- */
+.traceveri-view-button {
+    margin-top: 8px !important;
+    padding: 4px 8px !important;
+    font-size: 12px !important;
+    text-decoration: none;
+    display: inline-flex;
     align-items: center;
-  }
-  
-  .create-verify-member-item input[type="checkbox"] {
-    margin-right: 10px;
-  }
-  
-  .create-verify-member-label {
-    font-size: 16px;
-    color: #333;
-  }
-  
-  .create-verify-member-name {
-    font-weight: bold;
-  }
-  
-  .create-verify-member-roles {
-    font-style: italic;
-    color: #777;
-  }
-  
-  /* ----- Buttons ----- */
-  .create-verify-button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 5px;
-    margin-right: 10px;
-  }
-  
-  .create-verify-button:hover {
-    background-color: #0056b3;
-  }
-  
-  .create-verify-button:disabled {
-    background-color: #ccc;
+    gap: 4px;
+    border: 1px solid var(--cvt-border); /* Default light gray border */
+    border-radius: var(--cvt-radius-sm);
+    color: var(--cvt-text-secondary); /* Mid-gray text */
+    background-color: var(--cvt-white);
+    transition: var(--cvt-transition);
+}
+
+.traceveri-view-button:hover {
+    background-color: var(--cvt-bg-tertiary); /* Light gray background */
+    border-color: var(--cvt-gray-400); /* Slightly darker border */
+    color: var(--cvt-text-primary); /* Darker text */
+}
+
+.traceveri-view-button svg {
+    width: 12px;
+    height: 12px;
+    color: var(--cvt-primary); /* Icon remains primary gray */
+}
+
+/* Default state for 'trace' checkboxes */
+input[type="checkbox"].trace {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--cvt-border); /* Light gray border */
+  border-radius: var(--cvt-radius-sm);
+  background-color: var(--cvt-white);
+  cursor: pointer;
+  position: relative;
+  vertical-align: middle;
+  transition: var(--cvt-transition);
+  flex-shrink: 0; /* Prevent shrinking in flex containers */
+}
+
+/* Checked state for 'trace' checkboxes */
+input[type="checkbox"].trace:checked {
+  background-color: var(--cvt-primary); /* Primary gray */
+  border-color: var(--cvt-primary); /* Primary gray */
+}
+
+/* Checkmark style for checked 'trace' checkboxes */
+input[type="checkbox"].trace:checked::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: translate(-50%, -60%) rotate(45deg);
+}
+
+/* Hover state for unchecked 'trace' checkboxes */
+input[type="checkbox"].trace:hover:not(:checked) {
+  border-color: var(--cvt-primary-light); /* Mid-gray border on hover */
+}
+
+/* Focus state (accessibility) for 'trace' checkboxes */
+input[type="checkbox"].trace:focus-visible {
+  outline: 2px solid var(--cvt-border-focus);
+  outline-offset: 1px;
+}
+
+/* Disabled state for 'trace' checkboxes */
+input[type="checkbox"].trace:disabled {
+  background-color: var(--cvt-bg-tertiary); /* Light gray background */
+  border-color: var(--cvt-border); /* Light gray border */
+  cursor: not-allowed;
+  opacity: 0.7; /* Indicate disabled */
+}
+
+/* Disabled and checked state for 'trace' checkboxes */
+input[type="checkbox"].trace:disabled:checked {
+  background-color: var(--cvt-gray-300); /* Lighter gray when checked & disabled */
+  border-color: var(--cvt-gray-300);
+}
+
+/* Checkmark style for disabled and checked 'trace' checkboxes */
+input[type="checkbox"].trace:disabled:checked::after {
+  border-color: var(--cvt-gray-500); /* Darker check for contrast */
+}
+
+/* --- حالات التحميل / الخطأ / الفارغة Loading, Error, Empty states --- */
+.traceveri-loading,
+.traceveri-error-message,
+.traceveri-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+  color: var(--cvt-text-secondary); /* Mid-gray text */
+  gap: 12px;
+  flex-grow: 1;
+}
+
+.traceveri-loading svg,
+.traceveri-error-message svg,
+.traceveri-empty-state svg {
+  font-size: 28px; /* Keep icon size */
+  margin-bottom: 8px;
+}
+
+.traceveri-error-message { color: var(--cvt-error); } /* Keep error color */
+.traceveri-error-message svg { color: var(--cvt-error); }
+
+.traceveri-loading svg { color: var(--cvt-primary); } /* Primary gray spinner */
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.traceveri-loading svg { animation: spin 1s linear infinite; }
+
+
+.traceveri-empty-state svg { color: var(--cvt-text-light); } /* Light gray icon */
+
+/* --- قسم المراجعين Reviewers section --- */
+.traceveri-reviewers-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.traceveri-reviewers-list {
+  padding: 16px;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+.traceveri-reviewer-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-radius: var(--cvt-radius-md);
+  transition: background-color 0.15s ease;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.traceveri-reviewer-item:hover {
+  background-color: var(--cvt-bg-tertiary); /* Light gray hover */
+}
+
+.traceveri-reviewer-item input[type="checkbox"] {
+    margin-right: 12px;
+}
+
+.traceveri-reviewer-label {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  flex-grow: 1;
+}
+
+.traceveri-reviewer-name {
+  font-weight: 500;
+  color: var(--cvt-text-primary); /* Dark gray text */
+  font-size: 14px;
+}
+
+.traceveri-reviewer-role {
+  color: var(--cvt-text-secondary); /* Mid-gray text */
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+/* --- قسم الملخص Summary section --- */
+.traceveri-summary {
+  background-color: var(--cvt-bg-secondary); /* Very light gray */
+  padding: 16px 20px;
+  border-top: 1px solid var(--cvt-border); /* Light gray border */
+  flex-shrink: 0;
+}
+
+.traceveri-summary h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--cvt-text-primary); /* Dark gray text */
+  margin-bottom: 12px;
+}
+
+.traceveri-summary-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: var(--cvt-text-secondary); /* Mid-gray text */
+}
+.traceveri-summary-item:last-child {
+  margin-bottom: 0;
+}
+
+.traceveri-summary-count {
+  font-weight: 600;
+  color: var(--cvt-primary); /* Primary gray for count */
+}
+
+/* --- أزرار الإجراءات Action buttons --- */
+.traceveri-action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--cvt-border); /* Light gray border */
+}
+
+.traceveri-btn-create,
+.traceveri-btn-cancel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: var(--cvt-radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--cvt-transition);
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.traceveri-btn-create {
+  background-color: var(--cvt-primary); /* Primary gray */
+  color: var(--cvt-text-on-primary); /* White text */
+  border-color: var(--cvt-primary);
+  box-shadow: var(--cvt-shadow-colored); /* Gray shadow */
+}
+
+.traceveri-btn-create:hover:not(:disabled) {
+  background-color: var(--cvt-primary-dark); /* Darker primary gray */
+  border-color: var(--cvt-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 15px rgba(45, 55, 72, 0.2); /* Adjusted shadow color */
+}
+
+.traceveri-btn-create:disabled {
+  background-color: var(--cvt-gray-400); /* Lighter gray when disabled */
+  border-color: var(--cvt-gray-400);
+  color: var(--cvt-gray-600); /* Darker text for contrast */
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.traceveri-btn-cancel {
+  background-color: var(--cvt-bg-primary); /* White background */
+  color: var(--cvt-text-secondary); /* Mid-gray text */
+  border: 1px solid var(--cvt-border); /* Light gray border */
+}
+
+.traceveri-btn-cancel:hover:not(:disabled) {
+  background-color: var(--cvt-bg-tertiary); /* Light gray background */
+  color: var(--cvt-text-primary); /* Dark gray text */
+  border-color: var(--cvt-gray-400); /* Slightly darker border */
+}
+
+.traceveri-btn-cancel:disabled {
+    background-color: var(--cvt-bg-secondary); /* Very light gray */
+    color: var(--cvt-text-light); /* Light gray text */
+    border-color: var(--cvt-border);
     cursor: not-allowed;
-  }
-  
-  /* ----- Back and Next Button Layout ----- */
-  .create-verify-container .create-verify-button:last-child {
-    margin-right: 0;
-  }
-  
-  .create-verify-button + .create-verify-button {
-    margin-top: 10px;
-  }
-  
-  /* ----- Loading and Error States ----- */
-  .create-verify-loading-text,
-  .create-verify-error-text {
-    color: #e74c3c;
-    font-size: 16px;
-    font-weight: bold;
-  }
-  
-  .create-verify-error-text {
-    margin-top: 20px;
-  }
-  
-  
+}
+
+/* --- محاذاة الأيقونات داخل الأزرار Icon alignment inside buttons --- */
+.traceveri-btn-create svg,
+.traceveri-btn-cancel svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* --- شريط التمرير المخصص Custom scrollbar (Gray theme) --- */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--cvt-bg-secondary); /* Very light gray */
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--cvt-gray-300); /* Light gray thumb */
+  border-radius: 10px;
+  border: 2px solid var(--cvt-bg-secondary); /* Match track background */
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--cvt-gray-400); /* Slightly darker thumb on hover */
+}
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--cvt-gray-300) var(--cvt-bg-secondary);
+}
+
+
+/* --- أنماط التنبيهات Alert Styles (Keeping status colors) --- */
+.traceveri-alert {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 500px;
+  z-index: 9999;
+  overflow: hidden;
+  box-shadow: var(--cvt-shadow-lg);
+  border-radius: var(--cvt-radius-lg);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.traceveri-alert.show {
+  animation: traceveriSlideDownFadeIn 0.5s ease forwards;
+  pointer-events: auto;
+}
+
+@keyframes traceveriSlideDownFadeIn {
+  from { transform: translate(-50%, -20px); opacity: 0; }
+  to { transform: translate(-50%, 0); opacity: 1; }
+}
+
+/* Alert boxes for different types */
+.traceveri-alert-success,
+.traceveri-alert-error,
+.traceveri-alert-warning,
+.traceveri-alert-info { /* Added info style */
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: white; /* Assuming white text works on status colors */
+}
+
+.traceveri-alert-success { background: linear-gradient(135deg, var(--cvt-success), var(--cvt-success-dark)); }
+.traceveri-alert-error { background: linear-gradient(135deg, var(--cvt-error), var(--cvt-error-dark)); }
+.traceveri-alert-warning { background: linear-gradient(135deg, var(--cvt-warning), var(--cvt-warning-dark)); color: var(--cvt-gray-900); /* Dark text for yellow bg */ }
+.traceveri-alert-info { background: linear-gradient(135deg, var(--cvt-info), #1D4ED8); } /* Example info gradient */
+
+/* Adjust warning text/icon colors if needed */
+.traceveri-alert-warning .traceveri-alert-icon { background-color: rgba(0, 0, 0, 0.1); }
+.traceveri-alert-warning .traceveri-alert-close { color: rgba(0, 0, 0, 0.5); }
+.traceveri-alert-warning .traceveri-alert-close:hover { color: rgba(0, 0, 0, 0.8); }
+
+
+.traceveri-alert-content {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.traceveri-alert-icon {
+  background-color: rgba(255, 255, 255, 0.15);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+.traceveri-alert-icon svg { width: 16px; height: 16px; }
+
+.traceveri-alert-message {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.traceveri-alert-close {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  font-size: 20px;
+  transition: var(--cvt-transition);
+  padding: 4px;
+  margin-left: 16px;
+}
+.traceveri-alert-close:hover { color: white; }
+
+/* Progress bar for alert timeout */
+.traceveri-alert-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  background-color: rgba(255, 255, 255, 0.5);
+  width: 100%;
+  transform-origin: left;
+}
+
+/* --- التعديلات المستجيبة Responsive adjustments --- */
+@media (max-width: 1200px) {
+  .traceveri-content { flex-direction: column; }
+  .traceveri-left-panel, .traceveri-right-panel { width: 100%; flex: none; }
+  .traceveri-right-panel { display: flex; flex-direction: column; }
+  .traceveri-reviewers-list { max-height: 300px; }
+}
+
+@media (max-width: 768px) {
+  body { font-size: 13px; } /* Slightly smaller base font */
+  .traceveri-container { padding: 20px 15px; margin: 10px; }
+  .traceveri-header { flex-direction: column; align-items: flex-start; margin-bottom: 20px; }
+  .traceveri-header h1 { font-size: 20px; text-align: left; margin-top: 10px; }
+  .traceveri-back-btn { position: static; transform: none; margin-bottom: 10px; padding-left: 0; } /* Adjust back button */
+  .traceveri-content { gap: 16px; } /* Reduce gap */
+  .traceveri-panel-header { padding: 12px 16px; }
+  .traceveri-table th, .traceveri-table td { padding: 10px 12px; font-size: 13px; }
+  .traceveri-action-buttons { flex-direction: column; gap: 12px; }
+  .traceveri-btn-create, .traceveri-btn-cancel { width: 100%; justify-content: center; }
+  .traceveri-alert { max-width: calc(100% - 20px); /* Adjust alert width */ top: 10px; }
+}
+
+@media (max-width: 480px) {
+    .traceveri-container { padding: 15px 10px; }
+    .traceveri-header h1 { font-size: 18px; }
+    .traceveri-panel-header h2 { font-size: 15px; }
+    .traceveri-table th { font-size: 11px; padding: 8px 10px; }
+    .traceveri-table td { padding: 8px 10px; font-size: 12px; }
+    .traceveri-req-id { font-size: 12px; }
+    .traceveri-btn-create, .traceveri-btn-cancel { padding: 8px 16px; font-size: 13px; }
+}

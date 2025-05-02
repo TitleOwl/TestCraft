@@ -390,16 +390,6 @@ const VerificationList = () => {
                                     </button>
                                 )}
                             </div>
-
-
-                            <button
-                                className={`verificationlist-refresh-btn ${isRefreshing ? 'refreshing' : ''}`}
-                                onClick={handleRefresh}
-                                disabled={isRefreshing}
-                            >
-                                <FontAwesomeIcon icon={faSync} spin={isRefreshing} />
-                                {isRefreshing ? 'Refreshing...' : 'Refresh'}
-                            </button>
                         </div>
                     </div>
 
@@ -414,11 +404,11 @@ const VerificationList = () => {
                             <table className="verificationlist-table">
                                 <thead>
                                     <tr>
-                                        <th>Verification Round</th>
+                                        <th>Round</th>
                                         <th>Created By</th>
                                         <th>Date Assigned</th>
                                         <th>Status</th>
-                                        <th>Reviewer</th>
+                                        <th>Details</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -470,8 +460,7 @@ const VerificationList = () => {
                                                     }
                                                     disabled={verification.requirement_status === "VERIFIED" || verification.requirement_status === "REJECTED"}
                                                 >
-                                                    <FontAwesomeIcon icon={faCheck} className="button-icon" />
-                                                    Verify
+                                                    View
                                                 </button>
                                             </td>
                                         </tr>

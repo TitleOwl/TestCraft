@@ -104,17 +104,35 @@ const TestExecution = () => {
     );
   };
 
-  // บันทึกข้อมูล Test Execution ทั้งหมด (สถานะ, ผลลัพธ์)
-  const handleSave = async () => {
-    try {
-      // ส่งเฉพาะข้อมูลที่จำเป็น หรือส่ง testSteps ทั้งหมดก็ได้ ขึ้นอยู่กับ backend API
-      await axios.post("http://localhost:3001/api/update_test_execution", { testSteps });
-      alert("Test Execution saved successfully!");
-    } catch (error) {
-      console.error("Error saving test execution:", error);
-      alert("Failed to save test execution."); // แสดงข้อความเมื่อบันทึกไม่สำเร็จ
-    }
-  };
+
+    const handleSave = async () => {
+      // Add a check to ensure we have a testcase_id before proceeding
+      if (!testCase?.testcase_id) {
+          console.error("Test Case ID is missing. Cannot save.");
+          alert("Cannot save execution data: Test Case ID is missing.");
+          return; // Stop the function if ID is missing
+      }
+  
+      try {
+        // Send both testSteps and the testcase_id from the testCase state
+        const payload = {
+          testSteps: testSteps,
+          testcase_id: testCase.testcase_id // <--- Send testcase_id
+        };
+        console.log("Saving test execution data:", payload); // Log payload for debugging
+  
+        await axios.post("http://localhost:3001/api/update_test_execution", payload);
+        alert("Test Execution saved successfully!");
+  
+        // Optional: You might want to navigate back or refresh data after saving
+        // navigate(`/ExecutionList?project_id=${projectId}`);
+  
+      } catch (error) {
+        console.error("Error saving test execution:", error.response?.data || error.message);
+        // Display a more specific error from the backend if available
+        alert(`Failed to save test execution: ${error.response?.data?.error || error.message}`);
+      }
+    };
 
   // จัดการเมื่อมีการเลือกไฟล์ใน Modal
   const handleFileChange = async (index, event) => { // index อาจจะไม่จำเป็นแล้วถ้าใช้ selectedStep

@@ -356,7 +356,7 @@ const RequirementPage = () => {
             </div>
             <div className="REQproject-title">
               <h1 className="REQproject-name">{projectName || "WWWW"}</h1>
-              <span className="REQrequirements-badge">REQUIREMENTS MANAGEMENT</span>
+              <span className="REQrequirements-badge">REQUIREMENTS SPECIFICATION</span>
               <button
        onClick={handleRestartTutorial}
        className="tutorial-help-button tutorial-help-button-corner" // เพิ่ม class ไว้จัดสไตล์

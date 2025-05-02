@@ -6,6 +6,7 @@ import './CSS/Dashboard.css';
 // Import components
 import RequirementPage from './RequirementPage';
 import ProjectConfig from './ProjectConfig';
+import LinkGit from './LinkGit';
 import DesignPage from './DesignPage';
 import TestcasePage from './Testcase/TestcasePage';
 import OverviewProject from './Project/OverviewProject';
@@ -27,7 +28,8 @@ import {
   faBookOpen, 
   faDoorClosed,
   faChevronLeft,
-  faChevronRight
+  faChevronRight,
+  faLink
 } from '@fortawesome/free-solid-svg-icons';
 
 const Dashboard = () => {
@@ -81,33 +83,6 @@ const Dashboard = () => {
     localStorage.setItem('sidebarCollapsed', sidebarCollapsed);
   }, [sidebarCollapsed]);
 
-  const handleCloseProject = async () => {
-    const confirmation = window.confirm("คุณแน่ใจที่จะปิดโปรเจค?");
-    if (confirmation) {
-      try {
-        // ดึงข้อมูลโปรเจกต์ปัจจุบัน
-        const res = await axios.get(`http://localhost:3001/project/${projectId}`);
-        const currentProject = res.data;
-
-        // สร้างข้อมูลใหม่ที่มีสถานะ CLOSE แต่ข้อมูลอื่นเหมือนเดิม
-        const updatedProject = {
-          ...currentProject,
-          project_status: 'CLOSED',
-        };
-
-        // ส่งข้อมูลไปยัง Backend
-        await axios.put(`http://localhost:3001/project/${projectId}`, updatedProject);
-        alert("Project closed successfully!");
-
-        // อัปเดตสถานะโปรเจกต์ใน UI
-        setProjectStatus('CLOSED');
-        navigate('/Project');
-      } catch (error) {
-        console.error("Error closing project:", error);
-        alert("Failed to close project. Please try again.");
-      }
-    }
-  };
 
   // ปุ่มสลับการแสดงผล sidebar
   const toggleSidebar = () => {
@@ -149,7 +124,15 @@ const Dashboard = () => {
           onClick={() => setSelectedSection('Configuration')}
         >
           <FontAwesomeIcon icon={faCog} />
-          {!sidebarCollapsed && <span>Configuration</span>}
+          {!sidebarCollapsed && <span>  Ver. Criteria Setting</span>}
+        </div>
+
+        <div
+          className={`dashboard-nav-link ${selectedSection === 'LinkGit' ? 'active' : ''}`}
+          onClick={() => setSelectedSection('LinkGit')}
+        >
+          <FontAwesomeIcon icon={faLink} />
+          {!sidebarCollapsed && <span>Github Link</span>}
         </div>
 
         {/* Management Section */}
@@ -162,7 +145,7 @@ const Dashboard = () => {
           onClick={() => setSelectedSection('Requirement')}
         >
           <FontAwesomeIcon icon={faClipboardList} />
-          {!sidebarCollapsed && <span>Requirement</span>}
+          {!sidebarCollapsed && <span>Requirement Specification</span>}
         </div>
         
         <div
@@ -170,7 +153,7 @@ const Dashboard = () => {
           onClick={() => setSelectedSection('Design')}
         >
           <FontAwesomeIcon icon={faPencilRuler} />
-          {!sidebarCollapsed && <span>Design</span>}
+          {!sidebarCollapsed && <span>Software Design</span>}
         </div>
         
         <div
@@ -178,7 +161,7 @@ const Dashboard = () => {
           onClick={() => setSelectedSection('Implementation')}
         >
           <FontAwesomeIcon icon={faCode} />
-          {!sidebarCollapsed && <span>Implementation</span>}
+          {!sidebarCollapsed && <span>Code Component</span>}
         </div>
         
         <div
@@ -197,26 +180,7 @@ const Dashboard = () => {
           {!sidebarCollapsed && <span>Traceability</span>}
         </div>
 
-        {/* Automation Section */}
-        <div className="dashboard-sidebar-section-title">
-          {!sidebarCollapsed && "GUIDES"}
-        </div>
-        
-        <div
-          className={`dashboard-nav-link ${selectedSection === 'Guide Tutorial' ? 'active' : ''}`}
-          onClick={() => setSelectedSection('Guide Tutorial')}
-        >
-          <FontAwesomeIcon icon={faBookOpen} />
-          {!sidebarCollapsed && <span>Guide Tutorial</span>}
-        </div>
 
-        {/* Close Project Button in Sidebar */}
-        {projectStatus !== 'CLOSE' && (
-          <button onClick={handleCloseProject} className="dashboard-close-project-btn">
-            <FontAwesomeIcon icon={faDoorClosed} />
-            {!sidebarCollapsed && <span>Close Project</span>}
-          </button>
-        )}
       </nav>
 
       {/* Main Content Section */}
@@ -229,14 +193,13 @@ const Dashboard = () => {
           <>
             {selectedSection === 'Overview' && <OverviewProject />}
             {selectedSection === 'Configuration' && <ProjectConfig />}
+            {selectedSection === 'LinkGit' && <LinkGit />}
             {selectedSection === 'Requirement' && <RequirementPage />}
             {selectedSection === 'Design' && <DesignPage />}
             {selectedSection === 'Implementation' && <ImplementPage />}
             {selectedSection === 'Testcase' && <TestcasePage />}
-            {selectedSection === 'Review' && <h2>Review Content</h2>}
-            {selectedSection === 'Baseline' && <h2>Baseline Content</h2>}
             {selectedSection === 'Traceability' && <TraceabilityPage />}
-            {selectedSection === 'Guide Tutorial' && <h2>Guide Tutorial Content</h2>}
+
           </>
         )}
       </div>

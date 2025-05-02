@@ -1,226 +1,278 @@
-/* VericriReqDetails.css */
+/* --- VericriReqDetails Component Styling (Based on HisVali Theme) --- */
 
-:root {
-  --primary-color: #007bff;
-  --primary-color-dark: #0056b3;
-  --secondary-color: #6c757d;
-  --light-gray: #f8f9fa;
-  --medium-gray: #dee2e6;
-  --dark-gray: #343a40;
-  --text-color: #212529;
-  --white-color: #ffffff;
-  --danger-color: #dc3545;
-  --border-radius: 4px;
-  --box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
+/* Import Font (ถ้ายังไม่ได้ import ที่อื่น) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+/* --- ใช้ class หลักของ Component นี้ --- */
 .verification-req-details-container {
-  font-family: 'Roboto', sans-serif;
-  padding: 25px 30px; /* Added slightly more horizontal padding */
-  max-width: 900px; /* Adjusted max-width */
-  margin: 30px auto; /* Increased top/bottom margin */
-  background-color: var(--white-color);
-  border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow);
-  color: var(--text-color);
-  border-top: 4px solid var(--primary-color); /* Add a top border highlight */
+  /* --- ประกาศตัวแปร CSS พร้อม Prefix 'hisvali-' (เหมือนกับ HistoryValidationReq.css) --- */
+  --hisvali-primary-color: #4f46e5;
+  --hisvali-primary-hover: #4338ca;
+  --hisvali-primary-light: #e0e7ff;
+  --hisvali-text-color: #1e293b;
+  --hisvali-text-light: #64748b;
+  --hisvali-text-dark: #0f172a;
+  --hisvali-bg-color: #f8fafc;
+  --hisvali-bg-light: #ffffff;
+  --hisvali-bg-dark: #f1f5f9;
+  --hisvali-danger-color: #ef4444;
+  --hisvali-danger-light: #fee2e2;
+  --hisvali-border-color: #e2e8f0;
+  --hisvali-border-radius: 8px;
+  --hisvali-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --hisvali-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --hisvali-transition: all 0.2s ease-in-out;
+
+  /* --- ใช้ตัวแปรที่ประกาศไว้ --- */
+  font-family: 'Inter', sans-serif;
+  color: var(--hisvali-text-color);
+  background-color: var(--hisvali-bg-light);
+  border-radius: var(--hisvali-border-radius);
+  box-shadow: var(--hisvali-shadow-md);
+  margin: 2rem auto;
+  max-width: 1100px; /* อาจจะกว้างกว่าหน้า History เล็กน้อย */
+  padding: 1.5rem 2rem;
+  overflow: hidden;
 }
 
+/* --- Header Section --- */
 .verification-req-header {
   display: flex;
-  justify-content: space-between;
+  /* justify-content: space-between; (ปรับเปลี่ยนเล็กน้อยเพื่อให้ Title อยู่กลางสวยขึ้น) */
+  justify-content: flex-start; /* จัดชิดซ้าย */
   align-items: center;
-  margin-bottom: 25px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid var(--medium-gray);
+  gap: 1rem; /* เพิ่มช่องว่างระหว่างปุ่มกับ Title */
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--hisvali-border-color);
 }
 
+/* --- Back Button --- */
 .verification-req-back-btn {
-  padding: 10px 18px;
-  border: none;
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  font-size: 0.95rem;
-  font-weight: 500;
-  transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  /* ใช้สไตล์เหมือนปุ่ม Back ในหน้า History */
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background-color: var(--secondary-color);
-  color: var(--white-color);
-  text-decoration: none;
-  line-height: 1.5;
+  gap: 0.5rem;
+  background-color: var(--hisvali-bg-light);
+  color: var(--hisvali-text-color);
+  border: 1px solid var(--hisvali-border-color);
+  border-radius: var(--hisvali-border-radius);
+  padding: 0.6rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--hisvali-transition);
+  box-shadow: var(--hisvali-shadow-sm);
+  flex-shrink: 0; /* ไม่ให้ปุ่มหดเมื่อ Title ยาว */
 }
 
-.verification-req-back-btn:hover {
-  background-color: #5a6268;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+.verification-req-back-btn:hover,
+.verification-req-back-btn:focus {
+  background-color: var(--hisvali-bg-dark);
+  outline: none;
 }
 
+/* --- Title --- */
 .verification-req-title {
-  font-size: 1.7rem; /* Slightly adjusted size */
+  font-size: 1.5rem;
   font-weight: 700;
-  color: var(--dark-gray);
+  color: var(--hisvali-text-dark);
   margin: 0;
-  display: flex;
+  display: flex; /* จัดไอคอนกับข้อความ */
   align-items: center;
-  gap: 12px; /* Increased gap */
-  text-align: right; /* Align text to the right within its space */
-  flex-grow: 1; /* Allow title to take available space */
-  justify-content: flex-end; /* Push content (icon+text) to the right */
+  gap: 0.75rem; /* ระยะห่างไอคอนกับข้อความ */
+  flex-grow: 1; /* ให้ Title ขยาย */
+  justify-content: center; /* จัด Title ให้อยู่กลาง */
 }
 
 .verification-req-title-icon {
-  color: var(--primary-color);
-  font-size: 1.6rem; /* Adjust icon size if needed */
-  margin-top: -3px; /* Fine-tune vertical alignment */
-}
-
-/* General Loading/Error Styles (if rendered directly by this component) */
-.verification-req-details-container > div:first-child { /* Basic selector for loading/error */
-  padding: 30px;
-  text-align: center;
-  font-size: 1.1rem;
-  margin: 20px;
-  border-radius: var(--border-radius);
-}
-
-.verification-req-details-container > div:first-child:contains("Loading") {
-  color: var(--secondary-color);
-}
-
-.verification-req-details-container > div:first-child:contains("Error") {
-  color: var(--danger-color);
-  background-color: #f8d7da;
-  border: 1px solid #f5c6cb;
+  color: var(--hisvali-primary-color); /* ให้ไอคอนมีสีหลัก */
+  /* font-size: 1.3em; */ /* อาจปรับขนาดไอคอนถ้าต้องการ */
 }
 
 
-/* Verification Info Section */
-.verification-req-section {
-  background-color: var(--light-gray);
-  padding: 20px 25px;
-  border-radius: var(--border-radius);
-  margin-bottom: 30px;
-  border: 1px solid var(--medium-gray);
-}
-
-.verification-req-section h2 {
-  font-size: 1.25rem;
-  color: var(--primary-color);
-  margin-top: 0;
-  margin-bottom: 15px;
+/* --- Requirement ID Header --- */
+.requirement-id-header {
+  font-size: 1.125rem; /* 18px */
   font-weight: 600;
+  color: var(--hisvali-text-light); /* สีเทาอ่อน */
+  margin-bottom: 1.5rem;
+  text-align: center; /* จัดกึ่งกลาง */
+  padding-bottom: 1rem;
+  border-bottom: 1px dashed var(--hisvali-border-color); /* เส้นประ */
 }
 
-.verification-req-section h3 {
-  font-size: 1rem;
-  font-weight: 400; /* Normal weight for the value */
-  color: var(--text-color);
-  margin: 8px 0;
-  line-height: 1.6;
-}
-
-/* Style the label part of the h3 if you want */
-.verification-req-section h3::before {
- content: attr(data-label); /* Use a data-label attribute in JSX if needed, or style directly */
- font-weight: 600; /* Make label bold */
- color: var(--dark-gray);
- margin-right: 8px;
- display: inline-block; /* Optional: control spacing */
- min-width: 120px; /* Optional: align values */
-}
-
-/* Example JSX modification for the above CSS:
-   <h3 data-label="Verification By:">{item.verification_by}</h3>
-   <h3 data-label="Verification At:">{formatDate(item.verification_at)}</h3>
-   If you don't modify JSX, remove the ::before pseudo-element style.
-*/
-
-
-/* Criteria Table */
+/* --- Table Section --- */
 .verification-req-table-container {
-  margin-top: 20px;
-  overflow-x: auto; /* Scroll if needed on small screens */
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 1.5rem;
 }
 
 .verification-req-table {
+  /* ใช้สไตล์เหมือนตารางในหน้า History */
   width: 100%;
-  border-collapse: collapse;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  min-width: 700px; /* กำหนดความกว้างขั้นต่ำ */
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--hisvali-border-color);
+  border-radius: var(--hisvali-border-radius);
+  overflow: hidden;
 }
 
-.verification-req-table thead th {
-  background-color: var(--light-gray);
-  border-bottom: 2px solid var(--medium-gray);
-  padding: 12px 15px;
-  border: 1px solid var(--medium-gray);
+.verification-req-table th,
+.verification-req-table td {
+  padding: 1rem 1.25rem;
   text-align: left;
-  font-weight: 700;
-  color: var(--dark-gray);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-size: 0.9rem;
+  vertical-align: top; /* ชิดบนดีกว่าสำหรับ cell ที่อาจมีหลายบรรทัด */
+  border-bottom: 1px solid var(--hisvali-border-color);
+  font-size: 0.875rem;
 }
 
-.verification-req-table tbody tr {
-  transition: background-color 0.15s ease-in-out;
+.verification-req-table th {
+  background-color: var(--hisvali-bg-dark);
+  color: var(--hisvali-text-color);
+  font-weight: 600;
+  white-space: nowrap;
+  border-bottom-width: 2px;
 }
 
-.verification-req-table tbody tr:nth-child(even) {
-  background-color: #fdfdff; /* Very subtle striping */
+/* --- Specific Header/Cell Styling --- */
+.row-number-header,
+.row-number-cell {
+  width: 50px; /* กำหนดความกว้างคอลัมน์ลำดับ */
+  text-align: center;
+  vertical-align: middle; /* จัดเลขกลางแนวตั้ง */
+  color: var(--hisvali-text-light);
+}
+.row-number-header{
+  color: var(--hisvali-text-color); /* ให้หัวข้อเข้มกว่า */
 }
 
+.criteria-name-cell {
+  /* จัดการกับ div ภายใน cell นี้ */
+  line-height: 1.6; /* เพิ่มระยะห่างบรรทัด */
+}
+
+.criteria-name-cell div {
+  margin-bottom: 0.3rem; /* ระยะห่างระหว่างรายการย่อย */
+}
+.criteria-name-cell div:last-child {
+  margin-bottom: 0; /* ไม่ต้องมีระยะห่างหลังรายการสุดท้าย */
+}
+
+
+.verification-at-cell {
+  white-space: nowrap; /* ไม่ตัดวันที่/เวลา */
+  width: 200px; /* อาจกำหนดความกว้างคงที่ */
+}
+
+.verification-by-cell {
+    width: 180px; /* อาจกำหนดความกว้างคงที่ */
+}
+
+/* --- Table Body Row Hover --- */
 .verification-req-table tbody tr:hover {
-  background-color: #eef4ff; /* Light blue hover */
+  background-color: var(--hisvali-bg-dark);
 }
 
-.verification-req-table tbody td {
-  padding: 12px 15px; /* Consistent padding */
-  border: 1px solid var(--medium-gray);
-  text-align: left;
-  font-size: 0.95rem;
-  color: var(--text-color);
-  vertical-align: middle;
+/* --- Remove bottom border on last row --- */
+.verification-req-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
-/* Responsive Adjustments */
+/* --- Item Count Footer --- */
+.item-count-footer {
+  margin-top: 1rem;
+  padding: 0.5rem 0;
+  text-align: right;
+  font-size: 0.875rem;
+  color: var(--hisvali-text-light);
+}
+
+
+/* --- Loading, Error, No Data States --- */
+.loading-message,
+.error-message,
+.no-data-message { /* คลาสสำหรับ p tag ใน JSX */
+  text-align: center;
+  padding: 3rem 1rem;
+  margin: 1.5rem 0;
+  border-radius: var(--hisvali-border-radius);
+  font-size: 1rem;
+}
+
+.loading-message {
+  color: var(--hisvali-text-light);
+  font-weight: 500;
+}
+.loading-message svg {
+    margin-right: 0.5rem;
+    color: var(--hisvali-primary-color);
+}
+
+/* Style container when error */
+.verification-req-details-container.error-message {
+  border: 1px solid var(--hisvali-danger-color);
+  background-color: var(--hisvali-danger-light);
+  box-shadow: none; /* อาจจะเอาเงาออกเมื่อ error */
+}
+/* Style paragraph inside error container */
+.error-message p {
+  color: var(--hisvali-danger-color);
+  font-weight: 500;
+  margin-top: 1rem;
+}
+/* Ensure header inside error container uses appropriate color */
+.error-message .verification-req-title {
+    color: var(--hisvali-danger-color);
+}
+.error-message .verification-req-title-icon {
+    color: var(--hisvali-danger-color);
+}
+
+/* Style container when no data */
+.no-data-message { /* ใช้กับ <p> tag โดยตรง */
+    color: var(--hisvali-text-light);
+    background-color: var(--hisvali-bg-dark);
+    margin-top: 2rem; /* เพิ่มระยะห่างจาก Header */
+    padding: 2rem;
+}
+
+
+/* --- Responsive Adjustments --- */
 @media (max-width: 768px) {
   .verification-req-details-container {
-    padding: 20px 15px;
-    margin: 20px 10px;
+    margin: 1rem;
+    padding: 1rem 1.5rem;
   }
 
   .verification-req-header {
-    flex-direction: column; /* Stack header items */
-    align-items: flex-start; /* Align items to the start */
-    gap: 15px; /* Add gap between stacked items */
+    /* อาจจะปรับให้ title ไม่จำเป็นต้องอยู่กลางเป๊ะ */
+    justify-content: space-between;
   }
 
   .verification-req-title {
-    font-size: 1.5rem;
-    text-align: left; /* Align left on small screens */
-     justify-content: flex-start; /* Align icon/text left */
+    font-size: 1.25rem;
+    gap: 0.5rem;
+    /* justify-content: flex-start; ถ้าต้องการชิดซ้าย */
   }
 
-  .verification-req-back-btn {
-     align-self: flex-start; /* Ensure button aligns left */
+  .requirement-id-header {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
   }
 
-  .verification-req-section {
-    padding: 15px;
+  .verification-req-table th,
+  .verification-req-table td {
+    padding: 0.75rem 1rem;
+    font-size: 0.8rem;
   }
 
-  .verification-req-section h2 {
-    font-size: 1.15rem;
-  }
-  .verification-req-section h3 {
-    font-size: 0.95rem;
-  }
-
-  .verification-req-table thead th,
-  .verification-req-table tbody td {
-    padding: 10px 8px;
-    font-size: 0.9rem;
+  .verification-at-cell,
+  .verification-by-cell {
+    width: auto; /* ให้ปรับความกว้างอัตโนมัติ */
+    white-space: normal; /* อนุญาตให้ตัดคำ/วันที่ */
   }
 }

@@ -1,152 +1,242 @@
-/* src/components/CSS/HistoryValidationReq.css */
+/* --- HistoryValidationReq Component Styling with Prefixed Variables --- */
+
+/* Import Font (ถ้ายังไม่ได้ import ที่อื่น) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 .HistoryValidationReq {
-    padding: 20px;
-    font-family: sans-serif;
-    max-width: 1200px;
-    margin: 20px auto;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* --- ประกาศตัวแปร CSS พร้อม Prefix 'hisvali-' --- */
+  --hisvali-primary-color: #4f46e5;
+  --hisvali-primary-hover: #4338ca;
+  --hisvali-primary-light: #e0e7ff;
+  --hisvali-text-color: #1e293b;
+  --hisvali-text-light: #64748b;
+  --hisvali-text-dark: #0f172a;
+  --hisvali-bg-color: #f8fafc;
+  --hisvali-bg-light: #ffffff;
+  --hisvali-bg-dark: #f1f5f9;
+  --hisvali-danger-color: #ef4444;
+  --hisvali-danger-light: #fee2e2;
+  --hisvali-border-color: #e2e8f0;
+  --hisvali-border-radius: 8px;
+  --hisvali-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --hisvali-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --hisvali-transition: all 0.2s ease-in-out;
+
+  /* --- ใช้ตัวแปรที่ประกาศไว้ --- */
+  font-family: 'Inter', sans-serif;
+  color: var(--hisvali-text-color); /* <- ใช้ตัวแปรที่เติม prefix */
+  background-color: var(--hisvali-bg-light); /* <- ใช้ตัวแปรที่เติม prefix */
+  border-radius: var(--hisvali-border-radius); /* <- ใช้ตัวแปรที่เติม prefix */
+  box-shadow: var(--hisvali-shadow-md); /* <- ใช้ตัวแปรที่เติม prefix */
+  margin: 2rem auto;
+  max-width: 950px;
+  padding: 1.5rem 2rem;
+  overflow: hidden;
+}
+
+/* --- Header --- */
+.HistoryValidationReq__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--hisvali-border-color); /* <- ใช้ตัวแปรที่เติม prefix */
+}
+
+.HistoryValidationReq__back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--hisvali-bg-light); /* <- ใช้ตัวแปรที่เติม prefix */
+  color: var(--hisvali-text-color); /* <- ใช้ตัวแปรที่เติม prefix */
+  border: 1px solid var(--hisvali-border-color); /* <- ใช้ตัวแปรที่เติม prefix */
+  border-radius: var(--hisvali-border-radius); /* <- ใช้ตัวแปรที่เติม prefix */
+  padding: 0.6rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--hisvali-transition); /* <- ใช้ตัวแปรที่เติม prefix */
+  box-shadow: var(--hisvali-shadow-sm); /* <- ใช้ตัวแปรที่เติม prefix */
+}
+
+.HistoryValidationReq__back-btn:hover,
+.HistoryValidationReq__back-btn:focus {
+  background-color: var(--hisvali-bg-dark); /* <- ใช้ตัวแปรที่เติม prefix */
+  outline: none;
+}
+
+.HistoryValidationReq__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--hisvali-text-dark); /* <- ใช้ตัวแปรที่เติม prefix */
+  margin: 0;
+  text-align: center;
+  flex-grow: 1;
+}
+
+.HistoryValidationReq__header-placeholder {
+  width: auto;
+  min-width: 90px;
+  visibility: hidden;
+}
+
+/* --- Loading, Error, No Data Messages --- */
+.HistoryValidationReq__loading,
+.HistoryValidationReq__error,
+.HistoryValidationReq__no-data {
+  text-align: center;
+  padding: 3rem 1rem;
+  margin: 1.5rem 0;
+  border-radius: var(--hisvali-border-radius); /* <- ใช้ตัวแปรที่เติม prefix */
+  font-size: 1rem;
+}
+
+.HistoryValidationReq__loading {
+  color: var(--hisvali-text-light); /* <- ใช้ตัวแปรที่เติม prefix */
+}
+
+.HistoryValidationReq__error {
+  color: var(--hisvali-danger-color); /* <- ใช้ตัวแปรที่เติม prefix */
+  background-color: var(--hisvali-danger-light); /* <- ใช้ตัวแปรที่เติม prefix */
+  border: 1px solid #fca5a5; /* อาจใช้ var(--hisvali-danger-color) ที่ปรับความโปร่งใส */
+  font-weight: 500;
+}
+
+.HistoryValidationReq__no-data {
+  color: var(--hisvali-text-light); /* <- ใช้ตัวแปรที่เติม prefix */
+  background-color: var(--hisvali-bg-dark); /* <- ใช้ตัวแปรที่เติม prefix */
+}
+
+/* --- Table Styling --- */
+.HistoryValidationReq__table-container {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 1.5rem;
+}
+
+.HistoryValidationReq__table {
+  width: 100%;
+  min-width: 600px;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--hisvali-border-color); /* <- ใช้ตัวแปรที่เติม prefix */
+  border-radius: var(--hisvali-border-radius); /* <- ใช้ตัวแปรที่เติม prefix */
+  overflow: hidden;
+}
+
+.HistoryValidationReq__table th,
+.HistoryValidationReq__table td {
+  padding: 1rem 1.25rem;
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--hisvali-border-color); /* <- ใช้ตัวแปรที่เติม prefix */
+  font-size: 0.875rem;
+}
+
+.HistoryValidationReq__table th {
+  background-color: var(--hisvali-bg-dark); /* <- ใช้ตัวแปรที่เติม prefix */
+  color: var(--hisvali-text-color); /* <- ใช้ตัวแปรที่เติม prefix */
+  font-weight: 600;
+  white-space: nowrap;
+  border-bottom-width: 2px;
+}
+
+.HistoryValidationReq__table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.HistoryValidationReq__table tbody tr {
+  transition: var(--hisvali-transition); /* <- ใช้ตัวแปรที่เติม prefix */
+}
+
+.HistoryValidationReq__table tbody tr:hover {
+  background-color: var(--hisvali-bg-dark); /* <- ใช้ตัวแปรที่เติม prefix */
+}
+
+.HistoryValidationReq__no-comment {
+    color: var(--hisvali-text-light); /* <- ใช้ตัวแปรที่เติม prefix */
+    font-style: italic;
+}
+
+/* --- Related Files Section --- */
+.HistoryValidationReq__files-container {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--hisvali-border-color); /* <- ใช้ตัวแปรที่เติม prefix */
+}
+
+.HistoryValidationReq__files-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--hisvali-text-dark); /* <- ใช้ตัวแปรที่เติม prefix */
+  margin-bottom: 1rem;
+}
+
+.HistoryValidationReq__file-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.HistoryValidationReq__file-list li {
+  /* margin-bottom ถูกแทนที่ด้วย gap */
+}
+
+.HistoryValidationReq__file-link {
+  display: inline-block;
+  color: var(--hisvali-primary-color); /* <- ใช้ตัวแปรที่เติม prefix */
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.875rem;
+  padding: 0.25rem 0;
+  transition: var(--hisvali-transition); /* <- ใช้ตัวแปรที่เติม prefix */
+  border-bottom: 1px solid transparent;
+}
+
+.HistoryValidationReq__file-link:hover,
+.HistoryValidationReq__file-link:focus {
+  color: var(--hisvali-primary-hover); /* <- ใช้ตัวแปรที่เติม prefix */
+  border-bottom-color: var(--hisvali-primary-hover); /* <- ใช้ตัวแปรที่เติม prefix */
+  outline: none;
+}
+
+.HistoryValidationReq__file-error {
+    color: var(--hisvali-danger-color); /* <- ใช้ตัวแปรที่เติม prefix */
+    font-style: italic;
+    font-size: 0.875rem;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+  .HistoryValidationReq {
+    margin: 1rem;
+    padding: 1rem 1.5rem;
   }
-  
+
   .HistoryValidationReq__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #eee;
+    gap: 1rem;
   }
-  
+
   .HistoryValidationReq__title {
-    color: #333;
-    font-size: 1.8em;
-    margin: 0;
-  }
-  
-  .HistoryValidationReq__back-btn {
-    background-color: #6c757d; /* Bootstrap secondary color */
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1em;
-    transition: background-color 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px; /* Space between icon and text */
-  }
-  
-  .HistoryValidationReq__back-btn:hover {
-    background-color: #5a6268;
-  }
-  
-  .HistoryValidationReq__loading,
-  .HistoryValidationReq__error,
-  .HistoryValidationReq__no-data {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 1.1em;
-    color: #555;
-  }
-  
-  .HistoryValidationReq__error {
-    color: #dc3545; /* Bootstrap danger color */
-    font-weight: bold;
-  }
-  
-  
-  .HistoryValidationReq__table-container {
-    overflow-x: auto; /* Allows horizontal scrolling on small screens */
-  }
-  
-  .HistoryValidationReq__table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    background-color: #fff;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  }
-  
-  .HistoryValidationReq__table-header th,
-  .HistoryValidationReq__table-cell {
-    border: 1px solid #ddd;
-    padding: 12px 15px;
+    font-size: 1.25rem;
     text-align: left;
-    vertical-align: middle;
   }
-  
-  .HistoryValidationReq__table-header th {
-    background-color: #f2f2f2;
-    font-weight: bold;
-    color: #333;
+
+  .HistoryValidationReq__back-btn {
+    padding: 0.5rem 0.8rem;
   }
-  
-  .HistoryValidationReq__table-row:nth-child(even) {
-    background-color: #f9f9f9;
+
+  .HistoryValidationReq__header-placeholder {
+    display: none;
   }
-  
-  .HistoryValidationReq__table-row:hover {
-    background-color: #f1f1f1;
+
+  .HistoryValidationReq__table th,
+  .HistoryValidationReq__table td {
+    padding: 0.75rem 1rem;
+    font-size: 0.8rem;
   }
-  
-  .HistoryValidationReq__table-cell.text-center {
-    text-align: center;
-  }
-  
-  .HistoryValidationReq__comment-cell {
-    white-space: pre-wrap; /* Preserve whitespace and wrap long comments */
-    word-break: break-word; /* Break long words if needed */
-    max-width: 400px; /* Adjust max-width as needed */
-  }
-  
-  /* Responsive adjustments */
-  @media (max-width: 768px) {
-    .HistoryValidationReq__header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 10px;
-    }
-    .HistoryValidationReq__title {
-      font-size: 1.5em;
-    }
-    .HistoryValidationReq__table thead {
-      display: none; /* Hide table headers on small screens */
-    }
-    .HistoryValidationReq__table,
-    .HistoryValidationReq__table tbody,
-    .HistoryValidationReq__table tr,
-    .HistoryValidationReq__table td {
-      display: block;
-      width: 100%;
-    }
-    .HistoryValidationReq__table tr {
-      margin-bottom: 15px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
-    .HistoryValidationReq__table td {
-      text-align: right; /* Align cell content to the right */
-      padding-left: 50%; /* Make space for the label */
-      position: relative;
-      border: none;
-      border-bottom: 1px solid #eee;
-    }
-    .HistoryValidationReq__table td::before {
-      content: attr(data-label); /* Use data-label for pseudo-element content */
-      position: absolute;
-      left: 10px;
-      width: calc(50% - 20px); /* Adjust width based on padding */
-      padding-right: 10px;
-      white-space: nowrap;
-      text-align: left;
-      font-weight: bold;
-      color: #555;
-    }
-     .HistoryValidationReq__table-cell.HistoryValidationReq__comment-cell {
-       max-width: none; /* Remove max-width on small screens */
-       text-align: right; /* Keep text aligned right */
-     }
-  }
+}

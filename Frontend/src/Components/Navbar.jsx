@@ -11,8 +11,6 @@ import {
   faUser, 
   faCog, 
   faClipboardList, 
-  faChartBar, 
-  faBell
 } from '@fortawesome/free-solid-svg-icons';
 
 function Navbar() {
@@ -82,7 +80,7 @@ function Navbar() {
                                 className={`enterprise-nav-item ${isActive('/Project') ? 'active' : ''}`}
                             >
                                 <FontAwesomeIcon icon={faClipboardList} style={{ marginRight: '8px' }} />
-                                Projects
+                                Project Dashboard
                             </Link>
                           
                         </div>
@@ -93,12 +91,6 @@ function Navbar() {
                     {/* แจ้งเตือน */}
                     {username && (
                         <>
-                            <div className="enterprise-notification-icon">
-                                <FontAwesomeIcon icon={faBell} size="lg" />
-                                {notifications > 0 && (
-                                    <span className="enterprise-notification-badge">{notifications}</span>
-                                )}
-                            </div>
                             <div className="enterprise-navbar-divider"></div>
                         </>
                     )}
@@ -112,7 +104,6 @@ function Navbar() {
                                 </div>
                                 <div className="enterprise-user-info">
                                     <span className="enterprise-username">{username}</span>
-                                    <span className="enterprise-user-role">Admin</span>
                                 </div>
                                 <FontAwesomeIcon 
                                     icon={faChevronDown} 
@@ -128,15 +119,6 @@ function Navbar() {
                             
                             {isDropdownOpen && (
                                 <div className="enterprise-dropdown-menu">
-                                    <div className="enterprise-dropdown-item">
-                                        <FontAwesomeIcon icon={faUser} />
-                                        My Profile
-                                    </div>
-                                    <div className="enterprise-dropdown-item">
-                                        <FontAwesomeIcon icon={faCog} />
-                                        Settings
-                                    </div>
-                                    <div className="enterprise-dropdown-divider"></div>
                                     <div 
                                         className="enterprise-dropdown-item danger"
                                         onClick={handleLogout}

@@ -1,0 +1,234 @@
+/* currentBaselineTrace.css - Professional Gray Theme */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* --- Variables (cbt-) --- */
+
+  /* Grayscale Palette */
+  --cbt-gray-50: #F7FAFC;
+  --cbt-gray-100: #EDF2F7;
+  --cbt-gray-200: #E2E8F0;
+  --cbt-gray-300: #CBD5E0;
+  --cbt-gray-400: #A0AEC0;
+  --cbt-gray-500: #718096;
+  --cbt-gray-600: #4A5568;
+  --cbt-gray-700: #2D3748;
+  --cbt-gray-800: #1A202C;
+  --cbt-gray-900: #171923;
+  --cbt-white: #ffffff;
+  --cbt-black: #000000;
+
+  /* Base Colors - Using Grays */
+  --cbt-bg-primary: var(--cbt-white);
+  --cbt-bg-secondary: var(--cbt-gray-100);
+  --cbt-bg-tertiary: var(--cbt-gray-200);
+
+  /* Text Colors - Using Grays */
+  --cbt-text-primary: var(--cbt-gray-800);
+  --cbt-text-secondary: var(--cbt-gray-600);
+  --cbt-text-light: var(--cbt-gray-500);
+  --cbt-text-on-primary: var(--cbt-white); /* Text on dark gray buttons */
+  --cbt-text-placeholder: var(--cbt-gray-400);
+
+  /* Primary "Brand" Colors - Using Grays */
+  --cbt-primary: var(--cbt-gray-700);       /* Dark Gray as Primary */
+  --cbt-primary-light: var(--cbt-gray-500);   /* Mid Gray as Light Primary */
+  --cbt-primary-dark: var(--cbt-gray-800);    /* Very Dark Gray as Dark Primary */
+
+  /* Accent Colors - Using Grays */
+  --cbt-accent: var(--cbt-gray-600);        /* Mid-Dark Gray as Accent */
+
+  /* Status Colors (Keeping original main colors for clarity, added light variants) */
+  --cbt-success: #10b981;        /* Emerald 500 */
+  --cbt-success-dark: #059669;   /* Emerald 600 */
+  --cbt-success-light: #D1FAE5;  /* Emerald 100 */
+  --cbt-warning: #f59e0b;        /* Amber 500 */
+  --cbt-warning-dark: #d97706;   /* Amber 600 */
+  --cbt-warning-light: #FEF3C7;  /* Amber 100 */
+  --cbt-error: #ef4444;          /* Red 500 */
+  --cbt-error-dark: #dc2626;      /* Red 600 */
+  --cbt-error-light: #FEE2E2;    /* Red 100 */
+  --cbt-info: #3B82F6;           /* Blue 500 */
+  --cbt-info-dark: #1D4ED8;      /* Darker Blue */
+  --cbt-info-light: #DBEAFE;     /* Blue 100 */
+
+  /* UI Elements - Using Grays */
+  --cbt-border: var(--cbt-gray-300);        /* Light gray border */
+  --cbt-border-light: var(--cbt-gray-200);  /* Very light gray border */
+  --cbt-border-dark: var(--cbt-gray-400);   /* Slightly darker gray border */
+  --cbt-border-colored: var(--cbt-gray-400);/* Mid-gray colored border */
+  --cbt-border-focus: var(--cbt-primary);   /* Dark gray focus border */
+
+  /* Shadows - Standard Gray */
+  --cbt-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  --cbt-shadow-md: 0 3px 5px -1px rgba(0, 0, 0, 0.08), 0 2px 3px -1px rgba(0, 0, 0, 0.05);
+  --cbt-shadow-lg: 0 8px 12px -3px rgba(0, 0, 0, 0.08), 0 4px 5px -2px rgba(0, 0, 0, 0.04);
+
+  /* Border Radius */
+  --cbt-radius-sm: 0.25rem; /* 4px */
+  --cbt-radius-md: 0.375rem;/* 6px */
+  --cbt-radius-lg: 0.5rem;  /* 8px */
+  --cbt-radius-full: 9999px;
+
+  /* Transitions */
+  --cbt-transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --cbt-transition-fast: all 0.15s ease;
+}
+
+/* --- Global Reset --- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background-color: var(--cbt-bg-secondary); /* Very light gray */
+  font-family: 'Inter', sans-serif;
+  color: var(--cbt-text-primary); /* Dark gray text */
+  line-height: 1.6;
+  font-size: 14px; /* Default font size */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- Main Container --- */
+.cbt-container {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 30px 35px;
+  background-color: var(--cbt-bg-primary); /* White */
+  border-radius: var(--cbt-radius-lg);
+  box-shadow: var(--cbt-shadow-md);
+  position: relative;
+}
+
+/* --- Header --- */
+.cbt-header {
+  display: flex; align-items: center; justify-content: flex-start;
+  margin-bottom: 25px; position: relative; padding-top: 0;
+  border-bottom: 1px solid var(--cbt-border-light); /* Very light gray border */ padding-bottom: 20px;
+  padding-left: 120px; /* Space for back button */
+}
+.cbt-header h1 {
+  font-size: 20px; font-weight: 600; color: var(--cbt-text-primary); /* Dark gray text */ margin: 0;
+  display: flex; align-items: center; gap: 10px; letter-spacing: -0.02em;
+  flex-grow: 1;
+}
+.cbt-title-icon { color: var(--cbt-primary); /* Primary gray icon */ font-size: 1.1em; }
+.cbt-back-btn {
+  position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  background-color: transparent; color: var(--cbt-primary); /* Primary gray text */ border: none;
+  font-size: 14px; font-weight: 500; display: flex; align-items: center;
+  gap: 6px; cursor: pointer; transition: var(--cbt-transition);
+  padding: 8px 12px; border-radius: var(--cbt-radius-md);
+}
+.cbt-back-btn:hover {
+  color: var(--cbt-primary-dark); /* Darker gray text */ background-color: var(--cbt-bg-tertiary); /* Light gray bg */
+  transform: translateY(-50%) translateX(-3px);
+}
+
+/* --- Content Area --- */
+.cbt-content { margin-top: 1.5rem; }
+
+/* --- Loading / Error / No Data / Info States --- */
+.cbt-loading,
+.cbt-error-message,
+.cbt-no-data {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 3rem 2rem; text-align: center; color: var(--cbt-text-secondary); /* Mid gray text */ gap: 1rem;
+  background-color: var(--cbt-bg-secondary); /* Very light gray bg */ border-radius: var(--cbt-radius-lg);
+  border: 1px solid var(--cbt-border-light); /* Very light gray border */ min-height: 200px;
+}
+.cbt-loading svg { font-size: 2.5rem; color: var(--cbt-primary); /* Primary gray icon */ margin-bottom: 0.5rem; }
+.cbt-error-message svg { font-size: 2.5rem; margin-bottom: 0.5rem; }
+/* Specific icon colors based on message type */
+.cbt-error-message.cbt-info-message svg { color: var(--cbt-info); } /* Info color */
+.cbt-error-message:not(.cbt-info-message) svg { color: var(--cbt-error); } /* Error color */
+
+.cbt-loading p { font-size: 1rem; font-weight: 500; }
+.cbt-error-message p { font-size: 1rem; font-weight: 500; }
+/* Specific text colors based on message type */
+.cbt-error-message:not(.cbt-info-message) p { color: var(--cbt-error-dark); } /* Error text */
+.cbt-error-message.cbt-info-message p { color: var(--cbt-text-primary); } /* Normal text for info */
+
+.cbt-error-details { font-size: 0.85rem; color: var(--cbt-text-secondary); margin-top: 0.5rem; }
+.cbt-no-data p { font-size: 1rem; font-weight: 500; margin-bottom: 0.5rem; }
+.cbt-no-data-subtle { font-size: 0.9rem; color: var(--cbt-text-light); /* Light gray text */ }
+/* Specific border/background for info message */
+.cbt-error-message.cbt-info-message {
+    border-color: var(--cbt-info-light); /* Light blue border */
+    background-color: var(--cbt-info-light); /* Light blue background */
+}
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.cbt-loading svg { animation: spin 1s linear infinite; }
+
+/* --- Summary Box Styling --- */
+.cbt-summary-box {
+  background-color: var(--cbt-bg-primary); /* White */
+  border: 1px solid var(--cbt-border); /* Light gray border */
+  border-radius: var(--cbt-radius-lg);
+  padding: 1.5rem 2rem;
+  box-shadow: var(--cbt-shadow-sm);
+  max-width: 600px;
+  margin: 1rem auto;
+}
+.cbt-summary-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.75rem 0; border-bottom: 1px solid var(--cbt-border-light); /* Very light gray border */ font-size: 0.9rem;
+}
+.cbt-summary-item:last-of-type { border-bottom: none; }
+.cbt-summary-label {
+  font-weight: 500; color: var(--cbt-text-secondary); /* Mid gray text */ display: inline-flex;
+  align-items: center; gap: 0.6rem;
+}
+.cbt-summary-label svg { color: var(--cbt-primary); /* Primary gray icon */ font-size: 1em; }
+.cbt-summary-value { font-weight: 500; color: var(--cbt-text-primary); /* Dark gray text */ text-align: right; }
+.cbt-round-value {
+    font-weight: 600; color: var(--cbt-primary-dark); /* Very dark gray */ background-color: var(--cbt-bg-tertiary); /* Light gray bg */
+    padding: 0.2rem 0.5rem; border-radius: var(--cbt-radius-sm); border: 1px solid var(--cbt-border); /* Add subtle border */
+}
+.cbt-summary-actions {
+  margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--cbt-border-light); /* Very light gray border */
+  text-align: right;
+}
+
+/* --- Action Button (View Details) --- */
+.cbt-action-button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.375rem;
+  padding: 0.5rem 1rem; font-size: 0.875rem; font-weight: 500;
+  border-radius: var(--cbt-radius-md); border: 1px solid transparent;
+  cursor: pointer; transition: var(--cbt-transition);
+  white-space: nowrap; /* Prevent wrapping */
+}
+.cbt-action-button svg { width: 14px; height: 14px; margin-right: 0.3rem; }
+/* Gray View Button */
+.cbt-view-button {
+  background-color: transparent;
+  color: var(--cbt-text-secondary); /* Mid gray text */
+  border-color: var(--cbt-border); /* Light gray border */
+}
+.cbt-view-button:hover {
+  background-color: var(--cbt-bg-tertiary); /* Light gray BG */
+  border-color: var(--cbt-border-dark); /* Darker border */
+  color: var(--cbt-text-primary); /* Darker text */
+}
+/* Focus style */
+.cbt-action-button:focus-visible {
+    outline: 2px solid var(--cbt-border-focus);
+    outline-offset: 1px;
+    box-shadow: 0 0 0 2px rgba(45, 55, 72, 0.1); /* Subtle glow */
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+  body { font-size: 13px; }
+  .cbt-container { padding: 20px 15px; margin: 10px; }
+  .cbt-header { flex-wrap: wrap; gap: 10px; padding-bottom: 15px; padding-left: 15px; padding-right: 15px; }
+  .cbt-header h1 { font-size: 1rem; order: 2; width: 100%; text-align: center; padding: 0; margin: 0.5rem 0 0 0; }
+  .cbt-back-btn { position: static; transform: none; order: 1; }
+
+  .cbt-summary-box { padding: 1rem 1.25rem; margin: 1rem 0; max-width: none; }
+  .cbt-summary-item { flex-direction: column; align-items: flex-start; gap: 0.3rem; padding: 0.75rem 0; }
+  .cbt-summary-value { text-align: left; margin-top: 0.2rem; }
+  .cbt-summary-actions { text-align: center; }
+  .cbt-action-button { width: 100%; justify-content: center; }
+}
+
+/* No scrollbar needed for this page layout typically */

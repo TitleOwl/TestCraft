@@ -1,13 +1,21 @@
 import React, { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
-import './CSS/traceabilityPage.css'; // ตรวจสอบ Path
-import createvervar from "./image/createvervar.png"; // ตรวจสอบ Path
 import { toast } from "react-toastify";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Import เพิ่มเติม
-import { faEye } from '@fortawesome/free-solid-svg-icons'; // Import เพิ่มเติม
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+    faEye, faArrowLeft, faListCheck, faUsers, faSpinner,
+    faExclamationTriangle, faInfoCircle, faFloppyDisk, faBan
+} from '@fortawesome/free-solid-svg-icons';
 
+// --- CSS Import ---
+// Import ไฟล์ CSS ที่สร้างขึ้นสำหรับ Component นี้โดยเฉพาะ
+// (ตรวจสอบ Path และชื่อไฟล์ให้ถูกต้อง)
+import './CSS/createVerifyTrace.css'; // <<--- Import ไฟล์นี้เท่านั้น
+
+// --- Helper Function: flattenTraceabilityData (เหมือนเดิม) ---
 const flattenTraceabilityData = (nestedData) => {
+    // ... (โค้ด flattenTraceabilityData เหมือนเดิมทุกประการ) ...
     const flatRows = [];
     if (!nestedData || nestedData.length === 0) { return flatRows; }
     nestedData.forEach(req => {
@@ -50,16 +58,18 @@ const flattenTraceabilityData = (nestedData) => {
         });
         const firstReqRowIndex = flatRows.findIndex(row => row.key.startsWith(`req-${reqId}`)); if (firstReqRowIndex !== -1 && flatRows[firstReqRowIndex]) flatRows[firstReqRowIndex].reqRowSpan = reqRowCount;
     });
-    console.log("Flattened Rows with Names (CreateVerifyTrace):", flatRows);
+    // console.log("Flattened Rows with Names (CreateVerifyTrace):", flatRows);
     return flatRows;
 };
 
-// --- Component หลัก ---
+// --- Main Component ---
 const CreateVerifyTrace = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const projectId = queryParams.get("project_id");
 
-    // --- State (เหมือนเดิม) ---
+    // --- State ---
     const [members, setMembers] = useState([]);
     const [isLoadingMembers, setIsLoadingMembers] = useState(true);
     const [membersError, setMembersError] = useState(null);
@@ -67,54 +77,82 @@ const CreateVerifyTrace = () => {
     const [isLoadingTrace, setIsLoadingTrace] = useState(true);
     const [traceError, setTraceError] = useState(null);
     const [selectedMembers, setSelectedMembers] = useState([]);
-    const [step, setStep] = useState(1);
-    const queryParams = new URLSearchParams(location.search);
-    const projectId = queryParams.get("project_id");
+    const [isSaving, setIsSaving] = useState(false);
 
     // --- Fetch Members (เหมือนเดิม) ---
     useEffect(() => {
+        // ... (โค้ด Fetch Members เหมือนเดิม) ...
         if (projectId) {
             setIsLoadingMembers(true); setMembersError(null); setMembers([]);
             axios.get(`http://localhost:3001/projectname?project_id=${projectId}`)
                 .then((res) => {
                     if (Array.isArray(res.data) && res.data[0]?.project_member) {
-                        try { const membersData = JSON.parse(res.data[0].project_member); setMembers(Array.isArray(membersData) ? membersData : []); }
-                        catch (parseError) { console.error("Error parsing project members:", parseError); setMembersError("Invalid project member data format."); }
+                        try {
+                            const membersData = JSON.parse(res.data[0].project_member);
+                            setMembers(Array.isArray(membersData) ? membersData : []);
+                        } catch (parseError) {
+                            console.error("Error parsing project members:", parseError);
+                            setMembersError("Invalid project member data format.");
+                        }
                     } else { setMembersError("Project member data not found or invalid."); }
                 })
-                .catch((err) => { console.error("Failed to load project members:", err); setMembersError("Failed to load project members."); })
+                .catch((err) => {
+                    console.error("Failed to load project members:", err);
+                    setMembersError("Failed to load project members.");
+                })
                 .finally(() => setIsLoadingMembers(false));
-        } else { setMembersError("Project ID not found in URL."); setIsLoadingMembers(false); }
+        } else {
+            setMembersError("Project ID not found in URL.");
+            setIsLoadingMembers(false);
+        }
     }, [projectId]);
 
-    // --- Fetch traceability data (เหมือนเดิม) ---
+    // --- Fetch traceability data (Baseline) (เหมือนเดิม) ---
     useEffect(() => {
+        // ... (โค้ด Fetch Traceability Data เหมือนเดิม) ...
         if (projectId) {
             setIsLoadingTrace(true); setTraceError(null); setTraceabilityData([]);
-            axios.get("http://localhost:3001/traceability", { params: { projectId } }) // ดึงจาก /traceability (Baseline)
+            axios.get("http://localhost:3001/traceability", { params: { projectId } })
                 .then((response) => {
-                    console.log("Traceability Data Received (CreateVerifyTrace):", response.data);
-                    if (Array.isArray(response.data)) { setTraceabilityData(response.data); }
-                    else { console.error("Traceability API response is not an array"); setTraceError("รูปแบบข้อมูล Traceability ไม่ถูกต้อง"); }
+                    // console.log("Traceability Data Received (CreateVerifyTrace):", response.data);
+                    if (Array.isArray(response.data)) {
+                        setTraceabilityData(response.data);
+                    } else {
+                        console.error("Traceability API response is not an array");
+                        setTraceError("Invalid traceability data format received.");
+                    }
                 })
-                .catch((err) => { console.error("Error fetching traceability data:", err); setTraceError("ไม่สามารถดึงข้อมูล Traceability ได้"); })
+                .catch((err) => {
+                    console.error("Error fetching traceability data:", err);
+                    setTraceError("Failed to fetch traceability data.");
+                })
                 .finally(() => setIsLoadingTrace(false));
-        } else { setTraceError("Project ID not found in URL."); setIsLoadingTrace(false); }
+        } else {
+            setTraceError("Project ID not found in URL.");
+            setIsLoadingTrace(false);
+        }
     }, [projectId]);
 
-    // --- แปลงข้อมูล Traceability เป็น Flat Rows (ใช้ Helper ที่อัปเดตแล้ว) ---
+    // --- Flattened Traceability Data for Table (เหมือนเดิม) ---
     const tableRows = useMemo(() => flattenTraceabilityData(traceabilityData), [traceabilityData]);
 
-    // --- Handlers (เหมือนเดิม) ---
-    const handleMemberSelection = (memberName) => { setSelectedMembers((prev) => prev.includes(memberName) ? prev.filter((name) => name !== memberName) : [...prev, memberName]); };
+    // --- Handlers (เหมือนเดิม ยกเว้นส่วน Logic ไม่เปลี่ยน) ---
+    const handleMemberSelection = (memberName) => {
+        setSelectedMembers((prev) =>
+            prev.includes(memberName)
+                ? prev.filter((name) => name !== memberName)
+                : [...prev, memberName]
+        );
+    };
 
     const handleSaveVerification = async () => {
+        // ... (โค้ด Save Verification Logic เหมือนเดิม) ...
         const currentUser = localStorage.getItem("username");
         const roundKey = `create_round_${projectId}`;
         const currentRound = parseInt(localStorage.getItem(roundKey) || '1');
 
-        if (!currentUser || !projectId || step !== 2 || selectedMembers.length === 0 || !tableRows || tableRows.length === 0) {
-            toast.error("Incomplete or incorrect information.");
+        if (!currentUser || !projectId || selectedMembers.length === 0 || !tableRows || tableRows.length === 0) {
+            toast.error("Incomplete information: Missing user, project ID, selected members, or traceability data.");
             return;
         }
 
@@ -138,160 +176,261 @@ const CreateVerifyTrace = () => {
             }
 
             return [
-                parseInt(projectId),
-                currentUser,
-                reqIdForDb,
-                designIdForDb,
-                implIdForDb,
-                testCaseIdForDb,
-                verificationByJsonString,
-                status,
-                currentRound
+                parseInt(projectId), currentUser, reqIdForDb, designIdForDb,
+                implIdForDb, testCaseIdForDb, verificationByJsonString, status, currentRound
             ];
         }).filter(row => row !== null);
 
         if (rowsToInsert.length === 0) {
-            toast.warning("No valid data found for saving.");
+            toast.warning("No valid traceability links found to create verification records for.");
             return;
         }
 
-        console.log("Data to Insert:", rowsToInsert);
-
+        setIsSaving(true);
         try {
             const response = await axios.post("http://localhost:3001/saveVerificationTrace", { rowsToInsert });
             if (response.data.success) {
-                toast.success("Verification traceability record saved successfully!", {
+                const nextRound = currentRound + 1;
+                localStorage.setItem(roundKey, nextRound.toString());
+                toast.success("Verification traceability records created successfully!", {
                     onClose: () => {
-                        const nextRound = currentRound + 1;
-                        localStorage.setItem(roundKey, nextRound.toString());
-                        setSelectedMembers([]);
                         navigate(`/Dashboard?project_id=${projectId}`, {
                             state: { selectedSection: "Traceability" }
                         });
                     },
                     autoClose: 2000
                 });
-
-                const nextRound = currentRound + 1;
-                localStorage.setItem(roundKey, nextRound.toString());
                 setSelectedMembers([]);
-                navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Traceability" } });
             } else {
-                toast.error(`Failed to save data: ${response.data.message || 'Unknown error'}`);
+                toast.error(`Failed to save data: ${response.data.message || 'Unknown server error'}`);
             }
         } catch (error) {
             console.error("Error saving verification trace:", error);
             const errorMsg = error.response?.data?.message || error.message || "Server error or connection issue.";
             toast.error(`Error occurred: ${errorMsg}`);
+        } finally {
+            setIsSaving(false);
         }
     };
 
-    const handleNextStep = () => { if (tableRows.length > 0) setStep(2); else alert("ไม่พบข้อมูล Traceability สำหรับสร้าง Verification"); };
-    const handleBackStep = () => { setStep(1); };
-    const handleViewRequirement = (reqId) => { window.open(`/viewReqTrace?requirement_id=${reqId}`, '_blank'); console.log("View requirement:", reqId); };
+    const handleGoBack = () => {
+        navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Traceability" } });
+    };
 
+    // --- Render Helper for Loading/Error/Empty States (เปลี่ยน Class Name) ---
+    const renderInfoState = (isLoading, error, data, type) => {
+        const messages = {
+            trace: { loading: "Loading Traceability Data...", error: "Error loading traceability data:", empty: "No Baseline Traceability Data Found", emptyIcon: faInfoCircle },
+            members: { loading: "Loading Project Members...", error: "Error loading project members:", empty: "No Project Members Found", emptyIcon: faUsers }
+        };
+        const config = messages[type];
+        // *** เปลี่ยน Class Name ตรงนี้ ***
+        const loadingClass = "traceveri-loading";
+        const errorClass = "traceveri-error-message";
+        const emptyClass = "traceveri-empty-state";
+
+        if (isLoading) {
+            return (
+                <div className={loadingClass}>
+                    <FontAwesomeIcon icon={faSpinner} spin size="lg" />
+                    <p>{config.loading}</p>
+                </div>
+            );
+        }
+        if (error) {
+            return (
+                <div className={errorClass}>
+                    <FontAwesomeIcon icon={faExclamationTriangle} size="lg" />
+                    <p>{config.error} {error}</p>
+                </div>
+            );
+        }
+        if ( (type === 'trace' && (!traceabilityData || traceabilityData.length === 0)) ||
+             (type === 'members' && (!members || members.length === 0)) ) {
+            return (
+                <div className={emptyClass}>
+                    <FontAwesomeIcon icon={config.emptyIcon} size="lg" />
+                    <p>{config.empty}</p>
+                </div>
+            );
+        }
+        return null;
+    };
+
+
+    // --- JSX Structure (ใช้ Class Name ใหม่ ที่ขึ้นต้นด้วย traceveri-) ---
     return (
-        <div className="create-verify-container">
-            <button className="backveri-trace" onClick={() => navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Traceability" } })}>Back</button>
-            <h1>Create Verification Traceability Record</h1>
+        // *** เปลี่ยน Class Name ทั้งหมด ***
+        <div className="traceveri-container">
+            {/* Header */}
+            <div className="traceveri-header">
+                <button onClick={handleGoBack} className="traceveri-back-btn">
+                    <FontAwesomeIcon icon={faArrowLeft} /> Back
+                </button>
+                <h1>
+                    <FontAwesomeIcon icon={faListCheck} className="traceveri-title-icon" />
+                    Create Verification Traceability Record
+                </h1>
+            </div>
 
-            {/* ----- STEP 1: Display Traceability Table ----- */}
-            {step === 1 && (
-                <>
-                    {isLoadingTrace && <div className="loading-message"><p>Loading Traceability Data...</p></div>}
-                    {traceError && <div className="error-message">{traceError}</div>}
-                    {!isLoadingTrace && !traceError && tableRows.length === 0 && (<div className="no-data-message">ไม่พบข้อมูล Baseline Traceability</div>)}
+            {/* Content Panels */}
+            <div className="traceveri-content">
+
+                {/* Left Panel: Traceability Table */}
+                <div className="traceveri-left-panel">
+                    <div className="traceveri-panel-header">
+                        <h2>
+                            <FontAwesomeIcon icon={faListCheck} /> Baseline Traceability Links
+                            { !isLoadingTrace && !traceError && tableRows.length > 0 &&
+                                <span className="traceveri-count-badge">{tableRows.length}</span>
+                            }
+                        </h2>
+                    </div>
+                    {/* Loading/Error/Empty State for Traceability */}
+                    {renderInfoState(isLoadingTrace, traceError, tableRows, 'trace')}
+
+                    {/* Table Container */}
                     {!isLoadingTrace && !traceError && tableRows.length > 0 && (
-                        <table className="traceability-table">
-                            <thead>
-                                <tr>
-                                    <th>Requirement ID / Name</th>
-                                    <th>Design ID / Name</th>
-                                    <th>Code Component ID / Filename</th>
-                                    <th>Test Case ID / Name</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {tableRows.map((row) => (
-                                    <tr key={row.key}>
-                                        {/* Requirement Cell */}
-                                        {row.isFirstReqRow && (
-                                            <td rowSpan={row.reqRowSpan} className="requirement-cell">
-                                                <div className="reqid-trace" onClick={() => handleViewRequirement(row.reqId)} >
-                                                    {`REQ-${row.reqId}`}
-                                                </div>
-                                                {row.reqName && row.reqName !== `Requirement ${row.reqId}` ? (
-                                                    <div className="reqname-trace" >{row.reqName}</div>
-                                                ) : null}
-                                                <button title="View Requirement Details" className="button-req-trace" style={{ marginTop: '5px', padding: '2px 5px' }} onClick={() => navigate(`/viewReqTrace?requirement_id=${row.reqId}`)}>
-                                                    <FontAwesomeIcon icon={faEye} />
-                                                </button>
-                                            </td>
-                                        )}
-                                        {/* Design Cell */}
-                                        {row.isFirstDesignRow && (
-                                            <td rowSpan={row.designRowSpan}>
-                                                {row.designId !== "-" ? `DE-${row.designId}` : "-"}
-                                                {row.designName && row.designName !== "-" && row.designName !== `Design ${row.designId}` ? (
-                                                    <><br /><div className="reqname-trace" >{row.designName}</div></>
-                                                ) : null}
-                                            </td>
-                                        )}
-                                        {/* Implementation Cell */}
-                                        {row.isFirstImplRow && (
-                                            <td rowSpan={row.implRowSpan}>
-                                                {row.implId !== "-" ? (
-                                                    <>
-                                                        {`IMP-${row.implId}`}
-                                                        {row.implFile && row.implFile !== 'N/A' ? (
-                                                            <><br /><div className="reqname-trace" >{row.implFile}</div></>
-                                                        ) : null}
-                                                    </>
-                                                ) : (
-                                                    "-"
-                                                )}
-                                            </td>
-                                        )}
-                                        {/* Test Case Cell */}
-                                        <td>
-                                            {row.testCaseId !== "-" ? `TC-${row.testCaseId}` : "-"}
-                                            {row.testCaseName && row.testCaseName !== "-" && row.testCaseName !== `Test Case ${row.testCaseId}` ? (
-                                                <><br /><div className="reqname-trace" >{row.testCaseName}</div></>
-                                            ) : null}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                         <div className="traceveri-table-container">
+                             {/* เปลี่ยนชื่อ class ของ table ด้วย */}
+                             <table className="traceveri-table">
+                                 <thead>
+                                     <tr>
+                                         <th>Requirement</th>
+                                         <th>Design</th>
+                                         <th>Code Component</th>
+                                         <th>Test Case</th>
+                                     </tr>
+                                 </thead>
+                                 <tbody>
+                                     {tableRows.map((row) => (
+                                         <tr key={row.key}>
+                                             {row.isFirstReqRow && (
+                                                 <td rowSpan={row.reqRowSpan}>
+                                                     {/* เปลี่ยนชื่อ class หรือจะใช้ชื่อเดิมก็ได้ ถ้าไม่ซ้ำ */}
+                                                     <div className="traceveri-req-id">REQ-{row.reqId}</div>
+                                                      {row.reqName && row.reqName !== `Requirement ${row.reqId}` && (
+                                                          <div className="traceveri-item-detail">{row.reqName}</div>
+                                                      )}
+                                                     <a
+                                                         href={`/viewReqTrace?requirement_id=${row.reqId}`}
+                                                         target="_blank"
+                                                         rel="noopener noreferrer"
+                                                         title="View Requirement Details"
+                                                         className="traceveri-view-button" // เปลี่ยนชื่อ class button
+                                                         onClick={() => console.log("Viewing req:", row.reqId)}
+                                                     >
+                                                         <FontAwesomeIcon icon={faEye} /> View
+                                                     </a>
+                                                 </td>
+                                             )}
+                                             {row.isFirstDesignRow && (
+                                                 <td rowSpan={row.designRowSpan}>
+                                                     {row.designId !== "-" ? `DE-${row.designId}` : "-"}
+                                                     {row.designName && row.designName !== "-" && row.designName !== `Design ${row.designId}` && (
+                                                         <div className="traceveri-item-detail">{row.designName}</div> // ใช้ class กลางๆ
+                                                     )}
+                                                 </td>
+                                             )}
+                                             {row.isFirstImplRow && (
+                                                 <td rowSpan={row.implRowSpan}>
+                                                     {row.implId !== "-" ? `IMP-${row.implId}` : "-"}
+                                                     {row.implFile && row.implFile !== 'N/A' && (
+                                                         <div className="traceveri-item-detail">{row.implFile}</div> // ใช้ class กลางๆ
+                                                     )}
+                                                 </td>
+                                             )}
+                                             <td>
+                                                 {row.testCaseId !== "-" ? `TC-${row.testCaseId}` : "-"}
+                                                 {row.testCaseName && row.testCaseName !== "-" && row.testCaseName !== `Test Case ${row.testCaseId}` && (
+                                                     <div className="traceveri-item-detail">{row.testCaseName}</div> // ใช้ class กลางๆ
+                                                 )}
+                                             </td>
+                                         </tr>
+                                     ))}
+                                 </tbody>
+                             </table>
+                         </div>
                     )}
-                    <button onClick={handleNextStep} disabled={isLoadingTrace || !!traceError || tableRows.length === 0}> Next </button>
-                </>
-            )}
+                </div>
 
-            {step === 2 && (
-                <>
-                    {isLoadingMembers ? (<div className="loading-message"><p>Loading project members...</p></div>)
-                        : membersError ? (<div className="error-message">{membersError}</div>)
-                            : members.length === 0 ? (<div className="no-data-message">ไม่พบข้อมูลสมาชิกโปรเจกต์</div>)
-                                : (<div>
-                                    <h3>Select Members for Verification</h3>
-                                    <div className="members-list">
-                                        {members.map((member, index) => (
-                                            <div key={index} className="member-item">
-                                                <input type="checkbox" id={`member-${index}`} onChange={() => handleMemberSelection(member.name)} checked={selectedMembers.includes(member.name)} />
-                                                <label htmlFor={`member-${index}`} className="member-label">
-                                                    <span className="member-name">{member.name}</span>
-                                                    <span className="member-roles">({member.roles?.join(", ") || 'No Roles'})</span>
-                                                </label>
-                                            </div>
-                                        ))}
+                {/* Right Panel: Select Verifiers & Summary */}
+                <div className="traceveri-right-panel">
+                    <div className="traceveri-panel-header">
+                        <h2>
+                            <FontAwesomeIcon icon={faUsers} /> Select Verifiers
+                            { !isLoadingMembers && !membersError && members.length > 0 &&
+                                <span className="traceveri-count-badge">{members.length}</span>
+                            }
+                        </h2>
+                    </div>
+
+                    {/* Loading/Error/Empty State for Members */}
+                     {renderInfoState(isLoadingMembers, membersError, members, 'members')}
+
+                    {/* Member List */}
+                    {!isLoadingMembers && !membersError && members.length > 0 && (
+                        <div className="traceveri-reviewers-container">
+                             <div className="traceveri-reviewers-list">
+                                {members.map((member, index) => (
+                                    <div key={index} className="traceveri-reviewer-item">
+                                        <input
+                                            type="checkbox" classname="trace"
+                                            id={`member-${index}`}
+                                            onChange={() => handleMemberSelection(member.name)}
+                                            checked={selectedMembers.includes(member.name)}
+                                            disabled={isSaving}
+                                        />
+                                        <label htmlFor={`member-${index}`} className="traceveri-reviewer-label">
+                                            <span className="traceveri-reviewer-name">{member.name}</span>
+                                            <span className="traceveri-reviewer-role">
+                                                ({member.roles?.join(", ") || 'No Roles Assigned'})
+                                            </span>
+                                        </label>
                                     </div>
-                                </div>)
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Summary Section */}
+                    <div className="traceveri-summary">
+                        <h3>Summary</h3>
+                        <div className="traceveri-summary-item">
+                            <span>Traceability Links Found:</span>
+                            <span className="traceveri-summary-count">{isLoadingTrace ? '...' : tableRows.length}</span>
+                        </div>
+                         <div className="traceveri-summary-item">
+                             <span>Verifiers Selected:</span>
+                             <span className="traceveri-summary-count">{selectedMembers.length}</span>
+                         </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Action Buttons Area */}
+            <div className="traceveri-action-buttons">
+                <button
+                    onClick={handleGoBack}
+                    className="traceveri-btn-cancel" // เปลี่ยน Class
+                    disabled={isSaving}
+                >
+                    <FontAwesomeIcon icon={faBan} /> Cancel
+                </button>
+                <button
+                    onClick={handleSaveVerification}
+                    className="traceveri-btn-create" // เปลี่ยน Class
+                    disabled={
+                        isSaving ||
+                        isLoadingTrace || !!traceError || tableRows.length === 0 ||
+                        isLoadingMembers || !!membersError || members.length === 0 ||
+                        selectedMembers.length === 0
                     }
-                    <button onClick={handleSaveVerification} disabled={isLoadingMembers || !!membersError || selectedMembers.length === 0}> Save Verification </button>
-                    <button onClick={handleBackStep}>Back</button>
-                </>
-            )}
+                >
+                    <FontAwesomeIcon icon={isSaving ? faSpinner : faFloppyDisk} spin={isSaving} />
+                    {isSaving ? "Saving..." : "Create Verification Records"}
+                </button>
+            </div>
         </div>
     );
 };

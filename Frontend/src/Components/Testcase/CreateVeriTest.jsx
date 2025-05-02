@@ -105,7 +105,7 @@ const CreateVeriTest = () => {
 
   // --- Logic การ Filter (ถ้า Implement Search/Filter) ---
   const filteredTestCases = workingTestCase.filter(testcase => {
-    const tcIdString = `SD-00${testcase.testcase_id}`;
+    const tcIdString = `TC-00${testcase.testcase_id}`;
     const searchLower = searchQuery.toLowerCase();
     const matchesSearch =
       (testcase.testcase_name && testcase.testcase_name.toLowerCase().includes(searchLower)) ||
@@ -377,7 +377,7 @@ const CreateVeriTest = () => {
                               onChange={() => handleSelect(testcase.testcase_id, setSelectedTestCase)}
                             />
                           </td>
-                          <td className="tc-id">SD-00{testcase.testcase_id}</td>
+                          <td className="tc-id">TC-00{testcase.testcase_id}</td>
                           <td>{testcase.testcase_name}</td>
                           <td>
                             {/* ใส่ span สำหรับ Badge */}

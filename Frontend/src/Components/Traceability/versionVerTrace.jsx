@@ -1,20 +1,25 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react'; // <<--- แก้ไข Import ให้ครบ
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
-// แนะนำให้สร้าง CSS ใหม่ หรือปรับปรุง CSS เดิมให้เหมาะกับหน้านี้
-import "./CSS/viewVerifyTrace.css"; // หรือ ./CSS/baselineHistory.css
-import { format } from 'date-fns';
+import { format, isValid, parseISO } from 'date-fns';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+    faArrowLeft, faHistory, faCalendarAlt, faSearch, faSort, faSortUp,
+    faSortDown, faEye, faSpinner, faExclamationTriangle, faCheckCircle, faTimes // เพิ่ม faTimes ถ้าใช้ใน Alert
+} from '@fortawesome/free-solid-svg-icons';
 
-// *** แนะนำ: เปลี่ยนชื่อ Component เป็น BaselineHistory ***
-const VersionVerTrace = () => {
+// *** ใช้ CSS ไฟล์เดิมที่แก้ปุ่ม Back แล้ว (bh- prefix) ***
+import "./CSS/versionVerTrace.css"; // หรือ versionVerTrace.css ตามที่คุณตั้งชื่อ
+
+// --- Component หลัก (ใช้ชื่อ VersionVerTrace หรือ BaselineHistory ตามที่คุณใช้) ---
+const VersionVerTrace = () => { // หรือ const BaselineHistory = () => {
     const [verificationData, setVerificationData] = useState([]);
+    const [projectName, setProjectName] = useState('');
     const [combinedSearchQuery, setCombinedSearchQuery] = useState('');
     const [selectedDate, setSelectedDate] = useState('');
-    // --- ลบ State searchStatus ออก ---
-    // const [searchStatus, setSearchStatus] = useState('');
-    const [sortColumn, setSortColumn] = useState('round'); // อาจจะเปลี่ยน default เป็น date หรือ index
-    const [sortDirection, setSortDirection] = useState('desc'); // เริ่มจาก index/round ล่าสุดก่อน
-    const [isLoading, setIsLoading] = useState(true);
+    const [sortColumn, setSortColumn] = useState('date');
+    const [sortDirection, setSortDirection] = useState('desc');
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     const navigate = useNavigate();
@@ -22,184 +27,178 @@ const VersionVerTrace = () => {
     const queryParams = new URLSearchParams(location.search);
     const projectId = queryParams.get("project_id");
 
-    // Fetch Data Effect (เหมือนเดิม)
-    useEffect(() => {
-        if (!projectId) {
-            setError("Project ID not found in URL."); setIsLoading(false); setVerificationData([]); return;
-        }
-        const fetchData = async () => {
-            setIsLoading(true); setError(null); setVerificationData([]);
-            try {
-                // ยังคงเรียก API เดิม แต่ข้อมูลจะถูกกรองใน Frontend
-                const response = await axios.get('http://localhost:3001/getVerificationTrace');
-                console.log("Raw API Response for Baseline History:", response.data);
+    // Alert state - ถ้าใช้ Alert แบบเดิม
+    // const [alertType, setAlertType] = useState(null);
+    // const [alertMessage, setAlertMessage] = useState("");
+    // const [showAlert, setShowAlert] = useState(false);
+    // const alertTimeoutRef = useRef(null);
 
-                if (response.data.success && Array.isArray(response.data.data)) {
-                    const filteredData = response.data.data.filter(item => String(item.project_id) === String(projectId));
-                    console.log(`Filtered Data for project ${projectId}:`, filteredData);
-                    setVerificationData(filteredData);
-                } else {
-                    console.error("API request failed or data format incorrect:", response.data?.message);
-                    setError(response.data?.message || 'Could not fetch history records.');
-                }
-            } catch (err) {
-                console.error('Error fetching verification trace data', err);
-                setError(err.message || 'An error occurred while fetching data.');
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchData();
+
+    // Fetch Data Effect
+    const fetchInitialData = useCallback(async () => {
+        setLoading(true); setError(null); setVerificationData([]); setProjectName('');
+        if (!projectId) { setError("Project ID not found."); setLoading(false); return; }
+        try {
+            try {
+                const nameResponse = await axios.get(`http://localhost:3001/projectname?project_id=${projectId}`);
+                setProjectName((nameResponse.data && nameResponse.data.length > 0) ? nameResponse.data[0].project_name : `Project ${projectId}`);
+            } catch (nameError) { setProjectName(`Project ${projectId}`); }
+
+            const response = await axios.get('http://localhost:3001/getVerificationTrace');
+            if (response.data.success && Array.isArray(response.data.data)) {
+                const filteredData = response.data.data.filter(item =>
+                    String(item.project_id) === String(projectId) &&
+                    item.veritrace_status?.toUpperCase() === 'BASELINE'
+                );
+                setVerificationData(filteredData);
+            } else { throw new Error(response.data?.message || 'Could not fetch records.'); }
+        } catch (err) { setError(err.message || 'An error occurred.'); }
+        finally { setLoading(false); }
     }, [projectId]);
 
-    // Grouping Data (เหมือนเดิม)
-    const groupedData = useMemo(() => {
-        if (!verificationData || verificationData.length === 0) return {};
-        return verificationData.reduce((acc, item) => {
-            if (item && typeof item === 'object' && item.hasOwnProperty('create_round')) {
-                const round = item.create_round;
-                if (!acc[round]) acc[round] = [];
-                acc[round].push(item);
-            } else { console.warn("Skipping invalid item during grouping:", item); }
-            return acc;
-        }, {});
-    }, [verificationData]);
+    useEffect(() => {
+        fetchInitialData();
+        // Cleanup for alert timeout if using custom alert
+        // return () => { if (alertTimeoutRef.current) { clearTimeout(alertTimeoutRef.current); } };
+    }, [fetchInitialData]);
 
-    // --- Filtering and Sorting Rounds (แก้ไขการกรอง Status) ---
-    const filteredAndSortedRounds = useMemo(() => {
-        return Object.keys(groupedData).filter((round) => {
-            const roundItems = groupedData[round];
-            if (!roundItems || roundItems.length === 0) return false;
-            const firstItem = roundItems[0];
-            if (!firstItem) return false;
-
-            // ===== กรองเอาเฉพาะสถานะ BASELINE เท่านั้น =====
-            if (!firstItem.veritrace_status || firstItem.veritrace_status.toUpperCase() !== 'BASELINE') {
-                return false; // ไม่แสดง Round ที่ไม่ใช่ BASELINE
-            }
+    // Grouping and Filtering/Sorting
+    const uniqueBaselineRounds = useMemo(() => {
+        if (!verificationData || verificationData.length === 0) return [];
+        const roundMap = new Map();
+        for (let i = verificationData.length - 1; i >= 0; i--) {
+            const item = verificationData[i];
+             if (item && item.hasOwnProperty('create_round') && item.create_round !== null && item.veritrace_status?.toUpperCase() === 'BASELINE') {
+                 if (!roundMap.has(item.create_round)) { roundMap.set(item.create_round, item); }
+             }
+         }
+         let roundsArray = Array.from(roundMap.values());
+         roundsArray = roundsArray.filter(item => {
             let formattedDate = '';
-            try { if (firstItem.verification_at) { const date = new Date(firstItem.verification_at); if (!isNaN(date.getTime())) formattedDate = format(date, 'yyyy-MM-dd'); } } catch (e) { console.error("Error formatting date:", e); }
-            const roundMatch = String(round).toLowerCase().includes(combinedSearchQuery.toLowerCase());
-            const createdByMatch = firstItem.create_by?.toLowerCase().includes(combinedSearchQuery.toLowerCase()) ?? false;
-            const dateMatch = !selectedDate || formattedDate === selectedDate;
-            // --- ลบ statusMatch ออกจากการ return ---
-            return (roundMatch || createdByMatch) && dateMatch;
-
-        }).sort((a, b) => {
-            // --- การเรียงลำดับ (เหมือนเดิม แต่พิจารณา default sort) ---
-            if (!sortColumn) return 0;
-            const roundItemsA = groupedData[a]; const roundItemsB = groupedData[b];
-            if (!roundItemsA || !roundItemsB || roundItemsA.length === 0 || roundItemsB.length === 0) return 0;
-            const firstItemA = roundItemsA[0]; const firstItemB = roundItemsB[0];
-            if (!firstItemA || !firstItemB) return 0;
-            let valueA, valueB;
-            switch (sortColumn) {
-                // --- การเรียงตาม Round (ยังใช้ได้ แต่ในตารางจะแสดง Index) ---
-                case 'round': valueA = parseInt(a) || 0; valueB = parseInt(b) || 0; break;
-                case 'createdBy': valueA = firstItemA.create_by || ''; valueB = firstItemB.create_by || ''; break;
-                case 'date': try { valueA = firstItemA.verification_at ? new Date(firstItemA.verification_at).getTime() : 0; if (isNaN(valueA)) valueA = 0; } catch (e) { valueA = 0; } try { valueB = firstItemB.verification_at ? new Date(firstItemB.verification_at).getTime() : 0; if (isNaN(valueB)) valueB = 0; } catch (e) { valueB = 0; } break;
-                // --- Status ไม่ต้องเรียงแล้ว เพราะมีค่าเดียว ---
-                // case 'status': valueA = firstItemA.veritrace_status || ''; valueB = firstItemB.veritrace_status || ''; break;
-                default: return 0;
-            }
-            if (valueA < valueB) return sortDirection === 'asc' ? -1 : 1;
-            if (valueA > valueB) return sortDirection === 'asc' ? 1 : -1;
-            return 0;
-        });
-        // --- ลบ searchStatus ออกจาก dependencies ---
-    }, [groupedData, combinedSearchQuery, selectedDate, sortColumn, sortDirection]);
-
+             if (item.verification_at) {
+                 try {
+                     const date = parseISO(item.verification_at);
+                     if (isValid(date)) { formattedDate = format(date, 'yyyy-MM-dd'); }
+                 } catch (e) { console.error("Date parse error:", e); }
+             }
+             const dateMatch = !selectedDate || formattedDate === selectedDate;
+             const query = combinedSearchQuery.toLowerCase();
+             const roundMatch = String(item.create_round).toLowerCase().includes(query);
+             const createdByMatch = (item.baselinetrace_by || item.create_by)?.toLowerCase().includes(query) ?? false;
+             const searchMatch = query === '' || roundMatch || createdByMatch;
+             return dateMatch && searchMatch;
+         });
+         roundsArray.sort((a, b) => {
+            if (!sortColumn) return 0; let valueA, valueB;
+             switch (sortColumn) {
+                 case 'round': valueA = a.create_round || 0; valueB = b.create_round || 0; break;
+                 case 'setBy': valueA = a.baselinetrace_by || a.create_by || ''; valueB = b.baselinetrace_by || b.create_by || ''; break;
+                 case 'date':
+                      const dateStrToUseA = a.baselinetrace_at || a.verification_at;
+                      const dateStrToUseB = b.baselinetrace_at || b.verification_at;
+                      try { valueA = dateStrToUseA ? new Date(dateStrToUseA).getTime() : 0; } catch { valueA = 0; }
+                      try { valueB = dateStrToUseB ? new Date(dateStrToUseB).getTime() : 0; } catch { valueB = 0; }
+                      valueA = isNaN(valueA) ? 0 : valueA; valueB = isNaN(valueB) ? 0 : valueB; break;
+                 default: return 0;
+             }
+              if (typeof valueA === 'string' && typeof valueB === 'string') { const comparison = valueA.localeCompare(valueB); return sortDirection === 'asc' ? comparison : comparison * -1; }
+              else { const comparison = valueA < valueB ? -1 : (valueA > valueB ? 1 : 0); return sortDirection === 'asc' ? comparison : comparison * -1; }
+          });
+          return roundsArray;
+    }, [verificationData, combinedSearchQuery, selectedDate, sortColumn, sortDirection]);
 
     // --- Handlers ---
-    const handleViewClick = (round, projectId) => {
-        // *** สำคัญ: ต้องส่ง round (create_round เดิม) ไปยังหน้า View ไม่ใช่ index ***
-        navigate(`/viewTraceVersion?project_id=${projectId}&round=${round}`);
+    const handleViewClick = (round) => {
+        navigate(`/viewBaselineRound?project_id=${projectId}&round=${round}`); // Navigate to view details
     };
-
     const handleSearchChange = (e, field) => {
-        switch (field) {
-            case 'date': setSelectedDate(e.target.value); break;
-            // case 'status': setSearchStatus(e.target.value); break; // ลบออก
-            default: setCombinedSearchQuery(e.target.value);
-        }
+        const value = e.target.value;
+        if (field === 'date') { setSelectedDate(value); }
+        else { setCombinedSearchQuery(value); }
     };
-
     const handleSort = (column) => {
-        // --- ป้องกันการ sort ตาม status ---
-        if (column === 'status') return;
-        // --- อาจจะป้องกันการ sort ตาม index ด้วย ถ้าไม่ต้องการ ---
-        // if (column === 'index') return;
-
         if (sortColumn === column) { setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc'); }
-        else { setSortColumn(column); setSortDirection('asc'); }
+        else { setSortColumn(column); setSortDirection('desc'); }
     };
+    const getSortIcon = (column) => {
+        if (sortColumn !== column) return faSort;
+        return sortDirection === 'asc' ? faSortUp : faSortDown;
+    };
+    const handleBack = () => { navigate(-1); };
 
     // --- Render Logic ---
     return (
-        // *** แนะนำ: เปลี่ยน className หลัก ***
-        <div className='baseline-history-container'> {/* หรือชื่ออื่น */}
-            <button className="backviewveri-trace" onClick={() => navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Traceability" } })}>Back</button>
-            {/* --- เปลี่ยน Title --- */}
-            <h1 className='veri-trace-record'>Baseline History</h1>
-
-            {/* --- ส่วน Filter และ Search (ลบ status select) --- */}
-            <div className="filter-container">
-                <input type="text" placeholder="Search Original Round / Created By..." value={combinedSearchQuery} onChange={handleSearchChange} className="search-input" />
-                <input type="date" value={selectedDate} onChange={(e) => handleSearchChange(e, 'date')} className="date-input" />
+        <div className='bh-container'>
+            {/* Header */}
+            <div className="bh-header">
+                 <button className="bh-back-btn" onClick={handleBack} aria-label="Go back">
+                    <FontAwesomeIcon icon={faArrowLeft} /> Back
+                 </button>
+                 <h1 className="bh-title">
+                    <FontAwesomeIcon icon={faHistory} className="bh-title-icon" />
+                     Baseline History: {projectName}
+                 </h1>
             </div>
 
-            {isLoading && <div className="loading-message"><p>Loading data...</p></div>}
-            {error && <div className="error-message">{error}</div>}
+            {/* Filter Area */}
+            <div className="bh-filters">
+                <div className="bh-search-wrapper">
+                    <FontAwesomeIcon icon={faSearch} className="bh-search-icon" />
+                    <input type="text" placeholder="Search Origin Round or Set By..." value={combinedSearchQuery} onChange={(e) => handleSearchChange(e, 'text')} className="bh-search-input" aria-label="Search"/>
+                </div>
+                <div className="bh-search-wrapper">
+                    <FontAwesomeIcon icon={faCalendarAlt} className="bh-search-icon" />
+                    <input type="date" value={selectedDate} onChange={(e) => handleSearchChange(e, 'date')} className="bh-search-input bh-date-input" aria-label="Filter by Date"/>
+                </div>
+            </div>
 
-            {!isLoading && !error && (
-                <table className='verification-table'> {/* ใช้ class เดิมหรือสร้างใหม่ */}
-                    <thead>
-                        <tr>
-                            <th>Round</th>
-                            <th onClick={() => handleSort('createdBy')}>Created By {sortColumn === 'createdBy' ? (sortDirection === 'asc' ? '▲' : '▼') : ''}</th>
-                            <th onClick={() => handleSort('date')}>Date {sortColumn === 'date' ? (sortDirection === 'asc' ? '▲' : '▼') : ''}</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredAndSortedRounds.length === 0 ? (
-                            // --- ปรับปรุง No data message ---
-                            <tr><td colSpan="6" className="no-data-row">No matching Baseline records found.</td></tr>
-                        ) : (
-                            // --- ใช้ index ในการแสดงผลลำดับ ---
-                            filteredAndSortedRounds.map((round, index) => { // <--- เพิ่ม index ตรงนี้
-                                const roundItems = groupedData[round];
-                                const firstItem = roundItems ? roundItems[0] : {};
-                                const formattedDate = firstItem.verification_at ? format(new Date(firstItem.verification_at), 'dd/MM/yyyy') : 'N/A';
-                                const status = firstItem.veritrace_status || 'N/A'; // ควรจะเป็น BASELINE เสมอ
+            {/* Content Area */}
+            <div className="bh-content">
+                {loading ? ( <div className="bh-loading"><FontAwesomeIcon icon={faSpinner} spin size="2x" /><p>Loading history...</p></div>)
+                 : error ? ( <div className="bh-error-message"><FontAwesomeIcon icon={faExclamationTriangle} size="2x" /><p>Error</p><span className="bh-error-details">{error}</span></div>)
+                 : (
+                    <div className="bh-table-container">
+                        <table className="bh-table">
+                            <thead>
+                                <tr>
+                                     <th>#</th>
+                                     <th onClick={() => handleSort('round')} aria-label={`Sort by Origin Round ${sortColumn === 'round' ? (sortDirection === 'asc' ? '(asc)' : '(desc)') : ''}`}>Origin Round <FontAwesomeIcon icon={getSortIcon('round')} className="bh-sort-icon" /></th>
+                                     <th onClick={() => handleSort('setBy')} aria-label={`Sort by Set By ${sortColumn === 'setBy' ? (sortDirection === 'asc' ? '(asc)' : '(desc)') : ''}`}>Set By <FontAwesomeIcon icon={getSortIcon('setBy')} className="bh-sort-icon" /></th>
+                                     <th onClick={() => handleSort('date')} aria-label={`Sort by Date Set ${sortColumn === 'date' ? (sortDirection === 'asc' ? '(asc)' : '(desc)') : ''}`}>Date Set <FontAwesomeIcon icon={getSortIcon('date')} className="bh-sort-icon" /></th>
+                                     <th>Status</th>
+                                     <th className="bh-action-header">Action</th>
+                                 </tr>
+                             </thead>
+                             <tbody>
+                                 {uniqueBaselineRounds.length === 0 ? (
+                                     <tr><td colSpan="6" className="bh-no-data"><p>No Baseline records found.</p></td></tr>
+                                 ) : (
+                                     uniqueBaselineRounds.map((item, index) => {
+                                         let formattedDate = 'N/A';
+                                         const dateToFormat = item.baselinetrace_at || item.verification_at;
+                                          if(dateToFormat) { try { const date = parseISO(dateToFormat); if(isValid(date)) { formattedDate = format(date, 'PP H:mm'); } } catch (e) {} }
+                                          const setBy = item.baselinetrace_by || item.create_by || 'N/A';
+                                          return (
+                                             <tr key={item.create_round}>
+                                                 <td data-label="#">{index + 1}</td>
+                                                 <td data-label="Origin Round" className="bh-td-round">{`Round ${item.create_round}`}</td>
+                                                 <td data-label="Set By">{setBy}</td>
+                                                 <td data-label="Date Set">{formattedDate}</td>
+                                                 <td data-label="Status"><span className="bh-status-badge bh-status-baseline"><FontAwesomeIcon icon={faCheckCircle} /> BASELINE</span></td>
+                                                 <td data-label="Action" className="bh-td-actions">
+                                                     <button className="bh-action-button bh-view-button" onClick={() => handleViewClick(item.create_round)} aria-label={`View baseline from round ${item.create_round}`} > <FontAwesomeIcon icon={faEye} /> View </button>
+                                                 </td>
+                                             </tr>
+                                         );
+                                     })
+                                 )}
+                             </tbody>
+                         </table>
+                     </div>
+                 )}
+             </div> {/* End bh-content */}
+         </div> // End bh-container
+     ); // <<--- ตรวจสอบวงเล็บปิดของ return
+ }; // <<--- ตรวจสอบวงเล็บปิดของ Component
 
-                                return (
-                                    <tr key={round}> {/* key ยังคงใช้ round เดิมได้ */}
-                                        {/* --- แสดง index + 1 --- */}
-                                        <td>{index + 1}</td>
-                                        <td>{firstItem.create_by || 'N/A'}</td>
-                                        <td>{formattedDate}</td>
-                                        {/* --- แสดง Status (ซึ่งควรเป็น BASELINE) --- */}
-                                        <td>
-                                            <span className={`status-${status.toLowerCase().replace(/\s+/g, '-')}`}>
-                                                {status}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            {/* --- ปุ่ม View ยังคงใช้ round เดิม --- */}
-                                            <button title="View Details" className="view-button" onClick={() => handleViewClick(round, projectId)}>View</button>
-                                        </td>
-                                    </tr>
-                                );
-                            })
-                        )}
-                    </tbody>
-                </table>
-            )}
-        </div>
-    );
-};
-
-// *** แนะนำ: เปลี่ยนชื่อ Export ให้ตรงกับ Component ***
-export default VersionVerTrace;
+ export default VersionVerTrace; // <<--- ตรวจสอบชื่อ Export

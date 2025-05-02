@@ -1,0 +1,316 @@
+/* baselineHistory.css - Professional Gray Theme */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* --- Variables (bh-) --- */
+
+  /* Grayscale Palette */
+  --bh-gray-50: #F7FAFC;
+  --bh-gray-100: #EDF2F7;
+  --bh-gray-200: #E2E8F0;
+  --bh-gray-300: #CBD5E0;
+  --bh-gray-400: #A0AEC0;
+  --bh-gray-500: #718096;
+  --bh-gray-600: #4A5568;
+  --bh-gray-700: #2D3748;
+  --bh-gray-800: #1A202C;
+  --bh-gray-900: #171923;
+  --bh-white: #ffffff;
+  --bh-black: #000000;
+
+  /* Base Colors - Using Grays */
+  --bh-bg-primary: var(--bh-white);
+  --bh-bg-secondary: var(--bh-gray-100);
+  --bh-bg-tertiary: var(--bh-gray-200);
+
+  /* Text Colors - Using Grays */
+  --bh-text-primary: var(--bh-gray-800);
+  --bh-text-secondary: var(--bh-gray-600);
+  --bh-text-light: var(--bh-gray-500);
+  --bh-text-on-primary: var(--bh-white); /* Text on dark gray buttons */
+  --bh-text-placeholder: var(--bh-gray-400);
+
+  /* Primary "Brand" Colors - Using Grays */
+  --bh-primary: var(--bh-gray-700);       /* Dark Gray as Primary */
+  --bh-primary-light: var(--bh-gray-500);   /* Mid Gray as Light Primary */
+  --bh-primary-dark: var(--bh-gray-800);    /* Very Dark Gray as Dark Primary */
+
+  /* Accent Colors - Using Grays */
+  --bh-accent: var(--bh-gray-600);        /* Mid-Dark Gray as Accent */
+
+  /* Status Colors (Keeping original main colors for clarity, added light variants) */
+  --bh-success: #10b981;        /* Emerald 500 */
+  --bh-success-dark: #059669;   /* Emerald 600 */
+  --bh-success-light: #D1FAE5;  /* Emerald 100 */
+  --bh-warning: #f59e0b;        /* Amber 500 */
+  --bh-warning-dark: #d97706;   /* Amber 600 */
+  --bh-warning-light: #FEF3C7;  /* Amber 100 */
+  --bh-error: #ef4444;          /* Red 500 */
+  --bh-error-dark: #dc2626;      /* Red 600 */
+  --bh-error-light: #FEE2E2;    /* Red 100 */
+  --bh-info: #3B82F6;           /* Blue 500 */
+  --bh-info-dark: #1D4ED8;      /* Darker Blue */
+  --bh-info-light: #DBEAFE;     /* Blue 100 */
+
+  /* Specific UI Colors */
+  --bh-baseline-bg: var(--bh-success-light); /* Use light success */
+  --bh-baseline-text: var(--bh-success-dark);
+
+  /* UI Elements - Using Grays */
+  --bh-border: var(--bh-gray-300);        /* Light gray border */
+  --bh-border-light: var(--bh-gray-200);  /* Very light gray border */
+  --bh-border-dark: var(--bh-gray-400);   /* Slightly darker gray border */
+  --bh-border-colored: var(--bh-gray-400);/* Mid-gray colored border */
+  --bh-border-focus: var(--bh-primary);   /* Dark gray focus border */
+
+  /* Shadows - Standard Gray */
+  --bh-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  --bh-shadow-md: 0 3px 5px -1px rgba(0, 0, 0, 0.08), 0 2px 3px -1px rgba(0, 0, 0, 0.05);
+  --bh-shadow-lg: 0 8px 12px -3px rgba(0, 0, 0, 0.08), 0 4px 5px -2px rgba(0, 0, 0, 0.04);
+
+  /* Border Radius */
+  --bh-radius-sm: 0.25rem; /* 4px */
+  --bh-radius-md: 0.375rem;/* 6px */
+  --bh-radius-lg: 0.5rem;  /* 8px */
+  --bh-radius-full: 9999px;
+
+  /* Transitions */
+  --bh-transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --bh-transition-fast: all 0.15s ease;
+}
+
+/* --- Global Reset --- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background-color: var(--bh-bg-secondary); /* Very light gray */
+  font-family: 'Inter', sans-serif;
+  color: var(--bh-text-primary); /* Dark gray text */
+  line-height: 1.6;
+  font-size: 14px; /* Default font size */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- Main Container --- */
+.bh-container {
+  max-width: 1400px;
+  margin: 30px auto;
+  padding: 30px 35px;
+  background-color: var(--bh-bg-primary); /* White */
+  border-radius: var(--bh-radius-lg);
+  box-shadow: var(--bh-shadow-md);
+  position: relative;
+}
+
+/* --- Header --- */
+.bh-header {
+  display: flex; align-items: center; justify-content: flex-start;
+  margin-bottom: 25px; position: relative; padding-top: 0;
+  border-bottom: 1px solid var(--bh-border-light); /* Very light gray border */ padding-bottom: 20px;
+  padding-left: 110px; /* Space for back button */
+}
+.bh-header h1 {
+  font-size: 20px; font-weight: 600; color: var(--bh-text-primary); /* Dark gray text */
+  margin: 0; display: flex; align-items: center; gap: 10px; letter-spacing: -0.02em;
+  flex-grow: 1;
+}
+.bh-title-icon { color: var(--bh-primary); /* Primary gray icon */ font-size: 1.1em; }
+.bh-back-btn {
+  position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  background-color: transparent; color: var(--bh-primary); /* Primary gray text */ border: none;
+  font-size: 14px; font-weight: 500; display: inline-flex; align-items: center;
+  gap: 6px; cursor: pointer; transition: var(--bh-transition);
+  padding: 8px 12px; border-radius: var(--bh-radius-md);
+}
+.bh-back-btn:hover {
+  color: var(--bh-primary-dark); /* Darker gray text */ background-color: var(--bh-bg-tertiary); /* Light gray bg */
+  transform: translateY(-50%) translateX(-3px);
+}
+
+/* --- Filter Area --- */
+.bh-filters {
+  display: flex; gap: 1rem; margin-bottom: 1.5rem; padding: 1rem;
+  background-color: var(--bh-bg-secondary); /* Very light gray bg */ border-radius: var(--bh-radius-md);
+  border: 1px solid var(--bh-border-light); /* Very light gray border */ flex-wrap: wrap;
+}
+.bh-search-wrapper {
+  display: flex; align-items: center; background-color: var(--bh-bg-primary); /* White bg */
+  border: 1px solid var(--bh-border); /* Light gray border */ border-radius: var(--bh-radius-md);
+  padding: 0 0.75rem; flex-grow: 1; min-width: 220px;
+  transition: border-color var(--bh-transition-fast), box-shadow var(--bh-transition-fast);
+}
+.bh-search-wrapper:focus-within {
+  border-color: var(--bh-primary); /* Primary gray border on focus */
+  box-shadow: 0 0 0 2px rgba(45, 55, 72, 0.1); /* Subtle gray focus shadow */
+}
+.bh-search-icon { color: var(--bh-text-light); /* Light gray icon */ margin-right: 0.5rem; font-size: 0.9rem; }
+.bh-search-input, .bh-date-input {
+  border: none; background: transparent; font-size: 0.875rem;
+  color: var(--bh-text-primary); /* Dark gray text */ width: 100%; outline: none; padding: 0.625rem 0;
+}
+.bh-date-input {
+    color-scheme: light; min-width: 150px; flex-grow: 0; cursor: pointer; color: var(--bh-text-secondary); /* Mid gray default */
+    /* Style date input like text input */
+    border: 1px solid var(--bh-border);
+    border-radius: var(--bh-radius-md);
+    padding: 0.5rem 0.75rem; /* Adjust padding */
+    background-color: var(--bh-white);
+    transition: border-color var(--bh-transition-fast), box-shadow var(--bh-transition-fast);
+}
+.bh-date-input:focus, .bh-date-input:valid { color: var(--bh-text-primary); } /* Darken text when focused or valid */
+.bh-date-input:focus {
+    border-color: var(--bh-primary);
+    box-shadow: 0 0 0 2px rgba(45, 55, 72, 0.1);
+}
+.bh-search-input::placeholder { color: var(--bh-text-placeholder); opacity: 1; }
+
+/* --- Content Area --- */
+.bh-content { margin-top: 1.5rem; }
+
+/* --- Loading / Error / No Data States --- */
+.bh-loading,
+.bh-error-message {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 3rem 2rem; text-align: center; color: var(--bh-text-secondary); /* Mid gray text */ gap: 1rem;
+  background-color: var(--bh-bg-secondary); /* Very light gray bg */ border-radius: var(--bh-radius-lg);
+  border: 1px solid var(--bh-border-light); /* Very light gray border */ min-height: 200px;
+}
+.bh-loading svg { font-size: 2.5rem; color: var(--bh-primary); /* Primary gray icon */ margin-bottom: 0.5rem; }
+.bh-error-message svg { font-size: 2.5rem; color: var(--bh-error); margin-bottom: 0.5rem; } /* Keep error color */
+.bh-loading p { font-size: 1rem; font-weight: 500; }
+.bh-error-message p { font-size: 1rem; font-weight: 500; color: var(--bh-error-dark); } /* Keep error text color */
+.bh-error-details { font-size: 0.85rem; color: var(--bh-text-secondary); margin-top: 0.5rem; }
+/* Style for td when no data */
+.bh-table td.bh-no-data {
+  text-align: center !important; padding: 3rem; color: var(--bh-text-light); /* Light gray text */ font-style: italic;
+  background-color: var(--bh-bg-secondary); /* Very light gray bg */
+}
+.bh-no-data p { font-size: 1rem; font-weight: 500; margin-bottom: 0.5rem; }
+.bh-no-data-subtle { font-size: 0.9rem; color: var(--bh-text-light); }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.bh-loading svg { animation: spin 1s linear infinite; }
+
+/* --- Table Container & Table --- */
+.bh-table-container {
+  overflow-x: auto; border: 1px solid var(--bh-border); /* Light gray border */
+  border-radius: var(--bh-radius-lg); background-color: var(--bh-bg-primary); /* White bg */
+  box-shadow: var(--bh-shadow-sm);
+}
+.bh-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+.bh-table th,
+.bh-table td {
+  padding: 0.875rem 1.25rem; text-align: left;
+  border-bottom: 1px solid var(--bh-border-light); /* Very light gray border */ white-space: nowrap; vertical-align: middle;
+}
+.bh-table th {
+  background-color: var(--bh-bg-secondary); /* Very light gray header bg */ font-weight: 600; font-size: 0.75rem;
+  color: var(--bh-text-secondary); /* Mid gray text */ text-transform: uppercase; letter-spacing: 0.05em;
+  cursor: pointer; user-select: none; transition: background-color var(--bh-transition-fast);
+}
+.bh-table th:hover { background-color: var(--bh-bg-tertiary); /* Light gray hover */ }
+.bh-sort-icon {
+  margin-left: 0.375rem; opacity: 0.5; transition: opacity var(--bh-transition-fast), color var(--bh-transition-fast);
+  color: var(--bh-text-light); /* Light gray icon default */ vertical-align: middle;
+}
+.bh-table th:hover .bh-sort-icon { opacity: 1; color: var(--bh-text-secondary); /* Mid gray hover */ }
+/* Style for active sort */
+.bh-table th[aria-sort="ascending"] .bh-sort-icon,
+.bh-table th[aria-sort="descending"] .bh-sort-icon {
+   opacity: 1; color: var(--bh-primary); /* Primary gray active */
+}
+
+
+.bh-table tbody tr:hover { background-color: var(--bh-bg-tertiary); /* Light gray hover */ }
+.bh-table td { color: var(--bh-text-primary); /* Dark gray text */ }
+.bh-table tr:last-child td { border-bottom: none; }
+.bh-td-round { font-weight: 500; color: var(--bh-primary-dark); /* Very dark gray */ }
+.bh-action-header { text-align: right !important; width: 1%; }
+.bh-td-actions { text-align: right !important; }
+
+/* --- Status Badge --- */
+.bh-status-badge {
+  display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.75rem;
+  border-radius: var(--bh-radius-full); /* Pill shape */ font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+}
+.bh-status-badge svg { width: 12px; height: 12px; }
+.bh-status-baseline {
+    background-color: var(--bh-baseline-bg); /* Light success bg */
+    color: var(--bh-baseline-text); /* Dark success text */
+    border: 1px solid var(--bh-success-light); /* Light success border */
+}
+
+/* --- Action Buttons (within table) --- */
+.bh-action-button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.375rem;
+  padding: 0.4rem 0.8rem; font-size: 0.8125rem; font-weight: 500;
+  border-radius: var(--bh-radius-md); border: 1px solid transparent;
+  cursor: pointer; transition: var(--bh-transition);
+  white-space: nowrap; /* Prevent wrapping */
+}
+.bh-action-button svg { width: 14px; height: 14px; /* No margin needed due to gap */ }
+/* Gray View Button */
+.bh-view-button {
+  background-color: transparent;
+  color: var(--bh-text-secondary); /* Mid gray text */
+  border-color: var(--bh-border); /* Light gray border */
+}
+.bh-view-button:hover {
+  background-color: var(--bh-bg-tertiary); /* Light gray BG */
+  border-color: var(--bh-border-dark); /* Darker border */
+  color: var(--bh-text-primary); /* Darker text */
+}
+/* Focus style */
+.bh-action-button:focus-visible {
+    outline: 2px solid var(--bh-border-focus);
+    outline-offset: 1px;
+    box-shadow: 0 0 0 2px rgba(45, 55, 72, 0.1); /* Subtle glow */
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+  body { font-size: 13px; }
+  .bh-container { padding: 20px 15px; margin: 10px; }
+  .bh-header { flex-wrap: wrap; gap: 10px; padding-bottom: 15px; padding-left: 0; }
+  .bh-header h1 { font-size: 1rem; order: 2; width: 100%; text-align: center; padding: 0; margin: 0.5rem 0 0 0; }
+  .bh-back-btn { position: static; transform: none; order: 1; }
+  .bh-filters { flex-direction: column; gap: 10px; padding: 10px; }
+  .bh-search-wrapper, .bh-date-input { min-width: unset; width: 100%; }
+
+  /* Responsive Table */
+  .bh-table { min-width: auto; border: none; }
+  .bh-table-container { border: none; box-shadow: none; background-color: transparent; }
+  .bh-table thead { display: none; }
+  .bh-table tbody, .bh-table tr, .bh-table td { display: block; width: 100%; }
+  .bh-table tr {
+      border: 1px solid var(--bh-border);
+      border-radius: var(--bh-radius-md);
+      margin-bottom: 1rem;
+      padding: 0.8rem;
+      background-color: var(--bh-white); /* White card background */
+  }
+  .bh-table td {
+      display: flex; justify-content: space-between; align-items: center;
+      text-align: right; padding: 0.6rem 0;
+      border-bottom: 1px dashed var(--bh-border-light);
+      white-space: normal;
+  }
+  .bh-table td:last-child { border-bottom: none; }
+  .bh-table td[data-label]::before {
+      content: attr(data-label); font-weight: 600; font-size: 0.8rem;
+      text-align: left; margin-right: auto; color: var(--bh-text-secondary);
+      padding-right: 10px; white-space: nowrap;
+  }
+  .bh-td-actions { justify-content: flex-end; padding-top: 0.5rem; }
+  .bh-action-button { padding: 5px 8px; font-size: 12px; margin: 0 2px; }
+}
+
+/* Custom scrollbar */
+.bh-table-container {
+    scrollbar-width: thin;
+    scrollbar-color: var(--bh-gray-300) var(--bh-bg-secondary);
+}
+.bh-table-container::-webkit-scrollbar { width: 6px; height: 6px; }
+.bh-table-container::-webkit-scrollbar-track { background: var(--bh-bg-tertiary); border-radius: 10px; }
+.bh-table-container::-webkit-scrollbar-thumb { background-color: var(--bh-gray-300); border-radius: 10px; }
+.bh-table-container::-webkit-scrollbar-thumb:hover { background-color: var(--bh-gray-400); }

@@ -1,241 +1,1978 @@
-/* --- Styling for New Controls --- */
+/* Enterprise Traceability Page CSS - Professional Gray UI design */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-.traceability-controls {
-    display: flex;
-    flex-wrap: wrap;
-    /* Allow wrapping on smaller screens */
-    gap: 20px;
-    /* Space between control groups */
-    align-items: flex-start;
-    /* Align groups to the top */
-    border: 1px solid #ccc;
-    padding: 15px;
-    background-color: #f9f9f9;
-    border-radius: 5px;
-    margin-bottom: 20px;
+:root {
+  /* Main color scheme - Professional Gray Focus */
+  --trace-primary: #4A5568; /* Was blue, now mid-dark gray */
+  --trace-primary-light: #718096; /* Was light blue, now lighter gray */
+  --trace-primary-dark: #2D3748; /* Was dark blue, now darker gray */
+  --trace-secondary: #2D3748; /* Was dark gray, kept dark gray */
+  --trace-accent: #A0AEC0; /* Was blue, now light-mid gray for accents */
+  --trace-accent-hover: #718096; /* Slightly darker gray for accent hover */
+
+  /* Background colors */
+  --trace-bg-primary: #F7FAFC; /* Very light gray */
+  --trace-bg-secondary: #EDF2F7; /* Light gray */
+  --trace-bg-tertiary: #E2E8F0; /* Slightly darker light gray */
+
+  /* Status colors (Kept original colors for clarity, but light versions could be muted if needed) */
+  --trace-success: #25855A;
+  --trace-success-light: #C6F6D5;
+  --trace-warning: #D69E2E;
+  --trace-warning-light: #FEFCBF;
+  --trace-danger: #C53030;
+  --trace-danger-light: #FED7D7;
+  --trace-info: #3182CE; /* Kept blue for info, could change to gray if needed */
+  --trace-info-light: #BEE3F8; /* Kept blue for info, could change to gray if needed */
+  --trace-purple: #6B46C1; /* Kept purple, could change to gray if needed */
+  --trace-purple-light: #E9D8FD; /* Kept purple, could change to gray if needed */
+
+  /* Neutral colors - Grays (No changes needed here) */
+  --trace-gray-50: #F7FAFC;
+  --trace-gray-100: #EDF2F7;
+  --trace-gray-200: #E2E8F0;
+  --trace-gray-300: #CBD5E0;
+  --trace-gray-400: #A0AEC0;
+  --trace-gray-500: #718096;
+  --trace-gray-600: #4A5568;
+  --trace-gray-700: #2D3748;
+  --trace-gray-800: #1A202C;
+  --trace-gray-900: #171923;
+
+  /* Text colors (Ensure sufficient contrast with gray backgrounds) */
+  --trace-text-primary: var(--trace-gray-800); /* Darker gray for main text */
+  --trace-text-secondary: var(--trace-gray-600); /* Mid gray for secondary text */
+  --trace-text-light: var(--trace-gray-500); /* Lighter gray for less important text */
+  --trace-text-white: #FFFFFF;
+  --trace-text-on-primary: var(--trace-text-white); /* Text on primary gray buttons/elements */
+  --trace-text-on-accent: var(--trace-gray-800); /* Text on accent gray */
+
+  /* Spacing (No changes) */
+  --trace-space-xs: 0.25rem;
+  --trace-space-sm: 0.5rem;
+  --trace-space-md: 1rem;
+  --trace-space-lg: 1.5rem;
+  --trace-space-xl: 2rem;
+  --trace-space-xxl: 3rem;
+
+  /* Typography (No changes) */
+  --trace-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  --trace-font-size-xs: 0.75rem;
+  --trace-font-size-sm: 0.875rem;
+  --trace-font-size-md: 1rem;
+  --trace-font-size-lg: 1.125rem;
+  --trace-font-size-xl: 1.25rem;
+  --trace-font-size-2xl: 1.5rem;
+  --trace-font-size-3xl: 1.875rem;
+  --trace-font-size-4xl: 2.25rem;
+
+  /* Border Radius (No changes) */
+  --trace-radius-sm: 0.125rem;
+  --trace-radius-md: 0.25rem;
+  --trace-radius-lg: 0.5rem;
+  --trace-radius-xl: 0.75rem;
+  --trace-radius-xxl: 1rem;
+  --trace-radius-full: 9999px;
+
+  /* Shadows (No changes) */
+  --trace-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --trace-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --trace-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --trace-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+  /* Transitions (No changes) */
+  --trace-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --trace-transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --trace-transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.control-group {
-    border: 1px solid #e0e0e0;
-    padding: 10px 15px;
-    border-radius: 4px;
-    background-color: #fff;
-    min-width: 200px;
-    /* Ensure groups have some minimum width */
-    flex: 1;
-    /* Allow groups to grow */
+/* ========== Global Styles ========== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-.control-group-title {
-    margin-top: 0;
-    margin-bottom: 10px;
-    font-size: 0.95em;
-    font-weight: 600;
-    color: #333;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 5px;
+body {
+  font-family: var(--trace-font-family);
+  background-color: var(--trace-bg-primary);
+  color: var(--trace-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.control-group-title i {
-    margin-right: 6px;
-    color: #555;
+button, input, select {
+  font-family: var(--trace-font-family);
 }
 
-.control-row {
-    display: flex;
-    flex-wrap: wrap;
-    /* Allow items in a row to wrap */
-    gap: 8px;
-    /* Space between elements in a row */
-    align-items: center;
+.TRACE-page-wrapper {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: var(--trace-space-lg) var(--trace-space-md);
 }
 
-/* Specific overrides for search */
-.search-group .search-select {
-    flex-basis: 150px;
-    /* Give select a base width */
-    flex-grow: 0;
+/* ========== Header Section ========== */
+.TRACE-enterprise-header {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--trace-space-xl);
+  /* Changed gradient to gray */
+  background: linear-gradient(to right, var(--trace-primary-dark), var(--trace-primary));
+  border-radius: var(--trace-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--trace-shadow-lg);
 }
 
-.search-group .search-input-traceability {
-    flex-grow: 1;
-    /* Allow input to take remaining space */
-    min-width: 150px;
+/* Keep subtle pattern if desired */
+.TRACE-enterprise-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%,
+                    transparent 50%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.05) 75%,
+                    transparent 75%, transparent);
+  background-size: 20px 20px;
+  opacity: 0.05; /* Reduced opacity slightly */
 }
 
 
-.group-select,
-.search-select {
-    padding: 6px 8px;
-    height: 34px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #fff;
+.TRACE-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--trace-space-lg) var(--trace-space-xl);
+  position: relative; /* Ensure content is above pseudo-element */
+  z-index: 1;
 }
 
-.checkbox-group {
-    gap: 15px;
-    /* More space between checkboxes */
+.TRACE-project-info {
+  display: flex;
+  flex-direction: column;
 }
 
-.visibility-checkbox {
-    display: inline-flex;
-    /* Use inline-flex for alignment */
-    align-items: center;
-    cursor: pointer;
-    font-size: 0.9em;
+.TRACE-project-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--trace-space-sm);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: var(--trace-font-size-sm);
+  margin-bottom: var(--trace-space-sm);
 }
 
-.visibility-checkbox input[type="checkbox"] {
-    margin-right: 5px;
-    cursor: pointer;
+.TRACE-breadcrumb-link {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none; /* Remove underline */
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s;
+}
+.TRACE-breadcrumb-link:hover {
+  color: white;
+}
+/* Optional subtle underline on hover */
+.TRACE-breadcrumb-link::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  bottom: -2px;
+  left: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  transform: scaleX(0);
+  transform-origin: bottom right;
+  transition: transform 0.3s;
+}
+.TRACE-breadcrumb-link:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+.TRACE-breadcrumb-separator {
+  margin: 0 var(--trace-space-xs);
+  color: rgba(255, 255, 255, 0.5);
 }
 
-/* Buttons within controls */
-.control-row .small-button {
-    padding: 5px 10px;
-    font-size: 0.85em;
+.TRACE-project-title {
+  display: flex;
+  align-items: center;
+  gap: var(--trace-space-md);
+  position: relative;
+  padding-bottom: var(--trace-space-xs); /* Adjust padding if needed */
+}
+/* Optional accent line under title */
+.TRACE-project-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 50px;
+  height: 3px;
+  background-color: var(--trace-accent); /* Use gray accent */
+  border-radius: var(--trace-radius-full);
 }
 
-.control-row .filter-button {
-    background-color: #4CAF50;
-    color: white;
+.TRACE-project-name {
+  font-size: var(--trace-font-size-2xl);
+  font-weight: 700;
+  color: white;
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
 }
 
-.control-row .clear-button {
-    background-color: #f44336;
-    color: white;
+.TRACE-badge {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white;
+  font-size: var(--trace-font-size-xs);
+  font-weight: 600;
+  padding: var(--trace-space-xs) var(--trace-space-md);
+  border-radius: var(--trace-radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  gap: var(--trace-space-sm);
 }
 
-.control-row .direction-button {
-    background-color: #e7e7e7;
-    color: black;
+.TRACE-header-actions {
+  display: flex;
+  gap: var(--trace-space-md);
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
-.control-row .direction-button.active {
-    background-color: #555;
-    color: white;
+.TRACE-action-button {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--trace-radius-md); /* รักษามุมโค้งเดิม หรือปรับเป็น sm ถ้าต้องการ */
+  /* ลด Padding ลง (แนวตั้ง แนวนอน) */
+  padding: var(--trace-space-xs) var(--trace-space-sm); /* เช่น 4px 8px */
+  font-weight: 500;
+  /* ลดขนาด Font */
+  font-size: var(--trace-font-size-xs); /* เช่น 12px */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* ลดช่องว่างระหว่างไอคอนกับข้อความ (ถ้ามี) */
+  gap: var(--trace-space-xs); /* เช่น 4px */
+  cursor: pointer;
+  transition: var(--trace-transition-fast);
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+  /* อาจจะกำหนด line-height ให้เท่ากับ font-size เพื่อความแน่นอน */
+  line-height: 1.2; /* หรือ 1 */
+}
+.TRACE-action-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+.TRACE-action-button:active {
+  transform: translateY(0);
+}
+/* Ripple effect */
+.TRACE-action-button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.5); /* Lighter ripple */
+  opacity: 0;
+  border-radius: 100%;
+  transform: scale(1, 1) translate(-50%, -50%);
+  transform-origin: 50% 50%;
+}
+.TRACE-action-button:active::after {
+  opacity: 0.2; /* Less intense ripple */
+  transform: scale(60, 60) translate(-50%, -50%);
+  transition: transform 0.6s, opacity 0.4s;
 }
 
-/* --- Styling for Group Header Row --- */
-.group-header-row td {
-    background-color: #f0f0f0;
-    /* Light grey background */
-    font-weight: bold;
-    padding: 8px 10px;
-    border-top: 2px solid #ccc;
-    /* Separator */
-    border-bottom: 1px solid #ccc;
-    color: #333;
-    text-align: left;
-    /* Align text left */
+
+/* Style the refresh button with gray accent */
+.TRACE-refresh-button {
+  background-color: var(--trace-accent);
+  color: var(--trace-text-on-accent); /* Ensure text is readable */
+  border-color: transparent;
+}
+.TRACE-refresh-button:hover {
+  background-color: var(--trace-accent-hover);
 }
 
-/* --- Styling for Main Action Buttons (ensure they stay grouped) --- */
-.action-buttons-container.main-actions {
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #eee;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+.TRACE-icon-button, /* Style icon buttons like tutorial button */
+.TRACE-tutorial-button {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: var(--trace-font-size-lg); /* Adjust if needed */
+  cursor: pointer;
+  padding: var(--trace-space-xs);
+  line-height: 1;
+  transition: all 0.2s;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: inline-flex; /* Use inline-flex for better alignment */
+  align-items: center;
+  justify-content: center;
+}
+.TRACE-icon-button:hover,
+.TRACE-tutorial-button:hover {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* --- Optional: Cell Action Buttons (View/Edit) --- */
-.action-buttons-cell {
-    margin-top: 5px;
-    /* Space above buttons */
-    display: flex;
-    gap: 5px;
-    /* Space between buttons */
+.TRACE-tutorial-button-corner {
+  position: absolute;
+  top: var(--trace-space-sm); /* Adjust positioning */
+  right: var(--trace-space-sm);
 }
 
-.action-buttons-cell button {
-    padding: 2px 6px;
-    font-size: 0.8em;
-    cursor: pointer;
-    border-radius: 3px;
-    border: 1px solid #ccc;
+.TRACE-header-tab-bar {
+  display: flex;
+  padding: 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative; /* For active indicator line */
+  z-index: 1;
 }
 
-.action-buttons-cell button:hover {
-    border-color: #999;
-    background-color: #f0f0f0;
+.TRACE-header-tab {
+  padding: var(--trace-space-md) var(--trace-space-lg);
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+  font-size: var(--trace-font-size-sm);
+  cursor: pointer;
+  transition: var(--trace-transition-fast);
+  border-bottom: 3px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: var(--trace-space-sm);
+  position: relative;
+  overflow: hidden;
+}
+.TRACE-header-tab::before { /* Subtle hover background */
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: currentColor;
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.TRACE-header-tab:hover {
+  color: white;
+}
+.TRACE-header-tab:hover::before {
+  opacity: 0.05;
 }
 
-/* --- General Table / Page Styles (Adjust as needed) --- */
-.traceability-container {
-    padding: 20px;
-    font-family: sans-serif;
+/* Active tab uses gray accent */
+.TRACE-header-tab.TRACE-active {
+  color: white;
+  border-bottom-color: var(--trace-accent);
+  background-color: rgba(0, 0, 0, 0.1); /* Darker subtle background */
+}
+.TRACE-header-tab.TRACE-active::before {
+   opacity: 0; /* Don't show hover effect on active tab */
 }
 
-.section-title {
+.TRACE-tab-icon {
+  font-size: 1em; /* Adjust icon size relative to text */
+  line-height: 1; /* Ensure icon aligns well */
+}
+.TRACE-tab-shortcut {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.7em;
+  margin-left: var(--trace-space-sm);
+  font-family: monospace;
+}
+
+/* ========== Main Content Area ========== */
+.TRACE-main-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--trace-space-xl);
+}
+
+.TRACE-tab-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--trace-space-xl);
+}
+
+/* Warning/Error Messages (Kept original colors for visibility) */
+.TRACE-warning {
+  background-color: var(--trace-warning-light);
+  border-left: 4px solid var(--trace-warning);
+  color: var(--trace-secondary); /* Use darker text */
+  padding: var(--trace-space-md) var(--trace-space-lg);
+  border-radius: var(--trace-radius-md);
+  font-size: var(--trace-font-size-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--trace-space-md);
+  margin-bottom: var(--trace-space-lg);
+}
+
+.TRACE-error {
+  background-color: var(--trace-danger-light);
+  border-left: 4px solid var(--trace-danger);
+  color: var(--trace-danger);
+  padding: var(--trace-space-md) var(--trace-space-lg);
+  border-radius: var(--trace-radius-md);
+  font-size: var(--trace-font-size-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--trace-space-md);
+  margin-bottom: var(--trace-space-lg);
+}
+.TRACE-error.critical {
+  font-weight: 600;
+  padding: var(--trace-space-lg) var(--trace-space-xl);
+  text-align: center;
+  justify-content: center;
+  font-size: var(--trace-font-size-md);
+}
+
+/* ========== Controls Area ========== */
+.TRACE-table-section {
+  background-color: white;
+  border-radius: var(--trace-radius-lg);
+  box-shadow: var(--trace-shadow-md);
+  overflow: hidden;
+  margin-bottom: var(--trace-space-xl);
+}
+
+.TRACE-controls-area {
+  border-bottom: 1px solid var(--trace-gray-200);
+  transition: var(--trace-transition-normal);
+}
+
+.TRACE-controls-collapsed .TRACE-controls-content {
+  display: none;
+}
+
+.TRACE-controls-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--trace-space-lg);
+  cursor: pointer;
+  background-color: var(--trace-gray-50);
+  transition: var(--trace-transition-fast);
+}
+.TRACE-controls-header:hover {
+  background-color: var(--trace-gray-100);
+}
+
+.TRACE-controls-title {
+  font-size: var(--trace-font-size-lg);
+  font-weight: 600;
+  color: var(--trace-gray-700);
+  display: flex;
+  align-items: center;
+  gap: var(--trace-space-sm);
+}
+
+.TRACE-collapse-button {
+  display: flex;
+  align-items: center;
+  gap: var(--trace-space-sm);
+  padding: var(--trace-space-xs) var(--trace-space-md);
+  background-color: var(--trace-gray-200);
+  color: var(--trace-gray-700);
+  border: none;
+  border-radius: var(--trace-radius-md);
+  font-size: var(--trace-font-size-sm);
+  cursor: pointer;
+  transition: var(--trace-transition-fast);
+}
+.TRACE-collapse-button:hover {
+  background-color: var(--trace-gray-300);
+}
+
+.TRACE-controls-content {
+  padding: var(--trace-space-sm); /* เปลี่ยนเป็นขนาดเล็ก */
+  display: flex;
+  flex-direction: column;
+  gap: var(--trace-space-sm);     /* เปลี่ยนเป็นขนาดเล็ก */
+  background-color: var(--trace-bg-secondary);
+}
+
+.TRACE-control-card {
+  background-color: white;
+  border-radius: var(--trace-radius-md);
+  box-shadow: var(--trace-shadow-sm);
+  overflow: hidden;
+}
+
+.TRACE-control-group {
+  padding: var(--trace-space-lg);
+}
+
+.TRACE-control-group-title {
+  font-size: var(--trace-font-size-md);
+  font-weight: 600;
+  color: var(--trace-gray-700);
+  margin-bottom: var(--trace-space-md);
+  display: flex;
+  align-items: center;
+  gap: var(--trace-space-sm);
+}
+
+.TRACE-control-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--trace-space-md);
+  align-items: center;
+  margin-bottom: var(--trace-space-md);
+}
+.TRACE-control-row:last-child {
+  margin-bottom: 0;
+}
+
+.TRACE-search-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.TRACE-view-options-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--trace-space-md);
+}
+
+.TRACE-view-options-subgroup {
+  padding: var(--trace-space-md);
+  border: 1px solid var(--trace-gray-200);
+  border-radius: var(--trace-radius-md);
+  margin-bottom: var(--trace-space-md);
+  background-color: var(--trace-gray-50);
+}
+.TRACE-view-options-subgroup:last-child {
+  margin-bottom: 0;
+}
+
+.TRACE-option-item {
+  display: flex;
+  align-items: center;
+  gap: var(--trace-space-sm);
+}
+
+.TRACE-option-item-columns {
+  flex-wrap: wrap;
+}
+
+.TRACE-control-label {
+  font-weight: 500;
+  color: var(--trace-gray-700);
+  display: flex;
+  align-items: center;
+  gap: var(--trace-space-xs);
+  font-size: var(--trace-font-size-sm); /* Ensure consistent size */
+}
+
+/* Make icon slightly darker gray */
+.TRACE-option-label-icon {
+  color: var(--trace-primary); /* Use primary gray */
+}
+
+.TRACE-control-separator {
+  color: var(--trace-gray-300);
+  margin: 0 var(--trace-space-sm);
+}
+
+/* Form Controls */
+.TRACE-input {
+  padding: var(--trace-space-sm) var(--trace-space-md);
+  border: 1px solid var(--trace-gray-300);
+  border-radius: var(--trace-radius-md);
+  font-size: var(--trace-font-size-sm);
+  color: var(--trace-gray-800);
+  transition: var(--trace-transition-fast);
+  background-color: white;
+  min-width: 200px;
+  flex: 1;
+}
+/* Focus uses primary gray */
+.TRACE-input:focus {
+  outline: none;
+  border-color: var(--trace-primary);
+  box-shadow: 0 0 0 3px rgba(74, 85, 104, 0.15); /* Adjusted focus shadow color */
+}
+
+.TRACE-select {
+  padding: var(--trace-space-sm) var(--trace-space-md);
+  border: 1px solid var(--trace-gray-300);
+  border-radius: var(--trace-radius-md);
+  font-size: var(--trace-font-size-sm);
+  color: var(--trace-gray-800);
+  transition: var(--trace-transition-fast);
+  background-color: white;
+  min-width: 150px;
+  appearance: none;
+  /* Use gray arrow */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 1em;
+  padding-right: 2rem;
+}
+/* Focus uses primary gray */
+.TRACE-select:focus {
+  outline: none;
+  border-color: var(--trace-primary);
+  box-shadow: 0 0 0 3px rgba(74, 85, 104, 0.15); /* Adjusted focus shadow color */
+}
+.TRACE-select-small {
+  min-width: 120px;
+}
+
+/* Buttons use primary gray */
+.TRACE-button {
+  padding: var(--trace-space-sm) var(--trace-space-md);
+  background-color: var(--trace-primary);
+  color: var(--trace-text-on-primary);
+  border: none;
+  border-radius: var(--trace-radius-md);
+  font-size: var(--trace-font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--trace-transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--trace-space-sm);
+}
+.TRACE-button:hover {
+  background-color: var(--trace-primary-dark);
+  transform: translateY(-1px);
+}
+.TRACE-button:active {
+  transform: translateY(0);
+}
+
+.TRACE-button-clear {
+  background-color: var(--trace-gray-300);
+  color: var(--trace-gray-700);
+}
+.TRACE-button-clear:hover {
+  background-color: var(--trace-gray-400);
+}
+
+.TRACE-button-reset {
+  background-color: var(--trace-gray-200);
+  color: var(--trace-gray-700);
+  font-size: var(--trace-font-size-xs);
+  padding: var(--trace-space-xs) var(--trace-space-sm);
+}
+.TRACE-button-reset:hover {
+  background-color: var(--trace-gray-300);
+}
+
+.TRACE-button-direction {
+  min-width: 70px;
+  justify-content: center;
+}
+.TRACE-button-direction.active {
+  background-color: var(--trace-primary-dark);
+  cursor: default;
+}
+
+.TRACE-button-group {
+  display: flex;
+  gap: 1px;
+}
+.TRACE-button-group .TRACE-button {
+  border-radius: 0;
+}
+.TRACE-button-group .TRACE-button:first-child {
+  border-top-left-radius: var(--trace-radius-md);
+  border-bottom-left-radius: var(--trace-radius-md);
+}
+.TRACE-button-group .TRACE-button:last-child {
+  border-top-right-radius: var(--trace-radius-md);
+  border-bottom-right-radius: var(--trace-radius-md);
+}
+
+.TRACE-density-button {
+  background-color: var(--trace-gray-300);
+  color: var(--trace-gray-700);
+  min-width: 80px;
+}
+.TRACE-density-button:hover {
+  background-color: var(--trace-gray-400);
+}
+/* Active density uses primary gray */
+.TRACE-density-button.active {
+  background-color: var(--trace-primary);
+  color: var(--trace-text-on-primary);
+  cursor: default;
+}
+
+.TRACE-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: var(--trace-space-sm);
+  cursor: pointer;
+  font-size: var(--trace-font-size-sm);
+  color: var(--trace-gray-700);
+  user-select: none;
+}
+
+.TRACE-checkbox {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--trace-gray-400);
+  border-radius: var(--trace-radius-sm);
+  background-color: white;
+  cursor: pointer;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--trace-transition-fast);
+}
+/* Checked checkbox uses primary gray */
+.TRACE-checkbox:checked {
+  background-color: var(--trace-primary);
+  border-color: var(--trace-primary);
+}
+.TRACE-checkbox:checked::after {
+  content: '';
+  width: 8px; /* Made checkmark slightly larger */
+  height: 8px;
+  /* Simple gray checkmark using border */
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) translate(-1px, -1px); /* Adjust position */
+  position: absolute;
+  background-color: transparent; /* Remove background dot */
+  border-radius: 0; /* Remove radius */
+}
+
+
+.TRACE-checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--trace-space-md);
+}
+
+.TRACE-visibility-row,
+.TRACE-density-row {
+  border-top: 1px solid var(--trace-gray-200);
+  padding-top: var(--trace-space-md);
+}
+/* ========== WIP Summary ========== */
+.TRACE-wip-summary {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap; /* Allow wrapping */
+  padding: var(--trace-space-lg);
+  background-color: var(--trace-gray-50);
+  border-radius: var(--trace-radius-lg); /* Use larger radius */
+  box-shadow: var(--trace-shadow-sm); /* Use softer shadow */
+  gap: var(--trace-space-xl);
+  margin-bottom: var(--trace-space-lg); /* Consistent margin */
+}
+
+.TRACE-wip-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--trace-space-md) var(--trace-space-lg);
+  border-radius: var(--trace-radius-md);
+  background-color: white;
+  box-shadow: var(--trace-shadow-sm);
+  min-width: 120px;
+  flex: 1; /* Allow stats to grow */
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.TRACE-wip-stat:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--trace-shadow-md);
+}
+
+.TRACE-wip-stat-value {
+  font-size: var(--trace-font-size-2xl);
+  font-weight: 700;
+  color: var(--trace-gray-800); /* Darker gray for value */
+  margin-bottom: var(--trace-space-xs);
+}
+
+.TRACE-wip-stat-label {
+  font-size: var(--trace-font-size-sm);
+  color: var(--trace-gray-600); /* Mid-gray for label */
+  font-weight: 500;
+}
+
+/* Keep status colors for values for emphasis */
+.TRACE-wip-stat.TRACE-warning .TRACE-wip-stat-value {
+  color: var(--trace-warning);
+}
+.TRACE-wip-stat.TRACE-success .TRACE-wip-stat-value {
+  color: var(--trace-success);
+}
+.TRACE-wip-stat.TRACE-neutral .TRACE-wip-stat-value {
+  color: var(--trace-info); /* Or change to a gray like var(--trace-primary) */
+}
+
+/* ========== Table Styles ========== */
+.TRACE-table-container {
+  overflow-x: auto;
+  position: relative;
+}
+
+.TRACE-table {
+  width: 100%;
+  border-collapse: separate; /* Use separate for finer border control */
+  border-spacing: 0;
+  font-size: var(--trace-font-size-sm);
+}
+
+.TRACE-table th {
+  background-color: var(--trace-gray-100);
+  border-bottom: 1px solid var(--trace-gray-300);
+  color: var(--trace-gray-700);
+  font-size: var(--trace-font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: var(--trace-space-md) var(--trace-space-lg);
+  text-align: left;
+  position: sticky; /* Keep sticky header */
+  top: 0;
+  z-index: 10;
+  white-space: nowrap;
+  transition: background-color 0.2s; /* Add transition */
+}
+.TRACE-table th:first-child {
+  padding-left: var(--trace-space-xl);
+}
+.TRACE-table th:last-child {
+  padding-right: var(--trace-space-xl);
+}
+
+.TRACE-sortable {
+  cursor: pointer;
+  user-select: none;
+}
+.TRACE-sortable:hover {
+   background-color: var(--trace-gray-200); /* Hover effect on sortable header */
+}
+
+.TRACE-sort-icon {
+  display: inline-block;
+  margin-left: var(--trace-space-xs);
+  color: var(--trace-gray-500);
+  vertical-align: middle;
+}
+/* Sorted icon uses primary gray */
+.TRACE-sorted {
+   background-color: var(--trace-gray-200) !important; /* Keep background when sorted */
+}
+.TRACE-sorted .TRACE-sort-icon {
+  color: var(--trace-primary);
+}
+
+.TRACE-table td {
+  padding: var(--trace-space-md) var(--trace-space-lg);
+  border-bottom: 1px solid var(--trace-gray-200);
+  vertical-align: top;
+  transition: background-color var(--trace-transition-fast); /* Use fast transition */
+}
+.TRACE-table td:first-child {
+  padding-left: var(--trace-space-xl);
+}
+.TRACE-table td:last-child {
+  padding-right: var(--trace-space-xl);
+}
+
+/* Subtle row hover */
+.TRACE-table tbody tr:hover {
+  background-color: var(--trace-gray-50);
+}
+.TRACE-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Cell Styling */
+.TRACE-cell {
+  position: relative;
+}
+
+.TRACE-cell-req, .TRACE-cell-design, .TRACE-cell-impl, .TRACE-cell-test {
+  min-width: 150px;
+}
+
+/* Item ID uses primary gray */
+.TRACE-item-id {
+  font-weight: 600;
+  color: var(--trace-primary);
+  margin-bottom: var(--trace-space-xs);
+}
+
+.TRACE-item-name {
+  font-size: var(--trace-font-size-sm);
+  color: var(--trace-gray-700); /* Slightly darker for name */
+  margin-bottom: var(--trace-space-xs);
+  word-break: break-word;
+  line-height: 1.4;
+}
+
+.TRACE-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--trace-space-xs);
+  padding: var(--trace-space-xs) var(--trace-space-sm);
+  border-radius: var(--trace-radius-full);
+  font-size: var(--trace-font-size-xs);
+  font-weight: 600;
+  margin-top: var(--trace-space-xs);
+  white-space: nowrap;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05); /* Softer shadow */
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.TRACE-status-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); /* Subtle hover shadow */
+}
+
+/* Keep status badge colors */
+.TRACE-status-positive {
+  background-color: var(--trace-success-light);
+  color: var(--trace-success);
+}
+.TRACE-status-negative {
+  background-color: var(--trace-danger-light);
+  color: var(--trace-danger);
+}
+.TRACE-status-neutral {
+  background-color: var(--trace-info-light);
+  color: var(--trace-info);
+}
+
+.TRACE-status-dot {
+ display: inline-block;
+ width: 8px;
+ height: 8px;
+ border-radius: 50%;
+ margin-right: var(--trace-space-xs); /* Add margin if needed */
+}
+.TRACE-status-positive .TRACE-status-dot { background-color: var(--trace-success); }
+.TRACE-status-negative .TRACE-status-dot { background-color: var(--trace-danger); }
+.TRACE-status-neutral .TRACE-status-dot { background-color: var(--trace-info); }
+
+
+.TRACE-placeholder {
+  color: var(--trace-gray-400);
+  font-style: italic;
+}
+
+.TRACE-no-data {
+  text-align: center;
+  padding: var(--trace-space-xl) !important;
+  color: var(--trace-gray-600);
+  font-style: italic;
+}
+
+/* Group Headings */
+.TRACE-group-header {
+  background-color: var(--trace-gray-50);
+}
+.TRACE-group-header td {
+  padding: var(--trace-space-md) var(--trace-space-xl);
+  font-weight: 600;
+  color: var(--trace-gray-700);
+}
+
+.TRACE-group-icon {
+  color: var(--trace-primary); /* Use primary gray for icon */
+  margin-right: var(--trace-space-sm);
+}
+.TRACE-group-count {
+ font-weight: normal;
+ color: var(--trace-gray-500);
+ margin-left: var(--trace-space-sm);
+ font-size: 0.9em;
+}
+
+/* Table Density Variations (No changes needed) */
+.TRACE-density-compact td {
+  padding-top: var(--trace-space-xs);
+  padding-bottom: var(--trace-space-xs);
+  font-size: var(--trace-font-size-xs);
+}
+.TRACE-density-compact .TRACE-item-name {
+  font-size: var(--trace-font-size-xs);
+}
+.TRACE-density-spacious td {
+  padding-top: var(--trace-space-lg);
+  padding-bottom: var(--trace-space-lg);
+}
+
+/* Inline Actions */
+.TRACE-inline-actions {
+  display: flex;
+  gap: var(--trace-space-xs);
+  margin-top: var(--trace-space-sm);
+  opacity: 0; /* Hide initially */
+  transition: opacity var(--trace-transition-fast);
+}
+.TRACE-cell:hover .TRACE-inline-actions {
+  opacity: 1; /* Show on cell hover */
+}
+
+/* Reuse .TRACE-action-button style for consistency? Or keep separate */
+/* Using a slightly modified version for inline */
+.TRACE-inline-action-button { /* Renamed to avoid conflicts */
+  width: 24px;
+  height: 24px;
+  border-radius: var(--trace-radius-full);
+  border: none;
+  background-color: var(--trace-gray-200);
+  color: var(--trace-gray-700);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--trace-transition-fast); /* Changed transition */
+  font-size: var(--trace-font-size-xs);
+}
+.TRACE-inline-action-button:hover {
+  transform: translateY(-1px) scale(1.1); /* Add subtle scale */
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Add shadow */
+}
+
+/* Keep info/warning colors for view/edit */
+.TRACE-action-view {
+  background-color: var(--trace-info);
+  color: white;
+}
+.TRACE-action-view:hover {
+  background-color: #2B6CB0; /* Darker info blue */
+}
+
+.TRACE-action-edit {
+  background-color: var(--trace-warning);
+  color: var(--trace-text-white); /* Use white text */
+}
+.TRACE-action-edit:hover {
+  background-color: #C05621; /* Darker warning orange */
+}
+
+/* WIP Filters */
+.TRACE-wip-controls-group {
+  border-top: 1px solid var(--trace-gray-200);
+  padding-top: var(--trace-space-md);
+}
+
+.TRACE-unlinked-filter-label {
+  margin-left: auto;
+}
+
+/* Loading State */
+.TRACE-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px; /* Ensure it takes some space */
+  padding: var(--trace-space-xxl);
+  color: var(--trace-gray-600);
+  text-align: center;
+}
+.TRACE-loading svg {
+  margin-bottom: var(--trace-space-lg);
+  color: var(--trace-primary); /* Use primary gray for spinner */
+  width: 48px; /* Example size */
+  height: 48px;
+  animation: spin 1s linear infinite; /* Add spin animation */
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.TRACE-loading-cell { /* Loading indicator inside table */
+  padding: var(--trace-space-xl) !important;
+  text-align: center;
+}
+.TRACE-loading-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--trace-space-md);
+  color: var(--trace-gray-500);
+}
+
+/* ========== Dropdown Menus ========== */
+.TRACE-dropdown {
+ position: relative;
+}
+
+.TRACE-dropdown-arrow {
+ font-size: 0.75em;
+ opacity: 0.8;
+ margin-left: var(--trace-space-xs);
+ transition: transform 0.2s;
+}
+
+.TRACE-dropdown-menu {
+ position: absolute;
+ top: 100%;
+ right: 0;
+ min-width: 200px;
+ background-color: white;
+ border-radius: var(--trace-radius-md);
+ box-shadow: var(--trace-shadow-lg);
+ z-index: 1000;
+ margin-top: 5px;
+ overflow: hidden;
+ animation: fadeIn 0.2s ease-out; /* Add fade in */
+}
+
+.TRACE-dropdown-header {
+ padding: var(--trace-space-sm) var(--trace-space-md);
+ background-color: var(--trace-gray-100);
+ color: var(--trace-gray-700);
+ font-weight: 600;
+ font-size: var(--trace-font-size-xs);
+ border-bottom: 1px solid var(--trace-gray-200);
+}
+
+.TRACE-dropdown-item {
+ padding: var(--trace-space-sm) var(--trace-space-md);
+ color: var(--trace-gray-700);
+ background: none;
+ border: none;
+ width: 100%;
+ text-align: left;
+ cursor: pointer;
+ transition: background-color 0.2s, color 0.2s; /* Add color transition */
+ display: flex;
+ align-items: center;
+ gap: var(--trace-space-sm);
+ position: relative;
+}
+.TRACE-dropdown-item:hover {
+ background-color: var(--trace-gray-100);
+}
+/* Active item uses primary gray */
+.TRACE-dropdown-item.TRACE-active {
+ background-color: var(--trace-primary);
+ color: var(--trace-text-on-primary);
+}
+.TRACE-dropdown-item.TRACE-active .TRACE-dropdown-icon {
+   color: var(--trace-text-on-primary); /* Match icon color */
+}
+
+.TRACE-dropdown-icon {
+ color: var(--trace-primary); /* Use primary gray for icons */
+ width: 16px;
+ transition: color 0.2s; /* Add transition */
+}
+
+.TRACE-dropdown-action {
+ margin-left: auto;
+ color: var(--trace-gray-500);
+ background: none;
+ border: none;
+ padding: var(--trace-space-xs);
+ border-radius: 50%;
+ cursor: pointer;
+ opacity: 0.7;
+ transition: all 0.2s;
+}
+.TRACE-dropdown-action:hover {
+ color: var(--trace-danger);
+ background-color: var(--trace-danger-light);
+ opacity: 1;
+}
+
+.TRACE-dropdown-divider {
+ height: 1px;
+ background-color: var(--trace-gray-200);
+ margin: var(--trace-space-xs) 0;
+}
+
+.TRACE-dropdown-message {
+ padding: var(--trace-space-md);
+ color: var(--trace-gray-500);
+ text-align: center;
+ font-style: italic;
+ font-size: var(--trace-font-size-sm);
+}
+
+
+/* ========== Compact Controls Area Layout ========== */
+/* (Assuming the structure exists in HTML with TRACE-controls-compact class) */
+.TRACE-controls-content.TRACE-controls-compact {
+ display: flex;
+ flex-direction: row;
+ align-items: flex-start;
+ gap: var(--trace-space-md);
+ padding: var(--trace-space-md);
+}
+
+.TRACE-controls-content.TRACE-controls-compact .TRACE-control-column {
+ display: flex;
+ flex-direction: column;
+ gap: var(--trace-space-md);
+ flex: 1;
+ min-width: 0;
+}
+
+.TRACE-controls-compact .TRACE-control-group {
+ padding: var(--trace-space-sm);
+}
+
+.TRACE-controls-compact .TRACE-control-group-title {
+ font-size: var(--trace-font-size-sm);
+ margin-bottom: var(--trace-space-sm);
+}
+
+.TRACE-controls-compact .TRACE-control-row {
+ gap: var(--trace-space-sm);
+ margin-bottom: var(--trace-space-sm);
+}
+
+.TRACE-controls-compact .TRACE-view-options-subgroup {
+ border: none;
+ padding: 0;
+ margin-bottom: 0;
+ background-color: transparent;
+}
+
+.TRACE-controls-compact .TRACE-control-label,
+.TRACE-controls-compact .TRACE-checkbox-label {
+ font-size: var(--trace-font-size-xs);
+ gap: var(--trace-space-xs);
+}
+
+.TRACE-controls-compact .TRACE-input,
+.TRACE-controls-compact .TRACE-select,
+.TRACE-controls-compact .TRACE-button {
+ font-size: var(--trace-font-size-xs);
+ padding-top: var(--trace-space-xs);
+ padding-bottom: var(--trace-space-xs);
+ padding-left: var(--trace-space-sm);
+ padding-right: var(--trace-space-sm);
+ gap: var(--trace-space-xs);
+}
+
+.TRACE-controls-compact .TRACE-select {
+ min-width: 110px;
+ padding-right: 1.5rem;
+ background-size: 0.7em;
+ background-position: right 0.35rem center;
+}
+.TRACE-controls-compact .TRACE-select-small {
+ min-width: 90px;
+}
+
+.TRACE-controls-compact .TRACE-button-direction {
+ min-width: 50px;
+}
+
+.TRACE-controls-compact .TRACE-density-button {
+ min-width: 60px;
+}
+
+.TRACE-controls-compact .TRACE-button-reset {
+ padding: 2px var(--trace-space-xs);
+ font-size: calc(var(--trace-font-size-xs) * 0.9);
+}
+
+.TRACE-controls-compact .TRACE-checkbox {
+ width: 14px;
+ height: 14px;
+}
+.TRACE-controls-compact .TRACE-checkbox:checked::after {
+  /* Adjust compact checkmark */
+  width: 7px;
+  height: 7px;
+  transform: rotate(45deg) translate(-1px, -1.5px);
+  border-width: 0 1.5px 1.5px 0;
+}
+
+.TRACE-controls-compact .TRACE-visibility-row,
+.TRACE-controls-compact .TRACE-density-row {
+ padding-top: var(--trace-space-sm);
+ border-top: 1px solid var(--trace-gray-100);
+}
+
+.TRACE-controls-compact .TRACE-wip-controls-group .TRACE-control-row {
+ justify-content: space-between;
+}
+.TRACE-controls-compact .TRACE-unlinked-filter-label {
+ margin-left: var(--trace-space-md);
+}
+
+/* ========== Tab Bar Actions ========== */
+.TRACE-tab-bar-actions {
+ display: flex;
+ align-items: center;
+ padding-left: var(--trace-space-md);
+ padding-right: var(--trace-space-md);
+ gap: var(--trace-space-sm);
+ margin-left: auto; /* Push actions to the right */
+}
+
+.TRACE-tab-bar-actions .TRACE-action-button {
+ /* Inherits base styles, adjust padding/size for tab bar */
+ padding: var(--trace-space-xs) var(--trace-space-sm);
+ font-size: calc(var(--trace-font-size-sm) * 0.9);
+ flex-shrink: 0;
+ background-color: transparent; /* Make them blend more */
+ border: none;
+}
+.TRACE-tab-bar-actions .TRACE-action-button:hover {
+   background-color: rgba(255, 255, 255, 0.1); /* Keep hover effect */
+   transform: none; /* Remove transform in tab bar */
+}
+/* Style refresh button specifically if needed */
+.TRACE-tab-bar-actions .TRACE-refresh-button {
+  background-color: var(--trace-accent);
+  color: var(--trace-text-on-accent);
+}
+.TRACE-tab-bar-actions .TRACE-refresh-button:hover {
+   background-color: var(--trace-accent-hover);
+}
+
+
+/* ========== Enhanced Animations & Effects ========== */
+/* Keyframes (defined earlier) */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(74, 85, 104, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(74, 85, 104, 0); } 100% { box-shadow: 0 0 0 0 rgba(74, 85, 104, 0); } } /* Adjusted pulse color */
+@keyframes shimmer { 0% { background-position: -1000px 0; } 100% { background-position: 1000px 0; } }
+@keyframes highlightRow { 0%, 100% { background-color: transparent; } 50% { background-color: rgba(74, 85, 104, 0.1); } } /* Adjusted highlight color */
+
+/* Animation Classes */
+.TRACE-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+.TRACE-slide-down { animation: slideDown 0.3s ease-out forwards; }
+.TRACE-pulse-hover:hover { animation: pulse 1.5s infinite; }
+.TRACE-highlight-row { animation: highlightRow 2s ease-in-out; }
+
+/* Apply animations */
+.TRACE-table-section, .TRACE-wip-summary { animation: fadeIn 0.5s ease-out; }
+/* Apply pulse to refresh button */
+.TRACE-action-button.TRACE-refresh-button { transition: background-color 0.2s; } /* Ensure transition doesn't interfere */
+.TRACE-action-button.TRACE-refresh-button.TRACE-pulse-hover:hover { animation: pulse 1.5s infinite; }
+
+/* Shimmer effect for loading bar */
+.TRACE-loading-progress {
+  width: 250px;
+  height: 4px;
+  background-color: var(--trace-gray-200);
+  border-radius: var(--trace-radius-full);
+  overflow: hidden;
+  margin-top: var(--trace-space-md);
+}
+.TRACE-loading-bar {
+  height: 100%;
+  width: 30%; /* Or dynamic width */
+  background-color: var(--trace-primary);
+  border-radius: var(--trace-radius-full);
+  animation: shimmer 2s infinite linear;
+  background-image: linear-gradient(
+    to right,
+    var(--trace-primary) 0%,
+    var(--trace-primary-light) 20%,
+    var(--trace-primary) 40%
+  );
+  background-size: 1000px 100%;
+}
+
+
+/* ========== Overlay Elements ========== */
+.TRACE-refresh-overlay, .TRACE-export-overlay {
+ position: fixed;
+ top: 0;
+ left: 0;
+ width: 100%;
+ height: 100%;
+ background-color: rgba(247, 250, 252, 0.6); /* Use light background color with opacity */
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ z-index: 1000;
+ backdrop-filter: blur(3px); /* Slightly stronger blur */
+ animation: fadeIn 0.2s ease-out;
+}
+
+.TRACE-refresh-indicator, .TRACE-export-indicator {
+ background-color: white;
+ border-radius: var(--trace-radius-md);
+ box-shadow: var(--trace-shadow-lg);
+ padding: var(--trace-space-md) var(--trace-space-xl);
+ display: flex;
+ align-items: center;
+ gap: var(--trace-space-md);
+ color: var(--trace-primary); /* Use primary gray */
+ font-weight: 500;
+}
+.TRACE-export-indicator { /* Specific style for export if needed */
+  flex-direction: column;
+  padding: var(--trace-space-lg);
+}
+.TRACE-export-message {
+ font-weight: 500;
+ color: var(--trace-gray-700);
+ margin-top: var(--trace-space-sm);
+ text-align: center; /* Center align text */
+}
+
+/* ========== Advanced Search Styling ========== */
+.TRACE-toggle-advanced {
+ background: none;
+ border: none;
+ color: var(--trace-primary); /* Use primary gray */
+ cursor: pointer;
+ font-size: var(--trace-font-size-xs);
+ margin-left: auto;
+ font-weight: 500;
+}
+.TRACE-toggle-advanced:hover {
+ text-decoration: underline;
+ color: var(--trace-primary-dark); /* Darken on hover */
+}
+
+.TRACE-advanced-search {
+ margin-top: var(--trace-space-sm);
+ background-color: var(--trace-gray-50); /* Light bg for advanced section */
+ padding: var(--trace-space-md);
+ border-radius: var(--trace-radius-md);
+ border: 1px solid var(--trace-gray-200);
+ animation: slideDown 0.3s ease-out; /* Add animation */
+}
+
+.TRACE-advanced-field {
+ display: flex;
+ flex-direction: column;
+ gap: var(--trace-space-xs);
+ flex: 1;
+}
+.TRACE-advanced-field label {
+ font-size: var(--trace-font-size-xs);
+ font-weight: 500;
+ color: var(--trace-gray-700);
+}
+
+.TRACE-advanced-actions {
+ display: flex;
+ justify-content: flex-end; /* Align buttons right */
+ gap: var(--trace-space-sm);
+ margin-top: var(--trace-space-md);
+}
+
+/* ========== Recent Searches Styling ========== */
+.TRACE-recent-searches {
+ margin-top: var(--trace-space-sm);
+ padding-top: var(--trace-space-sm);
+ border-top: 1px dashed var(--trace-gray-200);
+}
+.TRACE-recent-searches-header {
+ font-size: var(--trace-font-size-xs);
+ color: var(--trace-gray-500);
+ margin-bottom: var(--trace-space-xs);
+ font-weight: 500; /* Make header slightly bolder */
+}
+
+.TRACE-search-tags {
+ display: flex;
+ flex-wrap: wrap;
+ gap: var(--trace-space-xs);
+}
+
+.TRACE-search-tag {
+ background-color: var(--trace-gray-100);
+ color: var(--trace-gray-700);
+ font-size: var(--trace-font-size-xs);
+ padding: var(--trace-space-xs) var(--trace-space-sm);
+ border-radius: var(--trace-radius-full);
+ cursor: pointer;
+ display: flex;
+ align-items: center;
+ transition: background-color 0.2s, box-shadow 0.2s; /* Add shadow transition */
+ border: 1px solid var(--trace-gray-200); /* Add subtle border */
+}
+.TRACE-search-tag:hover {
+ background-color: var(--trace-gray-200);
+ box-shadow: 0 1px 2px rgba(0,0,0,0.05); /* Add slight shadow on hover */
+}
+
+.TRACE-search-tag-type {
+ font-weight: 600;
+ margin-right: var(--trace-space-xs);
+ color: var(--trace-primary); /* Use primary gray for type */
+}
+
+/* ========== Active View Indicator ========== */
+/* Using info color for contrast, but could be gray */
+.TRACE-active-view-indicator {
+ background-color: var(--trace-info-light); /* Could change to var(--trace-gray-100) */
+ color: var(--trace-primary-dark); /* Could change to var(--trace-primary) */
+ padding: var(--trace-space-sm) var(--trace-space-lg);
+ border-radius: var(--trace-radius-md);
+ display: flex;
+ align-items: center;
+ gap: var(--trace-space-sm);
+ margin-bottom: var(--trace-space-md);
+ font-size: var(--trace-font-size-sm);
+ border: 1px solid var(--trace-info); /* Could change to var(--trace-gray-300) */
+}
+.TRACE-active-view-indicator.TRACE-highlight {
+ animation: highlightRow 2s ease-in-out;
+}
+
+.TRACE-view-icon {
+ color: var(--trace-info); /* Could change to var(--trace-primary) */
+}
+
+.TRACE-close-button {
+ background: none;
+ border: none;
+ color: var(--trace-gray-500);
+ cursor: pointer;
+ margin-left: auto;
+ padding: var(--trace-space-xs);
+ border-radius: 50%;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ transition: all 0.2s;
+}
+.TRACE-close-button:hover {
+ background-color: rgba(0,0,0,0.05);
+ color: var(--trace-gray-700);
+}
+
+/* ========== Table Footer ========== */
+.TRACE-table-footer {
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ padding: var(--trace-space-md);
+ border-top: 1px solid var(--trace-gray-200);
+ color: var(--trace-gray-600);
+ font-size: var(--trace-font-size-sm);
+ background-color: var(--trace-gray-50); /* Add slight background */
+}
+
+.TRACE-keyboard-hints-button {
+ background: none;
+ border: none;
+ color: var(--trace-gray-500);
+ font-size: var(--trace-font-size-xs);
+ display: flex;
+ align-items: center;
+ gap: var(--trace-space-xs);
+ cursor: pointer;
+ padding: var(--trace-space-xs) var(--trace-space-sm);
+ border-radius: var(--trace-radius-md);
+ transition: color 0.2s, background-color 0.2s;
+}
+.TRACE-keyboard-hints-button:hover {
+ color: var(--trace-gray-700);
+ background-color: var(--trace-gray-100);
+}
+
+.TRACE-keyboard-shortcut {
+ display: inline-block;
+ padding: 1px 4px;
+ border-radius: 3px;
+ background-color: var(--trace-gray-100);
+ color: var(--trace-gray-600);
+ font-size: 0.7em;
+ font-family: monospace;
+ margin-left: var(--trace-space-xs);
+ border: 1px solid var(--trace-gray-200);
+ box-shadow: 0 1px 1px rgba(0,0,0,0.05); /* Add subtle shadow */
+}
+
+/* ========== Print Styles (Adjusted for Gray Theme) ========== */
+@media print {
+  /* Hide elements not needed in print */
+  .TRACE-controls-area,
+  .TRACE-header-actions,
+  .TRACE-action-button, .TRACE-inline-action-button,
+  .TRACE-tutorial-button, .TRACE-icon-button,
+  .TRACE-tab-bar-actions, .TRACE-keyboard-hints-button,
+  .TRACE-toggle-advanced, .TRACE-recent-searches,
+  .TRACE-active-view-indicator .TRACE-close-button,
+  .TRACE-refresh-overlay, .TRACE-export-overlay {
+    display: none !important;
+  }
+
+  /* Ensure white background and black text */
+  body, .TRACE-page-wrapper, .TRACE-table-section,
+  .TRACE-wip-summary, .TRACE-wip-stat {
+    background-color: white !important;
+    color: black !important;
+    box-shadow: none !important;
+  }
+
+  /* Remove shadows and fancy effects */
+  .TRACE-enterprise-header, .TRACE-table-section, .TRACE-wip-stat {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+  }
+  .TRACE-enterprise-header {
+     background: white !important; /* Remove gradient */
+     border-bottom: 2px solid #333 !important;
+  }
+  .TRACE-project-name, .TRACE-badge, .TRACE-breadcrumb-link {
+     color: black !important;
+  }
+  .TRACE-badge {
+      border: 1px solid #aaa !important;
+      background-color: #eee !important;
+  }
+  .TRACE-header-tab-bar {
+      border-top: 1px solid #ccc !important;
+      background-color: #f0f0f0 !important;
+  }
+  .TRACE-header-tab {
+      color: #555 !important;
+  }
+  .TRACE-header-tab.TRACE-active {
+      color: black !important;
+      border-bottom-color: black !important;
+      background: #e0e0e0 !important;
+  }
+
+
+  /* Ensure table fits on the page */
+  .TRACE-table {
+    font-size: 9pt !important;
+    border-collapse: collapse !important; /* Collapse for print */
+  }
+  .TRACE-table th, .TRACE-table td {
+    padding: 5px 8px !important;
+    border: 1px solid #ddd !important; /* Add borders for print */
+    color: black !important; /* Ensure text is black */
+  }
+  .TRACE-table th {
+      background-color: #eee !important; /* Light gray header */
+  }
+
+  /* Add page breaks */
+  .TRACE-table-section {
+    page-break-before: always;
+  }
+
+  /* Ensure black text for printability */
+  .TRACE-item-id, .TRACE-item-name, .TRACE-wip-stat-value,
+  .TRACE-wip-stat-label, .TRACE-group-header td, .TRACE-control-label {
+    color: black !important;
+  }
+  .TRACE-item-id { font-weight: bold; }
+
+  /* Make the status badges more printer-friendly */
+  .TRACE-status-badge {
+    border: 1px solid #aaa !important;
+    background: #f0f0f0 !important; /* Light gray background */
+    color: black !important;
+    box-shadow: none !important;
+    padding: 1px 4px !important;
+  }
+  .TRACE-status-dot { display: none !important; } /* Hide color dots */
+
+  /* Print whole table */
+  .TRACE-table-container {
+    overflow: visible !important;
+  }
+
+  /* Display URL when printed */
+  .TRACE-page-wrapper::after {
+    content: "Printed from Traceability Management System";
+    display: block;
     text-align: center;
-    margin-top: 30px;
-    margin-bottom: 15px;
-    font-size: 1.4em;
-    color: #444;
-}
-
-.section-divider {
-    margin: 40px 0;
-    border: 0;
-    border-top: 2px solid #ddd;
-}
-
-.traceability-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    /* Space between controls/actions and table */
-}
-
-.traceability-table th,
-.traceability-table td {
-    border: 1px solid #ddd;
-    padding: 8px 10px;
-    text-align: left;
-    vertical-align: top;
-    /* Align content to the top */
-    font-size: 0.9em;
-}
-
-.traceability-table th {
-    background-color: #f2f2f2;
-    font-weight: bold;
-}
-
-.reqid-trace {
-    font-weight: bold;
-    color: #0056b3;
-    /* Example color */
-    margin-bottom: 3px;
-}
-
-.reqname-trace {
-    font-size: 0.9em;
-    color: #555;
-    margin-bottom: 3px;
-    word-break: break-word;
-    /* Prevent long names from breaking layout */
-}
-
-.loading-message,
-.error-message,
-.no-data-message {
-    text-align: center;
-    padding: 20px;
+    font-size: 8pt;
     margin-top: 20px;
-    font-style: italic;
-    color: #666;
-    border: 1px dashed #ccc;
-    background-color: #fafafa;
+    color: #999;
+  }
 }
 
-.error-message {
-    color: #D8000C;
-    background-color: #FFD2D2;
-    border-color: #D8000C;
-    font-style: normal;
-    font-weight: bold;
+
+/* ========== Focus Styles for Accessibility ========== */
+/* Ensure keyboard navigation has visible focus indicators using primary gray */
+button:focus,
+input:focus,
+select:focus,
+.TRACE-header-tab:focus,
+.TRACE-checkbox:focus,
+.TRACE-action-button:focus,
+.TRACE-inline-action-button:focus,
+.TRACE-breadcrumb-link:focus,
+.TRACE-collapse-button:focus,
+.TRACE-dropdown-item:focus,
+.TRACE-search-tag:focus,
+.TRACE-close-button:focus,
+.TRACE-keyboard-hints-button:focus,
+.TRACE-toggle-advanced:focus {
+ outline: 2px solid var(--trace-primary); /* Use primary gray */
+ outline-offset: 2px;
+}
+
+/* For mouse users, we can hide the focus outline (using :focus-visible) */
+button:focus:not(:focus-visible),
+input:focus:not(:focus-visible),
+select:focus:not(:focus-visible),
+.TRACE-header-tab:focus:not(:focus-visible),
+.TRACE-checkbox:focus:not(:focus-visible),
+.TRACE-action-button:focus:not(:focus-visible),
+.TRACE-inline-action-button:focus:not(:focus-visible),
+.TRACE-breadcrumb-link:focus:not(:focus-visible),
+.TRACE-collapse-button:focus:not(:focus-visible),
+.TRACE-dropdown-item:focus:not(:focus-visible),
+.TRACE-search-tag:focus:not(:focus-visible),
+.TRACE-close-button:focus:not(:focus-visible),
+.TRACE-keyboard-hints-button:focus:not(:focus-visible),
+.TRACE-toggle-advanced:focus:not(:focus-visible) {
+ outline: none;
+}
+
+
+/* ========== Additional Utility Classes (No Changes) ========== */
+.TRACE-text-center { text-align: center; }
+.TRACE-text-right { text-align: right; }
+.TRACE-text-bold { font-weight: 600; }
+.TRACE-margin-top { margin-top: var(--trace-space-md); }
+.TRACE-margin-bottom { margin-bottom: var(--trace-space-md); }
+.TRACE-padding { padding: var(--trace-space-md); }
+.TRACE-flex { display: flex; }
+.TRACE-flex-center { display: flex; align-items: center; justify-content: center; }
+.TRACE-flex-between { display: flex; align-items: center; justify-content: space-between; }
+.TRACE-flex-column { display: flex; flex-direction: column; }
+.TRACE-flex-wrap { display: flex; flex-wrap: wrap; }
+.TRACE-hidden { display: none !important; }
+.TRACE-ellipsis { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+
+/* ========== Responsive Design (Adjustments might be needed based on gray theme) ========== */
+@media (max-width: 1280px) {
+  .TRACE-header-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--trace-space-lg);
+  }
+  .TRACE-header-actions {
+    width: 100%;
+    justify-content: flex-start;
+    padding-top: var(--trace-space-md);
+  }
+  .TRACE-wip-summary {
+    justify-content: flex-start; /* Align wrapped items left */
+  }
+  .TRACE-wip-stat {
+    min-width: 180px; /* Ensure stats don't get too small */
+    flex-basis: calc(33% - var(--trace-space-xl)); /* Adjust basis */
+  }
+}
+
+@media (max-width: 1024px) {
+  .TRACE-controls-content {
+    padding: var(--trace-space-md);
+    flex-direction: column; /* Stack controls vertically */
+  }
+   .TRACE-controls-content.TRACE-controls-compact {
+      flex-direction: column; /* Force compact controls vertical */
+   }
+  .TRACE-control-row {
+    flex-direction: column;
+    align-items: stretch; /* Stretch items in column */
+    width: 100%;
+  }
+  .TRACE-option-item {
+    width: 100%;
+    margin-bottom: var(--trace-space-sm);
+  }
+  .TRACE-control-separator {
+    display: none;
+  }
+  .TRACE-button-group,
+  .TRACE-density-control-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .TRACE-density-button {
+    flex: 1;
+  }
+
+  .TRACE-search-group .TRACE-control-row {
+    flex-direction: column; /* Stack search elements */
+    align-items: stretch;
+  }
+  .TRACE-search-group .TRACE-select,
+  .TRACE-search-group .TRACE-input,
+  .TRACE-search-group .TRACE-button {
+    width: 100%;
+    margin-bottom: var(--trace-space-sm);
+  }
+  .TRACE-search-group .TRACE-button {
+    flex: none; /* Don't flex button when stacked */
+  }
+
+  .TRACE-header-tab-bar {
+    overflow-x: auto;
+    justify-content: flex-start; /* Allow scrolling tabs */
+  }
+  .TRACE-header-tab {
+    white-space: nowrap;
+    flex-shrink: 0; /* Prevent tabs from shrinking */
+  }
+  .TRACE-tab-bar-actions {
+    padding-left: var(--trace-space-sm);
+    padding-right: var(--trace-space-sm);
+    gap: var(--trace-space-xs);
+  }
+   /* Optional: hide text on tab bar buttons earlier */
+   /*
+   .TRACE-tab-bar-actions .TRACE-action-button span {
+       display: none;
+   }
+   .TRACE-tab-bar-actions .TRACE-action-button {
+       padding: var(--trace-space-xs);
+   }
+   */
+
+   .TRACE-dropdown-menu { /* Adjust dropdown position */
+      right: auto;
+      left: 0;
+   }
+}
+
+@media (max-width: 768px) {
+  .TRACE-page-wrapper {
+    padding: var(--trace-space-md) var(--trace-space-sm);
+  }
+  .TRACE-view-options-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--trace-space-sm);
+  }
+  .TRACE-button-reset {
+    width: 100%;
+    margin-top: var(--trace-space-sm);
+  }
+  .TRACE-option-item-columns {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .TRACE-checkbox-group {
+    margin-top: var(--trace-space-sm);
+    flex-direction: column; /* Stack checkboxes */
+    align-items: flex-start;
+  }
+
+  .TRACE-table th,
+  .TRACE-table td {
+    padding: var(--trace-space-sm);
+    font-size: var(--trace-font-size-xs); /* Reduce font size */
+  }
+  .TRACE-table th:first-child,
+  .TRACE-table td:first-child {
+    padding-left: var(--trace-space-md);
+  }
+  .TRACE-table th:last-child,
+  .TRACE-table td:last-child {
+    padding-right: var(--trace-space-md);
+  }
+  .TRACE-item-name {
+      font-size: var(--trace-font-size-xs); /* Reduce font size */
+  }
+
+  .TRACE-wip-summary {
+    flex-direction: column;
+    align-items: stretch; /* Stretch items full width */
+  }
+  .TRACE-wip-stat {
+    margin-bottom: var(--trace-space-sm);
+    min-width: unset; /* Remove min-width */
+    flex-basis: auto; /* Reset basis */
+  }
+
+  /* Hide text on main header buttons */
+  .TRACE-header-actions .TRACE-action-button span {
+     display: none;
+  }
+  .TRACE-header-actions .TRACE-action-button {
+      padding: var(--trace-space-sm); /* Adjust padding for icon only */
+      min-width: auto;
+  }
+  /* Hide text on tabs */
+  .TRACE-header-tab span:not(.TRACE-tab-icon):not(.TRACE-tab-shortcut) {
+      display: none;
+  }
+  .TRACE-header-tab {
+      padding: var(--trace-space-md) var(--trace-space-sm); /* Adjust padding */
+      gap: 0;
+  }
+
+  .TRACE-table-footer {
+     flex-direction: column; /* Stack footer items */
+     align-items: flex-start;
+     gap: var(--trace-space-sm);
+  }
+}
+
+@media (max-width: 576px) {
+  .TRACE-project-title {
+    flex-wrap: wrap;
+  }
+  .TRACE-project-name {
+    font-size: var(--trace-font-size-xl);
+    width: 100%;
+    margin-bottom: var(--trace-space-xs);
+  }
+  .TRACE-badge {
+    font-size: var(--trace-font-size-xs);
+    padding: var(--trace-space-xs) var(--trace-space-sm);
+  }
+
+  .TRACE-header-actions {
+    gap: var(--trace-space-xs); /* Reduce gap further */
+  }
+  .TRACE-action-button { /* Further reduce padding */
+      padding: var(--trace-space-xs);
+  }
+
+  .TRACE-collapse-button span {
+    display: none;
+  }
+  .TRACE-collapse-button {
+     padding: var(--trace-space-xs); /* Adjust padding for icon only */
+  }
+
+  .TRACE-inline-actions { /* Adjust inline action position */
+    position: absolute;
+    top: var(--trace-space-xs);
+    right: var(--trace-space-xs);
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: var(--trace-space-xs);
+    border-radius: var(--trace-radius-md);
+    opacity: 1; /* Ensure visible */
+    z-index: 5; /* Ensure above cell content */
+  }
+  .TRACE-inline-action-button { /* Make inline buttons slightly smaller */
+     width: 20px;
+     height: 20px;
+     font-size: calc(var(--trace-font-size-xs) * 0.9);
+  }
 }

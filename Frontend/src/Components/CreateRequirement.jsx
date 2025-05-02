@@ -91,9 +91,7 @@ const CreateRequirement = () => {
           console.log("History added successfully:", historyResponse.data);
 
           // ✅ Toast พร้อม onClose -> Redirect หลัง toast ปิด
-          toast.success("Requirement created successfully!", {
-            onClose: () => navigate(-1),
-          });
+          toast.success("Requirement created successfully!");
 
           // ✅ เคลียร์ฟอร์มก่อน redirect
           setRequirementStatement("");

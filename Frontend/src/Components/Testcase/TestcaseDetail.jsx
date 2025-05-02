@@ -104,6 +104,7 @@ const TestcaseDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+
   const testcase = location.state?.testcase || {};
   const queryParams = new URLSearchParams(location.search);
   let projectId = location.state?.projectId || testcase?.project_id || queryParams.get("project_id") || "";
@@ -213,7 +214,18 @@ const TestcaseDetail = () => {
       {/* Header (เหมือนเดิม) */}
       <div className="testcase-detail-header">
         <div className="testcase-detail-header-left">
-          <button className="testcase-detail-back-button" onClick={() => navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Testcase" } })}>
+          <button
+            className="testcase-detail-back-button"
+            onClick={() => {
+              if (window.history.length > 2) {
+                navigate(-1);
+              } else {
+                navigate(`/Dashboard?project_id=${projectId}`, {
+                  state: { selectedSection: "Testcase" },
+                });
+              }
+            }}
+          >
             <BackIcon />
             <span>Back</span>
           </button>

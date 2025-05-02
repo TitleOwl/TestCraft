@@ -1,814 +1,471 @@
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import React, { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
-import './CSS/traceabilityPage.css'; // ตรวจสอบ path CSS ให้ถูกต้อง
+import Joyride, { STATUS } from 'react-joyride';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+    // --- Core Icons ---
+    faSearch, faFilter, faTable, faExchangeAlt, faEye, faPen,
+    faPlus, faTrash, faHome, faChevronRight, faQuestionCircle,
+    faLayerGroup, faTimes, faColumns, faSort, faHistory, faCheckCircle,
+    faLink, faProjectDiagram, faSpinner, faExclamationTriangle,
+    faSortUp, faSortDown, faSync, faArrowsLeftRight, faArrowsAltV,
+    faEyeSlash, faChevronUp, faChevronDown, faSlidersH
+    // REMOVED: faDownload, faFileExport, faFileCsv (as per original removal)
+} from "@fortawesome/free-solid-svg-icons";
 
-// ****** ฟังก์ชัน filterTraceabilityData (เหมือนเดิม) ******
-const filterTraceabilityData = (data, searchTerm, searchTargetType) => {
-    if (!data) return [];
-    const lowerSearchTerm = searchTerm?.trim().toLowerCase() || '';
+// --- CSS Import ---
+// <<< ตรวจสอบ Path ของไฟล์ CSS ให้ถูกต้อง >>>
+import './CSS/traceabilityPage.css';
 
-    if (!lowerSearchTerm || !searchTargetType) {
-        return data;
-    }
+// ========================================================================
+// Constants & Configuration
+// ========================================================================
 
-    const checkMatch = (item, term, idKey, nameKey, prefix = '') => {
-        if (!item || !term) return false;
-        const termWithoutPrefix = prefix && term.startsWith(prefix.toLowerCase())
-            ? term.substring(prefix.length)
-            : term;
-        const idString = item[idKey]?.toString() || '';
-        const idMatch = idString === term || (termWithoutPrefix && idString === termWithoutPrefix);
-
-        const nameString = item[nameKey]?.toLowerCase() || '';
-        const nameMatch = nameString.includes(term);
-
-        return idMatch || nameMatch;
-    };
-
-    return data.filter(r => {
-        switch (searchTargetType) {
-            case 'req':
-                return checkMatch(r, lowerSearchTerm, 'RequirementID', 'RequirementName', 'req-');
-            case 'design':
-                return r.Designs?.some(d => checkMatch(d, lowerSearchTerm, 'DesignID', 'DiagramName', 'de-'));
-            case 'impl':
-                return r.Designs?.some(d =>
-                    d.Implementations?.some(i => checkMatch(i, lowerSearchTerm, 'ImplementID', 'ImplementFilename', 'imp-'))
-                );
-            case 'test':
-                return r.Designs?.some(d =>
-                    d.Implementations?.some(i =>
-                        i.TestCases?.some(t => checkMatch(t, lowerSearchTerm, 'TestCaseID', 'TestCaseName', 'tc-'))
-                    )
-                );
-            default:
-                return true;
-        }
-    });
-};
-// ***********************************************************
-
-// ===== generateForwardDisplayRows (เหมือนเดิม) =====
-const generateForwardDisplayRows = (nestedData) => {
-    const flatRows = [];
-    if (!nestedData || nestedData.length === 0) return flatRows;
-    let keyCounter = 0;
-
-    nestedData.forEach(req => {
-        let reqStartIndex = flatRows.length;
-        let reqRowCount = 0;
-        const reqId = req.RequirementID;
-        const reqName = req.RequirementName || `Requirement ${reqId}`;
-        const reqStatus = req.RequirementStatus || '-';
-
-        if (!req.Designs || req.Designs.length === 0) {
-            reqRowCount = 1;
-            flatRows.push({
-                key: `fwd-req-${reqId}-no-design-${keyCounter++}`,
-                reqId, reqName, reqStatus,
-                designId: "-", designName: "-", designStatus: "-",
-                implId: "-", implFile: "-",
-                testCaseId: "-", testCaseName: "-", testCaseStatus: "-",
-                isFirstReqRow: true, reqRowSpan: 1,
-                isFirstDesignRow: true, designRowSpan: 1,
-                isFirstImplRow: true, implRowSpan: 1,
-            });
-        } else {
-            req.Designs.forEach((design) => {
-                let designStartIndex = flatRows.length;
-                let designRowCount = 0;
-                const designId = design.DesignID;
-                const designName = design.DiagramName || `Design ${designId}`;
-                const designStatus = design.DesignStatus || '-';
-
-                if (!design.Implementations || design.Implementations.length === 0) {
-                    designRowCount = 1;
-                    flatRows.push({
-                        key: `fwd-req-${reqId}-design-${designId}-no-impl-${keyCounter++}`,
-                        reqId, reqName, reqStatus,
-                        designId, designName, designStatus,
-                        implId: "-", implFile: "-",
-                        testCaseId: "-", testCaseName: "-", testCaseStatus: "-",
-                        isFirstReqRow: reqRowCount === 0, reqRowSpan: 0,
-                        isFirstDesignRow: true, designRowSpan: 1,
-                        isFirstImplRow: true, implRowSpan: 1,
-                    });
-                    reqRowCount++;
-                } else {
-                    design.Implementations.forEach((impl) => {
-                        let implStartIndex = flatRows.length;
-                        let implRowCount = 0;
-                        const implId = impl.ImplementID;
-                        const implFile = impl.ImplementFilename || 'N/A';
-
-                        if (!impl.TestCases || impl.TestCases.length === 0) {
-                            implRowCount = 1;
-                            flatRows.push({
-                                key: `fwd-req-${reqId}-design-${designId}-impl-${implId}-no-tc-${keyCounter++}`,
-                                reqId, reqName, reqStatus,
-                                designId, designName, designStatus,
-                                implId, implFile,
-                                testCaseId: "-", testCaseName: "-", testCaseStatus: "-",
-                                isFirstReqRow: reqRowCount === 0, reqRowSpan: 0,
-                                isFirstDesignRow: designRowCount === 0, designRowSpan: 0,
-                                isFirstImplRow: true, implRowSpan: 1,
-                            });
-                            reqRowCount++;
-                            designRowCount++;
-                        } else {
-                            impl.TestCases.forEach((tc, tcIdx) => {
-                                const tcId = tc.TestCaseID;
-                                const tcName = tc.TestCaseName || `Test Case ${tcId}`;
-                                const testCaseStatus = tc.TestCaseStatus || '-';
-
-                                flatRows.push({
-                                    key: `fwd-req-${reqId}-design-${designId}-impl-${implId}-tc-${tcId}-${keyCounter++}`,
-                                    reqId, reqName, reqStatus,
-                                    designId, designName, designStatus,
-                                    implId, implFile,
-                                    testCaseId: tcId, testCaseName: tcName, testCaseStatus,
-                                    isFirstReqRow: reqRowCount === 0 && tcIdx === 0, reqRowSpan: 0,
-                                    isFirstDesignRow: designRowCount === 0 && tcIdx === 0, designRowSpan: 0,
-                                    isFirstImplRow: implRowCount === 0 && tcIdx === 0, implRowSpan: 0,
-                                });
-                                reqRowCount++;
-                                designRowCount++;
-                                implRowCount++;
-                            });
-                            if (implStartIndex < flatRows.length) flatRows[implStartIndex].implRowSpan = implRowCount;
-                        }
-                    });
-                    if (designStartIndex < flatRows.length) flatRows[designStartIndex].designRowSpan = designRowCount;
-                }
-            });
-            if (reqStartIndex < flatRows.length) flatRows[reqStartIndex].reqRowSpan = reqRowCount;
-        }
-        if (reqStartIndex < flatRows.length) flatRows[reqStartIndex].isFirstReqRow = true; // Ensure first row flag is always set
-    });
-    return flatRows;
-};
-
-// ===== generateBackwardDisplayRows (***** REVISED Flattening Logic *****) =====
-const generateBackwardDisplayRows = (nestedData) => {
-    const backwardMap = new Map();
-    if (!nestedData || nestedData.length === 0) return [];
-
-    // --- 1. Build the backward map ---
-    //    (Logic is kept the same as previous version, ensure data capture is correct)
-    nestedData.forEach(req => {
-        const reqId = req.RequirementID; // Capture reqId here
-        const reqName = req.RequirementName || `Requirement ${reqId}`;
-        const reqStatus = req.RequirementStatus || '-';
-        req.Designs?.forEach(design => {
-            const designId = design.DesignID; // Capture designId
-            const designName = design.DiagramName || `Design ${designId}`;
-            const designStatus = design.DesignStatus || '-';
-            design.Implementations?.forEach(impl => {
-                const implId = impl.ImplementID; // Capture implId
-                const implFile = impl.ImplementFilename || 'N/A';
-                impl.TestCases?.forEach(tc => {
-                    const tcId = tc.TestCaseID; // Capture tcId
-                    const tcName = tc.TestCaseName || `Test Case ${tcId}`;
-                    const testCaseStatus = tc.TestCaseStatus || '-';
-
-                    // Get or create Test Case entry
-                    if (!backwardMap.has(tcId)) {
-                        backwardMap.set(tcId, { testCaseName: tcName, testCaseStatus, implementations: new Map() });
-                    }
-                    const testEntry = backwardMap.get(tcId);
-                    testEntry.testCaseStatus = testCaseStatus; // Update status if seen again
-
-                    // Get or create Implementation entry
-                    if (!testEntry.implementations.has(implId)) {
-                        testEntry.implementations.set(implId, { implFile, designs: new Map() });
-                    }
-                    const implEntry = testEntry.implementations.get(implId);
-
-                    // Get or create Design entry
-                    if (!implEntry.designs.has(designId)) {
-                        implEntry.designs.set(designId, { designName, designStatus, requirements: new Map() });
-                    }
-                    const designEntry = implEntry.designs.get(designId);
-                    designEntry.designStatus = designStatus; // Update status
-
-                    // Get or create Requirement entry
-                    if (!designEntry.requirements.has(reqId)) {
-                        // *** Ensure all needed req details are stored ***
-                        designEntry.requirements.set(reqId, { reqName, reqStatus });
-                    }
-                    // Optional: Update status if req is encountered again via another path
-                    // designEntry.requirements.get(reqId).reqStatus = reqStatus;
-                });
-            });
-        });
-    });
-
-    // --- 2. Flatten the map into rows with revised rowSpans/flags calculation ---
-    const flatRows = [];
-    let keyCounter = 0;
-
-    Array.from(backwardMap.entries()).forEach(([testCaseId, testEntry], testIdx) => {
-        const testItems = Array.from(testEntry.implementations.entries());
-        let testTotalRowCount = 0; // Total rows this test case will span across all its children
-
-        testItems.forEach(([implId, implEntry], implIdx) => {
-            const designItems = Array.from(implEntry.designs.entries());
-            let implTotalRowCount = 0; // Total rows this implementation will span across all its children
-
-            designItems.forEach(([designId, designEntry], designIdx) => {
-                const requirementItems = Array.from(designEntry.requirements.entries());
-                // Each design needs at least one row, even if no requirements link back
-                let designTotalRowCount = requirementItems.length || 1;
-
-                if (requirementItems.length === 0) {
-                    // --- Handle case where a Design has NO linked requirements ---
-                    // Still create a row to show the Test->Impl->Design link exists
-                    const isFirstTestOverall = testTotalRowCount === 0; // Is this the very first row for the Test Case?
-                    const isFirstImplOverall = implTotalRowCount === 0; // Is this the very first row for the Implementation?
-
-                    flatRows.push({
-                        key: `bwd-tc-${testCaseId}-impl-${implId}-des-${designId}-no-req-${keyCounter++}`,
-                        testCaseId, testCaseName: testEntry.testCaseName, testCaseStatus: testEntry.testCaseStatus,
-                        implId, implFile: implEntry.implFile,
-                        designId, designName: designEntry.designName, designStatus: designEntry.designStatus,
-                        reqId: "-", reqName: "-", reqStatus: "-", // Placeholder for missing requirement
-                        isFirstTestRow: isFirstTestOverall, testRowSpan: 0, // Span will be set later
-                        isFirstImplRow: isFirstImplOverall, implRowSpan: 0, // Span will be set later
-                        isFirstDesignRow: true, designRowSpan: 1, // Design spans only this 1 row
-                    });
-                    testTotalRowCount++; // Increment parent row counts
-                    implTotalRowCount++;
-                    // designTotalRowCount is already 1
-                } else {
-                    // --- Handle case where Design HAS linked requirements ---
-                    requirementItems.forEach(([reqId, reqEntry], reqIdx) => {
-                        const isFirstTestOverall = testTotalRowCount === 0; // Is this the very first row for the Test Case?
-                        const isFirstImplOverall = implTotalRowCount === 0; // Is this the very first row for the Implementation?
-                        const isFirstDesignOverall = reqIdx === 0; // Is this the first Requirement for THIS Design?
-
-                        flatRows.push({
-                            key: `bwd-tc-${testCaseId}-impl-${implId}-des-${designId}-req-${reqId}-${keyCounter++}`,
-                            testCaseId, testCaseName: testEntry.testCaseName, testCaseStatus: testEntry.testCaseStatus,
-                            implId, implFile: implEntry.implFile,
-                            designId, designName: designEntry.designName, designStatus: designEntry.designStatus,
-                            reqId, reqName: reqEntry.reqName, reqStatus: reqEntry.reqStatus, // Use stored req data
-                            isFirstTestRow: isFirstTestOverall, testRowSpan: 0, // Span will be set later
-                            isFirstImplRow: isFirstImplOverall, implRowSpan: 0, // Span will be set later
-                            isFirstDesignRow: isFirstDesignOverall, designRowSpan: 0, // Span will be set later (for the first one)
-                        });
-                        testTotalRowCount++; // Increment parent row counts for each requirement row generated
-                        implTotalRowCount++;
-                    });
-                    // Set the designRowSpan for the first requirement row of this design group
-                    if (flatRows.length > 0 && requirementItems.length > 0) {
-                        const firstDesignRowIndex = flatRows.length - requirementItems.length;
-                        if (firstDesignRowIndex >= 0 && firstDesignRowIndex < flatRows.length) { // Bounds check
-                            flatRows[firstDesignRowIndex].designRowSpan = requirementItems.length;
-                        } else {
-                            console.error("Backward Flattening: Error calculating firstDesignRowIndex", { len: flatRows.length, count: requirementItems.length });
-                        }
-                    }
-                }
-                // designTotalRowCount was calculated above, represents rows for THIS design instance
-            }); // End Designs loop for one Implementation
-
-            // Set the implRowSpan for the first row generated by this implementation across all its designs/requirements
-            if (flatRows.length > 0 && implTotalRowCount > 0) {
-                const firstImplRowIndex = flatRows.length - implTotalRowCount;
-                if (firstImplRowIndex >= 0 && firstImplRowIndex < flatRows.length) { // Bounds check
-                    flatRows[firstImplRowIndex].implRowSpan = implTotalRowCount;
-                } else {
-                    console.error("Backward Flattening: Error calculating firstImplRowIndex", { len: flatRows.length, count: implTotalRowCount });
-                }
-            }
-        }); // End Implementations loop for one Test Case
-
-        // Set the testRowSpan for the first row generated by this test case across all its implementations/designs/requirements
-        if (flatRows.length > 0 && testTotalRowCount > 0) {
-            const firstTestRowIndex = flatRows.length - testTotalRowCount;
-            if (firstTestRowIndex >= 0 && firstTestRowIndex < flatRows.length) { // Bounds check
-                flatRows[firstTestRowIndex].testRowSpan = testTotalRowCount;
-            } else {
-                console.error("Backward Flattening: Error calculating firstTestRowIndex", { len: flatRows.length, count: testTotalRowCount });
-            }
-        }
-    }); // End Test Cases loop
-
-    // Optional: Log the final generated rows for debugging
-    // console.log("Generated Backward Rows:", JSON.stringify(flatRows, null, 2));
-
-    return flatRows;
-};
-
-
-// Mapping from state keys to row data keys (เหมือนเดิม)
+/** Mapping for column data keys, labels, and sorting */
 const columnKeyMap = {
-    req: { id: 'reqId', name: 'reqName', status: 'reqStatus' },
-    design: { id: 'designId', name: 'designName', status: 'designStatus' },
-    impl: { id: 'implId', name: 'implFile' /* No status for impl */ },
-    test: { id: 'testCaseId', name: 'testCaseName', status: 'testCaseStatus' }
+    req: { id: 'reqId', name: 'reqName', status: 'reqStatus', sortKey: 'reqId', label: 'Requirement' },
+    design: { id: 'designId', name: 'designName', status: 'designStatus', sortKey: 'designId', label: 'Design' },
+    impl: { id: 'implId', name: 'implFile',     /* status: null, */       sortKey: 'implId', label: 'Code Component' },
+    test: { id: 'testCaseId', name: 'testCaseName', status: 'testCaseStatus', sortKey: 'testCaseId', label: 'Test Case' }
 };
 
-// ===== RenderTraceabilityTable Component (เหมือนเดิมจากเวอร์ชั่นก่อนหน้า) =====
-const RenderTraceabilityTable = ({ title, rawData, showActionButtons, projectId, projectName }) => {
+/** Labels for table headers */
+const headerLabels = {
+    req: 'Requirement',
+    design: 'Design',
+    impl: 'Code Component',
+    test: 'Test Case'
+};
+
+/** Tutorial steps configuration (Adjust content as needed) */
+const tutorialSteps = [
+    { target: '.TRACE-header-tab-bar', content: 'สลับมุมมองระหว่าง Traceability Record (Baseline) และ Work-In-Progress ปุ่มดำเนินการสำหรับ Baseline จะแสดงที่ด้านขวาตรงนี้เมื่อแท็บ Record ทำงานอยู่', placement: 'bottom', disableBeacon: true }, // Updated content
+    { target: '.TRACE-header-actions', content: 'ใช้ปุ่มรีเฟรชเพื่ออัปเดตข้อมูล คลิกเครื่องหมายคำถาม (?) เพื่อเริ่ม Tutorial นี้ใหม่อีกครั้ง', placement: 'bottom' }, // Updated content
+    { target: '.TRACE-controls-header', content: 'คลิกที่หัวข้อนี้ หรือปุ่ม แสดง/ซ่อน เพื่อขยายหรือย่อส่วนควบคุม', placement: 'bottom' },
+    { target: '.TRACE-controls-content', content: 'เมื่อขยายแล้ว ใช้ส่วนควบคุมเหล่านี้ (จัดกลุ่มเป็นการ์ด) เพื่อค้นหา, กรองข้อมูล, และปรับแต่งตัวเลือกมุมมอง', placement: 'bottom' },
+    { target: '.TRACE-sortable', content: 'คลิกที่หัวคอลัมน์เพื่อเรียงลำดับข้อมูล', placement: 'top', },
+    { target: '.TRACE-view-options-group', content: 'ปรับแต่งมุมมองตารางของคุณ: ทิศทาง, การจัดกลุ่ม, คอลัมน์, รายละเอียดในเซลล์, ความหนาแน่นของแถว, หรือรีเซ็ตค่า', placement: 'top', },
+    { target: '.TRACE-density-control-group', content: 'ปรับระยะห่างระหว่างแถว: ชิด (Compact), ปกติ (Normal), หรือ กว้าง (Spacious)', placement: 'top', },
+    { target: '.TRACE-button-reset', content: 'รีเซ็ตตัวเลือกมุมมองทั้งหมดกลับไปเป็นค่าเริ่มต้น', placement: 'left', },
+    { target: '.TRACE-wip-controls-group', content: 'ส่วน WIP ใช้ตัวกรองเพื่อค้นหารายการที่ยังไม่มีการเชื่อมโยง (Missing links)', placement: 'top' },
+    { target: '.TRACE-wip-summary', content: 'สรุปความสมบูรณ์ของการเชื่อมโยง Traceability สำหรับรายการที่กำลังดำเนินการ', placement: 'top' },
+    { target: '.TRACE-table', content: 'ตาราง Traceability หลัก คลิกไอคอนในเซลล์ (ในมุมมอง Record) เพื่อดู/แก้ไขรายการ', placement: 'top' },
+    { target: '.TRACE-tutorial-button', content: 'เริ่ม Tutorial นี้ใหม่ได้ทุกเมื่อ', placement: 'left' },
+];
+
+
+// ========================================================================
+// Helper Functions (Data Processing)
+// ========================================================================
+
+/**
+ * Filters traceability data based on search term and target type.
+ */
+const filterTraceabilityData = (data, searchTerm, searchTargetType) => {
+    if (!data) return []; const lowerSearchTerm = searchTerm?.trim().toLowerCase() || ''; if (!lowerSearchTerm || !searchTargetType) { return data; }
+    const checkMatch = (item, term, idKey, nameKey, prefix = '') => { if (!item || !term) return false; const termWithoutPrefix = prefix && term.startsWith(prefix.toLowerCase()) ? term.substring(prefix.length) : term; const idString = item[idKey]?.toString() || ''; const idMatch = idString === term || (termWithoutPrefix && idString === termWithoutPrefix); const nameString = item[nameKey]?.toLowerCase() || ''; const nameMatch = nameString.includes(term); return idMatch || nameMatch; };
+    return data.filter(r => { switch (searchTargetType) { case 'req': return checkMatch(r, lowerSearchTerm, 'RequirementID', 'RequirementName', 'req-'); case 'design': return r.Designs?.some(d => checkMatch(d, lowerSearchTerm, 'DesignID', 'DiagramName', 'de-')); case 'impl': return r.Designs?.some(d => d.Implementations?.some(i => checkMatch(i, lowerSearchTerm, 'ImplementID', 'ImplementFilename', 'imp-'))); case 'test': return r.Designs?.some(d => d.Implementations?.some(i => i.TestCases?.some(t => checkMatch(t, lowerSearchTerm, 'TestCaseID', 'TestCaseName', 'tc-')))); default: return true; } });
+};
+
+/**
+ * Generates flattened rows for forward traceability display (Req -> Test).
+ */
+const generateForwardDisplayRows = (nestedData) => {
+    const flatRows = []; if (!nestedData || nestedData.length === 0) return flatRows; let keyCounter = 0;
+    nestedData.forEach(req => { let reqStartIndex = flatRows.length; let reqRowCount = 0; const reqId = req.RequirementID; const reqName = req.RequirementName || `Requirement ${reqId}`; const reqStatus = req.RequirementStatus || '-'; const baseKeyPrefix = `fwd-req-${reqId}`; if (!req.Designs || req.Designs.length === 0) { reqRowCount = 1; flatRows.push({ key: `${baseKeyPrefix}-no-design-${keyCounter++}`, reqId, reqName, reqStatus, designId: "-", designName: "-", designStatus: "-", implId: "-", implFile: "-", testCaseId: "-", testCaseName: "-", testCaseStatus: "-", isFirstReqRow: true, reqRowSpan: 1, isFirstDesignRow: true, designRowSpan: 1, isFirstImplRow: true, implRowSpan: 1, isFirstTestRow: true, testRowSpan: 1 }); } else { req.Designs.forEach((design) => { let designStartIndex = flatRows.length; let designRowCount = 0; const designId = design.DesignID; const designName = design.DiagramName || `Design ${designId}`; const designStatus = design.DesignStatus || '-'; const designKeyPrefix = `${baseKeyPrefix}-design-${designId}`; if (!design.Implementations || design.Implementations.length === 0) { designRowCount = 1; flatRows.push({ key: `${designKeyPrefix}-no-impl-${keyCounter++}`, reqId, reqName, reqStatus, designId, designName, designStatus, implId: "-", implFile: "-", testCaseId: "-", testCaseName: "-", testCaseStatus: "-", isFirstReqRow: reqRowCount === 0, reqRowSpan: 0, isFirstDesignRow: true, designRowSpan: 1, isFirstImplRow: true, implRowSpan: 1, isFirstTestRow: true, testRowSpan: 1 }); reqRowCount++; } else { design.Implementations.forEach((impl) => { let implStartIndex = flatRows.length; let implRowCount = 0; const implId = impl.ImplementID; const implFile = impl.ImplementFilename || 'N/A'; const implKeyPrefix = `${designKeyPrefix}-impl-${implId}`; if (!impl.TestCases || impl.TestCases.length === 0) { implRowCount = 1; flatRows.push({ key: `${implKeyPrefix}-no-tc-${keyCounter++}`, reqId, reqName, reqStatus, designId, designName, designStatus, implId, implFile, testCaseId: "-", testCaseName: "-", testCaseStatus: "-", isFirstReqRow: reqRowCount === 0, reqRowSpan: 0, isFirstDesignRow: designRowCount === 0, designRowSpan: 0, isFirstImplRow: true, implRowSpan: 1, isFirstTestRow: true, testRowSpan: 1 }); reqRowCount++; designRowCount++; } else { impl.TestCases.forEach((tc, tcIdx) => { const tcId = tc.TestCaseID; const tcName = tc.TestCaseName || `Test Case ${tcId}`; const testCaseStatus = tc.TestCaseStatus || '-'; flatRows.push({ key: `${implKeyPrefix}-tc-${tcId}-${keyCounter++}`, reqId, reqName, reqStatus, designId, designName, designStatus, implId, implFile, testCaseId: tcId, testCaseName: tcName, testCaseStatus, isFirstReqRow: reqRowCount === 0 && tcIdx === 0, reqRowSpan: 0, isFirstDesignRow: designRowCount === 0 && tcIdx === 0, designRowSpan: 0, isFirstImplRow: implRowCount === 0 && tcIdx === 0, implRowSpan: 0, isFirstTestRow: true, testRowSpan: 1 }); reqRowCount++; designRowCount++; implRowCount++; }); if (implStartIndex < flatRows.length && implRowCount > 0) { flatRows[implStartIndex].implRowSpan = implRowCount; flatRows[implStartIndex].isFirstImplRow = true; } } }); if (designStartIndex < flatRows.length && designRowCount > 0) { flatRows[designStartIndex].designRowSpan = designRowCount; flatRows[designStartIndex].isFirstDesignRow = true; } } }); if (reqStartIndex < flatRows.length && reqRowCount > 0) { flatRows[reqStartIndex].reqRowSpan = reqRowCount; flatRows[reqStartIndex].isFirstReqRow = true; } } if (reqStartIndex < flatRows.length && !flatRows[reqStartIndex].isFirstReqRow) { flatRows[reqStartIndex].isFirstReqRow = true; } });
+    return flatRows;
+};
+
+/**
+ * Generates flattened rows for backward traceability display (Test -> Req).
+ */
+const generateBackwardDisplayRows = (nestedData) => {
+    const backwardMap = new Map(); if (!nestedData || nestedData.length === 0) return [];
+    nestedData.forEach(req => { const reqId = req.RequirementID; const reqName = req.RequirementName || `Requirement ${reqId}`; const reqStatus = req.RequirementStatus || '-'; req.Designs?.forEach(design => { const designId = design.DesignID; const designName = design.DiagramName || `Design ${designId}`; const designStatus = design.DesignStatus || '-'; design.Implementations?.forEach(impl => { const implId = impl.ImplementID; const implFile = impl.ImplementFilename || 'N/A'; impl.TestCases?.forEach(tc => { const tcId = tc.TestCaseID; const tcName = tc.TestCaseName || `Test Case ${tcId}`; const testCaseStatus = tc.TestCaseStatus || '-'; if (!backwardMap.has(tcId)) { backwardMap.set(tcId, { testCaseName: tcName, testCaseStatus, implementations: new Map() }); } const testEntry = backwardMap.get(tcId); testEntry.testCaseStatus = testCaseStatus; if (!testEntry.implementations.has(implId)) { testEntry.implementations.set(implId, { implFile, designs: new Map() }); } const implEntry = testEntry.implementations.get(implId); if (!implEntry.designs.has(designId)) { implEntry.designs.set(designId, { designName, designStatus, requirements: new Map() }); } const designEntry = implEntry.designs.get(designId); designEntry.designStatus = designStatus; if (!designEntry.requirements.has(reqId)) { designEntry.requirements.set(reqId, { reqName, reqStatus }); } designEntry.requirements.get(reqId).reqStatus = reqStatus; }); }); }); });
+    const flatRows = []; let keyCounter = 0;
+    Array.from(backwardMap.entries()).forEach(([testCaseId, testEntry]) => { let testStartIndex = flatRows.length; let testRowCount = 0; const testItems = Array.from(testEntry.implementations.entries()); const baseKeyPrefix = `bwd-tc-${testCaseId}`; if (testItems.length === 0) { testRowCount = 1; flatRows.push({ key: `${baseKeyPrefix}-no-impl-${keyCounter++}`, testCaseId, testCaseName: testEntry.testCaseName, testCaseStatus: testEntry.testCaseStatus, implId: "-", implFile: "-", designId: "-", designName: "-", designStatus: "-", reqId: "-", reqName: "-", reqStatus: "-", isFirstTestRow: true, testRowSpan: 1, isFirstImplRow: true, implRowSpan: 1, isFirstDesignRow: true, designRowSpan: 1, isFirstReqRow: true, reqRowSpan: 1 }); } else { testItems.forEach(([implId, implEntry]) => { let implStartIndex = flatRows.length; let implRowCount = 0; const designItems = Array.from(implEntry.designs.entries()); const implKeyPrefix = `${baseKeyPrefix}-impl-${implId}`; if (designItems.length === 0) { implRowCount = 1; flatRows.push({ key: `${implKeyPrefix}-no-design-${keyCounter++}`, testCaseId, testCaseName: testEntry.testCaseName, testCaseStatus: testEntry.testCaseStatus, implId, implFile: implEntry.implFile, designId: "-", designName: "-", designStatus: "-", reqId: "-", reqName: "-", reqStatus: "-", isFirstTestRow: testRowCount === 0, testRowSpan: 0, isFirstImplRow: true, implRowSpan: 1, isFirstDesignRow: true, designRowSpan: 1, isFirstReqRow: true, reqRowSpan: 1 }); testRowCount++; } else { designItems.forEach(([designId, designEntry]) => { let designStartIndex = flatRows.length; let designRowCount = 0; const requirementItems = Array.from(designEntry.requirements.entries()); const designKeyPrefix = `${implKeyPrefix}-design-${designId}`; if (requirementItems.length === 0) { designRowCount = 1; flatRows.push({ key: `${designKeyPrefix}-no-req-${keyCounter++}`, testCaseId, testCaseName: testEntry.testCaseName, testCaseStatus: testEntry.testCaseStatus, implId, implFile: implEntry.implFile, designId, designName: designEntry.designName, designStatus: designEntry.designStatus, reqId: "-", reqName: "-", reqStatus: "-", isFirstTestRow: testRowCount === 0, testRowSpan: 0, isFirstImplRow: implRowCount === 0, implRowSpan: 0, isFirstDesignRow: true, designRowSpan: 1, isFirstReqRow: true, reqRowSpan: 1 }); testRowCount++; implRowCount++; } else { requirementItems.forEach(([reqId, reqEntry], reqIdx) => { flatRows.push({ key: `${designKeyPrefix}-req-${reqId}-${keyCounter++}`, testCaseId, testCaseName: testEntry.testCaseName, testCaseStatus: testEntry.testCaseStatus, implId, implFile: implEntry.implFile, designId, designName: designEntry.designName, designStatus: designEntry.designStatus, reqId, reqName: reqEntry.reqName, reqStatus: reqEntry.reqStatus, isFirstTestRow: testRowCount === 0 && reqIdx === 0, testRowSpan: 0, isFirstImplRow: implRowCount === 0 && reqIdx === 0, implRowSpan: 0, isFirstDesignRow: designRowCount === 0 && reqIdx === 0, designRowSpan: 0, isFirstReqRow: true, reqRowSpan: 1 }); testRowCount++; implRowCount++; designRowCount++; }); if (designStartIndex < flatRows.length && designRowCount > 0) { flatRows[designStartIndex].designRowSpan = designRowCount; flatRows[designStartIndex].isFirstDesignRow = true; } } }); if (implStartIndex < flatRows.length && implRowCount > 0) { flatRows[implStartIndex].implRowSpan = implRowCount; flatRows[implStartIndex].isFirstImplRow = true; } } }); if (testStartIndex < flatRows.length && testRowCount > 0) { flatRows[testStartIndex].testRowSpan = testRowCount; flatRows[testStartIndex].isFirstTestRow = true; } } if (testStartIndex < flatRows.length && !flatRows[testStartIndex].isFirstTestRow) { flatRows[testStartIndex].isFirstTestRow = true; } });
+    return flatRows;
+};
+
+
+// ========================================================================
+// RenderTraceabilityTable Sub-Component
+// Responsible for rendering the interactive traceability table.
+// ========================================================================
+const RenderTraceabilityTable = ({
+    // title prop removed as it wasn't used in final layout
+    rawData, // The raw nested data for this table (baseline or WIP)
+    showActionButtons, // Whether to show view/edit buttons in cells
+    projectId, // Current project ID
+    // projectName prop removed as it wasn't used
+    isWipView = false // Flag indicating if this is the WIP table
+}) => {
     const navigate = useNavigate();
 
-    // --- Internal States ---
+    // --- State Management ---
     const [searchTerm, setSearchTerm] = useState('');
     const [searchTargetType, setSearchTargetType] = useState('req');
     const [activeSearchTerm, setActiveSearchTerm] = useState('');
     const [activeSearchTargetType, setActiveSearchTargetType] = useState(searchTargetType);
+    const [isFiltering, setIsFiltering] = useState(false);
+    const [showUnlinkedOnly, setShowUnlinkedOnly] = useState(false);
+    const [wipStatusFilter, setWipStatusFilter] = useState('all');
     const [traceDirection, setTraceDirection] = useState('forward');
+    const [groupByColumn, setGroupByColumn] = useState('none');
+    const [visibleColumns, setVisibleColumns] = useState({ req: true, design: true, impl: true, test: true });
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
+    const [tableDensity, setTableDensity] = useState('normal');
+    const [showCellDetails, setShowCellDetails] = useState(true);
+    const [isControlsCollapsed, setIsControlsCollapsed] = useState(false);
 
-    // *** NEW State for Grouping and Column Visibility ***
-    const [groupByColumn, setGroupByColumn] = useState('none'); // 'none', 'reqStatus', 'designStatus', 'testCaseStatus'
-    const [visibleColumns, setVisibleColumns] = useState({
-        req: true,
-        design: true,
-        impl: true,
-        test: true,
-    });
-    const [isWipTable, setIsWipTable] = useState(!showActionButtons); // Simple flag based on prop
+    // --- Derived State & Memoized Values ---
+    const defaultViewOptions = useMemo(() => ({
+        direction: 'forward', groupBy: 'none', columns: { req: true, design: true, impl: true, test: true },
+        density: 'normal', details: true, sort: { key: null, direction: 'ascending' }
+    }), []);
 
-    // --- Handlers ---
-    const handleSearchTermChange = useCallback((event) => { setSearchTerm(event.target.value); }, []);
-    const handleTargetTypeChange = useCallback((event) => { setSearchTargetType(event.target.value); }, []);
-    const applySearch = useCallback(() => {
-        setActiveSearchTerm(searchTerm);
-        setActiveSearchTargetType(searchTargetType);
-    }, [searchTerm, searchTargetType]);
-    const clearSearch = useCallback(() => {
-        setSearchTerm(''); setSearchTargetType('req');
-        setActiveSearchTerm(''); setActiveSearchTargetType('req');
-    }, []);
-    const handleViewVersion = useCallback((projId) => { navigate(`/versionVerTrace?project_id=${projId}`); }, [navigate]);
-
-    // *** Handler for Column Visibility Change ***
-    const handleColumnVisibilityChange = useCallback((event) => {
-        const { name, checked } = event.target;
-        setVisibleColumns(prev => ({ ...prev, [name]: checked }));
-    }, []);
-
-    // --- Memoized Data Processing ---
-    const filteredData = useMemo(() =>
-        filterTraceabilityData(rawData, activeSearchTerm, activeSearchTargetType),
-        [rawData, activeSearchTerm, activeSearchTargetType]
-    );
-
-    // Generate initial flat rows with base rowSpans
-    const baseDisplayRows = useMemo(() => {
-        console.log(`[${title}] Generating BASE displayRows. Direction: ${traceDirection}.`);
-        // *** Make sure the correct generate function is called ***
-        return traceDirection === 'forward'
-            ? generateForwardDisplayRows(filteredData)
-            : generateBackwardDisplayRows(filteredData); // Calling the REVISED backward function
-    }, [filteredData, traceDirection, title]);
-
-    // Process rows for Grouping and final display structure
-    const processedRows = useMemo(() => {
-        // --- Grouping Logic (No change needed here) ---
-        if (groupByColumn === 'none') {
-            return baseDisplayRows.map(row => ({ ...row, type: 'data' }));
-        }
-        const groupKey = groupByColumn;
-        if (!groupKey || groupKey === 'none') return baseDisplayRows.map(row => ({ ...row, type: 'data' }));;
-
-        const sortedRows = [...baseDisplayRows].sort((a, b) => {
-            const valA = a[groupKey] || ''; // Handle potential undefined status
-            const valB = b[groupKey] || ''; // Handle potential undefined status
-            // Simple alphabetical sort for status/groups
-            return valA.localeCompare(valB);
-        });
-
-        const groupedRows = [];
-        let currentGroupValue = null;
-        sortedRows.forEach((row, index) => {
-            const rowGroupValue = row[groupKey] || 'N/A'; // Group undefined/missing status as 'N/A'
-            if (index === 0 || rowGroupValue !== currentGroupValue) {
-                currentGroupValue = rowGroupValue;
-                groupedRows.push({
-                    key: `group-header-${groupKey}-${currentGroupValue}-${index}`,
-                    type: 'groupHeader',
-                    groupValue: currentGroupValue,
-                    groupColumn: groupKey
+    const filteredData = useMemo(() => {
+        let filtered = filterTraceabilityData(rawData, activeSearchTerm, activeSearchTargetType);
+        if (isWipView) {
+            if (wipStatusFilter !== 'all') {
+                filtered = filtered.filter(item => {
+                    const hasDesigns = item.Designs && item.Designs.length > 0;
+                    const hasImplementations = hasDesigns && item.Designs.some(d => d.Implementations && d.Implementations.length > 0);
+                    switch (wipStatusFilter) {
+                        case 'missing-design': return item.RequirementID && !hasDesigns;
+                        case 'missing-impl': return hasDesigns && item.Designs.some(d => !d.Implementations || d.Implementations.length === 0);
+                        case 'missing-test': return hasImplementations && item.Designs.some(d => d.Implementations?.some(i => !i.TestCases || i.TestCases.length === 0));
+                        case 'incomplete-chain':
+                            const hasCompleteChain = item.RequirementID &&
+                                hasDesigns &&
+                                item.Designs.every(d => d.Implementations && d.Implementations.length > 0 &&
+                                    d.Implementations.every(i => i.TestCases && i.TestCases.length > 0));
+                            return !hasCompleteChain;
+                        default: return true;
+                    }
                 });
             }
-            groupedRows.push({
-                ...row,
-                type: 'data',
-                // Force rowSpans to 1 when grouping
-                isFirstReqRow: true, reqRowSpan: 1,
-                isFirstDesignRow: true, designRowSpan: 1,
-                isFirstImplRow: true, implRowSpan: 1,
-                isFirstTestRow: true, testRowSpan: 1, // Also force test row span for consistency
+        }
+        return filtered;
+    }, [rawData, activeSearchTerm, activeSearchTargetType, isWipView, wipStatusFilter]);
+
+    const baseDisplayRows = useMemo(() => (
+        traceDirection === 'forward'
+            ? generateForwardDisplayRows(filteredData)
+            : generateBackwardDisplayRows(filteredData)
+    ), [filteredData, traceDirection]);
+
+    const processedRows = useMemo(() => {
+        let processed = [...baseDisplayRows];
+        if (sortConfig.key !== null) {
+            const sortKeyInfo = Object.values(columnKeyMap).find(map => map.sortKey === sortConfig.key);
+            if (sortKeyInfo) {
+                const dataKey = sortKeyInfo.id;
+                processed.sort((a, b) => {
+                    const valA = a[dataKey]; const valB = b[dataKey];
+                    const isANumber = typeof valA === 'number'; const isBNumber = typeof valB === 'number';
+                    const isAValid = valA !== '-' && valA != null; const isBValid = valB !== '-' && valB != null;
+                    if (!isAValid && !isBValid) return 0; if (!isAValid) return 1; if (!isBValid) return -1;
+                    let comparison = 0;
+                    if (isANumber && isBNumber) { comparison = valA - valB; }
+                    else { comparison = String(valA).toLowerCase().localeCompare(String(valB).toLowerCase()); }
+                    return sortConfig.direction === 'ascending' ? comparison : comparison * -1;
+                });
+            }
+        }
+        if (groupByColumn !== 'none') {
+            const groupKeyMap = { 'reqStatus': columnKeyMap.req.status, 'designStatus': columnKeyMap.design.status, 'testCaseStatus': columnKeyMap.test.status };
+            const groupByKeyInData = groupKeyMap[groupByColumn] || groupByColumn;
+            const groupedRows = []; let currentGroupValue = undefined; let groupCounter = 0;
+            processed.sort((a, b) => {
+                const vA = a[groupByKeyInData] || 'N/A'; const vB = b[groupByKeyInData] || 'N/A';
+                if (vA === 'N/A' && vB !== 'N/A') return 1; if (vA !== 'N/A' && vB === 'N/A') return -1;
+                return String(vA).toLowerCase().localeCompare(String(vB).toLowerCase());
             });
+            processed.forEach((row, index) => {
+                const rowGroupValue = row[groupByKeyInData] || 'N/A';
+                if (index === 0 || rowGroupValue !== currentGroupValue) {
+                    currentGroupValue = rowGroupValue;
+                    groupedRows.push({ key: `gh-${groupByKeyInData}-${currentGroupValue}-${groupCounter++}`, type: 'groupHeader', groupValue: currentGroupValue, groupColumn: groupByColumn });
+                }
+                groupedRows.push({ ...row, type: 'data', key: row.key || `gd-${groupByKeyInData}-${index}-${Math.random()}`, isFirstReqRow: true, reqRowSpan: 1, isFirstDesignRow: true, designRowSpan: 1, isFirstImplRow: true, implRowSpan: 1, isFirstTestRow: true, testRowSpan: 1 });
+            });
+            processed = groupedRows;
+        } else {
+            processed = processed.map((row, index) => ({ ...row, type: 'data', key: row.key || `d-${index}-${Math.random()}` }));
+        }
+        processed = processed.map(row => {
+            if (row.type === 'data' && isWipView) {
+                const isUnlinkedForward = traceDirection === 'forward' && (row.designId === '-' || row.implId === '-' || row.testCaseId === '-');
+                const isUnlinkedBackward = traceDirection === 'backward' && (row.implId === '-' || row.designId === '-' || row.reqId === '-');
+                return { ...row, isUnlinked: isUnlinkedForward || isUnlinkedBackward };
+            } return row;
         });
-        return groupedRows;
+        if (isWipView && showUnlinkedOnly) {
+            if (groupByColumn !== 'none') {
+                const finalGroupedRows = []; let currentHeader = null; let groupHasUnlinked = false;
+                for (const row of processed) {
+                    if (row.type === 'groupHeader') {
+                        if (currentHeader && groupHasUnlinked) { finalGroupedRows.push(currentHeader); }
+                        currentHeader = row; groupHasUnlinked = false;
+                    } else if (row.type === 'data' && row.isUnlinked) {
+                        finalGroupedRows.push(row); groupHasUnlinked = true;
+                    }
+                }
+                if (currentHeader && groupHasUnlinked) { finalGroupedRows.push(currentHeader); }
+                processed = finalGroupedRows;
+            } else {
+                processed = processed.filter(row => row.type !== 'data' || row.isUnlinked);
+            }
+        }
+        return processed;
+    }, [baseDisplayRows, sortConfig, groupByColumn, isWipView, traceDirection, showUnlinkedOnly]);
 
-    }, [baseDisplayRows, groupByColumn]);
+    const getDynamicColumnOrder = useCallback((direction) => (
+        direction === 'forward' ? ['req', 'design', 'impl', 'test'] : ['test', 'impl', 'design', 'req']
+    ), []);
+    const columnOrder = useMemo(() => getDynamicColumnOrder(traceDirection), [traceDirection, getDynamicColumnOrder]);
+    const visibleColumnCount = useMemo(() => Object.values(visibleColumns).filter(Boolean).length, [visibleColumns]);
+
+    useEffect(() => {
+        setIsFiltering(!!activeSearchTerm || (isWipView && (wipStatusFilter !== 'all' || showUnlinkedOnly)));
+    }, [activeSearchTerm, isWipView, wipStatusFilter, showUnlinkedOnly]);
+
+    // --- Event Handlers ---
+    const handleSearchTermChange = useCallback((event) => { setSearchTerm(event.target.value); }, []);
+    const handleTargetTypeChange = useCallback((event) => { setSearchTargetType(event.target.value); }, []);
+    const applySearch = useCallback(() => { setActiveSearchTerm(searchTerm); setActiveSearchTargetType(searchTargetType); }, [searchTerm, searchTargetType]);
+    const clearSearch = useCallback(() => { setSearchTerm(''); setSearchTargetType('req'); setActiveSearchTerm(''); setActiveSearchTargetType('req'); if (isWipView) { setWipStatusFilter('all'); setShowUnlinkedOnly(false); } }, [isWipView]);
+    const handleColumnVisibilityChange = useCallback((event) => { const { name, checked } = event.target; setVisibleColumns(prev => ({ ...prev, [name]: checked })); }, []);
+    const handleGroupByChange = useCallback((event) => { setGroupByColumn(event.target.value); }, []);
+    const handleUnlinkedFilterChange = useCallback((event) => { setShowUnlinkedOnly(event.target.checked); }, []);
+    const handleWipStatusFilterChange = useCallback((event) => { setWipStatusFilter(event.target.value); }, []);
+    const requestSort = useCallback((key) => { let direction = 'ascending'; if (sortConfig.key === key && sortConfig.direction === 'ascending') { direction = 'descending'; } setSortConfig({ key, direction }); }, [sortConfig]);
+    const handleDirectionChange = useCallback((direction) => { setTraceDirection(direction); }, []);
+    const handleDensityChange = useCallback((density) => { setTableDensity(density); }, []);
+    const handleShowDetailsChange = useCallback((event) => { setShowCellDetails(event.target.checked); }, []);
+    const handleResetViewOptions = useCallback(() => {
+        setTraceDirection(defaultViewOptions.direction); setGroupByColumn(defaultViewOptions.groupBy); setVisibleColumns(defaultViewOptions.columns);
+        setTableDensity(defaultViewOptions.density); setShowCellDetails(defaultViewOptions.details); setSortConfig(defaultViewOptions.sort);
+    }, [defaultViewOptions]);
+    const toggleControlsCollapse = useCallback(() => { setIsControlsCollapsed(prev => !prev); }, []);
 
 
-    // --- Calculate Visible Column Count (for colSpan) ---
-    const visibleColumnCount = useMemo(() => {
-        return Object.values(visibleColumns).filter(Boolean).length;
-    }, [visibleColumns]);
-
-    // --- renderTableHeaders (No change needed) ---
-    const renderTableHeaders = () => {
-        const headers = traceDirection === 'forward'
-            ? [
-                { key: 'req', label: 'Requirement ID / Name' },
-                { key: 'design', label: 'Design ID / Name' },
-                { key: 'impl', label: 'Code Component ID / Filename' },
-                { key: 'test', label: 'Test Case ID / Name' }
-            ]
-            : [ // Backward
-                { key: 'test', label: 'Test Case ID / Name' },
-                { key: 'impl', label: 'Code Component ID / Filename' },
-                { key: 'design', label: 'Design ID / Name' },
-                { key: 'req', label: 'Requirement ID / Name' }
-            ];
-
+    // --- Render Functions ---
+    const renderWipSummary = () => {
+        if (!isWipView || !processedRows || processedRows.length === 0) return null;
+        const dataRows = processedRows.filter(row => row.type === 'data');
+        if (dataRows.length === 0 && !isFiltering) {
+            if (rawData?.length === 0) {
+                return (<div className="TRACE-wip-summary"> <div className="TRACE-wip-stat TRACE-success"> <div className="TRACE-wip-stat-value">100%</div> <div className="TRACE-wip-stat-label">Complete</div> <small>(No WIP items found)</small> </div> </div>);
+            } return null;
+        }
+        const totalItems = dataRows.length; const totalUnlinkedItems = dataRows.filter(row => row.isUnlinked).length;
+        const percentageComplete = totalItems > 0 ? Math.round(((totalItems - totalUnlinkedItems) / totalItems) * 100) : 100;
         return (
-            <tr>
-                {headers.map(header =>
-                    visibleColumns[header.key] ? <th key={header.key}>{header.label}</th> : null
-                )}
-            </tr>
-        );
+            <div className="TRACE-wip-summary">
+                <div className="TRACE-wip-stat"> <div className="TRACE-wip-stat-value">{totalItems}</div> <div className="TRACE-wip-stat-label">Displayed Items</div> </div>
+                <div className={`TRACE-wip-stat ${totalUnlinkedItems > 0 ? 'TRACE-warning' : 'TRACE-success'}`}> <div className="TRACE-wip-stat-value">{totalUnlinkedItems}</div> <div className="TRACE-wip-stat-label">Unlinked</div> </div>
+                <div className={`TRACE-wip-stat ${percentageComplete < 70 ? 'TRACE-warning' : (percentageComplete < 100 ? 'TRACE-neutral' : 'TRACE-success')}`}> <div className="TRACE-wip-stat-value">{percentageComplete}%</div> <div className="TRACE-wip-stat-label">Linked</div> </div>
+            </div>);
     };
 
-    // --- renderTableBody (No change needed from previous version) ---
+    const renderTableHeaders = () => {
+        return (<tr> {columnOrder.map(colKey => { if (!visibleColumns[colKey]) return null; const columnConfig = columnKeyMap[colKey]; const isSortable = columnConfig && columnConfig.sortKey; const isActiveSortCol = sortConfig.key === columnConfig?.sortKey; return (<th key={colKey} className={`TRACE-th-${colKey} ${isSortable ? 'TRACE-sortable' : ''} ${isActiveSortCol ? 'TRACE-sorted' : ''}`} onClick={() => isSortable && requestSort(columnConfig.sortKey)} title={isSortable ? `Click to sort by ${headerLabels[colKey]}` : headerLabels[colKey]}> {headerLabels[colKey]} {isSortable && (<span className="TRACE-sort-icon"> {isActiveSortCol ? (sortConfig.direction === 'ascending' ? <FontAwesomeIcon icon={faSortUp} /> : <FontAwesomeIcon icon={faSortDown} />) : <FontAwesomeIcon icon={faSort} />} </span>)} </th>); })} </tr>);
+    };
+
+    const renderCellContent = (row, colKey) => {
+        const cfg = columnKeyMap[colKey]; if (!cfg) return <span className="TRACE-placeholder">-</span>; const id = row[cfg.id]; const name = row[cfg.name]; const status = cfg.status ? row[cfg.status] : undefined;
+        if (id === "-" || id == null) { return <span className="TRACE-placeholder">-</span>; } let prefix = ''; if (colKey === 'req') prefix = 'REQ-'; else if (colKey === 'design') prefix = 'DE-'; else if (colKey === 'impl') prefix = 'IMP-'; else if (colKey === 'test') prefix = 'TC-';
+        let displayName = ''; if (showCellDetails) { if (colKey === 'impl') { displayName = name && name !== 'N/A' ? name : ''; } else { const defaultNamePattern = `${colKey.charAt(0).toUpperCase() + colKey.slice(1)} ${id}`; displayName = name && name !== defaultNamePattern && name !== '-' ? name : ''; } }
+        const renderStatusBadge = (st) => { if (!st || st === "-") return null; let statusClass = 'TRACE-status-neutral'; const lowerStatus = String(st).toLowerCase(); if (['approved', 'passed', 'complete', 'verified', 'validated', 'baseline', 'done', 'closed'].includes(lowerStatus)) { statusClass = 'TRACE-status-positive'; } else if (['rejected', 'failed', 'error', 'blocked', 'cancelled', 'invalid'].includes(lowerStatus)) { statusClass = 'TRACE-status-negative'; } return (<span className={`TRACE-status-badge ${statusClass}`}>{st}</span>); };
+        return (<> <div className="TRACE-item-id">{`${prefix}${id}`}</div> {displayName && <div className="TRACE-item-name">{displayName}</div>} {showCellDetails && status !== undefined && renderStatusBadge(status)}
+            {showActionButtons && id !== "-" && (<div className="TRACE-inline-actions">
+                {colKey === 'req' && (<> <button onClick={() => navigate(`/ViewEditReq?requirement_id=${id}`)} title={`View ${prefix}${id}`} className="TRACE-action-button TRACE-action-view"><FontAwesomeIcon icon={faEye} /></button> <button onClick={() => navigate(`/UpdateRequirement?project_id=${projectId}&requirement_id=${id}`)} title={`Edit ${prefix}${id}`} className="TRACE-action-button TRACE-action-edit"><FontAwesomeIcon icon={faPen} /></button> </>)}
+                {colKey === 'design' && (<> <button onClick={() => navigate(`/ViewDesign?project_id=${projectId}&design_id=${id}`)} title={`View ${prefix}${id}`} className="TRACE-action-button TRACE-action-view"><FontAwesomeIcon icon={faEye} /></button> <button onClick={() => navigate(`/UpdateDesign?project_id=${projectId}&design_id=${id}`)} title={`Edit ${prefix}${id}`} className="TRACE-action-button TRACE-action-edit"><FontAwesomeIcon icon={faPen} /></button> </>)}
+                {colKey === 'impl' && (<span className="TRACE-placeholder" style={{ fontSize: '0.8em', color: 'var(--trace-text-light)' }}></span>)}
+                {colKey === 'test' && (<> <button className="TRACE-action-button TRACE-action-view" onClick={() => navigate(`/TestcaseDetail?testcase_id=${id}&project_id=${projectId}`, { state: { testcase: { testcase_id: id, testcase_name: name, testcase_status: status, project_id: projectId }, projectId } })} title={`View ${prefix}${id}`}><FontAwesomeIcon icon={faEye} /></button> <button className="TRACE-action-button TRACE-action-edit" onClick={() => navigate(`/UpdateTestcase?testcase_id=${id}&project_id=${projectId}`)} title={`Edit ${prefix}${id}`}><FontAwesomeIcon icon={faPen} /></button> </>)}
+            </div>)} </>);
+    };
+
     const renderTableBody = () => {
-        if (!processedRows || processedRows.length === 0) {
-            return <tr><td colSpan={visibleColumnCount || 1} style={{ textAlign: 'center' }}>No data available for this section or filter/group criteria.</td></tr>;
-        }
-
-        const getRowSpan = (span) => span > 0 ? span : 1;
-
-        const renderStatus = (status) => {
-            if (!status || status === "-") return null;
-            return (<><br /><span>Status: {status}</span></>);
-        };
-
-        // Helper to render a cell's content
-        const renderCellContent = (row, colKey) => {
-            const colConfig = columnKeyMap[colKey];
-            if (!colConfig) return '-';
-
-            const id = row[colConfig.id];
-            const name = row[colConfig.name];
-            const status = colConfig.status ? row[colConfig.status] : undefined;
-
-            // Check if the primary ID for this cell is missing or placeholder
-            if (id === "-" || id === undefined || id === null) {
-                // If ID is missing, just return placeholder, don't try to render details/buttons
-                return "-";
-            }
-
-            let idPrefix = '';
-            if (colKey === 'req') idPrefix = 'REQ-';
-            else if (colKey === 'design') idPrefix = 'DE-';
-            else if (colKey === 'impl') idPrefix = 'IMP-';
-            else if (colKey === 'test') idPrefix = 'TC-';
-
-            let displayName = '';
-            if (colKey === 'impl') {
-                displayName = name && name !== 'N/A' ? name : '';
-            } else {
-                // Construct the default name pattern (e.g., "Requirement 123")
-                const defaultNamePattern = `${colKey.charAt(0).toUpperCase() + colKey.slice(1)} ${id}`;
-                // Display name only if it exists and is different from the default pattern and not "-"
-                displayName = name && name !== defaultNamePattern && name !== '-' ? name : '';
-            }
-
-
-            return (
-                <>
-                    <div className="reqid-trace">{`${idPrefix}${id}`}</div>
-                    {displayName && <div className="reqname-trace">{displayName}</div>}
-                    {status !== undefined && renderStatus(status)}
-                    {/* Action Buttons (View/Edit) */}
-                    {showActionButtons && id !== "-" && ( // Redundant check for id !== "-", already handled above
-                        <div className="action-buttons-cell">
-                            {colKey === 'req' && <>
-                                <button onClick={() => navigate(`/ViewEditReq?requirement_id=${id}`)} title={`View REQ-${id}`}>View</button>
-                                <button onClick={() => navigate(`/UpdateRequirement?project_id=${projectId}&requirement_id=${id}`)} title={`Edit REQ-${id}`}>Edit</button>
-                            </>}
-                            {colKey === 'design' && <>
-                                <button onClick={() => navigate(`/ViewDesign?project_id=${projectId}&design_id=${id}`)} title={`View DE-${id}`}>View</button>
-                                <button onClick={() => navigate(`/UpdateDesign?project_id=${projectId}&design_id=${id}`)} title={`Edit DE-${id}`}>Edit</button>
-                            </>}
-                            {colKey === 'test' && <>
-                                <button className="testcase-view" onClick={() => {
-                                    const testcaseDataToSend = {
-                                        testcase_id: id,
-                                        testcase_name: row[colConfig.name], // Use row[colConfig.name] to get original name
-                                        testcase_status: status,
-                                        project_id: projectId
-                                    };
-                                    navigate(
-                                        `/TestcaseDetail?testcase_id=${id}&project_id=${projectId}`,
-                                        { state: { testcase: testcaseDataToSend, projectId: projectId } }
-                                    );
-                                }} title={`View TC-${id}`}>View</button>
-                                <button className="testcase-edit" onClick={() => navigate(`/UpdateTestcase?testcase_id=${id}&project_id=${projectId}`)} title={`Edit TC-${id}`}>Edit</button>
-                            </>}
-                            {/* No View/Edit for Implementation currently */}
-                        </div>
-                    )}
-                </>
-            );
-        };
-
-        const columnOrder = traceDirection === 'forward'
-            ? ['req', 'design', 'impl', 'test']
-            : ['test', 'impl', 'design', 'req'];
-
+        if (!processedRows || processedRows.length === 0) { return (<tr> <td colSpan={visibleColumnCount || 1} className="TRACE-no-data"> {isFiltering ? "No items match the current filters." : (rawData?.length === 0 ? "No traceability data found for this project." : "No data available for the current view.")} </td> </tr>); }
+        const getRowSpanValue = (span) => (span > 0 ? span : 1);
         return processedRows.map((row) => {
-            // Render Group Header Row
-            if (row.type === 'groupHeader') {
-                let groupLabel = 'Group';
-                // Simplified labels
-                if (row.groupColumn === 'reqStatus') groupLabel = 'Req Status';
-                else if (row.groupColumn === 'designStatus') groupLabel = 'Design Status';
-                else if (row.groupColumn === 'testCaseStatus') groupLabel = 'Test Status';
-                return (
-                    <tr key={row.key} className="group-header-row">
-                        <td colSpan={visibleColumnCount || 1}>
-                            {groupLabel}: <strong>{row.groupValue || 'N/A'}</strong>
-                        </td>
-                    </tr>
-                );
-            }
-
-            // Render Data Row
-            const useRowSpan = groupByColumn === 'none'; // Determine if rowSpan should be used
-
-            return (
-                <tr key={row.key}>
-                    {columnOrder.map(colKey => {
-                        if (!visibleColumns[colKey]) return null; // Skip hidden columns
-
-                        // Determine if cell should render based on rowSpan logic (only when NOT grouping)
-                        let shouldRenderCell = true;
-                        if (useRowSpan) {
-                            // Apply original logic for forward direction
-                            if (traceDirection === 'forward') {
-                                if (colKey === 'req' && !row.isFirstReqRow) shouldRenderCell = false;
-                                else if (colKey === 'design' && !row.isFirstDesignRow) shouldRenderCell = false;
-                                else if (colKey === 'impl' && !row.isFirstImplRow) shouldRenderCell = false;
-                                // Test Case always renders its cell in forward (no span)
-                            }
-                            // Apply revised logic for backward direction (using flags set by new generateBackward)
-                            else { // traceDirection === 'backward'
-                                if (colKey === 'test' && !row.isFirstTestRow) shouldRenderCell = false;
-                                else if (colKey === 'impl' && !row.isFirstImplRow) shouldRenderCell = false;
-                                else if (colKey === 'design' && !row.isFirstDesignRow) shouldRenderCell = false;
-                                // Requirement always renders its cell in backward (no span needed)
-                            }
-                        } // End if(useRowSpan)
-
-                        if (shouldRenderCell) {
-                            // Calculate rowSpan ONLY if grouping is OFF
-                            let cellRowSpan = 1;
-                            if (useRowSpan) {
-                                // Use the rowSpan values calculated by the generate functions
-                                if (colKey === 'req') cellRowSpan = getRowSpan(row.reqRowSpan); // Relevant for Forward
-                                else if (colKey === 'design') cellRowSpan = getRowSpan(row.designRowSpan); // Relevant for Both
-                                else if (colKey === 'impl') cellRowSpan = getRowSpan(row.implRowSpan); // Relevant for Both
-                                else if (colKey === 'test') cellRowSpan = getRowSpan(row.testRowSpan); // Relevant for Backward
-                            }
-
-                            const cellClass = columnKeyMap[colKey]?.status ? `${colKey}-cell` : `${colKey}-cell no-status`;
-
-                            return (
-                                <td key={colKey} rowSpan={cellRowSpan} className={cellClass}>
-                                    {renderCellContent(row, colKey)}
-                                </td>
-                            );
-                        }
-                        return null; // Cell is spanned by a previous row or hidden
-                    })}
-                </tr>
-            );
+            if (row.type === 'groupHeader') { let groupLabel = columnKeyMap[row.groupColumn]?.label || 'Group'; return (<tr key={row.key} className="TRACE-group-header"> <td colSpan={visibleColumnCount || 1}> <FontAwesomeIcon icon={faLayerGroup} className="TRACE-group-icon" /> {groupLabel}: <strong>{row.groupValue || 'N/A'}</strong> </td> </tr>); }
+            const rowClasses = [`TRACE-density-${tableDensity}`, row.isUnlinked ? 'TRACE-unlinked' : '',].filter(Boolean).join(' ');
+            const useRowSpanning = groupByColumn === 'none';
+            return (<tr key={row.key} className={rowClasses}> {columnOrder.map(colKey => { if (!visibleColumns[colKey]) return null; let shouldRenderCell = true; let rowSpan = 1; if (useRowSpanning) { if (colKey === 'req' && !row.isFirstReqRow) shouldRenderCell = false; else if (colKey === 'design' && !row.isFirstDesignRow) shouldRenderCell = false; else if (colKey === 'impl' && !row.isFirstImplRow) shouldRenderCell = false; else if (colKey === 'test' && !row.isFirstTestRow) shouldRenderCell = false; if (shouldRenderCell) { if (colKey === 'req') rowSpan = getRowSpanValue(row.reqRowSpan); else if (colKey === 'design') rowSpan = getRowSpanValue(row.designRowSpan); else if (colKey === 'impl') rowSpan = getRowSpanValue(row.implRowSpan); else if (colKey === 'test') rowSpan = getRowSpanValue(row.testRowSpan); } } if (shouldRenderCell) { const cellClasses = `TRACE-cell TRACE-cell-${colKey}`; return (<td key={colKey} rowSpan={rowSpan} className={cellClasses}> {renderCellContent(row, colKey)} </td>); } return null; })} </tr>);
         });
-    }; // --- End renderTableBody ---
+    };
 
-    const isFiltering = !!activeSearchTerm;
-
-    // --- Render JSX for this table section (No change needed) ---
-    return (
-        <div className="traceability-section">
-            {/* Controls Section */}
-            <div className="traceability-controls individual-controls">
-                {/* Search UI */}
-                <div className="control-group search-group" >
-                    <h4 className="control-group-title"><i className="fas fa-search"></i> Search This Section</h4>
-                    <div className="control-row">
-                        <select name="searchTargetType" value={searchTargetType} onChange={handleTargetTypeChange} aria-label={`Select search target type for ${title}`} className="search-select">
-                            <option value="req">Requirement</option>
-                            <option value="design">Design</option>
-                            <option value="impl">Code Component</option>
-                            <option value="test">Test Case</option>
-                        </select>
-                        <input type="text" value={searchTerm} onChange={handleSearchTermChange} placeholder={`Search`} className="search-input-traceability" aria-label={`Search term for ${title}`} />
-                        <button onClick={applySearch} className='filter-button small-button'>Apply</button>
-                        <button onClick={clearSearch} className='clear-button small-button'>Clear</button>
-                    </div>
+    const renderControlsArea = () => {
+        return (
+            <div className={`TRACE-controls-area ${isControlsCollapsed ? 'TRACE-controls-collapsed' : ''}`}>
+                <div className="TRACE-controls-header" onClick={toggleControlsCollapse} role="button" tabIndex={0} aria-expanded={!isControlsCollapsed}>
+                    <h3 className="TRACE-controls-title"> <FontAwesomeIcon icon={faSlidersH} /> Controls & Options </h3>
+                    <button onClick={(e) => { e.stopPropagation(); toggleControlsCollapse(); }} className="TRACE-collapse-button" title={isControlsCollapsed ? 'Expand Controls' : 'Collapse Controls'} aria-expanded={!isControlsCollapsed}> <FontAwesomeIcon icon={isControlsCollapsed ? faChevronDown : faChevronUp} /> <span>{isControlsCollapsed ? 'Show' : 'Hide'}</span> </button>
                 </div>
-
-                {/* Direction Switch */}
-                {!isWipTable && (
-                    <div className="control-group direction-group" >
-                        <h4 className="control-group-title"><i className="fas fa-exchange-alt"></i> View Direction</h4>
-                        <div className="control-row">
-                            <button onClick={() => setTraceDirection('forward')} disabled={traceDirection === 'forward'} className={`direction-button small-button ${traceDirection === 'forward' ? 'active' : ''}`} title="View forward trace">
-                                ▶ Forward
-                            </button>
-                            <button onClick={() => setTraceDirection('backward')} disabled={traceDirection === 'backward'} className={`direction-button small-button ${traceDirection === 'backward' ? 'active' : ''}`} title="View backward trace">
-                                ◀ Backward
-                            </button>
+                <div className="TRACE-controls-content">
+                    <div className="TRACE-control-card"> <div className="TRACE-control-group TRACE-search-group"> <h4 className="TRACE-control-group-title"><FontAwesomeIcon icon={faSearch} /> Search</h4> <div className="TRACE-control-row"> <select name="searchTargetType" value={searchTargetType} onChange={handleTargetTypeChange} aria-label="Search target type" className="TRACE-select"> <option value="req">Requirement</option> <option value="design">Design</option> <option value="impl">Code</option> <option value="test">Test Case</option> </select> <input type="text" value={searchTerm} onChange={handleSearchTermChange} placeholder="Search ID or Name..." className="TRACE-input" aria-label="Search term" /> <button onClick={applySearch} className="TRACE-button" title="Apply search"><FontAwesomeIcon icon={faFilter} /> Apply</button> <button onClick={clearSearch} className="TRACE-button TRACE-button-clear" title="Clear search & filters"><FontAwesomeIcon icon={faTimes} /> Clear</button> </div> </div> </div>
+                    {isWipView && (<div className="TRACE-control-card"> <div className="TRACE-control-group TRACE-wip-controls-group"> <h4 className="TRACE-control-group-title"><FontAwesomeIcon icon={faFilter} /> Work in progress Filter</h4> <div className="TRACE-control-row"> <select value={wipStatusFilter} onChange={handleWipStatusFilterChange} className="TRACE-select" aria-label="Filter WIP status"> <option value="all">All Items</option> <option value="missing-design">Req - Missing Design</option> <option value="missing-impl">Design - Missing Impl</option> <option value="missing-test">Impl - Missing Test</option> <option value="incomplete-chain">Any Incomplete Chain</option> </select> <label className="TRACE-checkbox-label TRACE-unlinked-filter-label"> <input type="checkbox" checked={showUnlinkedOnly} onChange={handleUnlinkedFilterChange} /> Show Unlinked Only </label> </div> </div> </div>)}
+                    <div className="TRACE-control-card"> <div className="TRACE-control-group TRACE-view-options-group"> <div className="TRACE-view-options-header"> <h4 className="TRACE-control-group-title"><FontAwesomeIcon icon={faEye} /> View Options</h4> <button onClick={handleResetViewOptions} className="TRACE-button TRACE-button-reset" title="Reset all view options to default"> <FontAwesomeIcon icon={faTimes} /> Reset View </button> </div>
+                        <div className="TRACE-view-options-subgroup"> <div className="TRACE-control-row"> <div className="TRACE-option-item"> <label className="TRACE-control-label" title="Change trace direction"> <FontAwesomeIcon icon={faArrowsLeftRight} className="TRACE-option-label-icon" /> Direction: </label> <button onClick={() => handleDirectionChange('forward')} disabled={traceDirection === 'forward'} className={`TRACE-button TRACE-button-direction ${traceDirection === 'forward' ? 'active' : ''}`} title="Forward (REQ -> TEST)"><FontAwesomeIcon icon={faChevronRight} /> Fwd</button> <button onClick={() => handleDirectionChange('backward')} disabled={traceDirection === 'backward'} className={`TRACE-button TRACE-button-direction ${traceDirection === 'backward' ? 'active' : ''}`} title="Backward (TEST -> REQ)"><FontAwesomeIcon icon={faChevronRight} rotation={180} /> Bwd</button> </div> </div> </div>
+                        <div className="TRACE-view-options-subgroup"> <div className="TRACE-control-row TRACE-visibility-row"> <div className="TRACE-option-item TRACE-option-item-columns"> <label className="TRACE-control-label" title="Show or hide columns"> <FontAwesomeIcon icon={faColumns} className="TRACE-option-label-icon" /> Columns: </label> <div className="TRACE-checkbox-group"> {['req', 'design', 'impl', 'test'].map(colKey => (<label key={colKey} className="TRACE-checkbox-label" title={`Show/Hide ${headerLabels[colKey]}`}> <input type="checkbox" name={colKey} checked={visibleColumns[colKey]} onChange={handleColumnVisibilityChange} className="TRACE-checkbox" /> {headerLabels[colKey]} </label>))} </div> </div> <div className="TRACE-option-item"> <label className="TRACE-checkbox-label" title="Show/Hide cell details (Name, Status)"> </label> </div> </div>
                         </div>
                     </div>
-                )}
-
-                {/* Column Visibility Control */}
-                <div className="control-group visibility-group">
-                    <h4 className="control-group-title"><i className="fas fa-eye"></i> Group by Columns</h4>
-                    <div className="control-row checkbox-group">
-                        {(traceDirection === 'forward' ? ['req', 'design', 'impl', 'test'] : ['test', 'impl', 'design', 'req']).map(colKey => {
-                            let label = '';
-                            if (colKey === 'req') label = 'Requirement';
-                            else if (colKey === 'design') label = 'Design';
-                            else if (colKey === 'impl') label = 'Code Component';
-                            else if (colKey === 'test') label = 'Test Case';
-                            return (
-                                <label key={colKey} className="visibility-checkbox">
-                                    <input type="checkbox" name={colKey} checked={visibleColumns[colKey]} onChange={handleColumnVisibilityChange} /> {label}
-                                </label>
-                            );
-                        })}
                     </div>
-                </div>
+                </div> {/* End TRACE-controls-content */}
             </div>
-            {/* End Controls */}
+        );
+    }
 
-            {/* Message when no rows */}
-            {(!processedRows || processedRows.length === 0) && (
-                <div className="no-data-message">
-                    {isFiltering ? "No items match your current filter criteria." : isWipTable ? "No work items found or data not linked." : "No data in baseline or data not linked."}
-                </div>
-            )}
-
-            {/* Table container */}
-            {processedRows && processedRows.length > 0 && (
-                <div className="traceability-table-container">
-                    {/* Action Buttons Container */}
-                    {showActionButtons && (
-                        <div className="action-buttons-container main-actions">
-                            <button className='verify-trace' onClick={() => navigate(`/createVerifyTrace?project_id=${projectId}`)}> Create Verification </button>
-                            <button className='view-verify-trace' onClick={() => navigate(`/viewVerifyTrace?project_id=${projectId}`)}> View Verification </button>
-                            <button className='baseline-trace' onClick={() => navigate(`/viewBaselineTrace?project_id=${projectId}`)}> Set Baseline </button>
-                            <button className='version-ver-trace' onClick={() => handleViewVersion(projectId)}>History (Baseline)</button>
-                            <button className='current-baseline-trace' onClick={() => navigate(`/currentBaselineTrace?project_id=${projectId}`)}>View Current Baseline</button>
-                        </div>
-                    )}
-                    {/* Table */}
-                    <table className="traceability-table">
-                        <thead>{renderTableHeaders()}</thead>
-                        <tbody>{renderTableBody()}</tbody>
-                    </table>
-                </div>
-            )}
+    // ----- JSX Return for RenderTraceabilityTable -----
+    return (
+        <div className={`TRACE-table-section ${isWipView ? 'TRACE-wip-section' : 'TRACE-baseline-section'}`}>
+            {renderControlsArea()}
+            {isWipView && renderWipSummary()}
+            <div className="TRACE-table-container">
+                <table className="TRACE-table">
+                    <thead>{renderTableHeaders()}</thead>
+                    <tbody>{renderTableBody()}</tbody>
+                </table>
+            </div>
         </div>
     );
 };
 
 
-// ===== TraceabilityPage Component (เหมือนเดิมจากเวอร์ชั่นก่อนหน้า) =====
+// ========================================================================
+// Main TraceabilityPage Component
+// Handles overall page structure, data fetching, tabs, and tutorial.
+// ========================================================================
 const TraceabilityPage = () => {
-    // ... state, hooks, useEffect (mostly unchanged) ...
+    // --- State ---
     const [baselineData, setBaselineData] = useState([]);
-    const [nonBaselineData, setNonBaselineData] = useState([]); // Data for WIP
+    const [nonBaselineData, setNonBaselineData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const [fetchError, setFetchError] = useState(null);
     const [projectName, setProjectName] = useState('');
+    const [activeTab, setActiveTab] = useState('baseline');
+    const [runTutorial, setRunTutorial] = useState(false);
+
+    // --- Hooks ---
     const location = useLocation();
+    const navigate = useNavigate();
     const queryParams = new URLSearchParams(location.search);
     const projectId = queryParams.get("project_id");
+    const isMountedRef = useRef(true);
 
-    useEffect(() => {
-        if (!projectId) {
-            setFetchError("Project ID is missing from the URL.");
-            setIsLoading(false);
-            return;
+    // --- Event Handlers ---
+    const handleRestartTutorial = () => { setRunTutorial(true); };
+    const handleJoyrideCallback = (data) => {
+        const { status } = data;
+        if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
+            setRunTutorial(false);
+            localStorage.setItem('traceabilityPageTutorialShown', 'true');
         }
-        const fetchAllData = async () => {
-            setIsLoading(true);
-            setFetchError(null);
-            setBaselineData([]);
-            setNonBaselineData([]);
-            setProjectName('');
+    };
 
-            const projectDetailsEndpoint = `http://localhost:3001/project/${projectId}`;
-            const baselineEndpoint = `http://localhost:3001/traceability`; // Assumed API for Baseline
-            const nonBaselineEndpoint = `http://localhost:3001/not-linked-non-baseline`; // Assumed API for WIP
-
-            try {
-                const results = await Promise.allSettled([
-                    axios.get(projectDetailsEndpoint),
-                    axios.get(baselineEndpoint, { params: { projectId } }),
-                    axios.get(nonBaselineEndpoint, { params: { projectId } })
-                ]);
-
-                // Process Project Details
-                if (results[0].status === 'fulfilled' && results[0].value.data?.project_name) {
-                    setProjectName(results[0].value.data.project_name);
-                } else {
-                    console.warn("Could not fetch project name or project name is missing.");
-                    setProjectName('Unknown Project');
-                    if (results[0].status === 'rejected') {
-                        console.error("Error fetching project details:", results[0].reason);
-                    }
-                }
-
-                // Process Baseline Data
-                if (results[1].status === 'fulfilled' && Array.isArray(results[1].value.data)) {
-                    setBaselineData(results[1].value.data);
-                } else {
-                    console.warn("Baseline data is not an array or fetch failed.");
-                    setBaselineData([]);
-                    if (results[1].status === 'rejected') {
-                        console.error("Error fetching baseline data:", results[1].reason);
-                    }
-                }
-
-                // Process Non-Baseline (WIP) Data
-                if (results[2].status === 'fulfilled' && Array.isArray(results[2].value.data)) {
-                    setNonBaselineData(results[2].value.data);
-                } else {
-                    console.warn("Non-baseline (WIP) data is not an array or fetch failed.");
-                    setNonBaselineData([]);
-                    if (results[2].status === 'rejected') {
-                        console.error("Error fetching non-baseline data:", results[2].reason);
-                    }
-                }
-
-                if (results.some(r => r.status === 'rejected')) {
-                    // Don't necessarily set a global fetch error if only one part failed,
-                    // but log it. The component will show "No data" for the failed part.
-                    // setFetchError("Failed to fetch some traceability data. Check console.");
-                    console.error("One or more traceability fetches failed.");
-                }
-
-            } catch (err) {
-                console.error("Unexpected error fetching traceability data:", err);
-                setFetchError(`An unexpected error occurred: ${err.message}`);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchAllData();
+    // --- Data Fetching ---
+    const fetchData = useCallback(async (refresh = false) => {
+        if (!projectId) {
+            setFetchError("Project ID is missing in the URL."); setIsLoading(false); return;
+        }
+        if (refresh) { setIsRefreshing(true); } else { setIsLoading(true); } setFetchError(null);
+        const projectDetailsEndpoint = `http://localhost:3001/project/${projectId}`;
+        const baselineEndpoint = `http://localhost:3001/traceability`;
+        const nonBaselineEndpoint = `http://localhost:3001/not-linked-non-baseline`;
+        try {
+            const results = await Promise.allSettled([axios.get(projectDetailsEndpoint), axios.get(baselineEndpoint, { params: { projectId } }), axios.get(nonBaselineEndpoint, { params: { projectId } })]);
+            if (!isMountedRef.current) return; let currentFetchError = null;
+            if (results[0].status === 'fulfilled' && results[0].value.data?.project_name) { setProjectName(results[0].value.data.project_name); }
+            else { setProjectName(`Project ${projectId}`); if (results[0].status === 'rejected') { console.error("Project details fetch error:", results[0].reason); currentFetchError = "Failed to load project details."; } }
+            if (results[1].status === 'fulfilled' && Array.isArray(results[1].value.data)) { setBaselineData(results[1].value.data); }
+            else { setBaselineData([]); const errorMsg = results[1].reason?.response?.data?.message || results[1].reason?.message || "Failed to load Traceability Record data"; console.error("Baseline fetch error:", results[1].reason); currentFetchError = currentFetchError ? `${currentFetchError} & Record` : errorMsg; }
+            if (results[2].status === 'fulfilled' && Array.isArray(results[2].value.data)) { setNonBaselineData(results[2].value.data); }
+            else { setNonBaselineData([]); const errorMsg = results[2].reason?.response?.data?.message || results[2].reason?.message || "Failed to load Work In Progress data"; console.error("WIP fetch error:", results[2].reason); currentFetchError = currentFetchError ? `${currentFetchError} & WIP` : errorMsg; }
+            setFetchError(currentFetchError);
+        } catch (err) { if (isMountedRef.current) { console.error("General fetch error:", err); setFetchError(`A network or workspace error occurred: ${err.message}. Please check connection or try again.`); setProjectName(`Project ${projectId}`); setBaselineData([]); setNonBaselineData([]); } }
+        finally { if (isMountedRef.current) { setIsLoading(false); setIsRefreshing(false); } }
     }, [projectId]);
 
-    if (isLoading) return <div className="loading-message"><p>Loading Traceability Data...</p></div>;
-    if (fetchError && !isLoading) return <div className="error-message">{fetchError}</div>; // Show critical errors
-    if (!projectName && !isLoading) return <div className="error-message">Project details not found for ID: {projectId}.</div>
+    // --- Effects ---
+    useEffect(() => {
+        isMountedRef.current = true; fetchData();
+        const tutorialShown = localStorage.getItem('traceabilityPageTutorialShown');
+        if (!tutorialShown) { const timer = setTimeout(() => { if (isMountedRef.current) { setRunTutorial(true); } }, 700); return () => clearTimeout(timer); }
+        return () => { isMountedRef.current = false; };
+    }, [fetchData]);
 
+    // --- Conditional Rendering ---
+    if (isLoading && !isRefreshing) { return (<div className="TRACE-loading"><FontAwesomeIcon icon={faSpinner} spin size="3x" /><p>Loading Traceability Data...</p></div>); }
+    if (!projectId) { return (<div className="TRACE-error critical"><FontAwesomeIcon icon={faExclamationTriangle} /> Error: Project ID is missing. Cannot load traceability page. Please ensure you accessed this page via a valid project link.</div>); }
+
+    // --- JSX Return ---
     return (
-        <div className="traceability-container">
-            {/* Centered Main Title */}
-            <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>Traceability Matrix: {projectName}</h1>
-
-            {/* --- Baseline Table Section --- */}
-            <h2 className="section-title">
-                Traceability Record (Baselining)
-            </h2>
-            <RenderTraceabilityTable
-                title="Traceability Baselining"
-                rawData={baselineData}
-                showActionButtons={true}
-                projectId={projectId}
-                projectName={projectName}
+        <div className="TRACE-page-wrapper">
+            {/* --- Tutorial Component --- */}
+            <Joyride
+                steps={tutorialSteps} run={runTutorial} continuous showProgress showSkipButton
+                styles={{ options: { zIndex: 10000, arrowColor: 'var(--trace-primary)', backgroundColor: 'var(--trace-bg-primary)', primaryColor: 'var(--trace-primary)', textColor: 'var(--trace-text-primary)' }, tooltipContainer: { textAlign: "left" }, buttonNext: { backgroundColor: "var(--trace-primary)" }, buttonBack: { marginRight: 10 } }}
+                callback={handleJoyrideCallback}
             />
 
-            <hr className="section-divider" />
+            {/* --- Page Header --- */}
+            <div className="TRACE-enterprise-header">
+                <div className="TRACE-header-top">
+                    <div className="TRACE-project-info">
+                        <div className="TRACE-project-breadcrumb"> <FontAwesomeIcon icon={faHome} /> / <span onClick={() => navigate('/projects')} className="TRACE-breadcrumb-link">Projects</span> / <span>{projectName || `Project ${projectId}`}</span> </div>
+                        <div className="TRACE-project-title">
+                            <h1 className="TRACE-project-name">{projectName || `Project ${projectId}`}</h1>
+                            <span className="TRACE-badge"><FontAwesomeIcon icon={faLink} /> TRACEABILITY</span>
+                        </div>
+                    </div>
+                    <div className="TRACE-header-actions">
+                        <button onClick={handleRestartTutorial} className="TRACE-tutorial-button" title="Show Tutorial" style={{ color: 'white', fontSize: 'var(--trace-font-size-lg)' }}>
+                            <FontAwesomeIcon icon={faQuestionCircle} />
+                        </button>
+                    </div>
+                </div>
 
-            {/* --- Work in Progress Table Section --- */}
-            <h2 className="section-title">
-                Traceability Matrix (Work In Progress)
-            </h2>
-            <RenderTraceabilityTable
-                title="Traceability Matrix (Work in Progress)"
-                rawData={nonBaselineData}
-                showActionButtons={false}
-                projectId={projectId}
-                projectName={projectName}
-            />
+                {/* Tab Bar with Baseline Actions */}
+                <div className="TRACE-header-tab-bar">
+                    <div className={`TRACE-header-tab ${activeTab === 'baseline' ? 'TRACE-active' : ''}`} onClick={() => !isLoading && !isRefreshing && setActiveTab('baseline')} role="tab" aria-selected={activeTab === 'baseline'} tabIndex={0} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && !isLoading && !isRefreshing && setActiveTab('baseline')}>
+                        <FontAwesomeIcon icon={faTable} className="TRACE-tab-icon" /> Traceability Record 
+                    </div>
+                    <div className={`TRACE-header-tab ${activeTab === 'wip' ? 'TRACE-active' : ''}`} onClick={() => !isLoading && !isRefreshing && setActiveTab('wip')} role="tab" aria-selected={activeTab === 'wip'} tabIndex={0} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && !isLoading && !isRefreshing && setActiveTab('wip')}>
+                        <FontAwesomeIcon icon={faProjectDiagram} className="TRACE-tab-icon" /> Work Product Tracking
+                    </div>
+
+                    {/* Spacer */}
+                    <div style={{ marginLeft: 'auto' }}></div>
+
+                    {/* Moved Baseline Actions Container */}
+                    <div style={{ display: 'flex', alignItems: 'center', padding: '0 var(--trace-space-md)', gap: 'var(--trace-space-sm)' }}>
+                        {activeTab === 'baseline' && !isLoading && !isRefreshing && (
+                            <>
+                                <button className="TRACE-action-button" onClick={() => navigate(`/createVerifyTrace?project_id=${projectId}`)} title="Create Verification"><FontAwesomeIcon icon={faPlus} /> Create Verification</button>
+                                <button className="TRACE-action-button" onClick={() => navigate(`/viewVerifyTrace?project_id=${projectId}`)} title="View Verification"><FontAwesomeIcon icon={faEye} /> View Verification</button>
+                                <button className="TRACE-action-button" onClick={() => navigate(`/setBaselineTrace?project_id=${projectId}`)} title="Set Baseline"><FontAwesomeIcon icon={faTable} /> Set Baseline</button>
+                                <button className="TRACE-action-button" onClick={() => navigate(`/versionVerTrace?project_id=${projectId}`)} title="Baseline History"><FontAwesomeIcon icon={faHistory} /> Baseline History</button>
+                                <button className="TRACE-action-button" onClick={() => navigate(`/currentBaselineTrace?project_id=${projectId}`)} title="Current Baseline"><FontAwesomeIcon icon={faCheckCircle} /> Current Baseline</button>
+                            </>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* --- Main Content Area --- */}
+            <div className="TRACE-main-content">
+                {fetchError && !isLoading && !isRefreshing && (<div className="TRACE-warning"> <FontAwesomeIcon icon={faExclamationTriangle} /> Warning: {fetchError}. Some data might be missing or outdated. Try refreshing. </div>)}
+                <div className="TRACE-tab-content">
+                    {!isLoading && activeTab === 'baseline' && (<RenderTraceabilityTable key="baseline-table" rawData={baselineData} showActionButtons={true} projectId={projectId} isWipView={false} />)}
+                    {!isLoading && activeTab === 'wip' && (<RenderTraceabilityTable key="wip-table" rawData={nonBaselineData} showActionButtons={false} projectId={projectId} isWipView={true} />)}
+                </div>
+            </div>
         </div>
     );
 };

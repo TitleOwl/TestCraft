@@ -269,12 +269,12 @@ const VeriTestcase = () => {
                             <table className="table-veritestcase">
                                 <thead>
                                     <tr>
-                                        <th className="th-verif-round-veritestcase">VERIF-ID</th>
-                                        <th className="th-created-by-veritestcase">CREATED BY</th>
-                                        <th className="th-date-assigned-veritestcase">DATE ASSIGNED</th>
-                                        <th className="th-status-veritestcase">STATUS</th>
-                                        <th className="th-details-veritestcase">REVIEWER</th> {/* Changed Header */}
-                                        <th className="th-actions-veritestcase">ACTIONS</th>
+                                        <th className="th-verif-round-veritestcase">Round</th>
+                                        <th className="th-created-by-veritestcase">Create By</th>
+                                        <th className="th-date-assigned-veritestcase">Date Assign</th>
+                                        <th className="th-status-veritestcase">Status</th>
+                                        <th className="th-details-veritestcase">Details</th> {/* Changed Header */}
+                                        <th className="th-actions-veritestcase">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -317,7 +317,7 @@ const VeriTestcase = () => {
                                                     // disabled={tc.testcase_status !== "WAITING FOR VERIFICATION"}
                                                 >
                                                     <FontAwesomeIcon icon={faCheck} className="button-icon-veritestcase"/>
-                                                    Verify
+                                                    View
                                                 </button>
                                             </td>
                                         </tr>

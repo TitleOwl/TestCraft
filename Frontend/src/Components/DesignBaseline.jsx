@@ -206,10 +206,6 @@ const DesignBaseline = () => {
           <h1>Design Baseline Management</h1>
         </div>
         <div className="design-baseline-header-right">
-          <button className="design-baseline-refresh-button" onClick={handleRefresh}>
-            <RefreshIcon />
-            <span>Refresh</span>
-          </button>
         </div>
       </div>
 
