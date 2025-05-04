@@ -388,6 +388,7 @@ const handleSave = async () => {
               <th>ID</th>
               <th>Requirements Statement</th>
               <th>Type</th>
+              
             </tr>
           </thead>
           <tbody>

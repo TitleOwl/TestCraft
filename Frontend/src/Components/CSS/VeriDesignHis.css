@@ -1,0 +1,641 @@
+/* VeriDesignHis.css - Based on Orange Theme with veridesign-his- Prefix for selectors */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* --- Orange Theme Variables with --vdeh- Prefix --- */
+:root {
+    /* Base Colors */
+    --vdeh-bg-primary: #ffffff;
+    --vdeh-bg-secondary: #f8f9fc; /* Keep light grey-blue */
+    --vdeh-bg-tertiary: #fff7ed;  /* Light Orange background */
+
+    /* Text Colors */
+    --vdeh-text-primary: #1e293b;
+    --vdeh-text-secondary: #64748b;
+    --vdeh-text-light: #94a3b8;
+    --vdeh-text-white: #ffffff;
+
+    /* Primary Brand Colors (Orange Theme #d76000) */
+    --vdeh-primary: #d76000;         /* Base Orange */
+    --vdeh-primary-light: #ffa54d;   /* Lighter Orange */
+    --vdeh-primary-dark: #b55200;    /* Darker Orange */
+
+    /* Accent Colors (Using Blue for contrast) */
+    --vdeh-accent: #3b82f6;          /* Example: Blue for contrast */
+    --vdeh-accent-light: #93c5fd;
+    --vdeh-accent-dark: #1d4ed8;
+
+    /* Status Colors */
+    --vdeh-success: #10b981;          /* Emerald */
+    --vdeh-success-light: #ecfdf5;    /* Lighter Emerald bg */
+    --vdeh-success-dark: #059669;     /* Dark Emerald */
+    --vdeh-warning: #f59e0b;          /* Amber */
+    --vdeh-warning-light: #fffbeb;    /* Lighter Amber bg */
+    --vdeh-warning-dark: #b45309;     /* Dark Amber */
+    --vdeh-error: #ef4444;            /* Red */
+    --vdeh-error-light: #fef2f2;      /* Lighter Red bg */
+    --vdeh-error-dark: #b91c1c;       /* Dark Red */
+    --vdeh-info: #6366f1;             /* Indigo */
+    --vdeh-info-light: #eef2ff;       /* Lighter Indigo bg */
+    --vdeh-info-dark: #4338ca;        /* Dark Indigo */
+    --vdeh-unknown: var(--vdeh-text-light);
+    --vdeh-unknown-bg: var(--vdeh-bg-secondary);
+
+    /* UI Elements */
+    --vdeh-border: #e2e8f0;           /* Standard border */
+    --vdeh-border-light: #f1f5f9;      /* Lighter border */
+    --vdeh-border-colored: #fed7aa;   /* Orange related border */
+
+    /* Shadows */
+    --vdeh-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.03);
+    --vdeh-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --vdeh-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+    --vdeh-shadow-primary: 0 4px 12px rgba(215, 96, 0, 0.15); /* Orange shadow */
+
+    /* Border Radius */
+    --vdeh-radius-sm: 4px;
+    --vdeh-radius-md: 6px;
+    --vdeh-radius-lg: 8px;
+
+    /* Transitions */
+    --vdeh-transition: all 0.2s ease;
+}
+
+/* Global Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    /* Use new theme variables */
+    background-color: var(--vdeh-bg-secondary);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--vdeh-text-primary);
+    line-height: 1.6;
+}
+
+/* --- Styles for VeriDesignHis --- */
+/* Selectors updated to veridesign-his-... but use --vdeh-... variables */
+
+/* Main container */
+.veridesign-his-container { /* Updated */
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 30px;
+    background-color: var(--vdeh-bg-primary);
+    min-height: 100vh;
+    position: relative;
+}
+
+.veridesign-his-container::before { /* Updated */
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(to right, var(--vdeh-primary), var(--vdeh-primary-light));
+    z-index: 1;
+}
+
+/* Header */
+.veridesign-his-header { /* Updated */
+    display: flex;
+    align-items: center;
+    margin-bottom: 35px;
+    position: relative;
+}
+
+.veridesign-his-header h1 { /* Updated */
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--vdeh-text-primary);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    letter-spacing: -0.02em;
+}
+
+.veridesign-his-title-icon { /* Updated */
+    color: var(--vdeh-primary); /* Use primary orange */
+    font-size: 28px;
+}
+
+/* Back button */
+.veridesign-his-back-btn { /* Updated */
+    background-color: transparent;
+    color: var(--vdeh-primary); /* Use primary orange */
+    border: none;
+    font-size: 15px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: var(--vdeh-transition);
+    position: absolute;
+    left: 0;
+    padding: 8px 0;
+}
+
+.veridesign-his-back-btn:hover { /* Updated */
+    color: var(--vdeh-primary-dark); /* Darker orange */
+    transform: translateX(-3px);
+}
+
+/* Tutorial Help Button */
+/* Assuming this targets the specific button with this class */
+.veridesign-his-tutorial-help-button-corner-vdh { /* Updated */
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 1.8rem;
+    background: none;
+    border: none;
+    color: var(--vdeh-text-secondary);
+    cursor: pointer;
+    z-index: 5;
+    transition: color 0.2s ease;
+    padding: 5px;
+}
+.veridesign-his-tutorial-help-button-corner-vdh:hover { /* Updated */
+    color: var(--vdeh-primary); /* Orange on hover */
+}
+
+
+/* Content layout */
+.veridesign-his-content { /* Updated */
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-bottom: 30px;
+}
+
+.veridesign-his-panel { /* Updated */
+    background: var(--vdeh-bg-primary);
+    border-radius: var(--vdeh-radius-lg);
+    border: 1px solid var(--vdeh-border);
+    box-shadow: var(--vdeh-shadow-md);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Panel header */
+.veridesign-his-panel-header { /* Updated */
+    background-color: var(--vdeh-bg-secondary);
+    border-bottom: 1px solid var(--vdeh-border);
+    padding: 18px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.veridesign-his-panel-header h2 { /* Updated */
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--vdeh-text-primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+}
+
+.veridesign-his-panel-header h2 svg { /* Updated */
+    color: var(--vdeh-primary); /* Orange icon */
+}
+
+.veridesign-his-count-badge { /* Updated */
+    background-color: var(--vdeh-primary-light); /* Lighter orange */
+    color: var(--vdeh-primary-dark); /* Darker orange text */
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+    margin-left: 10px;
+}
+
+/* Search and Tools */
+.veridesign-his-tools { /* Updated */
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.veridesign-his-search { /* Updated */
+    display: flex;
+    align-items: center;
+    background-color: var(--vdeh-bg-primary);
+    border: 1px solid var(--vdeh-border);
+    border-radius: var(--vdeh-radius-md);
+    padding: 9px 14px;
+    flex-grow: 1;
+    min-width: 250px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.veridesign-his-search:focus-within { /* Updated */
+     border-color: var(--vdeh-primary-light); /* Light orange focus */
+     box-shadow: 0 0 0 2px rgba(215, 96, 0, 0.2); /* Orange focus shadow */
+}
+
+
+.veridesign-his-search-icon { /* Updated */
+    color: var(--vdeh-text-light);
+    margin-right: 10px;
+}
+
+.veridesign-his-search-input { /* Updated */
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    color: var(--vdeh-text-primary);
+    width: 100%;
+    outline: none;
+}
+.veridesign-his-search-input::placeholder { /* Updated */
+    color: var(--vdeh-text-light);
+}
+
+
+.veridesign-his-clear-search { /* Updated */
+    background: transparent;
+    border: none;
+    color: var(--vdeh-text-light);
+    cursor: pointer;
+    transition: var(--vdeh-transition);
+    padding: 0 5px;
+}
+
+.veridesign-his-clear-search:hover { /* Updated */
+    color: var(--vdeh-primary); /* Orange hover */
+}
+
+/* Refresh button */
+.veridesign-his-refresh-btn { /* Updated */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    width: 36px;
+    height: 36px;
+    background-color: var(--vdeh-bg-tertiary); /* Light orange bg */
+    color: var(--vdeh-text-secondary);
+    border: 1px solid var(--vdeh-border-colored); /* Orange related border */
+    border-radius: var(--vdeh-radius-md);
+    font-size: 14px;
+    cursor: pointer;
+    transition: var(--vdeh-transition);
+}
+
+.veridesign-his-refresh-btn:hover:not(:disabled) { /* Updated */
+    background-color: var(--vdeh-primary-light); /* Lighter orange */
+    color: var(--vdeh-primary-dark); /* Darker orange text */
+    border-color: var(--vdeh-primary-light);
+}
+
+.veridesign-his-refresh-btn.refreshing { /* Updated */
+    background-color: var(--vdeh-primary-light);
+    color: var(--vdeh-primary-dark);
+    border-color: var(--vdeh-primary-light);
+    cursor: default;
+}
+
+.veridesign-his-refresh-btn:disabled { /* Updated */
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+/* Table container */
+.veridesign-his-table-container { /* Updated */
+    overflow-x: auto;
+    width: 100%;
+    border-radius: 0 0 var(--vdeh-radius-lg) var(--vdeh-radius-lg);
+}
+
+/* History table */
+.veridesign-his-table { /* Updated */
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    min-width: 800px;
+}
+
+.veridesign-his-table th { /* Updated */
+    background-color: var(--vdeh-bg-secondary);
+    text-align: left;
+    padding: 16px 24px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--vdeh-text-secondary);
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--vdeh-border);
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    transition: background-color 0.2s ease;
+}
+.veridesign-his-table th:hover { /* Updated */
+    background-color: var(--vdeh-bg-tertiary); /* Use light orange for hover */
+}
+
+.veridesign-his-table td { /* Updated */
+    padding: 16px 24px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--vdeh-border-light);
+    color: var(--vdeh-text-primary);
+    vertical-align: middle;
+}
+
+.veridesign-his-table tr:last-child td { /* Updated */
+    border-bottom: none;
+}
+
+.veridesign-his-row:hover { /* Updated */
+    background-color: var(--vdeh-bg-tertiary); /* Use light orange for hover */
+}
+
+/* Table cell styling */
+.veridesign-his-hist-id-cell { /* Updated */
+    font-family: "SF Mono", "Roboto Mono", monospace;
+    font-size: 14px;
+    color: var(--vdeh-primary-dark); /* Dark orange */
+    font-weight: 500;
+}
+
+.veridesign-his-creator-info, .veridesign-his-date-info { /* Updated */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.veridesign-his-cell-icon { /* Updated */
+    color: var(--vdeh-text-light);
+    font-size: 15px;
+}
+
+/* Actions cell */
+.veridesign-his-actions-cell { /* Updated */
+    text-align: center;
+}
+
+/* Action buttons */
+.veridesign-his-view-details-btn { /* Updated */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background-color: var(--vdeh-info-light); /* Use info color */
+    color:#d76000;
+    border: none;
+    border-radius: var(--vdeh-radius-md);
+    cursor: pointer;
+    transition: var(--vdeh-transition);
+}
+
+.veridesign-his-view-details-btn:hover { /* Updated */
+    background-color: rgba(99, 102, 241, 0.2); /* Darker info bg */
+    transform: scale(1.05);
+}
+
+/* Sortable headers */
+.veridesign-his-sortable-header { /* Updated */
+    padding-right: 28px !important;
+}
+.veridesign-his-sortable-header:hover { /* Updated */
+     color: var(--vdeh-text-primary);
+}
+
+.veridesign-his-sortable-header svg { /* Updated */
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 13px;
+    color: var(--vdeh-text-light);
+    transition: color 0.2s ease;
+}
+.veridesign-his-sortable-header:hover svg { /* Updated */
+    color: var(--vdeh-text-secondary);
+}
+/* Updated this selector to match the table structure */
+.veridesign-his-table th[aria-sort] svg,
+.veridesign-his-table th:hover svg {
+     color: var(--vdeh-primary); /* Orange sort icon */
+}
+
+
+/* Empty state */
+.veridesign-his-empty-state { /* Updated */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--vdeh-text-secondary);
+    min-height: 250px;
+    gap: 16px;
+    background-color: var(--vdeh-bg-secondary);
+    border-radius: 0 0 var(--vdeh-radius-lg) var(--vdeh-radius-lg);
+}
+
+.veridesign-his-empty-icon { /* Updated */
+    font-size: 54px;
+    color: var(--vdeh-text-light);
+    margin-bottom: 10px;
+}
+.veridesign-his-empty-subtitle { /* Updated */
+    color: var(--vdeh-text-light);
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+/* Loading state */
+.veridesign-his-loading-state { /* Updated */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    text-align: center;
+    min-height: 300px;
+    width: 100%;
+}
+/* Updated compound class selector */
+.veridesign-his-loading-state.veridesign-his-small { /* Updated */
+    padding: 20px;
+    min-height: auto;
+    flex-direction: row;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--vdeh-text-secondary);
+}
+/* Updated compound class selector */
+.veridesign-his-loading-state.veridesign-his-small .veridesign-his-loading-spinner { /* Updated */
+    width: 20px;
+    height: 20px;
+    border-width: 2px;
+    margin-bottom: 0;
+}
+
+
+.veridesign-his-loading-spinner { /* Updated */
+    width: 48px;
+    height: 48px;
+    border: 4px solid var(--vdeh-bg-tertiary); /* Light orange */
+    border-radius: 50%;
+    border-top-color: var(--vdeh-primary); /* Orange spinner */
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* --- Reusable Modal, Scrollbar, Toastify Styles (Themed & Updated Selectors) --- */
+
+/* Modal Styles */
+.veridesign-his-modal-overlay-review { /* Updated */
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(30, 41, 59, 0.7);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 10000; backdrop-filter: blur(4px);
+    opacity: 0; animation: modalOverlayFadeIn 0.3s ease-out forwards;
+}
+@keyframes modalOverlayFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.veridesign-his-modal-content-review { /* Updated */
+    background-color: var(--vdeh-bg-primary);
+    border-radius: var(--vdeh-radius-lg);
+    width: 90%; max-width: 650px; max-height: 90vh;
+    overflow: hidden; display: flex; flex-direction: column;
+    position: relative; box-shadow: var(--vdeh-shadow-lg);
+    transform: scale(0.95); opacity: 0;
+    animation: modalContentScaleUp 0.3s 0.1s ease-out forwards;
+}
+@keyframes modalContentScaleUp { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+.veridesign-his-modal-header { /* Updated */
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 24px; border-bottom: 1px solid var(--vdeh-border);
+    background-color: var(--vdeh-bg-secondary); flex-shrink: 0;
+}
+.veridesign-his-modal-header h3 { font-size: 18px; font-weight: 600; color: var(--vdeh-text-primary); } /* Updated */
+.veridesign-his-close-modal-button { /* Updated */
+    background-color: transparent; border: none; color: var(--vdeh-text-secondary);
+    font-size: 18px; cursor: pointer; transition: var(--vdeh-transition);
+    display: flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; border-radius: 50%;
+}
+.veridesign-his-close-modal-button:hover { /* Updated */
+    background-color: var(--vdeh-bg-tertiary); /* Light orange */
+    color: var(--vdeh-error); /* Error color */
+    transform: rotate(90deg);
+}
+
+.veridesign-his-modal-body { padding: 0; flex-grow: 1; overflow-y: auto; } /* Updated */
+
+.veridesign-his-reviewer-section, .veridesign-his-requirement-section { /* Updated */
+    padding: 24px; border-bottom: 1px solid var(--vdeh-border-light);
+}
+.veridesign-his-modal-body > div:last-child { border-bottom: none; } /* Updated parent selector */
+
+.veridesign-his-reviewer-section h4, .veridesign-his-requirement-section h4 { /* Updated */
+    font-size: 16px; font-weight: 600; color: var(--vdeh-text-primary);
+    margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
+}
+.veridesign-his-section-icon { color: var(--vdeh-primary); width: 18px; height: 18px; } /* Updated */
+
+.veridesign-his-reviewers-list, .veridesign-his-requirements-list { display: flex; flex-direction: column; gap: 12px; } /* Updated */
+
+.veridesign-his-reviewer-item, .veridesign-his-requirement-item { /* Updated */
+    display: flex; align-items: center; padding: 14px;
+    background-color: var(--vdeh-bg-secondary);
+    border-radius: var(--vdeh-radius-md); gap: 14px;
+}
+.veridesign-his-reviewer-avatar { /* Updated */
+    width: 40px; height: 40px; border-radius: 50%;
+    background-color: var(--vdeh-accent-light); /* Light Blue for contrast */
+    color: var(--vdeh-accent-dark); /* Dark Blue */
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 18px;
+}
+.veridesign-his-reviewer-info { flex: 1; display: flex; flex-direction: column; gap: 4px; } /* Updated */
+.veridesign-his-reviewer-name { font-weight: 600; color: var(--vdeh-text-primary); font-size: 15px; } /* Updated */
+.veridesign-his-reviewer-status { font-size: 13px; font-weight: 500; } /* Updated */
+/* Updated compound class selectors */
+.veridesign-his-reviewer-status.veridesign-his-verified { color: var(--vdeh-success-dark); }
+.veridesign-his-reviewer-status.veridesign-his-not-verified { color: var(--vdeh-error-dark); }
+
+.veridesign-his-status-icon { font-size: 20px; margin-left: auto; padding-left: 16px; } /* Updated */
+/* Updated compound class selectors */
+.veridesign-his-status-icon.veridesign-his-verified { color: var(--vdeh-success); }
+.veridesign-his-status-icon.veridesign-his-not-verified { color: var(--vdeh-error); }
+
+.veridesign-his-req-icon { color: var(--vdeh-primary); font-size: 16px; } /* Updated */
+.veridesign-his-req-id { font-family: "SF Mono", "Roboto Mono", monospace; color: var(--vdeh-text-primary); font-weight: 500; } /* Updated */
+
+.veridesign-his-empty-message { /* Updated */
+    padding: 20px; color: var(--vdeh-text-secondary); text-align: center;
+    font-style: italic; background-color: var(--vdeh-bg-secondary);
+    border-radius: var(--vdeh-radius-md); font-size: 14px;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--vdeh-bg-secondary); border-radius: 10px; }
+::-webkit-scrollbar-thumb { background-color: var(--vdeh-border); border-radius: 10px; border: 2px solid var(--vdeh-bg-secondary); }
+::-webkit-scrollbar-thumb:hover { background-color: var(--vdeh-text-light); }
+
+/* Toast notification styles */
+.Toastify__toast {
+    border-radius: var(--vdeh-radius-md) !important; box-shadow: var(--vdeh-shadow-lg) !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important; padding: 16px !important;
+}
+.Toastify__toast-body { font-weight: 500 !important; font-size: 15px !important; }
+.Toastify__progress-bar { height: 4px !important; background: var(--vdeh-primary) !important; /* Orange progress bar */ }
+/* Style different toast types */
+.Toastify__toast--success { background-color: var(--vdeh-success-light) !important; color: var(--vdeh-success-dark) !important; }
+.Toastify__toast--error { background-color: var(--vdeh-error-light) !important; color: var(--vdeh-error-dark) !important; }
+.Toastify__toast--warning { background-color: var(--vdeh-warning-light) !important; color: var(--vdeh-warning-dark) !important; }
+.Toastify__toast--info { background-color: var(--vdeh-info-light) !important; color: var(--vdeh-info-dark) !important; }
+.Toastify__close-button { color: inherit !important; opacity: 0.7 !important; }
+.Toastify__close-button:hover { opacity: 1 !important; }
+
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    /* Updated selectors within media query */
+    .veridesign-his-tools { flex-direction: column; align-items: stretch; }
+    .veridesign-his-search { width: 100%; }
+    .veridesign-his-refresh-btn { width: 100%; justify-content: center; padding: 9px 16px; }
+    .veridesign-his-panel-header { flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 768px) {
+    /* Updated selectors within media query */
+    .veridesign-his-container { padding: 20px 15px; }
+    .veridesign-his-header { flex-direction: column; align-items: flex-start; gap: 15px; margin-bottom: 25px; }
+    .veridesign-his-header h1 { order: 1; margin: 0; font-size: 22px; }
+    .veridesign-his-back-btn { position: static; order: 0; }
+    .veridesign-his-tutorial-help-button-corner-vdh { top: 10px; right: 10px; }
+
+    .veridesign-his-table th, .veridesign-his-table td { padding: 12px 15px; font-size: 13px; }
+    .veridesign-his-hist-id-cell { font-size: 13px; }
+    .veridesign-his-actions-cell { text-align: left; }
+    .veridesign-his-view-details-btn { width: 30px; height: 30px; }
+
+    .veridesign-his-modal-content-review { width: 95%; max-height: 85vh; }
+    .veridesign-his-modal-header { padding: 12px 16px; }
+    .veridesign-his-modal-header h3 { font-size: 16px; }
+    .veridesign-his-reviewer-section, .veridesign-his-requirement-section { padding: 16px; }
+}

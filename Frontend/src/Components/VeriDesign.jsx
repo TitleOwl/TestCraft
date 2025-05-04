@@ -26,7 +26,8 @@ import {
     faListAlt,
     faCheckCircle,
     faQuestionCircle,
-    faPalette // Using palette for Design
+    faPalette, // Using palette for Design
+    faHistory
 } from "@fortawesome/free-solid-svg-icons";
 
 // --- Modal Component (Refactored with VeriDesign Class Names and Structure) ---
@@ -435,6 +436,15 @@ const VeriDesign = () => {
         );
     }
 
+        const handleGoToHistory = () => {
+            if (projectId) {
+                navigate(`/VeriDesignHis?project_id=${projectId}`);
+            } else {
+                console.error("Cannot navigate to history: Project ID is missing.");
+                toast.error("Project ID is missing, cannot view history.");
+            }
+        };
+
     return (
         // Use VeriDesign specific root container class
         <div className="veridesign-container">
@@ -509,8 +519,17 @@ const VeriDesign = () => {
                                     >
                                         <FontAwesomeIcon icon={faTimes} />
                                     </button>
-                                )}
+                                )} 
                             </div>
+                                                                                        {/* History Button */}
+                                                                                        <button
+                                                                className="verificationlist-design-history-btn"
+                                                                onClick={handleGoToHistory}
+                                                                title="View Verification History"
+                                                                // Style moved to CSS
+                                                            >
+                                                                <FontAwesomeIcon icon={faHistory} /> History
+                                                            </button>  
                         </div>
                     </div>
 

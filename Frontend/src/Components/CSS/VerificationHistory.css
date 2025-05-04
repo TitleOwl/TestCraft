@@ -1,0 +1,809 @@
+/* VerificationHistory.css - Based on Premium Colorful Luxury Design from VerificationList */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* --- ใช้ CSS Variables ชุดเดียวกับ VerificationList --- */
+:root {
+    /* Base Colors */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fc;
+    --bg-tertiary: #eef1f8;
+
+    /* Text Colors */
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --text-light: #94a3b8;
+
+    /* Primary Brand Colors */
+    --primary: #4f46e5;      /* Deep indigo */
+    --primary-light: #818cf8;
+    --primary-dark: #3730a3;
+
+    /* Accent Colors */
+    --accent: #0ea5e9;       /* Sky blue */
+    --accent-light: #7dd3fc;
+    --accent-dark: #0369a1;
+
+    /* Status Colors */
+    --success: #10b981;       /* Emerald */
+    --success-dark: #059669;
+    --warning: #f59e0b;       /* Amber */
+    --warning-dark: #b45309;
+    --error: #ef4444;         /* Red */
+    --error-dark: #b91c1c;
+    --info: #6366f1;         /* Indigo */
+    --completed: var(--success); /* Use success color for completed/verified */
+    --completed-dark: var(--success-dark);
+    --unknown: var(--text-light); /* Color for unknown status */
+    --unknown-bg: var(--bg-tertiary);
+
+    /* UI Elements */
+    --border: #e2e8f0;
+    --border-light: #f1f5f9;
+    --border-colored: #c7d2fe;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.03);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+    --shadow-colored: 0 4px 12px rgba(79, 70, 229, 0.15);
+
+    /* Border Radius */
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 8px;
+
+    /* Transitions */
+    --transition: all 0.2s ease;
+}
+
+/* Global Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-secondary);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* --- Styles for VerificationHistory --- */
+
+/* Main container - Adapted from verificationlist */
+.verificationhistory-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 30px;
+    background-color: var(--bg-primary);
+    min-height: 100vh;
+    position: relative;
+}
+
+.verificationhistory-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(to right, var(--primary), var(--accent));
+    z-index: 1;
+}
+
+/* Header - Adapted from verificationlist-header */
+.verificationhistory-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+    position: relative; /* Needed for absolute positioned buttons like help */
+}
+
+.verificationhistory-header h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 auto; /* Center title */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    letter-spacing: -0.02em;
+}
+
+.verificationhistory-title-icon {
+    color: var(--primary); /* Or maybe a history-specific color */
+}
+
+/* Back button - Adapted from verificationlist-back-btn */
+.verificationhistory-back-btn {
+    background-color: transparent;
+    color: var(--primary);
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+    position: absolute; /* Position it to the left */
+    left: 0;
+}
+
+.verificationhistory-back-btn:hover {
+    color: var(--primary-dark);
+    transform: translateX(-3px);
+}
+
+/* Tutorial Help Button - Copied, ensure class name matches JSX if used */
+.tutorial-help-button-corner-vh { /* Specific class for history page */
+    position: absolute;
+    top: 0; /* Adjust as needed relative to header */
+    right: 0; /* Adjust as needed */
+    font-size: 1.6rem;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    z-index: 5;
+    transition: color 0.2s ease;
+}
+.tutorial-help-button-corner-vh:hover {
+    color: var(--primary);
+}
+
+
+/* Content layout - Adapted from verificationlist */
+.verificationhistory-content {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 30px;
+}
+
+.verificationhistory-panel {
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Panel headers - Adapted from verificationlist */
+.verificationhistory-panel-header {
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px;
+    display: flex; /* Use flexbox for better alignment */
+    justify-content: space-between; /* Space out title and tools */
+    align-items: center; /* Align items vertically */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    gap: 16px; /* Add gap between title and tools */
+}
+
+.verificationhistory-panel-header h2 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0; /* Remove default margin */
+}
+
+.verificationhistory-panel-header h2 svg {
+    color: var(--primary); /* Or history specific color */
+}
+
+.verificationhistory-count-badge {
+    background-color: var(--primary-light); /* Or a neutral color like grey */
+    color: white; /* Adjust if background changes */
+    font-size: 12px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 12px;
+    margin-left: 8px;
+}
+
+/* Search and tools - Adapted from verificationlist */
+.verificationhistory-tools {
+    display: flex;
+    gap: 12px;
+    align-items: center; /* Align tools vertically */
+    flex-wrap: wrap;
+}
+
+.verificationhistory-search {
+    display: flex;
+    align-items: center;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 8px 12px;
+    flex-grow: 1; /* Allow search to take available space */
+    min-width: 220px; /* Minimum width */
+}
+
+.verificationhistory-search-icon {
+    color: var(--text-secondary);
+    margin-right: 8px;
+}
+
+.verificationhistory-search-input {
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    color: var(--text-primary);
+    width: 100%;
+    outline: none;
+}
+
+.verificationhistory-clear-search {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition);
+    padding: 0 4px; /* Add some padding */
+}
+
+.verificationhistory-clear-search:hover {
+    color: var(--primary);
+}
+
+/* Refresh button - Specific to history? */
+.verificationhistory-refresh-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center icon */
+    padding: 8px; /* Make it more square */
+    width: 36px; /* Fixed width */
+    height: 36px; /* Fixed height */
+    background-color: var(--bg-tertiary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.verificationhistory-refresh-btn:hover:not(:disabled) {
+    background-color: var(--primary-light);
+    color: white;
+}
+
+.verificationhistory-refresh-btn.refreshing {
+    background-color: var(--primary-light);
+    color: white;
+    cursor: default;
+}
+
+.verificationhistory-refresh-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Table container - Adapted from verificationlist */
+.verificationhistory-table-container {
+    overflow-x: auto;
+    width: 100%;
+    /* Removed background-color: white; to use panel's bg */
+    /* Removed margin-bottom: 30px; as panel provides spacing */
+}
+
+/* Verification table - Adapted from verificationlist */
+.verificationhistory-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.verificationhistory-table th {
+    background-color: #f8fafc; /* Light grey header */
+    text-align: left;
+    padding: 15px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748b; /* Grey text */
+    text-transform: uppercase;
+    border-bottom: 1px solid #e2e8f0; /* Border color from var(--border) */
+    letter-spacing: 0.05em;
+    white-space: nowrap; /* Prevent header text wrapping */
+}
+
+.verificationhistory-table td {
+    padding: 15px 20px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--border-light); /* Use lighter border */
+    color: var(--text-primary);
+    vertical-align: middle; /* Align content vertically */
+}
+
+.verificationhistory-table tr:last-child td {
+    border-bottom: none; /* No border on last row */
+}
+
+.verificationhistory-row:hover {
+    background-color: var(--bg-secondary); /* Hover effect */
+}
+
+/* --- Table cell styling (History Specific) --- */
+/* Use specific classes from JSX like hist-id-cell if needed, */
+/* otherwise rely on general td styles */
+
+.hist-id-cell { /* Example specific cell */
+    font-family: "SF Mono", "Roboto Mono", monospace;
+    font-size: 14px;
+    color: var(--primary);
+    font-weight: 500;
+}
+
+.creator-info, .date-info { /* Reused from VerificationList */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cell-icon { /* Reused from VerificationList */
+    color: var(--text-secondary);
+}
+
+/* --- Status badges (History Specific) --- */
+.hist-status {
+    display: inline-block;
+    padding: 4px 10px; /* Slightly adjusted padding */
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase; /* Make status stand out */
+    letter-spacing: 0.02em;
+}
+
+/* Define status colors using variables */
+.status-completed, /* Assuming 'COMPLETED' is a possible status */
+.status-verified {
+    background-color: rgba(16, 185, 129, 0.1); /* Light success bg */
+    color: var(--completed-dark); /* Dark success text */
+}
+
+.status-rejected,
+.status-failed { /* Add other potential failure statuses */
+    background-color: rgba(239, 68, 68, 0.1); /* Light error bg */
+    color: var(--error-dark); /* Dark error text */
+}
+
+
+.status-unknown {
+    background-color: var(--unknown-bg); /* Use tertiary bg */
+    color: var(--unknown); /* Light text color */
+}
+
+
+/* Action buttons - History page likely only needs View Details */
+.actions-cell {
+    /* Ensure enough space if multiple buttons were present */
+    text-align: center; /* Center the single button */
+}
+
+.view-details-btn { /* Reused from VerificationList, maybe adjust color */
+    display: inline-flex; /* Use inline-flex for centering */
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background-color: rgba(99, 102, 241, 0.1); /* Light primary bg */
+    color: var(--primary);
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.view-details-btn:hover {
+    background-color: rgba(99, 102, 241, 0.2);
+}
+
+/* Sortable headers - Reused from VerificationList */
+.sortable-header {
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+    position: relative;
+    padding-right: 24px !important; /* Ensure space for icon */
+}
+/* Reusing the pseudo-element logic for sort icons */
+.sortable-header::after {
+    content: "";
+    position: absolute;
+    right: 8px; /* Adjusted position */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 14px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M17 8.5L12 3.5L7 8.5M7 15.5L12 20.5L17 15.5'/%3E%3C/svg%3E"); /* Default light grey sort icon */
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+.sortable-header:hover::after {
+    opacity: 1;
+}
+/* Specific icons for ASC/DESC might be handled by FontAwesomeIcon in JSX */
+
+
+/* Empty state - Adapted from verificationlist */
+.verificationhistory-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px; /* More padding */
+    text-align: center;
+    color: var(--text-secondary);
+    gap: 16px; /* Increased gap */
+    min-height: 200px; /* Ensure it takes some space */
+}
+
+.empty-icon { /* Reused */
+    font-size: 48px; /* Larger icon */
+    color: var(--text-light);
+    margin-bottom: 8px;
+}
+
+.empty-subtitle { /* Renamed from verificationlist-empty-subtitle */
+    color: var(--text-light);
+    font-size: 14px;
+}
+
+/* Loading state - Reused from verificationlist */
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+    text-align: center;
+    min-height: 200px; /* Ensure loading takes space */
+    width: 100%;
+}
+/* Style for small loading indicator during refresh */
+.loading-state.small {
+     padding: 20px;
+     min-height: auto;
+     flex-direction: row;
+     gap: 10px;
+     font-size: 14px;
+     color: var(--text-secondary);
+}
+.loading-state.small .loading-spinner {
+    width: 20px;
+    height: 20px;
+    border-width: 2px;
+    margin-bottom: 0;
+}
+
+
+.loading-spinner { /* Reused */
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--bg-tertiary);
+    border-radius: 50%;
+    border-top-color: var(--primary);
+    animation: spin 1s linear infinite;
+    margin-bottom: 16px;
+}
+
+@keyframes spin { /* Reused */
+    to { transform: rotate(360deg); }
+}
+
+/* --- Reusable Modal, Scrollbar, Toastify Styles (Copied from VerificationList.css) --- */
+
+/* Modal Styles */
+.modal-overlay-review {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(15, 23, 42, 0.7); /* Darker overlay */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(3px);
+    opacity: 0; /* Start hidden */
+    animation: modalOverlayFadeIn 0.3s ease-out forwards; /* Animate */
+}
+@keyframes modalOverlayFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+
+.modal-content-review {
+    background-color: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 600px; /* Max width */
+    max-height: 90vh; /* Max height */
+    overflow-y: auto; /* Scroll if content overflows */
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: var(--shadow-lg);
+    transform: translateY(20px); /* Start slightly lower */
+    opacity: 0; /* Start hidden */
+    animation: modalContentSlideUp 0.3s 0.1s ease-out forwards; /* Animate after overlay */
+}
+@keyframes modalContentSlideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px; /* More padding */
+    border-bottom: 1px solid var(--border);
+    background-color: var(--bg-secondary);
+    flex-shrink: 0; /* Prevent header from shrinking */
+}
+
+.modal-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.close-modal-button {
+    background-color: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 18px;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+
+.close-modal-button:hover {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.modal-body {
+    padding: 0; /* Use padding on sections */
+    flex-grow: 1; /* Allow body to take remaining space */
+    overflow-y: auto; /* Scroll body if needed */
+}
+
+.reviewer-section,
+.requirement-section {
+    padding: 24px; /* Increased padding */
+    border-bottom: 1px solid var(--border-light);
+}
+.modal-body > div:last-child {
+    border-bottom: none; /* No border on last section */
+}
+
+
+.reviewer-section h4,
+.requirement-section h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-icon {
+    color: var(--primary);
+    width: 18px; /* Slightly larger */
+    height: 18px;
+}
+
+.reviewers-list,
+.requirements-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Slightly increased gap */
+}
+
+.reviewer-item {
+    display: flex;
+    align-items: center;
+    padding: 12px; /* Increased padding */
+    background-color: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    gap: 12px;
+    border: 1px solid transparent; /* Prepare for potential hover/active states */
+}
+
+.reviewer-avatar {
+    width: 36px; /* Slightly larger avatar */
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--primary-light);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.reviewer-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.reviewer-name {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.reviewer-status {
+    font-size: 12px;
+    font-weight: 500; /* Make status slightly bolder */
+}
+
+.reviewer-status.verified {
+    color: var(--success-dark);
+}
+
+.reviewer-status.not-verified {
+    color: var(--error-dark);
+}
+
+.status-icon {
+    font-size: 18px; /* Slightly larger status icon */
+    margin-left: auto; /* Push icon to the right */
+    padding-left: 12px;
+}
+
+.status-icon.verified {
+    color: var(--success);
+}
+
+.status-icon.not-verified {
+    color: var(--error);
+}
+
+.requirement-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background-color: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    font-size: 14px;
+}
+
+.req-icon {
+    color: var(--primary);
+}
+
+.req-id { /* Reused style */
+    font-family: "SF Mono", "Roboto Mono", monospace;
+    color: var(--text-primary);
+}
+
+
+.empty-message { /* Reused style */
+    padding: 15px;
+    color: var(--text-secondary);
+    text-align: center;
+    font-style: italic;
+    background-color: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    font-size: 14px;
+}
+
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+    background-color: var(--border);
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--text-light);
+}
+
+/* Toast notification styles */
+.Toastify__toast {
+    border-radius: var(--radius-md) !important;
+    box-shadow: var(--shadow-md) !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+.Toastify__toast-body {
+    font-weight: 500 !important;
+}
+.Toastify__progress-bar {
+    height: 3px !important;
+    background: rgba(79, 70, 229, 0.6) !important; /* Use primary color */
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    /* Stack tools vertically */
+    .verificationhistory-tools {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .verificationhistory-search {
+        width: 100%;
+    }
+    .verificationhistory-refresh-btn {
+        width: auto; /* Allow button to size naturally */
+        padding: 8px 16px;
+    }
+    /* Adjust panel header */
+     .verificationhistory-panel-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 768px) {
+    .verificationhistory-container {
+        padding: 20px 15px;
+    }
+    /* Stack header items */
+    .verificationhistory-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+        margin-bottom: 20px; /* Reduced margin */
+    }
+    .verificationhistory-header h1 {
+        order: 1; /* Title below button */
+        margin: 0;
+        font-size: 20px; /* Smaller title */
+    }
+    .verificationhistory-back-btn {
+        position: static; /* Remove absolute positioning */
+        order: 0; /* Button first */
+    }
+     .tutorial-help-button-corner-vh {
+        top: 10px; /* Adjust position */
+        right: 10px;
+    }
+    /* Make table cells wrap more easily */
+     .verificationhistory-table th,
+     .verificationhistory-table td {
+        padding: 12px 10px; /* Reduce padding */
+        font-size: 13px;
+    }
+     .hist-id-cell { font-size: 13px; }
+     .hist-status { padding: 3px 6px; font-size: 11px; }
+
+    /* Modal adjustments */
+    .modal-content-review {
+        width: 95%;
+        max-height: 85vh;
+    }
+     .modal-header { padding: 12px 16px; }
+     .modal-header h3 { font-size: 16px; }
+     .modal-body { padding: 0; }
+     .reviewer-section, .requirement-section { padding: 16px; }
+
+}

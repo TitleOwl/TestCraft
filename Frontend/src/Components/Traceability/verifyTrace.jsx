@@ -214,6 +214,7 @@ const VerifyTrace = () => {
             setSaving(false);
         }
     };
+    
 
 
     // --- Render Logic (ปรับโครงสร้าง JSX ให้เป็น 2 คอลัมน์บน + 1 ล่าง) ---

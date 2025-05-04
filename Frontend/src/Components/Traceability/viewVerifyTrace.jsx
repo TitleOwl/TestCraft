@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faArrowLeft, faListAlt, faUsers, faCheckCircle, faTimesCircle,
     faHourglassHalf, faSort, faSortUp, faSortDown, faSearch, faCalendarAlt,
-    faExclamationTriangle, faSpinner, faUser, faTimes // เพิ่ม faTimes สำหรับปุ่มปิด Popup
+    faExclamationTriangle, faSpinner, faUser, faTimes, faHistory // เพิ่ม faTimes สำหรับปุ่มปิด Popup
 } from '@fortawesome/free-solid-svg-icons';
 
 // --- CSS Import ---
@@ -166,6 +166,15 @@ const ViewVerifyTrace = () => {
          return sortDirection === 'asc' ? faSortUp : faSortDown;
      };
 
+         const handleGoToHistory = () => {
+             if (projectId) {
+                 navigate(`/VeriTraceHis?project_id=${projectId}`);
+             } else {
+                 console.error("Cannot navigate to history: Project ID is missing.");
+                 toast.error("Project ID is missing, cannot view history.");
+             }
+         };
+
     // --- Render Logic ---
     return (
         <div className='vvt-container'>
@@ -180,7 +189,7 @@ const ViewVerifyTrace = () => {
                 </button>
                 <h1>
                     <FontAwesomeIcon icon={faListAlt} className="vvt-title-icon" />
-                    Verification Traceability Records (Waiting)
+                    Verification Traceability Records
                 </h1>
             </div>
 
@@ -223,7 +232,15 @@ const ViewVerifyTrace = () => {
                         <p>{error}</p>
                     </div>
                 )}
-
+                
+                            <button
+                                className="veritrace-history-btn"
+                                onClick={handleGoToHistory}
+                                title="View Verification History"
+                                // Style moved to CSS
+                            >
+                                <FontAwesomeIcon icon={faHistory} /> History
+                            </button>
                 {!isLoading && !error && (
                     <div className="vvt-table-container">
                         <table className="vvt-table">

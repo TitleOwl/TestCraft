@@ -929,3 +929,31 @@ body {
     width: 95%;
   }
 }
+
+.veritestcase-history-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px; /* Match search height */
+  background-color: var(--tcl-primary);
+  color: var(--text-white);
+  border: 1px solid var(--tcl-primary);
+  border-radius: var(--tcl-radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--tcl-transition);
+  white-space: nowrap;
+  box-shadow: var(--tcl-shadow-sm);
+}
+
+.veritestcase-history-btn:hover {
+  background-color: var(--tcl-primary-dark);
+  border-color: var(--tcl-primary-dark);
+  box-shadow: var(--tcl-shadow-md);
+  transform: translateY(-1px);
+}
+
+.veritestcase-history-btn svg {
+  margin-right: 4px; /* Space before text */
+}

@@ -44,6 +44,7 @@ import VersionControl from './Components/VersionControl';
 import Comment from './Components/Comment';
 import VericriReqDetails from './Components/VericriReqDetails';
 import HistoryValidationReq from './Components/HistoryValidationReq';
+import VerificationHistory from './Components/VerificationHistory';
 
 // Design
 import DesignPage from './Components/DesignPage';
@@ -60,6 +61,7 @@ import ViewDiagram from './Components/viewDiagram';
 import UpdateDiagram from './Components/UpdateDiagram';
 import VersionDesign from './Components/VersionDesign';
 import VericriDesignDetails from './Components/VericriDesignDetails'
+import VeriDesignHis from './Components/VeriDesignHis'
 
 //Implement
 import ImplementPage from './Components/Implement/implementPage';
@@ -78,6 +80,8 @@ import VeriTestcase from './Components/Testcase/VeriTestcase';
 import TestcaseVerifed from './Components/Testcase/TestcaseVerifed';
 import TestcaseBaseline from './Components/Testcase/TestcaseBaseline';
 import CreateTestcasebaseline from './Components/Testcase/CreateTestcasebaseline';
+import VeriTestHis from './Components/Testcase/VeriTestHis';
+
 
 //Alert Delete Testcase
 import ConfirmationModal from './Components/Testcase/ConfirmationModal';
@@ -85,7 +89,6 @@ import ConfirmationModal from './Components/Testcase/ConfirmationModal';
 
 //Traceability
 import TraceabilityPage from './Components/Traceability/traceabilityPage';
-import ViewReqTrace from './Components/Traceability/viewReqTrace';
 import EditReqTrace from './Components/Traceability/editReqTrace';
 import ViewDesignTrace from './Components/Traceability/viewDesignTrace'
 import CreateVerifyTrace from './Components/Traceability/createVerifyTrace';
@@ -100,7 +103,7 @@ import ViewTraceVersion from './Components/Traceability/viewTraceVersion';
 import CommentVerTrace from './Components/Traceability/commentVerTrace';
 import CurrentBaselineTrace from './Components/Traceability/currentBaselineTrace';
 import ViewBaselineCurrent from './Components/Traceability/viewBaselineCurrent';
-
+import VeriTraceHis from './Components/Traceability/VeriTraceHis';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -166,6 +169,7 @@ const App = () => {
         <Route path="/VeriVaView" element={<VeriVaView />} />
         <Route path="/VericriReqDetails" element={<VericriReqDetails />} />
         <Route path="/HistoryValidationReq/:requirementId" element={<HistoryValidationReq/>} />
+        <Route path="/VerificationHistory" element={<VerificationHistory/>} />
 
         {/* Routes สำหรับ Login */}
         <Route path="/" element={<Login setUsername={setUsername} />} />
@@ -200,6 +204,8 @@ const App = () => {
         <Route path="/UpdateDiagram" element={<UpdateDiagram />} />
         <Route path="/VersionDesign" element={<VersionDesign />} />
         <Route path="/VericriDesignDetails" element={<VericriDesignDetails />} />
+        <Route path="/VeriDesignHis" element={<VeriDesignHis />} />
+        
 
         {/* ทำ Testcase */}
         <Route path="/CreateTestcase" element={<CreateTestcase />} />
@@ -214,6 +220,7 @@ const App = () => {
         <Route path="/TestcaseVerifed" element={<TestcaseVerifed />} />
         <Route path="/TestcaseBaseline" element={<TestcaseBaseline />} />
         <Route path="/CreateTestcasebaseline" element={<CreateTestcasebaseline />} />
+        <Route path="/VeriTestHis" element={<VeriTestHis />} />
 
         {/* Alert Delete Testcase */}
         <Route path="/ConfirmationModal" element={<ConfirmationModal />} />
@@ -223,7 +230,7 @@ const App = () => {
 
         {/* ทำ Trace */}
         <Route path="/traceabilityPage" element={<TraceabilityPage />} />
-        <Route path="/viewReqTrace" element={<ViewReqTrace />} />
+
         <Route path="/editReqTrace" element={<EditReqTrace />} />
         <Route path="/createVerifyTrace" element={<CreateVerifyTrace />} />
         <Route path="/viewDesignTrace" element={<ViewDesignTrace />} />
@@ -238,6 +245,7 @@ const App = () => {
         <Route path="/commentVerTrace" element={<CommentVerTrace />} />
         <Route path="/currentBaselineTrace" element={<CurrentBaselineTrace />} />
         <Route path="/viewBaselineCurrent" element={<ViewBaselineCurrent />} />
+        <Route path="/VeriTraceHis" element={<VeriTraceHis />} />
       </Routes>
     </>
   );

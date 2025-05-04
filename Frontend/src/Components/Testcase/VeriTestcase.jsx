@@ -15,8 +15,8 @@ import {
     faEye,
     faCheck,
     faTimes, // Keep for clear search
-    faClipboardList, // Keep for empty state
-    // faQuestionCircle // Keep if help button is used
+    faClipboardList,
+    faHistory
 } from '@fortawesome/free-solid-svg-icons';
 
 // Import the dedicated CSS file
@@ -181,11 +181,6 @@ const VeriTestcase = () => {
         navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Testcase" } });
     };
 
-    const handleRefresh = () => {
-        if (!isRefreshing) {
-            fetchTestcases();
-        }
-    };
 
     const closeModal = () => setShowModal(false);
 
@@ -200,6 +195,15 @@ const VeriTestcase = () => {
              </div>
          );
     }
+
+    const handleGoToHistory = () => {
+        if (projectId) {
+            navigate(`/VeriTestHis?project_id=${projectId}`);
+        } else {
+            console.error("Cannot navigate to history: Project ID is missing.");
+            toast.error("Project ID is missing, cannot view history.");
+        }
+    };
 
     return (
         <div className="container-veritestcase">
@@ -244,6 +248,15 @@ const VeriTestcase = () => {
                                     </button>
                                 )}
                             </div>
+                                                        {/* History Button */}
+                                                        <button
+                                                            className="veritestcase-history-btn"
+                                                            onClick={handleGoToHistory}
+                                                            title="View Verification History"
+                                                            // Style moved to CSS
+                                                        >
+                                                            <FontAwesomeIcon icon={faHistory} /> History
+                                                        </button>
                         </div>
                     </div>
 

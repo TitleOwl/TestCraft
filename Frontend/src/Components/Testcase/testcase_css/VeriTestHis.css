@@ -1,0 +1,659 @@
+/* VeriTestHis.css - Based on Emerald Green Theme (#10b981) with veritesthis- Prefix */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* --- Emerald Green Theme Variables with --vtch- Prefix --- */
+:root {
+    /* Base Colors */
+    --vtch-bg-primary: #ffffff;
+    --vtch-bg-secondary: #f8f9fc;
+    /* NEW: Light Green background, replaces light orange */
+    --vtch-bg-tertiary: #ecfdf5; /* Emerald 50 */
+
+    /* Text Colors */
+    --vtch-text-primary: #1e293b;
+    --vtch-text-secondary: #64748b;
+    --vtch-text-light: #94a3b8;
+    --vtch-text-white: #ffffff;
+
+    /* Primary Brand Colors (Emerald Green Theme #10b981) */
+    /* NEW: Emerald Green */
+    --vtch-primary: #10b981;        /* Base Emerald Green (Emerald 500) */
+    --vtch-primary-light: #6ee7b7;  /* Lighter Emerald Green (Emerald 300) */
+    --vtch-primary-dark: #059669;   /* Darker Emerald Green (Emerald 600) */
+
+    /* Accent Colors (Using Blue for contrast - kept from previous) */
+    --vtch-accent: #3b82f6;         /* Example: Blue */
+    --vtch-accent-light: #93c5fd;
+    --vtch-accent-dark: #1d4ed8;
+
+    /* Status Colors (Success now matches primary, others distinct) */
+    --vtch-success: #10b981;        /* Emerald (Same as primary) */
+    --vtch-success-light: #ecfdf5;  /* Lighter Emerald bg */
+    --vtch-success-dark: #059669;   /* Dark Emerald */
+    --vtch-warning: #f59e0b;        /* Amber */
+    --vtch-warning-light: #fffbeb;  /* Lighter Amber bg */
+    --vtch-warning-dark: #b45309;   /* Dark Amber */
+    --vtch-error: #ef4444;          /* Red */
+    --vtch-error-light: #fef2f2;    /* Lighter Red bg */
+    --vtch-error-dark: #b91c1c;     /* Dark Red */
+    --vtch-info: #6366f1;           /* Indigo */
+    --vtch-info-light: #eef2ff;     /* Lighter Indigo bg */
+    --vtch-info-dark: #4338ca;      /* Dark Indigo */
+    --vtch-unknown: var(--vtch-text-light);
+    --vtch-unknown-bg: var(--vtch-bg-secondary);
+
+    /* UI Elements */
+    --vtch-border: #e2e8f0;         /* Standard border */
+    --vtch-border-light: #f1f5f9;    /* Lighter border */
+    /* NEW: Green related border */
+    --vtch-border-colored: #a7f3d0; /* Emerald 200 */
+
+    /* Shadows */
+    --vtch-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.03);
+    --vtch-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --vtch-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+    /* NEW: Green shadow */
+    --vtch-shadow-primary: 0 4px 12px rgba(16, 185, 129, 0.15);
+
+    /* Border Radius */
+    --vtch-radius-sm: 4px;
+    --vtch-radius-md: 6px;
+    --vtch-radius-lg: 8px;
+
+    /* Transitions */
+    --vtch-transition: all 0.2s ease;
+}
+
+/* Global Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--vtch-bg-secondary);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--vtch-text-primary);
+    line-height: 1.6;
+}
+
+/* --- Styles for VeriTestHis --- */
+/* Selectors are veritesthis-... and use --vtch-... variables */
+
+/* Main container */
+.veritesthis-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 30px;
+    background-color: var(--vtch-bg-primary);
+    min-height: 100vh;
+    position: relative;
+}
+
+.veritesthis-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    /* Apply new green gradient */
+    background: linear-gradient(to right, var(--vtch-primary), var(--vtch-primary-light));
+    z-index: 1;
+}
+
+/* Header */
+.veritesthis-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 35px;
+    position: relative;
+}
+
+.veritesthis-header h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--vtch-text-primary);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    letter-spacing: -0.02em;
+}
+
+.veritesthis-title-icon {
+    /* Apply new green */
+    color: var(--vtch-primary);
+    font-size: 28px;
+}
+
+/* Back button */
+.veritesthis-back-btn {
+    background-color: transparent;
+    /* Apply new green */
+    color: var(--vtch-primary);
+    border: none;
+    font-size: 15px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: var(--vtch-transition);
+    position: absolute;
+    left: 0;
+    padding: 8px 0;
+}
+
+.veritesthis-back-btn:hover {
+    /* Apply new dark green */
+    color: var(--vtch-primary-dark);
+    transform: translateX(-3px);
+}
+
+/* Tutorial Help Button */
+.tutorial-help-button-corner-vth {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 1.8rem;
+    background: none;
+    border: none;
+    color: var(--vtch-text-secondary);
+    cursor: pointer;
+    z-index: 5;
+    transition: color 0.2s ease;
+    padding: 5px;
+}
+.tutorial-help-button-corner-vth:hover {
+    /* Apply new green */
+    color: var(--vtch-primary);
+}
+
+
+/* Content layout */
+.veritesthis-content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-bottom: 30px;
+}
+
+.veritesthis-panel {
+    background: var(--vtch-bg-primary);
+    border-radius: var(--vtch-radius-lg);
+    border: 1px solid var(--vtch-border);
+    box-shadow: var(--vtch-shadow-md);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Panel header */
+.veritesthis-panel-header {
+    background-color: var(--vtch-bg-secondary);
+    border-bottom: 1px solid var(--vtch-border);
+    padding: 18px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.veritesthis-panel-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--vtch-text-primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+}
+
+.veritesthis-panel-header h2 svg {
+    /* Apply new green */
+    color: var(--vtch-primary);
+}
+
+.veritesthis-count-badge {
+    /* Apply new green theme */
+    background-color: var(--vtch-primary-light);
+    color: var(--vtch-primary-dark);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+    margin-left: 10px;
+}
+
+/* Search and Tools */
+.veritesthis-tools {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.veritesthis-search {
+    display: flex;
+    align-items: center;
+    background-color: var(--vtch-bg-primary);
+    border: 1px solid var(--vtch-border);
+    border-radius: var(--vtch-radius-md);
+    padding: 9px 14px;
+    flex-grow: 1;
+    min-width: 250px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.veritesthis-search:focus-within {
+     /* Apply new light green focus border */
+     border-color: var(--vtch-primary-light);
+     /* NEW: Green focus shadow */
+     box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+
+.veritesthis-search-icon {
+    color: var(--vtch-text-light);
+    margin-right: 10px;
+}
+
+.veritesthis-search-input {
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    color: var(--vtch-text-primary);
+    width: 100%;
+    outline: none;
+}
+.veritesthis-search-input::placeholder {
+    color: var(--vtch-text-light);
+}
+
+
+.veritesthis-clear-search {
+    background: transparent;
+    border: none;
+    color: var(--vtch-text-light);
+    cursor: pointer;
+    transition: var(--vtch-transition);
+    padding: 0 5px;
+}
+
+.veritesthis-clear-search:hover {
+    /* Apply new green */
+    color: var(--vtch-primary);
+}
+
+/* Refresh button - Styles updated for green theme if added */
+/*
+.veritesthis-refresh-btn {
+    background-color: var(--vtch-bg-tertiary);
+    color: var(--vtch-text-secondary);
+    border: 1px solid var(--vtch-border-colored);
+    border-radius: var(--vtch-radius-md);
+    ...
+}
+.veritesthis-refresh-btn:hover:not(:disabled) {
+    background-color: var(--vtch-primary-light);
+    color: var(--vtch-primary-dark);
+    border-color: var(--vtch-primary-light);
+}
+*/
+
+
+/* Table container */
+.veritesthis-table-container {
+    overflow-x: auto;
+    width: 100%;
+    border-radius: 0 0 var(--vtch-radius-lg) var(--vtch-radius-lg);
+}
+
+/* History table */
+.veritesthis-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    min-width: 900px;
+}
+
+.veritesthis-table th {
+    background-color: var(--vtch-bg-secondary);
+    text-align: left;
+    padding: 16px 24px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--vtch-text-secondary);
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--vtch-border);
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    transition: background-color 0.2s ease;
+}
+.veritesthis-table th:hover {
+    /* Apply new light green hover */
+    background-color: var(--vtch-bg-tertiary);
+}
+
+.veritesthis-table td {
+    padding: 16px 24px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--vtch-border-light);
+    color: var(--vtch-text-primary);
+    vertical-align: middle;
+}
+
+.veritesthis-table tr:last-child td {
+    border-bottom: none;
+}
+
+.veritesthis-row:hover {
+    /* Apply new light green hover */
+    background-color: var(--vtch-bg-tertiary);
+}
+
+/* Table cell styling */
+.veritesthis-hist-id-cell {
+    font-family: "SF Mono", "Roboto Mono", monospace;
+    font-size: 14px;
+    /* Apply new dark green */
+    color: var(--vtch-primary-dark);
+    font-weight: 500;
+}
+
+.veritesthis-hist-round-cell {
+    font-weight: 500;
+    text-align: center;
+}
+
+.veritesthis-hist-tc-id-cell {
+    font-family: "SF Mono", "Roboto Mono", monospace;
+    font-size: 14px;
+    color: var(--vtch-accent-dark); /* Kept accent color for TC ID */
+    font-weight: 500;
+}
+
+
+.veritesthis-creator-info, .veritesthis-date-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.veritesthis-cell-icon {
+    color: var(--vtch-text-light);
+    font-size: 15px;
+}
+
+/* Actions cell */
+.veritesthis-actions-cell {
+    text-align: center;
+}
+
+/* Action buttons */
+.veritesthis-view-details-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background-color: var(--vtch-info-light); /* Keep info color for view */
+    color: var(--vtch-info-dark);
+    border: none;
+    border-radius: var(--vtch-radius-md);
+    cursor: pointer;
+    transition: var(--vtch-transition);
+}
+
+.veritesthis-view-details-btn:hover {
+    background-color: rgba(99, 102, 241, 0.2); /* Keep info color for view */
+    transform: scale(1.05);
+}
+
+/* Sortable headers */
+.veritesthis-sortable-header {
+    padding-right: 28px !important;
+}
+.veritesthis-sortable-header:hover {
+     color: var(--vtch-text-primary);
+}
+
+.veritesthis-sortable-header svg {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 13px;
+    color: var(--vtch-text-light);
+    transition: color 0.2s ease;
+}
+.veritesthis-sortable-header:hover svg {
+    color: var(--vtch-text-secondary);
+}
+.veritesthis-table th[aria-sort] svg,
+.veritesthis-table th:hover svg {
+     /* Apply new green */
+     color: var(--vtch-primary);
+}
+
+
+/* Empty state */
+.veritesthis-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--vtch-text-secondary);
+    min-height: 250px;
+    gap: 16px;
+    background-color: var(--vtch-bg-secondary);
+    border-radius: 0 0 var(--vtch-radius-lg) var(--vtch-radius-lg);
+}
+
+.veritesthis-empty-icon {
+    font-size: 54px;
+    color: var(--vtch-text-light);
+    margin-bottom: 10px;
+}
+.veritesthis-empty-subtitle {
+    color: var(--vtch-text-light);
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+/* Loading state */
+.veritesthis-loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    text-align: center;
+    min-height: 300px;
+    width: 100%;
+}
+.veritesthis-loading-state.veritesthis-small {
+    padding: 20px;
+    min-height: auto;
+    flex-direction: row;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--vtch-text-secondary);
+}
+.veritesthis-loading-state.veritesthis-small .veritesthis-loading-spinner {
+    width: 20px;
+    height: 20px;
+    border-width: 2px;
+    margin-bottom: 0;
+}
+
+
+.veritesthis-loading-spinner {
+    width: 48px;
+    height: 48px;
+    /* Apply new light green */
+    border: 4px solid var(--vtch-bg-tertiary);
+    border-radius: 50%;
+    /* Apply new green */
+    border-top-color: var(--vtch-primary);
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* --- Reusable Modal, Scrollbar, Toastify Styles (Green Theme Applied) --- */
+
+/* Modal Styles */
+.modal-overlay-review {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(30, 41, 59, 0.7); /* Kept overlay color */
+    display: flex; align-items: center; justify-content: center;
+    z-index: 10000; backdrop-filter: blur(4px);
+    opacity: 0; animation: modalOverlayFadeIn 0.3s ease-out forwards;
+}
+@keyframes modalOverlayFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal-content-review {
+    background-color: var(--vtch-bg-primary);
+    border-radius: var(--vtch-radius-lg);
+    width: 90%; max-width: 650px; max-height: 90vh;
+    overflow: hidden; display: flex; flex-direction: column;
+    position: relative; box-shadow: var(--vtch-shadow-lg);
+    transform: scale(0.95); opacity: 0;
+    animation: modalContentScaleUp 0.3s 0.1s ease-out forwards;
+}
+@keyframes modalContentScaleUp { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+.modal-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 24px; border-bottom: 1px solid var(--vtch-border);
+    background-color: var(--vtch-bg-secondary); flex-shrink: 0;
+}
+.modal-header h3 { font-size: 18px; font-weight: 600; color: var(--vtch-text-primary); }
+.close-modal-button {
+    background-color: transparent; border: none; color: var(--vtch-text-secondary);
+    font-size: 18px; cursor: pointer; transition: var(--vtch-transition);
+    display: flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; border-radius: 50%;
+}
+.close-modal-button:hover {
+    /* Apply new light green bg */
+    background-color: var(--vtch-bg-tertiary);
+    color: var(--vtch-error); /* Keep error color for close */
+    transform: rotate(90deg);
+}
+
+.modal-body { padding: 0; flex-grow: 1; overflow-y: auto; }
+
+/* Modal Sections */
+.reviewer-section, .requirement-section {
+    padding: 24px; border-bottom: 1px solid var(--vtch-border-light);
+}
+.modal-body > div:last-child { border-bottom: none; }
+
+.reviewer-section h4, .requirement-section h4 {
+    font-size: 16px; font-weight: 600; color: var(--vtch-text-primary);
+    margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
+}
+.section-icon {
+    /* Apply new green */
+    color: var(--vtch-primary);
+    width: 18px; height: 18px;
+}
+
+.reviewers-list, .requirements-list { display: flex; flex-direction: column; gap: 12px; }
+
+.reviewer-item, .requirement-item {
+    display: flex; align-items: center; padding: 14px;
+    background-color: var(--vtch-bg-secondary);
+    border-radius: var(--vtch-radius-md); gap: 14px;
+}
+.reviewer-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    /* Kept accent color for avatar */
+    background-color: var(--vtch-accent-light);
+    color: var(--vtch-accent-dark);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 18px;
+}
+.reviewer-info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.reviewer-name { font-weight: 600; color: var(--vtch-text-primary); font-size: 15px; }
+.reviewer-status { font-size: 13px; font-weight: 500; }
+/* Status colors remain distinct (success uses primary green variables) */
+.reviewer-status.verified { color: var(--vtch-success-dark); }
+.reviewer-status.not-verified { color: var(--vtch-error-dark); }
+
+.status-icon { font-size: 20px; margin-left: auto; padding-left: 16px; }
+/* Status icon colors remain distinct (success uses primary green variables) */
+.status-icon.verified { color: var(--vtch-success); }
+.status-icon.not-verified { color: var(--vtch-error); }
+
+.req-icon {
+    /* Apply new green */
+    color: var(--vtch-primary);
+    font-size: 16px;
+}
+.req-id { font-family: "SF Mono", "Roboto Mono", monospace; color: var(--vtch-text-primary); font-weight: 500; }
+
+.empty-message {
+    padding: 20px; color: var(--vtch-text-secondary); text-align: center;
+    font-style: italic; background-color: var(--vtch-bg-secondary);
+    border-radius: var(--vtch-radius-md); font-size: 14px;
+}
+
+/* Custom scrollbar (style remains the same, uses base variables) */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--vtch-bg-secondary); border-radius: 10px; }
+::-webkit-scrollbar-thumb { background-color: var(--vtch-border); border-radius: 10px; border: 2px solid var(--vtch-bg-secondary); }
+::-webkit-scrollbar-thumb:hover { background-color: var(--vtch-text-light); }
+
+/* Toast notification styles */
+.Toastify__toast {
+    border-radius: var(--vtch-radius-md) !important; box-shadow: var(--vtch-shadow-lg) !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important; padding: 16px !important;
+}
+.Toastify__toast-body { font-weight: 500 !important; font-size: 15px !important; }
+/* Apply new green progress bar */
+.Toastify__progress-bar { height: 4px !important; background: var(--vtch-primary) !important; }
+/* Style different toast types (using distinct status colors) */
+.Toastify__toast--success { background-color: var(--vtch-success-light) !important; color: var(--vtch-success-dark) !important; }
+.Toastify__toast--error { background-color: var(--vtch-error-light) !important; color: var(--vtch-error-dark) !important; }
+.Toastify__toast--warning { background-color: var(--vtch-warning-light) !important; color: var(--vtch-warning-dark) !important; }
+.Toastify__toast--info { background-color: var(--vtch-info-light) !important; color: var(--vtch-info-dark) !important; }
+.Toastify__close-button { color: inherit !important; opacity: 0.7 !important; }
+.Toastify__close-button:hover { opacity: 1 !important; }
+
+
+/* Responsive adjustments (selectors remain the same) */
+@media (max-width: 1024px) {
+    .veritesthis-tools { flex-direction: column; align-items: stretch; }
+    .veritesthis-search { width: 100%; }
+    .veritesthis-panel-header { flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 768px) {
+    .veritesthis-container { padding: 20px 15px; }
+    .veritesthis-header { flex-direction: column; align-items: flex-start; gap: 15px; margin-bottom: 25px; }
+    .veritesthis-header h1 { order: 1; margin: 0; font-size: 22px; }
+    .veritesthis-back-btn { position: static; order: 0; }
+    .tutorial-help-button-corner-vth { top: 10px; right: 10px; }
+
+    .veritesthis-table th, .veritesthis-table td { padding: 12px 15px; font-size: 13px; }
+    .veritesthis-hist-id-cell, .veritesthis-hist-tc-id-cell { font-size: 13px; }
+    .veritesthis-actions-cell { text-align: left; }
+    .veritesthis-view-details-btn { width: 30px; height: 30px; }
+
+    .modal-content-review { width: 95%; max-height: 85vh; }
+    .modal-header { padding: 12px 16px; }
+    .modal-header h3 { font-size: 16px; }
+    .reviewer-section, .requirement-section { padding: 16px; }
+}
