@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faSave, faTrash, faTimes, faEdit, faChevronUp, faChevronDown } from "@fortawesome/free-solid-svg-icons";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { faPlus, faSave, faTrash, faTimes, faEdit, faClipboardList } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import "./testcase_css/TestProcedures.css";
 import ReactQuill from 'react-quill';
@@ -92,10 +91,15 @@ const TestProcedures = () => {
   return (
     <div className={`test-procedures-container-testprocedures ${isTableExpanded ? 'expanded' : 'collapsed'}`}>
       <div className="test-procedures-header-testprocedures">
-        <div className="test-procedures-header-actions-testprocedures">
-          <h3>Test Step</h3>
-          <button className="add-test-step-btn" onClick={() => handleOpenModal()}>
-            <FontAwesomeIcon icon={faPlus} /> Add Test Step
+        <div className="test-procedures-header-actions-testprocedures flex items-center gap-4">
+          <div className="flex items-center gap-2">
+
+            <h3 className="text-lg font-semibold"> <FontAwesomeIcon icon={faClipboardList} className="icon-teststep" />Test Step</h3>
+          </div>
+
+          <button className="add-test-step-btn flex items-center gap-1" onClick={handleOpenModal}>
+            <FontAwesomeIcon icon={faPlus} />
+            Add Test Step
           </button>
         </div>
       </div>
