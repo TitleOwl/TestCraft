@@ -305,13 +305,55 @@
 
 /* --- General Button Styles --- */
 .imp-fetch-btn,
-.imp-refresh-btn,
 .imp-save-btn,
 .imp-empty-button {
     padding: 0.5rem 1rem;
     /* Consistent padding */
     font-size: 0.875rem;
     /* Consistent font size */
+    border-radius: var(--imp-border-radius);
+    display: inline-flex;
+    /* Use inline-flex */
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    /* Bolder */
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color var(--imp-transition), border-color var(--imp-transition), color var(--imp-transition), box-shadow var(--imp-transition), transform var(--imp-transition);
+    border: 1px solid transparent;
+    /* Base border */
+    line-height: 1.5;
+    /* Ensure consistent height */
+    height: auto;
+    /* Remove fixed height */
+}
+
+.imp-refresh-btn {
+    margin-right: 10px;
+    width: 15%;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    border-radius: var(--imp-border-radius);
+    display: inline-flex;
+    /* Use inline-flex */
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color var(--imp-transition), border-color var(--imp-transition), color var(--imp-transition), box-shadow var(--imp-transition), transform var(--imp-transition);
+    border: 1px solid transparent;
+    line-height: 1.5;
+    height: auto;
+}
+
+.imp-save-btn {
+    width: 15%;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
     border-radius: var(--imp-border-radius);
     display: inline-flex;
     /* Use inline-flex */
@@ -877,11 +919,6 @@
 
 
 .imp-actions-container {
-    margin-top: 1rem;
-    padding-top: 1rem;
-    /* Space above save button */
-    border-top: 1px solid var(--imp-border-light);
-    /* Separator line */
     display: flex;
     justify-content: flex-end;
 }
@@ -1315,4 +1352,23 @@
         word-break: break-all;
         /* Force break long filenames */
     }
+}
+
+.code-icon {
+    font-size: 1.0rem;
+    padding-right: 10px;
+}
+
+.folder-icon-sc {
+    font-size: 1.2rem;
+    color: #FFC107;
+}
+
+.icon-link-sctosd {
+    color: #6200EE;
+}
+
+.imp-relation-file-icon {
+    font-size: 1.1rem;
+    color: #495057;
 }

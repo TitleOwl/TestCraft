@@ -196,7 +196,6 @@ const CreateVerifyTrace = () => {
                             state: { selectedSection: "Traceability" }
                         });
                     },
-                    autoClose: 2000
                 });
                 setSelectedMembers([]);
             } else {

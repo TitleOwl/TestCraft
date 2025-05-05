@@ -93,7 +93,7 @@ const TestProcedures = () => {
     <div className={`test-procedures-container-testprocedures ${isTableExpanded ? 'expanded' : 'collapsed'}`}>
       <div className="test-procedures-header-testprocedures">
         <div className="test-procedures-header-actions-testprocedures">
-          <h3>Test Procedures</h3>
+          <h3>Test Step</h3>
           <button className="add-test-step-btn" onClick={() => handleOpenModal()}>
             <FontAwesomeIcon icon={faPlus} /> Add Test Step
           </button>
