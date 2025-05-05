@@ -1,32 +1,38 @@
-/* Dashboard.css - เฉพาะส่วน Sidebar */
+/* Dashboard.css - พร้อมใช้งาน: Overview เขียวตลอด, อื่นๆ Active น้ำเงิน */
 
 :root {
-  /* Main colors */
+  /* Main colors - กลับไปใช้ค่าเดิมสำหรับ Active */
   --primary: #2563eb;
   --primary-dark: #1d4ed8;
   --primary-light: #dbeafe;
   --sidebar-bg: #111827;
-  --sidebar-hover: #1e40af;
-  --sidebar-active: #1e3a8a;
+  --sidebar-hover: rgba(255, 255, 255, 0.08);
+  --sidebar-active: #1e3a8a; /* สี Active เดิม (น้ำเงินเข้ม) */
   --sidebar-text: #f3f4f6;
   --sidebar-text-muted: #9ca3af;
   --danger: #ef4444;
   --danger-hover: #dc2626;
-  
+
+  /* --- Green Variables for Overview --- */
+  --overview-active-bg: #10B981;     /* พื้นหลังเขียวสำหรับ Overview */
+  --overview-active-border: #34D399; /* เส้นขอบเขียวสำหรับ Overview */
+  --overview-active-text: #F0FDFA;   /* ข้อความ/ไอคอนเขียวสำหรับ Overview */
+  /* --------------------------------- */
+
   /* Typography */
   --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  
+
   /* Transitions */
   --transition-normal: all 0.2s ease;
   --transition-slow: all 0.3s ease;
-  
+
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
-/* Main layout - ไม่เปลี่ยนแปลงการแสดงผล content */
+/* Main layout */
 .dashboard-container {
   display: flex;
   min-height: 100vh;
@@ -42,10 +48,10 @@
   box-shadow: var(--shadow-lg);
   display: flex;
   flex-direction: column;
-  /* overflow-y: auto; */
   z-index: 10;
-  transition: var(--transition-normal);
+  transition: width var(--transition-normal); /* แก้ transition ให้เนียนขึ้น */
   position: relative;
+  flex-shrink: 0; /* ป้องกัน Sidebar หดเมื่อเนื้อหาเยอะ */
 }
 
 /* Project name at the top */
@@ -57,6 +63,9 @@
   position: relative;
   color: white;
   letter-spacing: 0.025em;
+  min-height: 40px; /* กำหนดความสูงขั้นต่ำ กันการกระโดด */
+  display: flex;
+  align-items: center;
 }
 
 .dashboard-sidebar-project-name::after {
@@ -68,7 +77,13 @@
   height: 3px;
   background-color: var(--primary);
   border-radius: 2px;
+  transition: width var(--transition-normal); /* เพิ่ม transition */
 }
+
+.dashboard-sidebar.collapsed .dashboard-sidebar-project-name::after {
+    width: 0; /* ซ่อนเส้นใต้เมื่อย่อ */
+}
+
 
 /* Section titles */
 .dashboard-sidebar-section-title {
@@ -80,6 +95,8 @@
   text-transform: uppercase;
   letter-spacing: 0.1em;
   padding-left: 0.5rem;
+  white-space: nowrap; /* ไม่ให้ตัดคำ */
+  overflow: hidden; /* ซ่อนส่วนที่เกิน */
 }
 
 /* Navigation links */
@@ -93,23 +110,33 @@
   font-size: 0.9375rem;
   color: var(--sidebar-text);
   font-weight: 500;
-  transition: var(--transition-normal);
+  transition: background-color var(--transition-normal), color var(--transition-normal);
   position: relative;
-  overflow: hidden;
+  overflow: hidden; /* ซ่อน indicator ที่อาจจะล้นตอน transition */
+  white-space: nowrap; /* ป้องกันข้อความตกบรรทัด */
 }
 
-/* Icon in navigation links (if you have them) */
-.dashboard-nav-link i, 
+/* Icon in navigation links */
+.dashboard-nav-link i,
 .dashboard-nav-link svg {
   margin-right: 0.75rem;
   font-size: 1.125rem;
-  transition: var(--transition-normal);
+  transition: color var(--transition-normal), opacity var(--transition-normal);
   opacity: 0.7;
+  flex-shrink: 0; /* ไม่ให้ icon หด */
 }
+
+/* Text span in navigation links */
+.dashboard-nav-link span {
+    overflow: hidden; /* ซ่อนข้อความที่ล้น */
+    text-overflow: ellipsis; /* แสดง ... ถ้าข้อความยาวไป */
+    transition: opacity var(--transition-normal); /* เพิ่ม transition ให้ text */
+}
+
 
 /* Hover state */
 .dashboard-nav-link:hover {
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: var(--sidebar-hover);
   color: white;
 }
 
@@ -118,9 +145,9 @@
   opacity: 1;
 }
 
-/* Active state */
+/* --- Default Active state (Blue - สำหรับรายการอื่นๆ) --- */
 .dashboard-nav-link.active {
-  background-color: var(--sidebar-active);
+  background-color: var(--sidebar-active); /* น้ำเงินเข้ม */
   color: white;
   font-weight: 600;
   box-shadow: var(--shadow-sm);
@@ -128,27 +155,65 @@
 
 .dashboard-nav-link.active i,
 .dashboard-nav-link.active svg {
-  color: var(--primary-light);
+  color: var(--primary-light); /* น้ำเงินอ่อน */
   opacity: 1;
 }
 
-/* Active indicator */
-.dashboard-nav-link.active::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 4px;
-  background-color: var(--primary);
-  border-radius: 0 2px 2px 0;
+/* Default Active indicator (Blue - สำหรับรายการอื่นๆ) */
+/* ใช้ ::before สำหรับ Indicator */
+.dashboard-nav-link::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 0; /* ซ่อนไว้ปกติ */
+    background-color: var(--primary); /* สีน้ำเงิน */
+    border-radius: 0 2px 2px 0;
+    transition: width var(--transition-normal); /* เพิ่ม transition */
+    z-index: -1; /* อยู่หลังสุด */
 }
 
-/* ไม่เปลี่ยนแปลงส่วน content container */
+.dashboard-nav-link.active::before {
+    width: 4px; /* แสดงเส้นเมื่อ Active */
+    background-color: var(--primary); /* ยืนยันสีน้ำเงิน */
+}
+/* ---------------------------------------------------- */
+
+
+/* --- Style เฉพาะสำหรับ Overview (เขียวตลอด) --- */
+.dashboard-nav-link.overview-always-active {
+  background-color: var(--overview-active-bg); /* พื้นหลังเขียว */
+  color: var(--overview-active-text);         /* ข้อความเขียวอ่อน */
+}
+
+.dashboard-nav-link.overview-always-active i,
+.dashboard-nav-link.overview-always-active svg {
+  color: var(--overview-active-text); /* ไอคอนเขียวอ่อน */
+  opacity: 1; /* ทำให้ชัดเจน */
+}
+
+/* Indicator สีเขียวสำหรับ Overview (ทับ ::before เดิม) */
+.dashboard-nav-link.overview-always-active::before {
+  width: 4px; /* แสดงเส้นตลอด */
+  background-color: var(--overview-active-border); /* เส้นสีเขียว */
+}
+
+/* ถ้า Overview ถูก Active ด้วย (ถูกคลิก) เพิ่ม font-weight */
+.dashboard-nav-link.overview-always-active.active {
+   font-weight: 600;
+   /* ไม่ต้องเปลี่ยน background หรือ border เพราะมันเขียวอยู่แล้ว */
+}
+/* --------------------------------------------- */
+
+
+/* Main content container */
 .dashboard-content-container {
   flex-grow: 1;
   overflow-y: auto;
   position: relative;
+  padding: 2rem;
+  background-color: #f9fafb;
 }
 
 /* Close project button */
@@ -170,6 +235,7 @@
   transition: var(--transition-normal);
   box-shadow: var(--shadow-sm);
   margin-top: 1.5rem;
+  white-space: nowrap;
 }
 
 .dashboard-close-project-btn:hover {
@@ -182,156 +248,114 @@
   transform: translateY(0);
 }
 
-/* Dropdown styling with Animation */
+
+/* Dropdown styling (ถ้ามี) */
 @keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
-
-@keyframes slideContentDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.dashboard-dropdown-container {
-  position: relative;
-  z-index: 10;
-}
-
+.dashboard-dropdown-container { position: relative; z-index: 10; }
 .dashboard-dropdown-menu {
-  position: absolute;
-  top: calc(100% + 0.25rem);
-  left: 0.5rem;
-  background-color: #1f2937;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  width: 200px;
-  display: none;
-  flex-direction: column;
-  z-index: 999;
-  animation: slideDown 0.2s ease-out;
-  box-shadow: var(--shadow-lg);
-  border-radius: 0.375rem;
-  overflow: hidden;
+  position: absolute; top: calc(100% + 0.25rem); left: 0.5rem;
+  background-color: #1f2937; border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 200px; display: none; flex-direction: column; z-index: 999;
+  animation: slideDown 0.2s ease-out; box-shadow: var(--shadow-lg);
+  border-radius: 0.375rem; overflow: hidden;
 }
-
-.dashboard-dropdown-container.open .dashboard-dropdown-menu {
-  display: flex;
-}
-
+.dashboard-dropdown-container.open .dashboard-dropdown-menu { display: flex; }
 .dashboard-dropdown-item {
-  padding: 0.75rem 1rem;
-  color: var(--sidebar-text);
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: var(--transition-normal);
-  position: relative;
-  font-weight: 500;
+  padding: 0.75rem 1rem; color: var(--sidebar-text); font-size: 0.875rem;
+  cursor: pointer; transition: var(--transition-normal); position: relative; font-weight: 500;
 }
-
-.dashboard-dropdown-item:not(:last-child) {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.dashboard-dropdown-item:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-  color: white;
-  padding-left: 1.25rem;
-}
-
-.dashboard-dropdown-item.active {
-  background-color: var(--sidebar-active);
-  color: white;
-  font-weight: 600;
-}
-
+.dashboard-dropdown-item:not(:last-child) { border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+.dashboard-dropdown-item:hover { background-color: rgba(255, 255, 255, 0.05); color: white; padding-left: 1.25rem; }
+.dashboard-dropdown-item.active { background-color: var(--sidebar-active); color: white; font-weight: 600; }
 .dashboard-dropdown-item.active::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 3px;
-  background-color: var(--primary);
+  content: ""; position: absolute; left: 0; top: 0; height: 100%; width: 3px; background-color: var(--primary);
 }
+
 
 /* Responsive adjustments */
 @media (max-width: 1024px) {
-  .dashboard-sidebar {
-    width: 240px;
-  }
+  .dashboard-sidebar { width: 240px; }
 }
 
 @media (max-width: 768px) {
-  .dashboard-container {
-    flex-direction: column;
-  }
-  
-  .dashboard-sidebar {
-    width: 100%;
-    padding: 1rem;
-  }
-  
-  .dashboard-sidebar-project-name {
-    font-size: 1.125rem;
-    margin-bottom: 1rem;
-    padding-bottom: 0.75rem;
-  }
-  
-  .dashboard-nav-link {
-    padding: 0.625rem 0.875rem;
-    margin-bottom: 0.125rem;
-    font-size: 0.875rem;
-  }
-  
-  .dashboard-dropdown-menu {
-    position: static;
-    width: 100%;
-    margin-top: 0.25rem;
-    margin-bottom: 0.25rem;
-  }
+  .dashboard-container { flex-direction: column; }
+  .dashboard-sidebar { width: 100%; padding: 1rem; height: auto; }
+  .dashboard-sidebar-project-name { font-size: 1.125rem; margin-bottom: 1rem; padding-bottom: 0.75rem; }
+  .dashboard-nav-link { padding: 0.625rem 0.875rem; margin-bottom: 0.125rem; font-size: 0.875rem; }
+  .dashboard-dropdown-menu { position: static; width: 100%; margin-top: 0.25rem; margin-bottom: 0.25rem; box-shadow: none; border: none; background-color: transparent; }
+  .dashboard-dropdown-item { padding-left: 2rem; }
+  .dashboard-content-container { padding: 1rem; }
+  .sidebar-toggle { top: 0.5rem; right: 0.5rem; }
 }
 
-/* Optional: Collapsed state for the sidebar */
+/* Collapsed state for the sidebar */
 .dashboard-sidebar.collapsed {
   width: 80px;
   padding: 1.5rem 0.75rem;
 }
 
-.dashboard-sidebar.collapsed .dashboard-sidebar-project-name,
+/* ซ่อน element ที่ไม่ต้องการเมื่อ collapsed */
 .dashboard-sidebar.collapsed .dashboard-sidebar-section-title,
 .dashboard-sidebar.collapsed .dashboard-nav-link span,
 .dashboard-sidebar.collapsed .dashboard-close-project-btn span {
-  display: none;
+  /* ใช้ opacity และ width เพื่อ transition */
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  transition: opacity 0.1s ease-out, width 0.1s ease-out;
 }
 
+/* จัดไอคอนให้อยู่กลางเมื่อ Sidebar ย่อ */
 .dashboard-sidebar.collapsed .dashboard-nav-link {
   justify-content: center;
-  padding: 0.75rem;
+  padding: 0.75rem; /* ลด padding */
 }
 
+/* ปรับไอคอนเมื่อ Sidebar ย่อ */
 .dashboard-sidebar.collapsed .dashboard-nav-link i,
 .dashboard-sidebar.collapsed .dashboard-nav-link svg {
   margin-right: 0;
   font-size: 1.25rem;
 }
 
+/* ปุ่มปิดเมื่อ Sidebar ย่อ */
 .dashboard-sidebar.collapsed .dashboard-close-project-btn {
   padding: 0.75rem;
 }
+
+/* แสดงตัวย่อโปรเจกต์เมื่อย่อ */
+.project-initial {
+    display: inline-block; /* ใช้ inline-block */
+    font-size: 1.25rem;
+    font-weight: 700;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    background-color: var(--primary);
+    color: white;
+    border-radius: 50%;
+    margin: 0 auto; /* จัดกึ่งกลางแนวนอน */
+    flex-shrink: 0; /* ไม่ให้หด */
+    /* ซ่อนไว้ก่อน ปกติจะแสดงชื่อเต็ม */
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+}
+.dashboard-sidebar.collapsed .project-initial {
+    opacity: 1; /* แสดงเมื่อ collapsed */
+}
+
+/* ซ่อนชื่อโปรเจกต์เต็มเมื่อย่อ */
+.dashboard-sidebar.collapsed .dashboard-sidebar-project-name span:not(.project-initial) {
+    display: none;
+}
+.dashboard-sidebar:not(.collapsed) .project-initial {
+    display: none; /* ซ่อนตัวย่อเมื่อขยาย */
+}
+
 
 /* Toggle button for sidebar collapse */
 .sidebar-toggle {
@@ -350,9 +374,14 @@
   color: white;
   box-shadow: var(--shadow-md);
   z-index: 20;
-  transition: var(--transition-normal);
+  transition: background-color var(--transition-normal), transform var(--transition-normal);
 }
 
 .sidebar-toggle:hover {
   background-color: var(--primary-dark);
+}
+
+.dashboard-sidebar.collapsed .sidebar-toggle {
+    /* อาจจะหมุนปุ่มนิดหน่อย */
+    /* transform: rotate(180deg); */
 }

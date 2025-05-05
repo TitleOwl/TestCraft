@@ -1,4 +1,4 @@
-/* VeriTestHis.css - Based on Emerald Green Theme (#10b981) with veritesthis- Prefix */
+/* VeriTestHis.css - Emerald Green Theme with updated 'veritesthis-' Prefix */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 /* --- Emerald Green Theme Variables with --vtch- Prefix --- */
@@ -6,7 +6,6 @@
     /* Base Colors */
     --vtch-bg-primary: #ffffff;
     --vtch-bg-secondary: #f8f9fc;
-    /* NEW: Light Green background, replaces light orange */
     --vtch-bg-tertiary: #ecfdf5; /* Emerald 50 */
 
     /* Text Colors */
@@ -16,17 +15,16 @@
     --vtch-text-white: #ffffff;
 
     /* Primary Brand Colors (Emerald Green Theme #10b981) */
-    /* NEW: Emerald Green */
     --vtch-primary: #10b981;        /* Base Emerald Green (Emerald 500) */
     --vtch-primary-light: #6ee7b7;  /* Lighter Emerald Green (Emerald 300) */
     --vtch-primary-dark: #059669;   /* Darker Emerald Green (Emerald 600) */
 
-    /* Accent Colors (Using Blue for contrast - kept from previous) */
+    /* Accent Colors (Using Blue for contrast) */
     --vtch-accent: #3b82f6;         /* Example: Blue */
     --vtch-accent-light: #93c5fd;
     --vtch-accent-dark: #1d4ed8;
 
-    /* Status Colors (Success now matches primary, others distinct) */
+    /* Status Colors (Success now matches primary) */
     --vtch-success: #10b981;        /* Emerald (Same as primary) */
     --vtch-success-light: #ecfdf5;  /* Lighter Emerald bg */
     --vtch-success-dark: #059669;   /* Dark Emerald */
@@ -44,16 +42,14 @@
 
     /* UI Elements */
     --vtch-border: #e2e8f0;         /* Standard border */
-    --vtch-border-light: #f1f5f9;    /* Lighter border */
-    /* NEW: Green related border */
+    --vtch-border-light: #f1f5f9;   /* Lighter border */
     --vtch-border-colored: #a7f3d0; /* Emerald 200 */
 
     /* Shadows */
     --vtch-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.03);
     --vtch-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
     --vtch-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
-    /* NEW: Green shadow */
-    --vtch-shadow-primary: 0 4px 12px rgba(16, 185, 129, 0.15);
+    --vtch-shadow-primary: 0 4px 12px rgba(16, 185, 129, 0.15); /* Green shadow */
 
     /* Border Radius */
     --vtch-radius-sm: 4px;
@@ -78,8 +74,7 @@ body {
     line-height: 1.6;
 }
 
-/* --- Styles for VeriTestHis --- */
-/* Selectors are veritesthis-... and use --vtch-... variables */
+/* --- Styles for VeriTestHis (Selectors updated to veritesthis-...) --- */
 
 /* Main container */
 .veritesthis-container {
@@ -98,7 +93,6 @@ body {
     left: 0;
     width: 100%;
     height: 5px;
-    /* Apply new green gradient */
     background: linear-gradient(to right, var(--vtch-primary), var(--vtch-primary-light));
     z-index: 1;
 }
@@ -123,16 +117,14 @@ body {
 }
 
 .veritesthis-title-icon {
-    /* Apply new green */
-    color: var(--vtch-primary);
+    color: var(--vtch-primary); /* Green */
     font-size: 28px;
 }
 
 /* Back button */
 .veritesthis-back-btn {
     background-color: transparent;
-    /* Apply new green */
-    color: var(--vtch-primary);
+    color: var(--vtch-primary); /* Green */
     border: none;
     font-size: 15px;
     font-weight: 500;
@@ -147,28 +139,29 @@ body {
 }
 
 .veritesthis-back-btn:hover {
-    /* Apply new dark green */
-    color: var(--vtch-primary-dark);
+    color: var(--vtch-primary-dark); /* Dark Green */
     transform: translateX(-3px);
 }
 
 /* Tutorial Help Button */
-.tutorial-help-button-corner-vth {
-    position: absolute;
-    top: 0;
-    right: 0;
-    font-size: 1.8rem;
-    background: none;
-    border: none;
-    color: var(--vtch-text-secondary);
-    cursor: pointer;
-    z-index: 5;
-    transition: color 0.2s ease;
-    padding: 5px;
+.veritesthis-tutorial-help-button { /* Base class */
+   background: none;
+   border: none;
+   cursor: pointer;
+   padding: 5px;
+   color: var(--vtch-text-secondary);
+   transition: color 0.2s ease;
 }
-.tutorial-help-button-corner-vth:hover {
-    /* Apply new green */
-    color: var(--vtch-primary);
+.veritesthis-tutorial-help-button:hover {
+   color: var(--vtch-primary); /* Green on hover */
+}
+/* Specific class for positioning */
+.veritesthis-tutorial-help-button-corner-vth {
+    position: absolute;
+    top: 15px; /* Keep position from React */
+    right: 20px; /* Keep position from React */
+    font-size: 1.8rem; /* Adjusted size */
+    z-index: 5;
 }
 
 
@@ -212,15 +205,14 @@ body {
     margin: 0;
 }
 
-.veritesthis-panel-header h2 svg {
-    /* Apply new green */
-    color: var(--vtch-primary);
+/* Updated panel icon class */
+.veritesthis-panel-icon {
+    color: var(--vtch-primary); /* Green */
 }
 
 .veritesthis-count-badge {
-    /* Apply new green theme */
-    background-color: var(--vtch-primary-light);
-    color: var(--vtch-primary-dark);
+    background-color: var(--vtch-primary-light); /* Light Green */
+    color: var(--vtch-primary-dark); /* Dark Green */
     font-size: 12px;
     font-weight: 600;
     padding: 3px 10px;
@@ -247,12 +239,9 @@ body {
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .veritesthis-search:focus-within {
-     /* Apply new light green focus border */
-     border-color: var(--vtch-primary-light);
-     /* NEW: Green focus shadow */
-     box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+    border-color: var(--vtch-primary-light); /* Light Green focus */
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2); /* Green focus shadow */
 }
-
 
 .veritesthis-search-icon {
     color: var(--vtch-text-light);
@@ -270,38 +259,29 @@ body {
 .veritesthis-search-input::placeholder {
     color: var(--vtch-text-light);
 }
+.veritesthis-search-input:disabled {
+    background-color: var(--vtch-bg-secondary);
+    cursor: not-allowed;
+}
 
-
-.veritesthis-clear-search {
+.veritesthis-clear-search-btn { /* Updated class */
     background: transparent;
     border: none;
     color: var(--vtch-text-light);
     cursor: pointer;
     transition: var(--vtch-transition);
     padding: 0 5px;
+    margin-left: 4px;
 }
 
-.veritesthis-clear-search:hover {
-    /* Apply new green */
-    color: var(--vtch-primary);
+.veritesthis-clear-search-btn:hover {
+    color: var(--vtch-primary); /* Green */
 }
 
-/* Refresh button - Styles updated for green theme if added */
+/* Refresh button styles (kept commented out) */
 /*
-.veritesthis-refresh-btn {
-    background-color: var(--vtch-bg-tertiary);
-    color: var(--vtch-text-secondary);
-    border: 1px solid var(--vtch-border-colored);
-    border-radius: var(--vtch-radius-md);
-    ...
-}
-.veritesthis-refresh-btn:hover:not(:disabled) {
-    background-color: var(--vtch-primary-light);
-    color: var(--vtch-primary-dark);
-    border-color: var(--vtch-primary-light);
-}
+.veritesthis-refresh-btn { ... }
 */
-
 
 /* Table container */
 .veritesthis-table-container {
@@ -315,7 +295,7 @@ body {
     width: 100%;
     border-collapse: collapse;
     border-spacing: 0;
-    min-width: 900px;
+    min-width: 900px; /* Adjusted min-width */
 }
 
 .veritesthis-table th {
@@ -329,15 +309,15 @@ body {
     border-bottom: 2px solid var(--vtch-border);
     letter-spacing: 0.05em;
     white-space: nowrap;
-    cursor: pointer;
-    user-select: none;
-    position: relative;
     transition: background-color 0.2s ease;
 }
-.veritesthis-table th:hover {
-    /* Apply new light green hover */
-    background-color: var(--vtch-bg-tertiary);
+.veritesthis-table th:not(.veritesthis-sortable-header) { /* Apply hover only to non-sortable */
+    cursor: default;
 }
+.veritesthis-table th:hover:not(.veritesthis-sortable-header) {
+     background-color: var(--vtch-bg-secondary); /* No hover effect */
+}
+
 
 .veritesthis-table td {
     padding: 16px 24px;
@@ -352,33 +332,25 @@ body {
 }
 
 .veritesthis-row:hover {
-    /* Apply new light green hover */
-    background-color: var(--vtch-bg-tertiary);
+    background-color: var(--vtch-bg-tertiary); /* Light Green hover */
 }
 
-/* Table cell styling */
-.veritesthis-hist-id-cell {
+/* Table cell styling (Updated classes) */
+.veritesthis-cell-id {
     font-family: "SF Mono", "Roboto Mono", monospace;
     font-size: 14px;
-    /* Apply new dark green */
-    color: var(--vtch-primary-dark);
+    color: var(--vtch-primary-dark); /* Dark Green */
     font-weight: 500;
 }
-
-.veritesthis-hist-round-cell {
-    font-weight: 500;
-    text-align: center;
+.veritesthis-cell-creator {
+   /* Styles for creator cell if needed */
+}
+.veritesthis-cell-date {
+    /* Styles for date cell if needed */
 }
 
-.veritesthis-hist-tc-id-cell {
-    font-family: "SF Mono", "Roboto Mono", monospace;
-    font-size: 14px;
-    color: var(--vtch-accent-dark); /* Kept accent color for TC ID */
-    font-weight: 500;
-}
-
-
-.veritesthis-creator-info, .veritesthis-date-info {
+.veritesthis-cell-creator-info,
+.veritesthis-cell-date-info {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -395,51 +367,57 @@ body {
 }
 
 /* Action buttons */
-.veritesthis-view-details-btn {
+.veritesthis-view-details-btn { /* Updated class */
     display: inline-flex;
     align-items: center;
     justify-content: center;
     width: 36px;
     height: 36px;
-    background-color: var(--vtch-info-light); /* Keep info color for view */
+    background-color: var(--vtch-info-light); /* Keep info for view button */
     color: var(--vtch-info-dark);
     border: none;
     border-radius: var(--vtch-radius-md);
     cursor: pointer;
-    transition: var(--vtch-transition);
+    transition: var(--vtch-transition), transform 0.2s ease;
 }
 
 .veritesthis-view-details-btn:hover {
-    background-color: rgba(99, 102, 241, 0.2); /* Keep info color for view */
+    background-color: var(--vtch-info); /* Darker info on hover */
+    color: var(--vtch-text-white);
     transform: scale(1.05);
+    box-shadow: var(--vtch-shadow-md);
 }
 
 /* Sortable headers */
 .veritesthis-sortable-header {
-    padding-right: 28px !important;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    padding-right: 28px !important; /* Space for icon */
 }
 .veritesthis-sortable-header:hover {
+     background-color: var(--vtch-bg-tertiary); /* Light green hover */
      color: var(--vtch-text-primary);
 }
 
-.veritesthis-sortable-header svg {
+/* Updated sort icon class */
+.veritesthis-sort-icon {
     position: absolute;
     right: 10px;
     top: 50%;
     transform: translateY(-50%);
     font-size: 13px;
-    color: var(--vtch-text-light);
-    transition: color 0.2s ease;
+    color: var(--vtch-primary); /* Green sort icon */
+    transition: color 0.2s ease, opacity 0.2s ease;
+    opacity: 0.6; /* Dim when inactive */
 }
-.veritesthis-sortable-header:hover svg {
-    color: var(--vtch-text-secondary);
+.veritesthis-sortable-header:hover .veritesthis-sort-icon {
+    opacity: 1;
 }
-.veritesthis-table th[aria-sort] svg,
-.veritesthis-table th:hover svg {
-     /* Apply new green */
-     color: var(--vtch-primary);
+/* Keep opacity 1 if this header is the one being sorted */
+.veritesthis-sortable-header[aria-sort] .veritesthis-sort-icon {
+     opacity: 1;
 }
-
 
 /* Empty state */
 .veritesthis-empty-state {
@@ -478,30 +456,37 @@ body {
     min-height: 300px;
     width: 100%;
 }
-.veritesthis-loading-state.veritesthis-small {
+
+/* Refreshing state (Overlay) */
+.veritesthis-refreshing-state { /* Updated class */
     padding: 20px;
     min-height: auto;
+    display: flex;
     flex-direction: row;
+    align-items: center;
+    justify-content: center;
     gap: 10px;
     font-size: 14px;
     color: var(--vtch-text-secondary);
+    width: 100%;
+    background-color: rgba(248, 249, 252, 0.8); /* Overlay effect */
+    position: absolute;
+    top: 0; left: 0;
+    z-index: 2;
 }
-.veritesthis-loading-state.veritesthis-small .veritesthis-loading-spinner {
+.veritesthis-loading-spinner.veritesthis-loading-spinner-small { /* Updated compound class */
     width: 20px;
     height: 20px;
     border-width: 2px;
     margin-bottom: 0;
 }
 
-
 .veritesthis-loading-spinner {
     width: 48px;
     height: 48px;
-    /* Apply new light green */
-    border: 4px solid var(--vtch-bg-tertiary);
+    border: 4px solid var(--vtch-bg-tertiary); /* Light Green */
     border-radius: 50%;
-    /* Apply new green */
-    border-top-color: var(--vtch-primary);
+    border-top-color: var(--vtch-primary); /* Green */
     animation: spin 1s linear infinite;
     margin-bottom: 20px;
 }
@@ -510,19 +495,18 @@ body {
     to { transform: rotate(360deg); }
 }
 
-/* --- Reusable Modal, Scrollbar, Toastify Styles (Green Theme Applied) --- */
+/* --- Modal Styles (Green Theme & Updated Selectors) --- */
 
-/* Modal Styles */
-.modal-overlay-review {
+.veritesthis-modal-overlay { /* Updated */
     position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background-color: rgba(30, 41, 59, 0.7); /* Kept overlay color */
+    background-color: rgba(30, 41, 59, 0.7);
     display: flex; align-items: center; justify-content: center;
     z-index: 10000; backdrop-filter: blur(4px);
     opacity: 0; animation: modalOverlayFadeIn 0.3s ease-out forwards;
 }
-@keyframes modalOverlayFadeIn { from { opacity: 0; } to { opacity: 1; } }
+/* Keyframes defined earlier */
 
-.modal-content-review {
+.veritesthis-modal-content { /* Updated */
     background-color: var(--vtch-bg-primary);
     border-radius: var(--vtch-radius-lg);
     width: 90%; max-width: 650px; max-height: 90vh;
@@ -531,112 +515,105 @@ body {
     transform: scale(0.95); opacity: 0;
     animation: modalContentScaleUp 0.3s 0.1s ease-out forwards;
 }
-@keyframes modalContentScaleUp { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+/* Keyframes defined earlier */
 
-.modal-header {
+.veritesthis-modal-header {
     display: flex; justify-content: space-between; align-items: center;
     padding: 18px 24px; border-bottom: 1px solid var(--vtch-border);
     background-color: var(--vtch-bg-secondary); flex-shrink: 0;
 }
-.modal-header h3 { font-size: 18px; font-weight: 600; color: var(--vtch-text-primary); }
-.close-modal-button {
+.veritesthis-modal-header h3 { font-size: 18px; font-weight: 600; color: var(--vtch-text-primary); }
+.veritesthis-modal-close-button {
     background-color: transparent; border: none; color: var(--vtch-text-secondary);
-    font-size: 18px; cursor: pointer; transition: var(--vtch-transition);
+    font-size: 18px; cursor: pointer; transition: var(--vtch-transition), transform 0.3s ease;
     display: flex; align-items: center; justify-content: center;
     width: 34px; height: 34px; border-radius: 50%;
 }
-.close-modal-button:hover {
-    /* Apply new light green bg */
-    background-color: var(--vtch-bg-tertiary);
-    color: var(--vtch-error); /* Keep error color for close */
+.veritesthis-modal-close-button:hover {
+    background-color: var(--vtch-bg-tertiary); /* Light Green */
+    color: var(--vtch-error); /* Keep error color */
     transform: rotate(90deg);
 }
 
-.modal-body { padding: 0; flex-grow: 1; overflow-y: auto; }
+.veritesthis-modal-body { padding: 0; flex-grow: 1; overflow-y: auto; }
 
-/* Modal Sections */
-.reviewer-section, .requirement-section {
+/* Modal Sections (Updated classes) */
+.veritesthis-modal-reviewer-section,
+.veritesthis-modal-testcase-section { /* Updated class */
     padding: 24px; border-bottom: 1px solid var(--vtch-border-light);
 }
-.modal-body > div:last-child { border-bottom: none; }
+.veritesthis-modal-body > div:last-child { border-bottom: none; }
 
-.reviewer-section h4, .requirement-section h4 {
+.veritesthis-modal-reviewer-section h4,
+.veritesthis-modal-testcase-section h4 { /* Updated class */
     font-size: 16px; font-weight: 600; color: var(--vtch-text-primary);
     margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
 }
-.section-icon {
-    /* Apply new green */
-    color: var(--vtch-primary);
+.veritesthis-modal-section-icon {
+    color: var(--vtch-primary); /* Green */
     width: 18px; height: 18px;
 }
 
-.reviewers-list, .requirements-list { display: flex; flex-direction: column; gap: 12px; }
+/* Modal Lists (Updated classes) */
+.veritesthis-modal-reviewers-list,
+.veritesthis-modal-testcase-list { /* Updated class */
+    display: flex; flex-direction: column; gap: 12px;
+}
 
-.reviewer-item, .requirement-item {
+/* Modal Items (Updated classes) */
+.veritesthis-modal-reviewer-item,
+.veritesthis-modal-testcase-item { /* Updated class */
     display: flex; align-items: center; padding: 14px;
     background-color: var(--vtch-bg-secondary);
     border-radius: var(--vtch-radius-md); gap: 14px;
 }
-.reviewer-avatar {
+
+.veritesthis-modal-reviewer-avatar {
     width: 40px; height: 40px; border-radius: 50%;
-    /* Kept accent color for avatar */
-    background-color: var(--vtch-accent-light);
+    background-color: var(--vtch-accent-light); /* Keep Blue accent */
     color: var(--vtch-accent-dark);
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0; font-size: 18px;
 }
-.reviewer-info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
-.reviewer-name { font-weight: 600; color: var(--vtch-text-primary); font-size: 15px; }
-.reviewer-status { font-size: 13px; font-weight: 500; }
-/* Status colors remain distinct (success uses primary green variables) */
-.reviewer-status.verified { color: var(--vtch-success-dark); }
-.reviewer-status.not-verified { color: var(--vtch-error-dark); }
+.veritesthis-modal-reviewer-info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.veritesthis-modal-reviewer-name { font-weight: 600; color: var(--vtch-text-primary); font-size: 15px; }
 
-.status-icon { font-size: 20px; margin-left: auto; padding-left: 16px; }
-/* Status icon colors remain distinct (success uses primary green variables) */
-.status-icon.verified { color: var(--vtch-success); }
-.status-icon.not-verified { color: var(--vtch-error); }
+/* Modal Status Text (Updated classes) */
+.veritesthis-modal-reviewer-status { font-size: 13px; font-weight: 500; }
+.veritesthis-modal-reviewer-status.veritesthis-modal-status-verified { color: var(--vtch-success-dark); } /* Dark Green */
+.veritesthis-modal-reviewer-status.veritesthis-modal-status-not-verified { color: var(--vtch-error-dark); } /* Dark Red */
+.veritesthis-modal-reviewer-status.veritesthis-modal-status-unknown { color: var(--vtch-unknown); } /* Grey */
 
-.req-icon {
-    /* Apply new green */
-    color: var(--vtch-primary);
+/* Modal Status Icon (Updated classes) */
+.veritesthis-modal-status-icon { font-size: 20px; margin-left: auto; padding-left: 16px; }
+.veritesthis-modal-status-icon.veritesthis-modal-status-verified { color: var(--vtch-success); } /* Green */
+.veritesthis-modal-status-icon.veritesthis-modal-status-not-verified { color: var(--vtch-error); } /* Red */
+.veritesthis-modal-status-icon.veritesthis-modal-status-unknown { color: var(--vtch-unknown); } /* Grey */
+
+/* Modal Test Case Item (Updated classes) */
+.veritesthis-modal-testcase-icon {
+    color: var(--vtch-primary); /* Green */
     font-size: 16px;
 }
-.req-id { font-family: "SF Mono", "Roboto Mono", monospace; color: var(--vtch-text-primary); font-weight: 500; }
+.veritesthis-modal-testcase-id { font-family: "SF Mono", "Roboto Mono", monospace; color: var(--vtch-text-primary); font-weight: 500; }
 
-.empty-message {
+.veritesthis-modal-empty-message {
     padding: 20px; color: var(--vtch-text-secondary); text-align: center;
     font-style: italic; background-color: var(--vtch-bg-secondary);
     border-radius: var(--vtch-radius-md); font-size: 14px;
 }
 
-/* Custom scrollbar (style remains the same, uses base variables) */
+/* Custom scrollbar (Themed thumb) */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: var(--vtch-bg-secondary); border-radius: 10px; }
-::-webkit-scrollbar-thumb { background-color: var(--vtch-border); border-radius: 10px; border: 2px solid var(--vtch-bg-secondary); }
-::-webkit-scrollbar-thumb:hover { background-color: var(--vtch-text-light); }
+::-webkit-scrollbar-thumb { background-color: var(--vtch-border-colored); border-radius: 10px; border: 2px solid var(--vtch-bg-secondary); } /* Light green thumb */
+::-webkit-scrollbar-thumb:hover { background-color: var(--vtch-primary-light); } /* Medium green hover */
 
-/* Toast notification styles */
-.Toastify__toast {
-    border-radius: var(--vtch-radius-md) !important; box-shadow: var(--vtch-shadow-lg) !important;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important; padding: 16px !important;
-}
-.Toastify__toast-body { font-weight: 500 !important; font-size: 15px !important; }
-/* Apply new green progress bar */
-.Toastify__progress-bar { height: 4px !important; background: var(--vtch-primary) !important; }
-/* Style different toast types (using distinct status colors) */
-.Toastify__toast--success { background-color: var(--vtch-success-light) !important; color: var(--vtch-success-dark) !important; }
-.Toastify__toast--error { background-color: var(--vtch-error-light) !important; color: var(--vtch-error-dark) !important; }
-.Toastify__toast--warning { background-color: var(--vtch-warning-light) !important; color: var(--vtch-warning-dark) !important; }
-.Toastify__toast--info { background-color: var(--vtch-info-light) !important; color: var(--vtch-info-dark) !important; }
-.Toastify__close-button { color: inherit !important; opacity: 0.7 !important; }
-.Toastify__close-button:hover { opacity: 1 !important; }
-
-
-/* Responsive adjustments (selectors remain the same) */
+/* Responsive adjustments */
 @media (max-width: 1024px) {
     .veritesthis-tools { flex-direction: column; align-items: stretch; }
     .veritesthis-search { width: 100%; }
+    /* .veritesthis-refresh-btn { width: 100%; justify-content: center; padding: 9px 16px; } */
     .veritesthis-panel-header { flex-direction: column; align-items: flex-start; }
 }
 
@@ -645,15 +622,24 @@ body {
     .veritesthis-header { flex-direction: column; align-items: flex-start; gap: 15px; margin-bottom: 25px; }
     .veritesthis-header h1 { order: 1; margin: 0; font-size: 22px; }
     .veritesthis-back-btn { position: static; order: 0; }
-    .tutorial-help-button-corner-vth { top: 10px; right: 10px; }
+    .veritesthis-tutorial-help-button-corner-vth { top: 10px; right: 10px; }
 
-    .veritesthis-table th, .veritesthis-table td { padding: 12px 15px; font-size: 13px; }
-    .veritesthis-hist-id-cell, .veritesthis-hist-tc-id-cell { font-size: 13px; }
+    .veritesthis-table th,
+    .veritesthis-table td { padding: 12px 15px; font-size: 13px; }
+
+    /* Updated cell class name */
+    .veritesthis-cell-id { font-size: 13px; }
+
     .veritesthis-actions-cell { text-align: left; }
     .veritesthis-view-details-btn { width: 30px; height: 30px; }
 
-    .modal-content-review { width: 95%; max-height: 85vh; }
-    .modal-header { padding: 12px 16px; }
-    .modal-header h3 { font-size: 16px; }
-    .reviewer-section, .requirement-section { padding: 16px; }
+    .veritesthis-modal-content { /* Updated class */
+        width: 95%; max-height: 85vh;
+    }
+    .veritesthis-modal-header { padding: 12px 16px; }
+    .veritesthis-modal-header h3 { font-size: 16px; }
+
+    /* Updated modal section classes */
+    .veritesthis-modal-reviewer-section,
+    .veritesthis-modal-testcase-section { padding: 16px; }
 }

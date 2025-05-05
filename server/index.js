@@ -4817,7 +4817,7 @@ app.get("/api/testcase_executions", (req, res) => {
             t.testcase_name,
             t.testcase_status, -- เพิ่มตรงนี้
             te.test_execution_status,
-            t.testcase_at
+            te.recent_date
         FROM testcase t
         LEFT JOIN test_execution te ON t.testcase_id = te.testcase_id
         LEFT JOIN project p ON te.project_id = p.project_id
@@ -4876,31 +4876,33 @@ app.get("/api/test_procedures/:testcase_id", (req, res) => {
 
 });
 
-
+// --- API Endpoint: Update Test Execution Status ---
 app.post("/api/update_test_execution", async (req, res) => {
     const { testSteps, testcase_id } = req.body;
 
-    // --- Basic Input Validation --- (เหมือนเดิม)
+    // --- Basic Input Validation ---
     if (!testSteps || !Array.isArray(testSteps)) {
         return res.status(400).json({ error: "Invalid or missing 'testSteps' array" });
     }
     if (testSteps.length === 0) {
         console.log("Received empty testSteps array. No status update applied.");
-        return res.json({ message: "No test steps provided. Execution status unchanged." });
+        return res.status(200).json({ message: "No test steps provided. Execution status unchanged." });
     }
     if (!testcase_id) {
         return res.status(400).json({ error: "Missing 'testcase_id'" });
     }
-    if (isNaN(parseInt(testcase_id))) {
-        return res.status(400).json({ error: "Invalid 'testcase_id'" });
+    const parsedTestcaseId = parseInt(testcase_id, 10);
+    if (isNaN(parsedTestcaseId)) {
+        return res.status(400).json({ error: "Invalid 'testcase_id'. Must be a number." });
     }
 
     // --- Define Status Values (Strings) ---
     const STATUS_PASSED_STRING = "PASSED";
-    const STATUS_IN_PROGRESS_STRING = "IN PROGRESS"; // <-- เพิ่มสถานะนี้
-    // Optional: const STATUS_FAILED_STRING = "Failed";
+    const STATUS_FAILED_STRING = "FAILED";
+    const STATUS_IN_PROGRESS_STRING = "IN PROGRESS";
+    const STATUS_READY_TO_TEST_STRING = "READY TO TEST";
 
-    // --- SQL Queries --- (เหมือนเดิม)
+    // --- SQL Queries ---
     const updateStepQuery = `
         UPDATE test_procedures
         SET test_status = ?, actual_result = ?
@@ -4909,13 +4911,13 @@ app.post("/api/update_test_execution", async (req, res) => {
 
     const updateExecutionStatusQuery = `
         UPDATE test_execution
-        SET test_execution_status = ?
+        SET test_execution_status = ?, recent_date = NOW()
         WHERE testcase_id = ?
     `;
 
     // --- Database Operations ---
     try {
-        // 1. Update individual test step statuses and actual results (เหมือนเดิม)
+        // 1. Update individual test step statuses and actual results
         await Promise.all(
             testSteps.map((step) => {
                 // Basic validation for each step's data
@@ -4923,16 +4925,35 @@ app.post("/api/update_test_execution", async (req, res) => {
                     console.error("Invalid data received for a step:", step);
                     throw new Error(`Invalid data for step ID ${step.test_procedures_id || 'UNKNOWN'}. Status or actual result might be missing.`);
                 }
+
+                 const parsedStepId = parseInt(step.test_procedures_id, 10);
+                 if (isNaN(parsedStepId)) {
+                      throw new Error(`Invalid 'test_procedures_id' (${step.test_procedures_id}). Must be a number.`);
+                 }
+
+                const knownStatuses = [
+                    STATUS_PASSED_STRING,
+                    STATUS_FAILED_STRING,
+                    STATUS_IN_PROGRESS_STRING,
+                    STATUS_READY_TO_TEST_STRING,
+                ];
+
+                const upperCaseStepStatus = typeof step.test_status === 'string' ? step.test_status.toUpperCase() : step.test_status;
+
+                if (!knownStatuses.includes(upperCaseStepStatus)) {
+                    console.warn(`Received potentially unknown test_status '${upperCaseStepStatus}' (original: '${step.test_status}') for step ID ${parsedStepId}. Proceeding, but check data consistency.`);
+                }
+
                 return new Promise((resolve, reject) => {
                     db.query(updateStepQuery,
-                        [step.test_status, step.actual_result, step.test_procedures_id],
+                        [upperCaseStepStatus, step.actual_result, parsedStepId],
                         (err, result) => {
                             if (err) {
-                                console.error(`Error updating test step ${step.test_procedures_id}:`, err);
-                                reject(new Error(`Database error updating step ${step.test_procedures_id}`));
+                                console.error(`Error updating test step ${parsedStepId}:`, err);
+                                reject(new Error(`Database error updating step ${parsedStepId}.`));
                             } else {
                                 if (result.affectedRows === 0) {
-                                    console.warn(`No rows updated for test_procedures_id: ${step.test_procedures_id}. It might not exist.`);
+                                    console.warn(`No rows updated for test_procedures_id: ${parsedStepId}. It might not exist or was already deleted.`);
                                 }
                                 resolve();
                             }
@@ -4941,56 +4962,86 @@ app.post("/api/update_test_execution", async (req, res) => {
             })
         );
 
-        console.log(`Successfully updated individual steps for testcase_id: ${testcase_id}`);
+        console.log(`Successfully updated individual steps for testcase_id: ${parsedTestcaseId}`);
 
-        // 2. Check if ALL steps *just saved* have the status "Passed" (เหมือนเดิม)
-        const allStepsPassed = testSteps.every(step => step.test_status === "Passed");
+        // --- Determine Final Execution Status ---
+        // 2. Analyze statuses of the steps *just processed*
+        const getUpperCaseStatus = (status) => typeof status === 'string' ? status.toUpperCase() : status;
 
-        // --- *** ส่วนแก้ไข: กำหนดสถานะสุดท้ายที่จะอัปเดต *** ---
+        const hasFailed = testSteps.some(step => getUpperCaseStatus(step.test_status) === STATUS_FAILED_STRING);
+        const hasPassed = testSteps.some(step => getUpperCaseStatus(step.test_status) === STATUS_PASSED_STRING);
+        const allStepsConsideredPassed = testSteps.every(step => getUpperCaseStatus(step.test_status) === STATUS_PASSED_STRING);
+        // *** เพิ่มการตรวจสอบ: ทุกขั้นตอนเป็น IN PROGRESS หรือไม่ ***
+        const allStepsInProgress = testSteps.every(step => getUpperCaseStatus(step.test_status) === STATUS_IN_PROGRESS_STRING);
+
+
+        // 3. Set the final execution status based on the updated logic
         let finalExecutionStatus;
-        if (allStepsPassed) {
-            // ถ้าทุก step เป็น Passed, สถานะรวมคือ Passed
-            finalExecutionStatus = STATUS_PASSED_STRING;
-        } else {
-            // ถ้ามี step ใดๆ ไม่ใช่ Passed, สถานะรวมให้กลับเป็น In Progress
-            finalExecutionStatus = STATUS_IN_PROGRESS_STRING;
-            // --- หมายเหตุ: ถ้าต้องการให้เป็น Failed ถ้ามีอันใดอันหนึ่ง Failed ---
-            // const hasFailed = testSteps.some(step => step.test_status === "Failed");
-            // finalExecutionStatus = hasFailed ? STATUS_FAILED_STRING : STATUS_IN_PROGRESS_STRING;
-            // --- จบส่วนหมายเหตุ ---
-        }
-        // --- *** จบส่วนแก้ไข *** ---
 
-        // 3. Update the test_execution table status based on the evaluation above
-        //    (อัปเดตทุกครั้งที่ Save ไม่ว่าสถานะเดิมจะเป็นอะไรก็ตาม)
-        console.log(`Updating execution status for testcase_id: ${testcase_id} to '${finalExecutionStatus}'.`);
+        if (hasFailed) { // Priority 1: มี FAILED
+            if (hasPassed) {
+                finalExecutionStatus = STATUS_IN_PROGRESS_STRING; // Mix FAILED/PASSED -> IN PROGRESS
+                console.log(`Condition met for testcase_id ${parsedTestcaseId}: Has FAILED and Has PASSED -> ${STATUS_IN_PROGRESS_STRING}`);
+            } else {
+                finalExecutionStatus = STATUS_FAILED_STRING; // มี FAILED แต่ไม่มี PASSED -> FAILED
+                console.log(`Condition met for testcase_id ${parsedTestcaseId}: Has FAILED but no PASSED -> ${STATUS_FAILED_STRING}`);
+            }
+        } else { // Priority 2: ไม่มี FAILED
+            if (allStepsConsideredPassed) {
+                finalExecutionStatus = STATUS_PASSED_STRING; // ทุกอัน PASSED -> PASSED
+                console.log(`Condition met for testcase_id ${parsedTestcaseId}: No FAILED and All PASSED -> ${STATUS_PASSED_STRING}`);
+            } else if (allStepsInProgress) { // *** เพิ่มเงื่อนไขตรวจสอบ: ทุกอันเป็น IN PROGRESS หรือไม่? ***
+                 finalExecutionStatus = STATUS_IN_PROGRESS_STRING; // ทุกอัน IN PROGRESS -> IN PROGRESS
+                 console.log(`Condition met for testcase_id ${parsedTestcaseId}: No FAILED, Not All PASSED, All IN PROGRESS -> ${STATUS_IN_PROGRESS_STRING}`);
+            } else {
+                // กรณีอื่นๆ ที่ไม่มี FAILED (เช่น มี PASSED ปนกับ IN PROGRESS หรือ มีแต่ READY TO TEST)
+                finalExecutionStatus = STATUS_READY_TO_TEST_STRING; // -> READY TO TEST
+                 console.log(`Condition met for testcase_id ${parsedTestcaseId}: No FAILED, Not All PASSED, Not All IN PROGRESS (Mix) -> ${STATUS_READY_TO_TEST_STRING}`);
+            }
+        }
+
+        // 4. Update the test_execution table status AND recent_date
+        console.log(`Updating execution status for testcase_id: ${parsedTestcaseId} to '${finalExecutionStatus}' and setting recent_date.`);
         await new Promise((resolve, reject) => {
             db.query(updateExecutionStatusQuery,
-                [finalExecutionStatus, testcase_id], // <-- ใช้สถานะสุดท้ายที่คำนวณได้
+                [finalExecutionStatus, parsedTestcaseId],
                 (err, result) => {
                     if (err) {
-                        console.error(`Error updating test execution status for testcase_id ${testcase_id}:`, err);
-                        reject(new Error("Database error updating execution status."));
+                        console.error(`Error updating test execution status/date for testcase_id ${parsedTestcaseId}:`, err);
+                        reject(new Error("Database error updating execution status and date."));
                     } else {
                         if (result.affectedRows === 0) {
-                            // ควรจะมี record นี้อยู่แล้ว ถ้าไม่มีอาจจะแปลก
-                            console.warn(`No test_execution record found or updated for testcase_id: ${testcase_id}.`);
+                            console.error(`CRITICAL: No test_execution record found or updated for testcase_id: ${parsedTestcaseId}. Verify this ID exists in the test_execution table.`);
+                            reject(new Error(`Test execution record not found for testcase_id: ${parsedTestcaseId}`));
                         } else {
-                            console.log(`Successfully updated test_execution status for testcase_id: ${testcase_id} to '${finalExecutionStatus}'`);
+                            console.log(`Successfully updated test_execution status to '${finalExecutionStatus}' and recent_date for testcase_id: ${parsedTestcaseId}`);
+                            resolve();
                         }
-                        resolve();
                     }
                 });
         });
 
-        res.json({ message: "Test execution updated successfully!" });
+        // --- Success Response ---
+        res.status(200).json({
+             message: `Test execution for testcase_id ${parsedTestcaseId} updated successfully to ${finalExecutionStatus}.`,
+             finalStatus: finalExecutionStatus
+        });
 
     } catch (error) {
         console.error("Error during test execution update process:", error);
-        res.status(500).json({ error: "Database update error", details: error.message });
+        let statusCode = 500;
+        if (error.message.startsWith("Invalid data") ||
+            error.message.startsWith("Invalid 'testcase_id'") ||
+            error.message.startsWith("Invalid 'test_procedures_id'") ||
+            error.message.startsWith("Invalid test_status") ||
+            error.message.includes("not found")) {
+             statusCode = 400;
+        } else if (error.message.startsWith("Database error")) {
+             statusCode = 500;
+        }
+        res.status(statusCode).json({ error: error.message || "An internal server error occurred." });
     }
 });
-
 
 //------------------------- file testcase ------------------------------
 
@@ -6014,9 +6065,9 @@ app.post('/createtestcasebaseline', (req, res) => {
                     return res.status(500).json({ message: "Failed to update testcase status", details: updateErr.message });
                 }
 
-                // --- 4. Update สถานะในตาราง test_execution เป็น 'IN PROGRESS' (เพิ่มส่วนนี้เข้ามา) ---
-                // *** ข้อควรระวัง: หาก test_execution_status เป็น int ให้เปลี่ยน 'IN PROGRESS' เป็นค่าตัวเลขที่ถูกต้อง ***
-                const updateExecutionQuery = `UPDATE test_execution SET test_execution_status = 'IN PROGRESS' WHERE testcase_id IN (?)`;
+                // --- 4. Update สถานะในตาราง test_execution เป็น 'READY TO TEST' (เพิ่มส่วนนี้เข้ามา) ---
+                // *** ข้อควรระวัง: หาก test_execution_status เป็น int ให้เปลี่ยน 'READY TO TEST' เป็นค่าตัวเลขที่ถูกต้อง ***
+                const updateExecutionQuery = `UPDATE test_execution SET test_execution_status = 'READY TO TEST' WHERE testcase_id IN (?)`;
 
                 db.query(updateExecutionQuery, [testcase_id], (execUpdateErr, execUpdateResult) => {
                     if (execUpdateErr) {

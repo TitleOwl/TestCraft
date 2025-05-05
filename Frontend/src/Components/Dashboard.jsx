@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './CSS/Dashboard.css';
+import './CSS/Dashboard.css'; // ตรวจสอบว่า Path ถูกต้อง
 
 // Import components
 import RequirementPage from './RequirementPage';
@@ -13,7 +13,7 @@ import OverviewProject from './Project/OverviewProject';
 import ImplementPage from './Implement/implementPage';
 import TraceabilityPage from './Traceability/traceabilityPage';
 
-// Import icons (ติดตั้งด้วย: npm install @fortawesome/react-fontawesome @fortawesome/free-solid-svg-icons @fortawesome/fontawesome-svg-core)
+// Import icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faHome,
@@ -56,8 +56,6 @@ const Dashboard = () => {
   useEffect(() => {
     if (projectId) {
       setLoading(true);
-
-      // หา project name จาก project_id
       axios
         .get(`http://localhost:3001/project/${projectId}`)
         .then((res) => {
@@ -70,6 +68,9 @@ const Dashboard = () => {
           setError("Failed to load project name. Please try again.");
           setLoading(false);
         });
+    } else {
+      setError("Project ID not found in URL.");
+      setLoading(false);
     }
   }, [projectId]);
 
@@ -101,8 +102,10 @@ const Dashboard = () => {
         {/* Project Name */}
         {projectName && (
           <div className="dashboard-sidebar-project-name">
-            {!sidebarCollapsed && projectName}
+             {/* แสดงตัวย่อเมื่อ collapsed */}
             {sidebarCollapsed && <span className="project-initial">{projectName.charAt(0)}</span>}
+             {/* แสดงชื่อเต็มเมื่อไม่ collapsed */}
+            {!sidebarCollapsed && <span>{projectName}</span>}
           </div>
         )}
 
@@ -111,13 +114,15 @@ const Dashboard = () => {
           {!sidebarCollapsed && "PROJECT"}
         </div>
 
+        {/* ---- Overview Link (มีการเพิ่ม overview-always-active) ---- */}
         <div
-          className={`dashboard-nav-link ${selectedSection === 'Overview' ? 'active' : ''}`}
+          className={`dashboard-nav-link overview-always-active ${selectedSection === 'Overview' ? 'active' : ''}`}
           onClick={() => setSelectedSection('Overview')}
         >
           <FontAwesomeIcon icon={faHome} />
           {!sidebarCollapsed && <span>Overview</span>}
         </div>
+        {/* --------------------------------------------------------- */}
 
         <div
           className={`dashboard-nav-link ${selectedSection === 'Configuration' ? 'active' : ''}`}
@@ -182,6 +187,11 @@ const Dashboard = () => {
           {!sidebarCollapsed && <span>Traceability</span>}
         </div>
 
+        {/* Optional: Close Project Button */}
+        {/* <button className="dashboard-close-project-btn" onClick={() => navigate('/')}>
+          <FontAwesomeIcon icon={faDoorClosed} />
+          {!sidebarCollapsed && <span>Close Project</span>}
+        </button> */}
 
       </nav>
 
@@ -201,7 +211,6 @@ const Dashboard = () => {
             {selectedSection === 'Implementation' && <ImplementPage />}
             {selectedSection === 'Testcase' && <TestcasePage />}
             {selectedSection === 'Traceability' && <TraceabilityPage />}
-
           </>
         )}
       </div>
