@@ -24,7 +24,8 @@ import {
     faUsers,
     faListAlt,
     faCheckCircle,
-    faQuestionCircle
+    faQuestionCircle,
+    faHistory
 } from "@fortawesome/free-solid-svg-icons";
 
 const Modal = ({ show, onClose, requirements = [], verificationBy = [] }) => {
@@ -307,6 +308,15 @@ const VerificationList = () => {
         );
     }
 
+    const handleGoToHistory = () => {
+        if (projectId) {
+            navigate(`/VerificationHistory?project_id=${projectId}`);
+        } else {
+            console.error("Cannot navigate to history: Project ID is missing.");
+            toast.error("Project ID is missing, cannot view history.");
+        }
+    };
+
     return (
         <div className="verificationlist-container">
             <Joyride
@@ -390,6 +400,15 @@ const VerificationList = () => {
                                     </button>
                                 )}
                             </div>
+                                                        {/* History Button */}
+                                                        <button
+                                className="verificationlist-history-btn"
+                                onClick={handleGoToHistory}
+                                title="View Verification History"
+                                // Style moved to CSS
+                            >
+                                <FontAwesomeIcon icon={faHistory} /> History
+                            </button>
                         </div>
                     </div>
 

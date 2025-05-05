@@ -68,7 +68,7 @@ function Navbar() {
         <>
             <nav className="enterprise-navbar">
                 <div className="enterprise-navbar-brand">
-                    <Link to="/Project">
+                    <Link>
                         <img src={logo} alt="TestCraft Logo" className="enterprise-logo" />
                     </Link>
                     
