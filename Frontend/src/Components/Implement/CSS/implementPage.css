@@ -1372,3 +1372,12 @@
     font-size: 1.1rem;
     color: #495057;
 }
+
+.icon-delete-mapping {
+    color: #f87171;
+    font-size: 1rem;
+}
+
+.imp-delete-btn {
+    border: none;
+}

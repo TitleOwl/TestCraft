@@ -583,7 +583,7 @@ const ImplementPage = () => {
                               className="imp-delete-btn"
                               onClick={() => handleDeleteRelation(relation.implement_filename, relation.relation_at)}
                               title={`Delete instance for ${relation.implement_filename} from ${formattedDate}`}>
-                              <FontAwesomeIcon icon={faTrash} />
+                              <FontAwesomeIcon icon={faTrash} className='icon-delete-mapping' />
                             </button>
                             {/* TODO: Consider if a "Delete All for this File" or "View Instances" button is needed */}
                           </td>
