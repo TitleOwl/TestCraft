@@ -58,17 +58,17 @@ const OverviewProject = () => {
   const COLORS = {
     REQUIREMENTS: {
       BASELINE: "#0056B3",     // Corresponds to --req-color-primary
-      NON_BASELINE: "#FFB74D", // Corresponds to --req-color-secondary
+      NON_BASELINE: "#A9A9A9", // Corresponds to --req-color-secondary
       PLACEHOLDER: "#e9ecef"   // Use the defined placeholder color
     },
     DESIGN: {
       BASELINE: "#d76000",     // Corresponds to --des-color-primary
-      NON_BASELINE: "#42A5F5", // Corresponds to --des-color-secondary
+      NON_BASELINE: "#A9A9A9", // Corresponds to --des-color-secondary
       PLACEHOLDER: "#e9ecef"
     },
     TESTCASES: {
       BASELINE: "#10b981",     // Corresponds to --test-color-primary
-      NON_BASELINE: "#BA68C8", // Corresponds to --test-color-secondary
+      NON_BASELINE: "#A9A9A9", // Corresponds to --test-color-secondary
       PLACEHOLDER: "#e9ecef"
     },
     LABEL_TEXT: "#ffffff", // สีข้อความ % บนกราฟ (ปรับได้ถ้าต้องการ)
