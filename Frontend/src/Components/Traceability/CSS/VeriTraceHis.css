@@ -1,63 +1,63 @@
-/* VeriTraceHis.css - Slate Gray Theme with updated 'veritrace-his-' Prefix */
+/* VeriTraceHis.css - Based on Slate Gray Theme (#4A5568) with veritrace-his- Prefix */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* --- Slate Gray Theme Variables with --vtth- Prefix --- */
+/* --- Slate Gray Theme Variables with --vtth- Prefix --- */ /* Updated Prefix */
 :root {
     /* Base Colors */
-    --vtth-bg-primary: #ffffff;
-    --vtth-bg-secondary: #f8f9fc;
-    --vtth-bg-tertiary: #F1F5F9; /* Slate 100 */
+    --vtth-bg-primary: #ffffff;                     /* Updated Prefix */
+    --vtth-bg-secondary: #f8f9fc;                   /* Updated Prefix */
+    --vtth-bg-tertiary: #F1F5F9;                    /* Updated Prefix */
 
     /* Text Colors */
-    --vtth-text-primary: #1e293b; /* Slate 800 */
-    --vtth-text-secondary: #4A5568; /* Slate 600 */
-    --vtth-text-light: #94a3b8; /* Slate 400 */
-    --vtth-text-white: #ffffff;
+    --vtth-text-primary: #1e293b;                   /* Updated Prefix */
+    --vtth-text-secondary: #4A5568;                 /* Updated Prefix */
+    --vtth-text-light: #94a3b8;                     /* Updated Prefix */
+    --vtth-text-white: #ffffff;                     /* Updated Prefix */
 
     /* Primary Brand Colors (Slate Gray Theme #4A5568) */
-    --vtth-primary: #4A5568;      /* Slate 600 */
-    --vtth-primary-light: #94A3B8; /* Slate 400 */
-    --vtth-primary-dark: #334155;  /* Slate 700 */
+    --vtth-primary: #4A5568;                        /* Updated Prefix */
+    --vtth-primary-light: #94A3B8;                  /* Updated Prefix */
+    --vtth-primary-dark: #334155;                   /* Updated Prefix */
 
     /* Accent Colors (Keep Blue for contrast) */
-    --vtth-accent: #3b82f6;
-    --vtth-accent-light: #93c5fd;
-    --vtth-accent-dark: #1d4ed8;
+    --vtth-accent: #3b82f6;                         /* Updated Prefix */
+    --vtth-accent-light: #93c5fd;                   /* Updated Prefix */
+    --vtth-accent-dark: #1d4ed8;                    /* Updated Prefix */
 
-    /* Status Colors */
-    --vtth-success: #10b981;
-    --vtth-success-light: #ecfdf5;
-    --vtth-success-dark: #059669;
-    --vtth-warning: #f59e0b;
-    --vtth-warning-light: #fffbeb;
-    --vtth-warning-dark: #b45309;
-    --vtth-error: #ef4444;
-    --vtth-error-light: #fef2f2;
-    --vtth-error-dark: #b91c1c;
-    --vtth-info: #6366f1;
-    --vtth-info-light: #eef2ff;
-    --vtth-info-dark: #4338ca;
-    --vtth-unknown: var(--vtth-text-light);
-    --vtth-unknown-bg: var(--vtth-bg-secondary);
+    /* Status Colors (Keep distinct status colors) */
+    --vtth-success: #10b981;                        /* Updated Prefix */
+    --vtth-success-light: #ecfdf5;                  /* Updated Prefix */
+    --vtth-success-dark: #059669;                   /* Updated Prefix */
+    --vtth-warning: #f59e0b;                        /* Updated Prefix */
+    --vtth-warning-light: #fffbeb;                  /* Updated Prefix */
+    --vtth-warning-dark: #b45309;                   /* Updated Prefix */
+    --vtth-error: #ef4444;                          /* Updated Prefix */
+    --vtth-error-light: #fef2f2;                    /* Updated Prefix */
+    --vtth-error-dark: #b91c1c;                     /* Updated Prefix */
+    --vtth-info: #6366f1;                           /* Updated Prefix */
+    --vtth-info-light: #eef2ff;                     /* Updated Prefix */
+    --vtth-info-dark: #4338ca;                      /* Updated Prefix */
+    --vtth-unknown: var(--vtth-text-light);         /* Updated Prefix */
+    --vtth-unknown-bg: var(--vtth-bg-secondary);    /* Updated Prefix */
 
     /* UI Elements */
-    --vtth-border: #e2e8f0;       /* Slate 200 */
-    --vtth-border-light: #f1f5f9; /* Slate 100 */
-    --vtth-border-colored: #CBD5E1; /* Slate 300 */
+    --vtth-border: #e2e8f0;                         /* Updated Prefix */
+    --vtth-border-light: #f1f5f9;                   /* Updated Prefix */
+    --vtth-border-colored: #CBD5E1;                 /* Updated Prefix */
 
     /* Shadows */
-    --vtth-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.03);
-    --vtth-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-    --vtth-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
-    --vtth-shadow-primary: 0 4px 12px rgba(74, 85, 104, 0.15); /* Slate shadow */
+    --vtth-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.03); /* Updated Prefix */
+    --vtth-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); /* Updated Prefix */
+    --vtth-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025); /* Updated Prefix */
+    --vtth-shadow-primary: 0 4px 12px rgba(74, 85, 104, 0.15); /* Updated Prefix */
 
     /* Border Radius */
-    --vtth-radius-sm: 4px;
-    --vtth-radius-md: 6px;
-    --vtth-radius-lg: 8px;
+    --vtth-radius-sm: 4px;                          /* Updated Prefix */
+    --vtth-radius-md: 6px;                          /* Updated Prefix */
+    --vtth-radius-lg: 8px;                          /* Updated Prefix */
 
     /* Transitions */
-    --vtth-transition: all 0.2s ease;
+    --vtth-transition: all 0.2s ease;               /* Updated Prefix */
 }
 
 /* Global Reset */
@@ -68,20 +68,22 @@
 }
 
 body {
-    background-color: var(--vtth-bg-secondary);
+    /* Use new theme variables */
+    background-color: var(--vtth-bg-secondary); /* Updated Variable Use */
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    color: var(--vtth-text-primary);
+    color: var(--vtth-text-primary);        /* Updated Variable Use */
     line-height: 1.6;
 }
 
-/* --- Styles for VeriTraceHis (Selectors updated to veritrace-his-...) --- */
+/* --- Styles for VeriTraceHis --- */
+/* Selectors are veritrace-his-... and use --vtth-... variables */
 
 /* Main container */
 .veritrace-his-container {
     max-width: 1400px;
     margin: 0 auto;
     padding: 30px;
-    background-color: var(--vtth-bg-primary);
+    background-color: var(--vtth-bg-primary); /* Updated Variable Use */
     min-height: 100vh;
     position: relative;
 }
@@ -93,7 +95,7 @@ body {
     left: 0;
     width: 100%;
     height: 5px;
-    background: linear-gradient(to right, var(--vtth-primary), var(--vtth-primary-light)); /* Slate Gradient */
+    background: linear-gradient(to right, var(--vtth-primary), var(--vtth-primary-light)); /* Updated Variable Use */
     z-index: 1;
 }
 
@@ -108,7 +110,7 @@ body {
 .veritrace-his-header h1 {
     font-size: 26px;
     font-weight: 700;
-    color: var(--vtth-text-primary);
+    color: var(--vtth-text-primary); /* Updated Variable Use */
     margin: 0 auto;
     display: flex;
     align-items: center;
@@ -117,14 +119,14 @@ body {
 }
 
 .veritrace-his-title-icon {
-    color: var(--vtth-primary); /* Slate */
+    color: var(--vtth-primary); /* Updated Variable Use */
     font-size: 28px;
 }
 
 /* Back button */
 .veritrace-his-back-btn {
     background-color: transparent;
-    color: var(--vtth-primary); /* Slate */
+    color: var(--vtth-primary); /* Updated Variable Use */
     border: none;
     font-size: 15px;
     font-weight: 500;
@@ -132,38 +134,35 @@ body {
     align-items: center;
     gap: 8px;
     cursor: pointer;
-    transition: var(--vtth-transition);
+    transition: var(--vtth-transition); /* Updated Variable Use */
     position: absolute;
     left: 0;
     padding: 8px 0;
 }
 
 .veritrace-his-back-btn:hover {
-    color: var(--vtth-primary-dark); /* Darker Slate */
+    color: var(--vtth-primary-dark); /* Updated Variable Use */
     transform: translateX(-3px);
 }
 
 /* Tutorial Help Button */
 .veritrace-his-tutorial-help-button {
-    /* Base styles if needed */
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 1.8rem;
     background: none;
     border: none;
+    color: var(--vtth-text-secondary); /* Updated Variable Use */
     cursor: pointer;
-    padding: 5px;
-    color: var(--vtth-text-secondary);
-    transition: color 0.2s ease;
-}
-/* Specific positioning class */
-.veritrace-his-tutorial-help-button { /* Re-using the base class selector from JSX */
-    position: absolute;
-    top: 15px; /* Position from JSX inline style */
-    right: 20px; /* Position from JSX inline style */
-    font-size: 1.8rem; /* Increased size */
     z-index: 5;
+    transition: color 0.2s ease;
+    padding: 5px;
 }
 .veritrace-his-tutorial-help-button:hover {
-    color: var(--vtth-primary); /* Slate hover */
+    color: var(--vtth-primary); /* Updated Variable Use */
 }
+
 
 /* Content layout */
 .veritrace-his-content {
@@ -174,10 +173,10 @@ body {
 }
 
 .veritrace-his-panel {
-    background: var(--vtth-bg-primary);
-    border-radius: var(--vtth-radius-lg);
-    border: 1px solid var(--vtth-border);
-    box-shadow: var(--vtth-shadow-md);
+    background: var(--vtth-bg-primary); /* Updated Variable Use */
+    border-radius: var(--vtth-radius-lg); /* Updated Variable Use */
+    border: 1px solid var(--vtth-border); /* Updated Variable Use */
+    box-shadow: var(--vtth-shadow-md); /* Updated Variable Use */
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -185,8 +184,8 @@ body {
 
 /* Panel header */
 .veritrace-his-panel-header {
-    background-color: var(--vtth-bg-secondary);
-    border-bottom: 1px solid var(--vtth-border);
+    background-color: var(--vtth-bg-secondary); /* Updated Variable Use */
+    border-bottom: 1px solid var(--vtth-border); /* Updated Variable Use */
     padding: 18px 24px;
     display: flex;
     justify-content: space-between;
@@ -198,20 +197,20 @@ body {
 .veritrace-his-panel-header h2 {
     font-size: 18px;
     font-weight: 600;
-    color: var(--vtth-text-primary);
+    color: var(--vtth-text-primary); /* Updated Variable Use */
     display: flex;
     align-items: center;
     gap: 10px;
     margin: 0;
 }
 
-.veritrace-his-panel-icon { /* Updated class */
-    color: var(--vtth-primary); /* Slate */
+.veritrace-his-panel-header h2 svg {
+    color: var(--vtth-primary); /* Updated Variable Use */
 }
 
 .veritrace-his-count-badge {
-    background-color: var(--vtth-primary-light); /* Lighter Slate */
-    color: var(--vtth-primary-dark); /* Darker Slate */
+    background-color: var(--vtth-primary-light); /* Updated Variable Use */
+    color: var(--vtth-primary-dark); /* Updated Variable Use */
     font-size: 12px;
     font-weight: 600;
     padding: 3px 10px;
@@ -229,21 +228,22 @@ body {
 .veritrace-his-search {
     display: flex;
     align-items: center;
-    background-color: var(--vtth-bg-primary);
-    border: 1px solid var(--vtth-border);
-    border-radius: var(--vtth-radius-md);
+    background-color: var(--vtth-bg-primary); /* Updated Variable Use */
+    border: 1px solid var(--vtth-border); /* Updated Variable Use */
+    border-radius: var(--vtth-radius-md); /* Updated Variable Use */
     padding: 9px 14px;
     flex-grow: 1;
     min-width: 250px;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .veritrace-his-search:focus-within {
-    border-color: var(--vtth-primary-light); /* Light Slate focus */
-    box-shadow: 0 0 0 2px rgba(74, 85, 104, 0.2); /* Slate focus shadow */
+     border-color: var(--vtth-primary-light); /* Updated Variable Use */
+     box-shadow: 0 0 0 2px rgba(74, 85, 104, 0.2); /* Updated RGBA */
 }
 
+
 .veritrace-his-search-icon {
-    color: var(--vtth-text-light);
+    color: var(--vtth-text-light); /* Updated Variable Use */
     margin-right: 10px;
 }
 
@@ -251,48 +251,39 @@ body {
     border: none;
     background: transparent;
     font-size: 14px;
-    color: var(--vtth-text-primary);
+    color: var(--vtth-text-primary); /* Updated Variable Use */
     width: 100%;
     outline: none;
 }
 .veritrace-his-search-input::placeholder {
-    color: var(--vtth-text-light);
-}
-.veritrace-his-search-input:disabled {
-     background-color: var(--vtth-bg-secondary);
-     cursor: not-allowed;
+    color: var(--vtth-text-light); /* Updated Variable Use */
 }
 
-.veritrace-his-clear-search-btn { /* Updated class name */
+
+.veritrace-his-clear-search {
     background: transparent;
     border: none;
-    color: var(--vtth-text-light);
+    color: var(--vtth-text-light); /* Updated Variable Use */
     cursor: pointer;
-    transition: var(--vtth-transition);
+    transition: var(--vtth-transition); /* Updated Variable Use */
     padding: 0 5px;
-    margin-left: 4px;
 }
 
-.veritrace-his-clear-search-btn:hover {
-    color: var(--vtth-primary); /* Slate */
-}
-.veritrace-his-clear-search-btn:disabled {
-     color: var(--vtth-text-light);
-     cursor: not-allowed;
-     opacity: 0.6;
+.veritrace-his-clear-search:hover {
+    color: var(--vtth-primary); /* Updated Variable Use */
 }
 
-
-/* Refresh button (Styles kept commented if needed) */
+/* Refresh button (if needed) */
 /*
 .veritrace-his-refresh-btn { ... }
 */
+
 
 /* Table container */
 .veritrace-his-table-container {
     overflow-x: auto;
     width: 100%;
-    border-radius: 0 0 var(--vtth-radius-lg) var(--vtth-radius-lg);
+    border-radius: 0 0 var(--vtth-radius-lg) var(--vtth-radius-lg); /* Updated Variable Use */
 }
 
 /* History table */
@@ -300,36 +291,34 @@ body {
     width: 100%;
     border-collapse: collapse;
     border-spacing: 0;
-    min-width: 800px;
+    min-width: 800px; /* Adjust if needed */
 }
 
 .veritrace-his-table th {
-    background-color: var(--vtth-bg-secondary);
+    background-color: var(--vtth-bg-secondary); /* Updated Variable Use */
     text-align: left;
     padding: 16px 24px;
     font-size: 12px;
     font-weight: 600;
-    color: var(--vtth-text-secondary); /* Slate */
+    color: var(--vtth-text-secondary); /* Updated Variable Use */
     text-transform: uppercase;
-    border-bottom: 2px solid var(--vtth-border);
+    border-bottom: 2px solid var(--vtth-border); /* Updated Variable Use */
     letter-spacing: 0.05em;
     white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
     transition: background-color 0.2s ease;
 }
-/* Specific class for non-sortable headers */
-.veritrace-his-actions-header {
-    cursor: default;
+.veritrace-his-table th:hover {
+    background-color: var(--vtth-bg-tertiary); /* Updated Variable Use */
 }
-.veritrace-his-table th:hover:not(.veritrace-his-sortable-header) {
-    background-color: var(--vtth-bg-secondary); /* No hover on non-sortable */
-}
-
 
 .veritrace-his-table td {
     padding: 16px 24px;
     font-size: 14px;
-    border-bottom: 1px solid var(--vtth-border-light);
-    color: var(--vtth-text-primary);
+    border-bottom: 1px solid var(--vtth-border-light); /* Updated Variable Use */
+    color: var(--vtth-text-primary); /* Updated Variable Use */
     vertical-align: middle;
 }
 
@@ -338,33 +327,39 @@ body {
 }
 
 .veritrace-his-row:hover {
-    background-color: var(--vtth-bg-tertiary); /* Lighter Slate hover */
+    background-color: var(--vtth-bg-tertiary); /* Updated Variable Use */
 }
 
-/* Table cell styling (Updated classes) */
-.veritrace-his-cell-round { /* Updated class */
+/* Table cell styling */
+.veritrace-his-hist-round-cell {
     font-weight: 500;
     text-align: center;
     font-family: "SF Mono", "Roboto Mono", monospace;
-    color: var(--vtth-primary-dark); /* Dark Slate */
-}
-.veritrace-his-cell-creator { /* Updated class */
-   /* Styles specific to creator cell */
-}
-.veritrace-his-cell-date { /* Updated class */
-   /* Styles specific to date cell */
 }
 
-/* Updated cell inner element classes */
-.veritrace-his-cell-creator-info,
-.veritrace-his-cell-date-info {
+.veritrace-his-hist-status-cell {
+    font-weight: 500;
+    font-style: italic;
+    color: var(--vtth-text-secondary); /* Updated Variable Use */
+}
+
+.veritrace-his-hist-creator-cell {
+    /* Style remains similar */
+}
+
+.veritrace-his-hist-date-cell {
+     /* Style remains similar */
+}
+
+/* Common cell inner elements */
+.creator-info, .date-info {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.veritrace-his-cell-icon { /* Updated class */
-    color: var(--vtth-text-light);
+.cell-icon {
+    color: var(--vtth-text-light); /* Updated Variable Use */
     font-size: 15px;
 }
 
@@ -374,55 +369,50 @@ body {
 }
 
 /* Action buttons */
-.veritrace-his-view-details-btn { /* Updated class */
+.veritrace-his-view-details-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     width: 36px;
     height: 36px;
-    background-color: var(--vtth-info-light); /* Keep Info */
-    color: var(--vtth-info-dark);
+    background-color: var(--vtth-info-light); /* Updated Variable Use */
+    color: var(--vtth-info-dark); /* Updated Variable Use */
     border: none;
-    border-radius: var(--vtth-radius-md);
+    border-radius: var(--vtth-radius-md); /* Updated Variable Use */
     cursor: pointer;
-    transition: var(--vtth-transition), transform 0.2s ease;
+    transition: var(--vtth-transition); /* Updated Variable Use */
 }
 
 .veritrace-his-view-details-btn:hover {
-    background-color: var(--vtth-info); /* Darker Info */
-    color: var(--vtth-text-white);
+    background-color: rgba(99, 102, 241, 0.2); /* Darker info bg */
     transform: scale(1.05);
-    box-shadow: var(--vtth-shadow-md);
 }
 
 /* Sortable headers */
 .veritrace-his-sortable-header {
-    cursor: pointer;
-    user-select: none;
-    position: relative;
     padding-right: 28px !important;
 }
 .veritrace-his-sortable-header:hover {
-    background-color: var(--vtth-bg-tertiary); /* Light Slate hover */
-    color: var(--vtth-text-primary);
+     color: var(--vtth-text-primary); /* Updated Variable Use */
 }
 
-.veritrace-his-sort-icon { /* Updated class */
+.veritrace-his-sortable-header svg {
     position: absolute;
     right: 10px;
     top: 50%;
     transform: translateY(-50%);
     font-size: 13px;
-    color: var(--vtth-primary); /* Slate sort icon */
-    transition: color 0.2s ease, opacity 0.2s ease;
-    opacity: 0.6;
+    color: var(--vtth-text-light); /* Updated Variable Use */
+    transition: color 0.2s ease;
 }
-.veritrace-his-sortable-header:hover .veritrace-his-sort-icon {
-    opacity: 1;
+.veritrace-his-sortable-header:hover svg {
+    color: var(--vtth-text-secondary); /* Updated Variable Use */
 }
-.veritrace-his-sortable-header[aria-sort] .veritrace-his-sort-icon {
-     opacity: 1;
+.veritrace-his-table th[aria-sort] svg,
+.veritrace-his-table th:hover svg {
+     color: var(--vtth-primary); /* Updated Variable Use */
 }
+
 
 /* Empty state */
 .veritrace-his-empty-state {
@@ -432,66 +422,56 @@ body {
     justify-content: center;
     padding: 60px 20px;
     text-align: center;
-    color: var(--vtth-text-secondary); /* Slate text */
+    color: var(--vtth-text-secondary); /* Updated Variable Use */
     min-height: 250px;
     gap: 16px;
-    background-color: var(--vtth-bg-secondary);
-    border-radius: 0 0 var(--vtth-radius-lg) var(--vtth-radius-lg);
+    background-color: var(--vtth-bg-secondary); /* Updated Variable Use */
+    border-radius: 0 0 var(--vtth-radius-lg) var(--vtth-radius-lg); /* Updated Variable Use */
 }
 
-.veritrace-his-empty-icon { /* Updated class */
+.empty-icon {
     font-size: 54px;
-    color: var(--vtth-text-light); /* Light Slate */
+    color: var(--vtth-text-light); /* Updated Variable Use */
     margin-bottom: 10px;
 }
-.veritrace-his-empty-subtitle { /* Updated class */
-    color: var(--vtth-text-light); /* Light Slate */
+.empty-subtitle {
+    color: var(--vtth-text-light); /* Updated Variable Use */
     font-size: 14px;
     margin-top: 4px;
 }
 
 /* Loading state */
-.veritrace-his-loading-state { /* Updated class */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 80px 20px;
-    text-align: center;
-    min-height: 300px;
-    width: 100%;
+.veritrace-his-loading-state {
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     justify-content: center;
+     padding: 80px 20px;
+     text-align: center;
+     min-height: 300px;
+     width: 100%;
 }
-
-/* Refreshing state */
-.veritrace-his-refreshing-state { /* Updated class */
+.veritrace-his-loading-state.small {
     padding: 20px;
     min-height: auto;
-    display: flex;
     flex-direction: row;
-    align-items: center;
-    justify-content: center;
     gap: 10px;
     font-size: 14px;
-    color: var(--vtth-text-secondary); /* Slate */
-    width: 100%;
-    background-color: rgba(248, 249, 252, 0.8);
-    position: absolute;
-    top: 0; left: 0;
-    z-index: 2;
+    color: var(--vtth-text-secondary); /* Updated Variable Use */
 }
-.veritrace-his-loading-spinner.veritrace-his-loading-spinner-small { /* Updated compound class */
+.veritrace-his-loading-state.small .loading-spinner {
     width: 20px;
     height: 20px;
     border-width: 2px;
     margin-bottom: 0;
 }
 
-.veritrace-his-loading-spinner { /* Updated class */
+.loading-spinner {
     width: 48px;
     height: 48px;
-    border: 4px solid var(--vtth-bg-tertiary); /* Light Slate */
+    border: 4px solid var(--vtth-bg-tertiary); /* Updated Variable Use */
     border-radius: 50%;
-    border-top-color: var(--vtth-primary); /* Slate */
+    border-top-color: var(--vtth-primary); /* Updated Variable Use */
     animation: spin 1s linear infinite;
     margin-bottom: 20px;
 }
@@ -500,232 +480,132 @@ body {
     to { transform: rotate(360deg); }
 }
 
-/* --- Modal Styles (Slate Theme & Updated Prefixes) --- */
+/* --- Reusable Modal Styles (Slate Theme Applied) --- */
+/* --- Prefixes are veritrace-his-* --- */
 
-.veritrace-his-modal-overlay { /* Updated */
+.veritrace-his-modal-overlay-review {
     position: fixed; top: 0; left: 0; right: 0; bottom: 0;
     background-color: rgba(30, 41, 59, 0.7); /* Dark Slate overlay */
     display: flex; align-items: center; justify-content: center;
     z-index: 10000; backdrop-filter: blur(4px);
     opacity: 0; animation: modalOverlayFadeIn 0.3s ease-out forwards;
 }
-/* Keyframes defined earlier */
+@keyframes modalOverlayFadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-.veritrace-his-modal-content { /* Updated */
-    background-color: var(--vtth-bg-primary);
-    border-radius: var(--vtth-radius-lg);
-    width: 90%; max-width: 650px; max-height: 90vh; /* Default width */
+.veritrace-his-modal-content-review {
+    background-color: var(--vtth-bg-primary); /* Updated Variable Use */
+    border-radius: var(--vtth-radius-lg); /* Updated Variable Use */
+    width: 90%; max-width: 650px; max-height: 90vh;
     overflow: hidden; display: flex; flex-direction: column;
-    position: relative; box-shadow: var(--vtth-shadow-lg);
+    position: relative; box-shadow: var(--vtth-shadow-lg); /* Updated Variable Use */
     transform: scale(0.95); opacity: 0;
     animation: modalContentScaleUp 0.3s 0.1s ease-out forwards;
 }
-/* Keyframes defined earlier */
-
-/* Modifier for wider modal */
-.veritrace-his-modal-content.wide {
-    max-width: 900px; /* Adjusted width for trace table */
-}
+@keyframes modalContentScaleUp { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
 .veritrace-his-modal-header {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 18px 24px; border-bottom: 1px solid var(--vtth-border);
-    background-color: var(--vtth-bg-secondary); flex-shrink: 0;
+    padding: 18px 24px; border-bottom: 1px solid var(--vtth-border); /* Updated Variable Use */
+    background-color: var(--vtth-bg-secondary); flex-shrink: 0; /* Updated Variable Use */
 }
-.veritrace-his-modal-header h3 { font-size: 18px; font-weight: 600; color: var(--vtth-text-primary); }
-.veritrace-his-modal-close-button {
-    background-color: transparent; border: none; color: var(--vtth-text-secondary); /* Slate */
-    font-size: 18px; cursor: pointer; transition: var(--vtth-transition), transform 0.3s ease;
+.veritrace-his-modal-header h3 { font-size: 18px; font-weight: 600; color: var(--vtth-text-primary); } /* Updated Variable Use */
+.veritrace-his-close-modal-button {
+    background-color: transparent; border: none; color: var(--vtth-text-secondary); /* Updated Variable Use */
+    font-size: 18px; cursor: pointer; transition: var(--vtth-transition); /* Updated Variable Use */
     display: flex; align-items: center; justify-content: center;
     width: 34px; height: 34px; border-radius: 50%;
 }
-.veritrace-his-modal-close-button:hover {
-    background-color: var(--vtth-bg-tertiary); /* Light Slate */
-    color: var(--vtth-error); /* Keep error red */
+.veritrace-his-close-modal-button:hover {
+    background-color: var(--vtth-bg-tertiary); /* Updated Variable Use */
+    color: var(--vtth-error); /* Updated Variable Use */
     transform: rotate(90deg);
 }
 
 .veritrace-his-modal-body { padding: 0; flex-grow: 1; overflow-y: auto; }
 
-/* Modal Sections (Updated classes) */
-.veritrace-his-modal-reviewer-section,
-.veritrace-his-modal-linked-items-section, /* Updated class */
-.veritrace-his-modal-testcase-section { /* Added just in case */
-    padding: 24px; border-bottom: 1px solid var(--vtth-border-light);
+/* Modal Sections */
+.veritrace-his-reviewer-section,
+.veritrace-his-linked-items-section {
+    padding: 24px; border-bottom: 1px solid var(--vtth-border-light); /* Updated Variable Use */
 }
 .veritrace-his-modal-body > div:last-child { border-bottom: none; }
 
-.veritrace-his-modal-reviewer-section h4,
-.veritrace-his-modal-linked-items-section h4, /* Updated class */
-.veritrace-his-modal-testcase-section h4 { /* Added just in case */
-    font-size: 16px; font-weight: 600; color: var(--vtth-text-primary);
+.veritrace-his-reviewer-section h4,
+.veritrace-his-linked-items-section h4 {
+    font-size: 16px; font-weight: 600; color: var(--vtth-text-primary); /* Updated Variable Use */
     margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
 }
-.veritrace-his-modal-section-icon { color: var(--vtth-primary); width: 18px; height: 18px; } /* Slate */
+.veritrace-his-section-icon { color: var(--vtth-primary); width: 18px; height: 18px; } /* Updated Variable Use */
 
-/* Modal Lists (Updated classes) */
-.veritrace-his-modal-reviewers-list,
-.veritrace-his-modal-testcase-list { /* Updated class */
-    display: flex; flex-direction: column; gap: 12px;
-}
+.veritrace-his-reviewers-list,
+.veritrace-his-requirements-list { display: flex; flex-direction: column; gap: 12px; }
 
-/* Modal Items (Updated classes) */
-.veritrace-his-modal-reviewer-item,
-.veritrace-his-modal-testcase-item { /* Updated class */
+.veritrace-his-reviewer-item,
+.veritrace-his-requirement-item {
     display: flex; align-items: center; padding: 14px;
-    background-color: var(--vtth-bg-secondary);
-    border-radius: var(--vtth-radius-md); gap: 14px;
+    background-color: var(--vtth-bg-secondary); /* Updated Variable Use */
+    border-radius: var(--vtth-radius-md); gap: 14px; /* Updated Variable Use */
 }
-
-.veritrace-his-modal-reviewer-avatar {
+.veritrace-his-reviewer-avatar {
     width: 40px; height: 40px; border-radius: 50%;
-    background-color: var(--vtth-accent-light); /* Keep Blue */
-    color: var(--vtth-accent-dark);
+    background-color: var(--vtth-accent-light); /* Updated Variable Use */
+    color: var(--vtth-accent-dark); /* Updated Variable Use */
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0; font-size: 18px;
 }
-.veritrace-his-modal-reviewer-info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
-.veritrace-his-modal-reviewer-name { font-weight: 600; color: var(--vtth-text-primary); font-size: 15px; }
-
-/* Modal Status Text (Use specific classes from helpers) */
+.veritrace-his-reviewer-info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.veritrace-his-reviewer-name { font-weight: 600; color: var(--vtth-text-primary); font-size: 15px; } /* Updated Variable Use */
 .veritrace-his-reviewer-status { font-size: 13px; font-weight: 500; }
-.veritrace-his-reviewer-status.veritrace-his-status-verified { color: var(--vtth-success-dark); }
-.veritrace-his-reviewer-status.veritrace-his-status-not-verified { color: var(--vtth-error-dark); }
-.veritrace-his-reviewer-status.veritrace-his-status-unknown { color: var(--vtth-unknown); }
+.veritrace-his-reviewer-status.veritrace-his-verified { color: var(--vtth-success-dark); } /* Updated Variable Use */
+.veritrace-his-reviewer-status.veritrace-his-not-verified { color: var(--vtth-error-dark); } /* Updated Variable Use */
+.veritrace-his-reviewer-status.veritrace-his-unknown { color: var(--vtth-unknown); } /* Updated Variable Use */
 
-/* Modal Status Icon (Use specific classes from helpers) */
 .veritrace-his-status-icon { font-size: 20px; margin-left: auto; padding-left: 16px; }
-.veritrace-his-status-icon.veritrace-his-status-verified { color: var(--vtth-success); }
-.veritrace-his-status-icon.veritrace-his-status-not-verified { color: var(--vtth-error); }
-.veritrace-his-status-icon.veritrace-his-status-unknown { color: var(--vtth-unknown); }
+.veritrace-his-status-icon.veritrace-his-verified { color: var(--vtth-success); } /* Updated Variable Use */
+.veritrace-his-status-icon.veritrace-his-not-verified { color: var(--vtth-error); } /* Updated Variable Use */
+.veritrace-his-status-icon.veritrace-his-unknown { color: var(--vtth-unknown); } /* Updated Variable Use */
 
-/* Modal Test Case Item (Updated classes) */
-.veritrace-his-modal-testcase-icon { /* Updated class */
-    color: var(--vtth-primary); /* Slate */
-    font-size: 16px;
-}
-.veritrace-his-modal-testcase-id { /* Updated class */
-     font-family: "SF Mono", "Roboto Mono", monospace; color: var(--vtth-text-primary); font-weight: 500;
- }
+.veritrace-his-req-icon { color: var(--vtth-accent); font-size: 16px; } /* Updated Variable Use */
+.veritrace-his-req-id { font-family: "SF Mono", "Roboto Mono", monospace; color: var(--vtth-text-primary); font-weight: 500; } /* Updated Variable Use */
 
-
-.veritrace-his-modal-empty-message { /* Updated class */
-    padding: 20px; color: var(--vtth-text-secondary); text-align: center;
-    font-style: italic; background-color: var(--vtth-bg-secondary);
-    border-radius: var(--vtth-radius-md); font-size: 14px;
-}
-/* Small variant if needed */
-.veritrace-his-modal-empty-message.small { padding: 10px; font-style: normal; text-align: left; }
-
-/* --- Modal Horizontal Trace Table Styles --- */
-.veritrace-his-modal-table-container {
-    width: 100%;
-    overflow-x: auto;
+.veritrace-his-status-display {
     margin-top: 16px;
-    border: 1px solid var(--vtth-border-light);
-    border-radius: var(--vtth-radius-sm);
+    padding: 10px 14px;
+    background-color: var(--vtth-bg-secondary); /* Updated Variable Use */
+    border-radius: var(--vtth-radius-sm); /* Updated Variable Use */
+    border: 1px solid var(--vtth-border); /* Updated Variable Use */
+    font-size: 14px;
+    color: var(--vtth-text-secondary); /* Updated Variable Use */
 }
-.veritrace-his-modal-artifact-table.horizontal {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
+.veritrace-his-status-display strong {
+    color: var(--vtth-text-primary); /* Updated Variable Use */
+    margin-right: 8px;
 }
-.veritrace-his-modal-artifact-table.horizontal th,
-.veritrace-his-modal-artifact-table.horizontal td {
-    border: 1px solid var(--vtth-border-light);
-    padding: 12px 10px;
+
+.veritrace-his-empty-message {
+    padding: 20px; color: var(--vtth-text-secondary); text-align: center; /* Updated Variable Use */
+    font-style: italic; background-color: var(--vtth-bg-secondary); /* Updated Variable Use */
+    border-radius: var(--vtth-radius-md); font-size: 14px; /* Updated Variable Use */
+}
+.veritrace-his-empty-message.small {
+    padding: 10px;
+    font-style: normal;
     text-align: left;
-    vertical-align: top;
-    word-break: break-word;
-    font-size: 0.9em;
-}
-.veritrace-his-modal-artifact-table.horizontal th {
-    background-color: var(--vtth-bg-secondary);
-    font-weight: 600;
-    color: var(--vtth-text-secondary); /* Slate */
-    white-space: nowrap;
-}
-.veritrace-his-modal-artifact-table.horizontal th svg {
-    margin-right: 6px;
-    color: var(--vtth-primary); /* Slate */
-}
-
-/* Content within artifact cells */
-.veritrace-his-artifact-cell-multi-content { /* Updated class */
-    display: flex;
-    flex-direction: column;
-    gap: 8px; /* Space between multiple items */
-}
-.veritrace-his-artifact-item { /* Style for each item if multiple */
-    display: flex;
-    flex-direction: column;
-    gap: 4px; /* Space between ID, Name, Status */
-}
-.veritrace-his-artifact-id {
-    font-family: "SF Mono", "Roboto Mono", monospace;
-    font-weight: 600;
-    color: var(--vtth-text-primary);
-}
-.veritrace-his-artifact-name {
-    color: var(--vtth-text-secondary); /* Slate */
-    font-size: 0.95em;
-}
-.veritrace-his-artifact-nolink {
-    color: var(--vtth-text-light); /* Light Slate */
-    font-style: italic;
-    font-size: 0.9em;
-    text-align: center;
-    display: block;
-    padding: 15px 0;
-}
-
-/* Status badge styling (within modal table) */
-.veritrace-his-status-badge {
-    display: inline-block; padding: 3px 8px; border-radius: var(--vtth-radius-sm);
-    font-size: 0.8em; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid transparent;
-}
-.veritrace-his-status-positive { background-color: var(--vtth-success-light); color: var(--vtth-success-dark); border-color: var(--vtth-success); }
-.veritrace-his-status-negative { background-color: var(--vtth-error-light); color: var(--vtth-error-dark); border-color: var(--vtth-error); }
-.veritrace-his-status-neutral { background-color: var(--vtth-bg-secondary); color: var(--vtth-text-secondary); border-color: var(--vtth-border); }
-.veritrace-his-status-wip { background-color: var(--vtth-info-light); color: var(--vtth-info-dark); border-color: var(--vtth-info); }
-
-/* Style applied to the badge when inside the multi-content cell */
-.veritrace-his-artifact-cell-multi-content .veritrace-his-status-badge {
-     margin-top: 4px;
-     align-self: flex-start;
 }
 
 
 /* Custom scrollbar */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: var(--vtth-bg-secondary); border-radius: 10px; }
-::-webkit-scrollbar-thumb { background-color: var(--vtth-border-colored); border-radius: 10px; border: 2px solid var(--vtth-bg-secondary); } /* Slate thumb */
-::-webkit-scrollbar-thumb:hover { background-color: var(--vtth-primary-light); } /* Lighter Slate */
-
-
-/* History Button Style (Corrected Prefix) */
-.veritrace-his-history-btn { /* Added 'his' */
-    display: flex; align-items: center; gap: 8px; padding: 9px 18px;
-    background-color: var(--vtth-primary); color: var(--vtth-text-white);
-    border: 1px solid var(--vtth-primary); border-radius: var(--vtth-radius-md);
-    font-size: 14px; font-weight: 500; cursor: pointer; transition: var(--vtth-transition);
-    white-space: nowrap; box-shadow: var(--vtth-shadow-sm); margin-left: auto;
-  }
-.veritrace-his-history-btn:hover {
-    background-color: var(--vtth-primary-dark); border-color: var(--vtth-primary-dark);
-    box-shadow: var(--vtth-shadow-md); transform: translateY(-1px);
-  }
-.veritrace-his-history-btn svg { margin-right: 4px; }
+::-webkit-scrollbar-track { background: var(--vtth-bg-secondary); border-radius: 10px; } /* Updated Variable Use */
+::-webkit-scrollbar-thumb { background-color: var(--vtth-border); border-radius: 10px; border: 2px solid var(--vtth-bg-secondary); } /* Updated Variable Use */
+::-webkit-scrollbar-thumb:hover { background-color: var(--vtth-text-light); } /* Updated Variable Use */
 
 
 /* Responsive adjustments */
 @media (max-width: 1024px) {
     .veritrace-his-tools { flex-direction: column; align-items: stretch; }
     .veritrace-his-search { width: 100%; }
-    /* .veritrace-his-refresh-btn { width: 100%; justify-content: center; padding: 9px 16px; } */
     .veritrace-his-panel-header { flex-direction: column; align-items: flex-start; }
-    /* Adjust modal width earlier if needed */
-    .veritrace-his-modal-content.wide { max-width: 95%; }
 }
 
 @media (max-width: 768px) {
@@ -733,35 +613,149 @@ body {
     .veritrace-his-header { flex-direction: column; align-items: flex-start; gap: 15px; margin-bottom: 25px; }
     .veritrace-his-header h1 { order: 1; margin: 0; font-size: 22px; }
     .veritrace-his-back-btn { position: static; order: 0; }
-    .veritrace-his-tutorial-help-button { top: 10px; right: 10px; } /* Re-apply position relative to header */
+    .veritrace-his-tutorial-help-button { top: 10px; right: 10px; }
 
-    .veritrace-his-table th,
-    .veritrace-his-table td { padding: 12px 10px; font-size: 13px; } /* Reduced padding further */
-
+    .veritrace-his-table th, .veritrace-his-table td { padding: 12px 15px; font-size: 13px; }
     .veritrace-his-actions-cell { text-align: left; }
     .veritrace-his-view-details-btn { width: 30px; height: 30px; }
 
-    .veritrace-his-modal-content { /* Apply to base modal content class */
-        width: 95%; max-height: 85vh;
-    }
-    .veritrace-his-modal-content.wide { /* Ensure wide still applies */
-        max-width: 95%;
-    }
-
+    .veritrace-his-modal-content-review { width: 95%; max-height: 85vh; }
     .veritrace-his-modal-header { padding: 12px 16px; }
     .veritrace-his-modal-header h3 { font-size: 16px; }
-
-    .veritrace-his-modal-reviewer-section,
-    .veritrace-his-modal-linked-items-section { padding: 16px; }
-
-    /* Modal table responsive */
-     .veritrace-his-modal-artifact-table.horizontal th,
-     .veritrace-his-modal-artifact-table.horizontal td {
-         padding: 8px 6px; /* Further reduce padding */
-         font-size: 0.85em; /* Smaller font */
-     }
-     .veritrace-his-status-badge {
-         font-size: 0.75em;
-         padding: 2px 5px;
-     }
+    .veritrace-his-reviewer-section, .veritrace-his-linked-items-section { padding: 16px; }
 }
+
+/* Add or Modify these styles in VeriTraceHis.css */
+
+/* Container for the horizontal table to allow scrolling if needed */
+.veritrace-his-modal-table-container {
+    width: 100%;
+    overflow-x: auto; /* Enable horizontal scroll on small screens */
+    margin-top: 16px;
+    border: 1px solid var(--vtth-border-light); /* Add border around table */
+    border-radius: var(--vtth-radius-sm);
+}
+
+/* Style for the horizontal artifact table itself */
+.veritrace-his-modal-artifact-table.horizontal {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed; /* Distribute column width evenly */
+}
+
+.veritrace-his-modal-artifact-table.horizontal th,
+.veritrace-his-modal-artifact-table.horizontal td {
+    border: 1px solid var(--vtth-border-light);
+    padding: 12px 10px; /* Adjust padding */
+    text-align: left;
+    vertical-align: top; /* Align content to the top */
+    word-break: break-word; /* Allow wrapping */
+    font-size: 0.9em;
+}
+
+.veritrace-his-modal-artifact-table.horizontal th {
+    background-color: var(--vtth-bg-secondary);
+    font-weight: 600;
+    color: var(--vtth-text-secondary);
+    white-space: nowrap; /* Prevent header text wrapping */
+}
+.veritrace-his-modal-artifact-table.horizontal th svg {
+    margin-right: 6px;
+    color: var(--vtth-primary); /* Color header icons */
+}
+
+
+/* Styling for the content within each table cell (td) */
+.veritrace-his-artifact-cell-content {
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* Space between ID, Name, Status */
+}
+
+.veritrace-his-artifact-id {
+    font-family: "SF Mono", "Roboto Mono", monospace;
+    font-weight: 600; /* Make ID bold */
+    color: var(--vtth-text-primary);
+}
+
+.veritrace-his-artifact-name {
+    color: var(--vtth-text-secondary);
+    font-size: 0.95em;
+}
+
+/* Placeholder for non-linked items */
+.veritrace-his-artifact-nolink {
+    color: var(--vtth-text-light);
+    font-style: italic;
+    font-size: 0.9em;
+    text-align: center;
+    display: block;
+    padding: 15px 0; /* Add padding for visual spacing */
+}
+
+/* Status badge styling within the cell */
+.veritrace-his-artifact-cell-content .veritrace-his-status-badge {
+    margin-top: 5px;
+    align-self: flex-start; /* Align badge to start */
+}
+
+/* Reusing status badge styles defined previously */
+.veritrace-his-status-badge {
+    display: inline-block; padding: 3px 8px; border-radius: var(--vtth-radius-sm);
+    font-size: 0.8em; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid transparent;
+}
+.veritrace-his-status-positive { background-color: var(--vtth-success-light); color: var(--vtth-success-dark); border-color: var(--vtth-success-dark); }
+.veritrace-his-status-negative { background-color: var(--vtth-error-light); color: var(--vtth-error-dark); border-color: var(--vtth-error-dark); }
+.veritrace-his-status-neutral { background-color: var(--vtth-bg-secondary); color: var(--vtth-text-secondary); border-color: var(--vtth-border); }
+.veritrace-his-status-wip { background-color: var(--vtth-info-light); color: var(--vtth-info-dark); border-color: var(--vtth-info); }
+
+
+/* Adjust overall modal width if needed for the table */
+.veritrace-his-modal-content-review.wide {
+    max-width: 900px; /* Example: Increase max-width */
+}
+
+/* Ensure reviewer section styling still uses correct prefix */
+.veritrace-his-reviewer-section {
+    /* Styles from previous CSS */
+}
+/* ... other reviewer styles with veritrace-his- prefix ... */
+
+/* Status display below the table */
+.veritrace-his-status-display {
+    margin-top: 16px; padding: 10px 14px; background-color: var(--vtth-bg-secondary);
+    border-radius: var(--vtth-radius-sm); border: 1px solid var(--vtth-border);
+    font-size: 14px; color: var(--vtth-text-secondary); display: flex;
+    align-items: center; gap: 8px;
+}
+.veritrace-his-status-display strong { color: var(--vtth-text-primary); margin-right: 0; }
+
+.veritrace-history-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 18px; /* Match search height */
+    background-color: var(--vtth-primary);
+    color: var(--text-white);
+    border: 1px solid var(--vtth-primary);
+    border-radius: var(--vtth-radius-md);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--vtth-transition);
+    white-space: nowrap;
+    box-shadow: var(--vtth-shadow-sm);
+    margin-left: auto;
+    margin-bottom: 20px;
+  }
+  
+  .veritrace-history-btn:hover {
+    background-color: var(--vtth-primary-dark);
+    border-color: var(--vtth-primary-dark);
+    box-shadow: var(--vtth-shadow-md);
+    transform: translateY(-1px);
+  }
+  
+  .veritrace-history-btn svg {
+    margin-right: 4px; /* Space before text */
+  }
