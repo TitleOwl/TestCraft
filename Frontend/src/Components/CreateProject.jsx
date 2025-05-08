@@ -315,8 +315,8 @@ const CreateProject = () => {
   const roleOptions = [
     { value: 'Analyst', label: 'Analyst' },
     { value: 'Designer', label: 'Designer' },
-    { value: 'Developer', label: 'Developer' },
-    { value: 'Tester', label: 'Tester' },
+    { value: 'Programmer', label: 'Programmer' },
+    { value: 'Project Manager', label: 'Project Manager' },
     { value: 'Technical Leader', label: 'Technical Leader' },
     { value: 'Work Team', label: 'Work Team' },
   ];

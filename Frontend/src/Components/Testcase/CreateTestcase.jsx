@@ -193,17 +193,17 @@ const CreateTestcase = () => {
       {/* {error && <div className="tc-create-error">{error}</div>} */}
 
       <div className="tc-create-form-group">
-        <label className="tc-create-label"><FontAwesomeIcon icon={faFileAlt} className="tc-create-label-icon" /> Test Case Name *</label>
+        <label className="tc-create-label"><FontAwesomeIcon icon={faFileAlt} className="tc-create-label-icon" /> Test Case Name</label>
         <input type="text" className="tc-create-input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Enter test case title" required />
       </div>
 
       <div className="tc-create-form-group">
-        <label className="tc-create-label"><FontAwesomeIcon icon={faFileAlt} className="tc-create-label-icon" /> Description *</label>
+        <label className="tc-create-label"><FontAwesomeIcon icon={faFileAlt} className="tc-create-label-icon" /> Description</label>
         <textarea className="tc-create-textarea" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Enter detailed test case description" rows="4" required />
       </div>
 
       <div className="tc-create-form-group">
-        <label className="tc-create-label"><FontAwesomeIcon icon={faFileAlt} className="tc-create-label-icon" /> Select Code Component *</label>
+        <label className="tc-create-label"><FontAwesomeIcon icon={faFileAlt} className="tc-create-label-icon" /> Select Code Component</label>
         {/* Use grouped options */}
         <Select
           className="tc-create-select-multi"
@@ -219,7 +219,7 @@ const CreateTestcase = () => {
       </div>
 
       <div className="tc-create-form-group">
-        <label className="tc-create-label"><FontAwesomeIcon icon={faTag} className="tc-create-label-icon" /> Test Type *</label>
+        <label className="tc-create-label"><FontAwesomeIcon icon={faTag} className="tc-create-label-icon" /> Test Type</label>
         <select className="tc-create-select" value={testType} onChange={(e) => setTestType(e.target.value)} required>
           <option value="">Select Test Type</option>
           <option value="Unit Test">Unit Test</option>
@@ -235,7 +235,7 @@ const CreateTestcase = () => {
       </div>
 
       <div className="tc-create-form-group">
-        <label className="tc-create-label"><FontAwesomeIcon icon={faLevelUpAlt} className="tc-create-label-icon" /> Priority *</label>
+        <label className="tc-create-label"><FontAwesomeIcon icon={faLevelUpAlt} className="tc-create-label-icon" /> Priority</label>
         <select className="tc-create-select" value={priority} onChange={(e) => setPriority(e.target.value)} required>
           <option value="">Select Priority</option>
           <option value="High">High</option>
