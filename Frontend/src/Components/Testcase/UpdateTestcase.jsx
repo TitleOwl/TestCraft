@@ -282,7 +282,7 @@ const UpdateTestcase = () => {
 
       {/* Title */}
       <div className="tc-create-form-group">
-        <label className="tc-create-label"><FontAwesomeIcon icon={faFileAlt} className="tc-create-label-icon" /> Title</label>
+        <label className="tc-create-label"><FontAwesomeIcon icon={faFileAlt} className="tc-create-label-icon" /> Test Case Name</label>
         <input type="text" name="testcase_name" className="tc-create-input" value={testcase.testcase_name || ''} onChange={handleChange} placeholder="Enter test case title" required />
       </div>
       {/* Description */}

@@ -193,7 +193,7 @@ const CreateTestcase = () => {
       {/* {error && <div className="tc-create-error">{error}</div>} */}
 
       <div className="tc-create-form-group">
-        <label className="tc-create-label"><FontAwesomeIcon icon={faFileAlt} className="tc-create-label-icon" /> Title *</label>
+        <label className="tc-create-label"><FontAwesomeIcon icon={faFileAlt} className="tc-create-label-icon" /> Test Case Name *</label>
         <input type="text" className="tc-create-input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Enter test case title" required />
       </div>
 
