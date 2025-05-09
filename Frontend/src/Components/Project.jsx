@@ -16,7 +16,8 @@ import {
   faArrowsRotate,
   faSortDown,
   faXmark,
-  faClipboardList
+  faClipboardList,
+  faClock
 } from '@fortawesome/free-solid-svg-icons';
 import { Modal, Button } from 'react-bootstrap';
 import { ToastContainer } from 'react-toastify';
@@ -190,26 +191,26 @@ const Project = () => {
 
   // Calculate remaining days for the project
   const calculateDaysRemaining = (endDate, status) => {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0); // Normalize today's date to start of day
-      const end = new Date(endDate);
-      end.setHours(0, 0, 0, 0); // Normalize end date to start of day
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Normalize today's date to start of day
+    const end = new Date(endDate);
+    end.setHours(0, 0, 0, 0); // Normalize end date to start of day
 
-      if (status === 'CLOSE') {
-          return { value: 0, label: 'Completed', status: 'completed' };
-      }
+    if (status === 'CLOSE') {
+      return { value: 0, label: 'Completed', status: 'completed' };
+    }
 
-      const difference = Math.ceil((end - today) / (1000 * 60 * 60 * 24));
+    const difference = Math.ceil((end - today) / (1000 * 60 * 60 * 24));
 
-      if (difference < 0) {
-          return { value: difference, label: 'Expired', status: 'expired' };
-      } else if (difference === 0) {
-          return { value: difference, label: 'Ends Today', status: 'warning' };
-      } else if (difference <= 7) {
-          return { value: difference, label: `${difference} day${difference > 1 ? 's' : ''}`, status: 'warning' };
-      } else {
-          return { value: difference, label: `${difference} days`, status: 'normal' };
-      }
+    if (difference < 0) {
+      return { value: difference, label: 'Expired', status: 'expired' };
+    } else if (difference === 0) {
+      return { value: difference, label: 'Ends Today', status: 'warning' };
+    } else if (difference <= 7) {
+      return { value: difference, label: `${difference} day${difference > 1 ? 's' : ''}`, status: 'warning' };
+    } else {
+      return { value: difference, label: `${difference} days`, status: 'normal' };
+    }
   };
 
 
@@ -243,11 +244,13 @@ const Project = () => {
   const getStatusIcon = (status) => {
     switch (status) {
       case 'CLOSE':
-        return <FontAwesomeIcon icon={faCheckCircle} className="status-icon status-completed" title="Completed"/>;
+        return <FontAwesomeIcon icon={faCheckCircle} className="status-icon-project status-completed" title="Completed" />;
       case 'IN PROGRESS':
-        return <FontAwesomeIcon icon={faSpinner} className="status-icon status-inprogress" title="In Progress"/>;
+        return <FontAwesomeIcon icon={faSpinner} className="status-icon-project status-inprogress" title="In Progress" />;
       case 'DELAYED':
-        return <FontAwesomeIcon icon={faExclamationTriangle} className="status-icon status-delayed" title="Delayed"/>;
+        return <FontAwesomeIcon icon={faExclamationTriangle} className="status-icon-project status-delayed" title="Delayed" />;
+      case 'PENDING':
+        return <FontAwesomeIcon icon={faClock} className="status-icon-project status-pending" title="Pending" />;
       default:
         return null; // Or a default icon like faClipboardList
     }
@@ -255,13 +258,13 @@ const Project = () => {
 
   // Format Date Helper
   const formatDate = (dateString) => {
-      if (!dateString) return 'N/A';
-      // Example: Thai locale, short date style
-      return new Date(dateString).toLocaleDateString('th-TH', {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric'
-      });
+    if (!dateString) return 'N/A';
+    // Example: Thai locale, short date style
+    return new Date(dateString).toLocaleDateString('th-TH', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
   };
 
 
@@ -281,7 +284,7 @@ const Project = () => {
 
       <div className="enterprise-header">
         {/* ... Header content remains the same ... */}
-         <div className="enterprise-title-section">
+        <div className="enterprise-title-section">
           <h1 className="enterprise-page-title">
             <FontAwesomeIcon icon={faClipboardList} className="enterprise-page-icon" />
             Project Dashboard
@@ -298,7 +301,7 @@ const Project = () => {
 
       <div className="enterprise-stats-cards">
         {/* ... Stats cards remain the same ... */}
-         <div className="enterprise-stat-card">
+        <div className="enterprise-stat-card">
           <div className="enterprise-stat-icon total">
             <FontAwesomeIcon icon={faClipboardList} />
           </div>
@@ -340,8 +343,8 @@ const Project = () => {
       </div>
 
       <div className="enterprise-controls-container">
-         {/* ... Search and Filter controls remain the same ... */}
-         <div className="enterprise-search-section">
+        {/* ... Search and Filter controls remain the same ... */}
+        <div className="enterprise-search-section">
           <div className="enterprise-search-box">
             <FontAwesomeIcon icon={faMagnifyingGlass} className="enterprise-search-icon" />
             <input
@@ -408,21 +411,21 @@ const Project = () => {
               <div className="enterprise-filter-group">
                 <label className="enterprise-filter-label">Timeline</label>
                 <div className="enterprise-filter-options">
-                   {[
-                      { value: 'All', label: 'All Time' },
-                      { value: 'Active', label: 'Active' },
-                      { value: 'Last30Days', label: 'Started Last 30 Days' },
-                      { value: 'Next30Days', label: 'Ending Next 30 Days' },
-                      { value: 'Expired', label: 'Expired/Completed' }
-                   ].map(filter => (
-                      <button
-                         key={filter.value}
-                         className={`enterprise-filter-option ${dateFilter === filter.value ? 'active' : ''}`}
-                         onClick={() => setDateFilter(filter.value)}
-                      >
-                         {filter.label}
-                      </button>
-                   ))}
+                  {[
+                    { value: 'All', label: 'All Time' },
+                    { value: 'Active', label: 'Active' },
+                    { value: 'Last30Days', label: 'Started Last 30 Days' },
+                    { value: 'Next30Days', label: 'Ending Next 30 Days' },
+                    { value: 'Expired', label: 'Expired/Completed' }
+                  ].map(filter => (
+                    <button
+                      key={filter.value}
+                      className={`enterprise-filter-option ${dateFilter === filter.value ? 'active' : ''}`}
+                      onClick={() => setDateFilter(filter.value)}
+                    >
+                      {filter.label}
+                    </button>
+                  ))}
                 </div>
               </div>
 
@@ -467,18 +470,18 @@ const Project = () => {
             )}
 
             {dateFilter !== 'All' && (
-               <div className="enterprise-filter-tag">
-                  Timeline: {
-                     dateFilter === 'Active' ? 'Active' :
-                     dateFilter === 'Expired' ? 'Expired/Completed' :
-                     dateFilter === 'Last30Days' ? 'Started Last 30 Days' :
-                     dateFilter === 'Next30Days' ? 'Ending Next 30 Days' :
-                     'All Time' // Fallback, though shouldn't be needed here
-                  }
-                  <button className="enterprise-filter-tag-remove" onClick={() => setDateFilter('All')} aria-label={`Remove filter Timeline: ${dateFilter}`}>
-                     <FontAwesomeIcon icon={faXmark} />
-                  </button>
-               </div>
+              <div className="enterprise-filter-tag">
+                Timeline: {
+                  dateFilter === 'Active' ? 'Active' :
+                    dateFilter === 'Expired' ? 'Expired/Completed' :
+                      dateFilter === 'Last30Days' ? 'Started Last 30 Days' :
+                        dateFilter === 'Next30Days' ? 'Ending Next 30 Days' :
+                          'All Time' // Fallback, though shouldn't be needed here
+                }
+                <button className="enterprise-filter-tag-remove" onClick={() => setDateFilter('All')} aria-label={`Remove filter Timeline: ${dateFilter}`}>
+                  <FontAwesomeIcon icon={faXmark} />
+                </button>
+              </div>
             )}
 
           </div>
@@ -502,7 +505,7 @@ const Project = () => {
         ) : (
           <>
             {/* ... Table header remains the same ... */}
-             <div className="enterprise-table-header">
+            <div className="enterprise-table-header">
               <h2 className="enterprise-table-title">Projects List</h2>
               <div className="enterprise-table-meta">
                 Showing {filteredProjects.length} of {projectList.length} projects
@@ -544,8 +547,8 @@ const Project = () => {
                 <tbody>
                   {filteredProjects.length === 0 ? (
                     <tr>
-                       {/* ... No data row remains the same ... */}
-                        <td colSpan="7" className="enterprise-no-data">
+                      {/* ... No data row remains the same ... */}
+                      <td colSpan="7" className="enterprise-no-data">
                         <div className="enterprise-no-data-content">
                           <FontAwesomeIcon icon={faClipboardList} className="enterprise-no-data-icon" />
                           <p className="enterprise-no-data-text">
@@ -558,11 +561,11 @@ const Project = () => {
                               Reset Filters & Search
                             </button>
                           )}
-                           {!(searchQuery || statusFilter !== 'All' || dateFilter !== 'All') && (
-                             <button className="enterprise-btn enterprise-btn-primary" onClick={() => navigate('/CreateProject')}>
-                               Create New Project
+                          {!(searchQuery || statusFilter !== 'All' || dateFilter !== 'All') && (
+                            <button className="enterprise-btn enterprise-btn-primary" onClick={() => navigate('/CreateProject')}>
+                              Create New Project
                             </button>
-                           )}
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -573,16 +576,16 @@ const Project = () => {
                       return (
                         <tr key={project.project_id}>
                           <td className="enterprise-project-name" data-label="Project Name">
-                             {/* Make name clickable to navigate */}
-                             <button
-                                className="enterprise-project-link-button"
-                                onClick={() => navigate(`/Dashboard?project_id=${project.project_id}`)}
-                                title={`Go to dashboard for ${project.project_name}`}
-                             >
-                                {project.project_name}
-                             </button>
+                            {/* Make name clickable to navigate */}
+                            <button
+                              className="enterprise-project-link-button"
+                              onClick={() => navigate(`/Dashboard?project_id=${project.project_id}`)}
+                              title={`Go to dashboard for ${project.project_name}`}
+                            >
+                              {project.project_name}
+                            </button>
                           </td>
-                           <td data-label="Description">
+                          <td data-label="Description">
                             <div className="enterprise-description-cell" title={project.project_description}>
                               {project.project_description?.length > 30
                                 ? `${project.project_description.substring(0, 30)}...`
@@ -591,13 +594,13 @@ const Project = () => {
                           </td>
                           <td data-label="Start Date">
                             <div className="enterprise-date-cell">
-                              <FontAwesomeIcon icon={faCalendarAlt} className="enterprise-date-icon" aria-hidden="true"/>
+                              <FontAwesomeIcon icon={faCalendarAlt} className="enterprise-date-icon" aria-hidden="true" />
                               {formatDate(project.start_date)}
                             </div>
                           </td>
-                           <td data-label="End Date">
+                          <td data-label="End Date">
                             <div className="enterprise-date-cell">
-                              <FontAwesomeIcon icon={faCalendarAlt} className="enterprise-date-icon" aria-hidden="true"/>
+                              <FontAwesomeIcon icon={faCalendarAlt} className="enterprise-date-icon" aria-hidden="true" />
                               {formatDate(project.end_date)}
                             </div>
                           </td>
@@ -610,7 +613,7 @@ const Project = () => {
                             <div className="enterprise-status-cell">
                               {getStatusIcon(project.project_status)}
                               <span className={`enterprise-status enterprise-status-${project.project_status.replace(' ', '-').toLowerCase()}`}>
-                                 {project.project_status === 'CLOSE' ? 'Completed' : project.project_status}
+                                {project.project_status === 'CLOSE' ? 'Completed' : project.project_status}
                               </span>
                             </div>
                           </td>
@@ -653,165 +656,165 @@ const Project = () => {
         )}
       </div>
 
-       {/* Delete Confirmation Modal - Using specific state */}
-       <Modal
-         show={showDeleteModal} // Use specific state variable
-         onHide={() => setShowDeleteModal(false)}
-         centered
-         dialogClassName="modal-dialog-centered project-modal-dialog" // UPDATED CLASS
-         contentClassName="project-modal-content" // UPDATED CLASS
-         className="project-modal" // UPDATED CLASS
-       >
-         <Modal.Header closeButton>
-           <Modal.Title className="project-modal-title">Confirm Delete</Modal.Title> {/* UPDATED CLASS */}
-         </Modal.Header>
-         <Modal.Body>
-           {projectToDelete && (
-             <div className="project-modal-body-content"> {/* Optional: Wrapper for layout */}
-               <div className="project-modal-icon project-modal-icon-warning"> {/* UPDATED CLASS */}
-                 <FontAwesomeIcon icon={faExclamationTriangle} />
-               </div>
-               <div className="project-modal-message"> {/* UPDATED CLASS */}
-                 <p>Are you sure you want to delete the project <strong>{projectToDelete.project_name}</strong>?</p>
-                 <p className="project-modal-warning-text">This action cannot be undone.</p> {/* UPDATED CLASS */}
-               </div>
-             </div>
-           )}
-         </Modal.Body>
-         <Modal.Footer className="project-modal-footer"> {/* UPDATED CLASS */}
-           <Button
-             variant="outline-secondary"
-             onClick={() => setShowDeleteModal(false)}
-             className="enterprise-btn enterprise-btn-outline" // Keep general button style? Or create project-modal-btn?
-           >
-             Cancel
-           </Button>
-           <Button
-             variant="danger"
-             onClick={handleDeleteProject}
-             className="enterprise-btn enterprise-btn-danger" // Keep general button style?
-           >
-             Delete Project
-           </Button>
-         </Modal.Footer>
-       </Modal>
+      {/* Delete Confirmation Modal - Using specific state */}
+      <Modal
+        show={showDeleteModal} // Use specific state variable
+        onHide={() => setShowDeleteModal(false)}
+        centered
+        dialogClassName="modal-dialog-centered project-modal-dialog" // UPDATED CLASS
+        contentClassName="project-modal-content" // UPDATED CLASS
+        className="project-modal" // UPDATED CLASS
+      >
+        <Modal.Header closeButton>
+          <Modal.Title className="project-modal-title">Confirm Delete</Modal.Title> {/* UPDATED CLASS */}
+        </Modal.Header>
+        <Modal.Body>
+          {projectToDelete && (
+            <div className="project-modal-body-content"> {/* Optional: Wrapper for layout */}
+              <div className="project-modal-icon project-modal-icon-warning"> {/* UPDATED CLASS */}
+                <FontAwesomeIcon icon={faExclamationTriangle} />
+              </div>
+              <div className="project-modal-message"> {/* UPDATED CLASS */}
+                <p>Are you sure you want to delete the project <strong>{projectToDelete.project_name}</strong>?</p>
+                <p className="project-modal-warning-text">This action cannot be undone.</p> {/* UPDATED CLASS */}
+              </div>
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer className="project-modal-footer"> {/* UPDATED CLASS */}
+          <Button
+            variant="outline-secondary"
+            onClick={() => setShowDeleteModal(false)}
+            className="enterprise-btn enterprise-btn-outline" // Keep general button style? Or create project-modal-btn?
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="danger"
+            onClick={handleDeleteProject}
+            className="enterprise-btn enterprise-btn-danger" // Keep general button style?
+          >
+            Delete Project
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
-       {/* Project Details Modal */}
-       <Modal
-         show={!!selectedProject}
-         onHide={() => setSelectedProject(null)}
-         centered
-         dialogClassName="modal-dialog-centered project-modal-dialog" // UPDATED CLASS
-         contentClassName="project-modal-content" // UPDATED CLASS
-         className="project-modal project-modal-lg" // UPDATED CLASS (added size class)
-         size="lg" // Use react-bootstrap size prop for lg modal
-       >
-         <Modal.Header closeButton>
-           <Modal.Title className="project-modal-title">Project Details</Modal.Title> {/* UPDATED CLASS */}
-         </Modal.Header>
-         <Modal.Body className="project-modal-body"> {/* UPDATED CLASS */}
-           {selectedProject && (
-             <div className="project-details-content"> {/* Use a more specific class for inner details */}
-               <div className="project-details-overview"> {/* Specific class */}
-                 <h4 className="project-details-name">{selectedProject.project_name}</h4> {/* Specific class */}
-                 <div className={`enterprise-status enterprise-status-${selectedProject.project_status.replace(' ', '-').toLowerCase()}`}>
-                   {getStatusIcon(selectedProject.project_status)}
-                   {selectedProject.project_status === 'CLOSE' ? 'Completed' : selectedProject.project_status}
-                 </div>
-               </div>
+      {/* Project Details Modal */}
+      <Modal
+        show={!!selectedProject}
+        onHide={() => setSelectedProject(null)}
+        centered
+        dialogClassName="modal-dialog-centered project-modal-dialog" // UPDATED CLASS
+        contentClassName="project-modal-content" // UPDATED CLASS
+        className="project-modal project-modal-lg" // UPDATED CLASS (added size class)
+        size="lg" // Use react-bootstrap size prop for lg modal
+      >
+        <Modal.Header closeButton>
+          <Modal.Title className="project-modal-title">Project Details</Modal.Title> {/* UPDATED CLASS */}
+        </Modal.Header>
+        <Modal.Body className="project-modal-body"> {/* UPDATED CLASS */}
+          {selectedProject && (
+            <div className="project-details-content"> {/* Use a more specific class for inner details */}
+              <div className="project-details-overview"> {/* Specific class */}
+                <h4 className="project-details-name">{selectedProject.project_name}</h4> {/* Specific class */}
+                <div className={`enterprise-status enterprise-status-${selectedProject.project_status.replace(' ', '-').toLowerCase()}`}>
+                  {getStatusIcon(selectedProject.project_status)}
+                  {selectedProject.project_status === 'CLOSE' ? 'Completed' : selectedProject.project_status}
+                </div>
+              </div>
 
-               <div className="project-details-section"> {/* Specific class */}
-                 <h5 className="project-details-section-title">Description</h5> {/* Specific class */}
-                 <p className="project-details-description">{selectedProject.project_description || 'No description provided.'}</p> {/* Specific class */}
-               </div>
+              <div className="project-details-section"> {/* Specific class */}
+                <h5 className="project-details-section-title">Description</h5> {/* Specific class */}
+                <p className="project-details-description">{selectedProject.project_description || 'No description provided.'}</p> {/* Specific class */}
+              </div>
 
-               <div className="project-details-timeline"> {/* Specific class */}
-                 <div className="project-details-date"> {/* Specific class */}
-                   <div className="project-details-date-label">Start Date</div> {/* Specific class */}
-                   <div className="project-details-date-value"> {/* Specific class */}
-                     <FontAwesomeIcon icon={faCalendarAlt} className="enterprise-date-icon" /> {/* Keep existing icon class? */}
-                     {formatDate(selectedProject.start_date)}
-                   </div>
-                 </div>
-                 <div className="project-details-timeline-divider"></div> {/* Specific class */}
-                 <div className="project-details-date"> {/* Specific class */}
-                   <div className="project-details-date-label">End Date</div> {/* Specific class */}
-                   <div className="project-details-date-value"> {/* Specific class */}
-                     <FontAwesomeIcon icon={faCalendarAlt} className="enterprise-date-icon" /> {/* Keep existing icon class? */}
-                     {formatDate(selectedProject.end_date)}
-                   </div>
-                 </div>
-               </div>
+              <div className="project-details-timeline"> {/* Specific class */}
+                <div className="project-details-date"> {/* Specific class */}
+                  <div className="project-details-date-label">Start Date</div> {/* Specific class */}
+                  <div className="project-details-date-value"> {/* Specific class */}
+                    <FontAwesomeIcon icon={faCalendarAlt} className="enterprise-date-icon" /> {/* Keep existing icon class? */}
+                    {formatDate(selectedProject.start_date)}
+                  </div>
+                </div>
+                <div className="project-details-timeline-divider"></div> {/* Specific class */}
+                <div className="project-details-date"> {/* Specific class */}
+                  <div className="project-details-date-label">End Date</div> {/* Specific class */}
+                  <div className="project-details-date-value"> {/* Specific class */}
+                    <FontAwesomeIcon icon={faCalendarAlt} className="enterprise-date-icon" /> {/* Keep existing icon class? */}
+                    {formatDate(selectedProject.end_date)}
+                  </div>
+                </div>
+              </div>
 
-               {/* Team Members Section - Already seems specific */}
-               {selectedProject.project_member && (
+              {/* Team Members Section - Already seems specific */}
+              {selectedProject.project_member && (
                 <div className="project-details-section"> {/* Specific class */}
                   <h5 className="project-details-section-title">Team Members</h5> {/* Specific class */}
                   {(() => { // IIFE to handle parsing safely
-                      try {
-                          const members = JSON.parse(selectedProject.project_member);
-                          if (Array.isArray(members) && members.length > 0) {
-                              return (
-                                <div className="enterprise-team-members"> {/* Keep if styled globally? Or change? */}
-                                  {members.map((member, index) => (
-                                    <div key={index} className="enterprise-team-member">
-                                      <div className="enterprise-member-avatar" title={member.name}>
-                                        {member.name?.charAt(0).toUpperCase() || '?'}
-                                      </div>
-                                      <div className="enterprise-member-info">
-                                        <div className="enterprise-member-name">{member.name || 'Unnamed Member'}</div>
-                                        {member.roles && Array.isArray(member.roles) && (
-                                          <div className="enterprise-member-roles">
-                                            {member.roles.map((role, roleIndex) => (
-                                              <span key={roleIndex} className="enterprise-member-role">
-                                                {role}
-                                              </span>
-                                            ))}
-                                          </div>
-                                        )}
-                                      </div>
-                                    </div>
-                                  ))}
+                    try {
+                      const members = JSON.parse(selectedProject.project_member);
+                      if (Array.isArray(members) && members.length > 0) {
+                        return (
+                          <div className="enterprise-team-members"> {/* Keep if styled globally? Or change? */}
+                            {members.map((member, index) => (
+                              <div key={index} className="enterprise-team-member">
+                                <div className="enterprise-member-avatar" title={member.name}>
+                                  {member.name?.charAt(0).toUpperCase() || '?'}
                                 </div>
-                              );
-                          } else {
-                              return <p className="enterprise-no-members">No team members assigned</p>; // Keep or change?
-                          }
-                      } catch (e) {
-                          console.error("Error parsing project members:", e);
-                          return <p className="enterprise-no-members">Error loading team members</p>; // Keep or change?
+                                <div className="enterprise-member-info">
+                                  <div className="enterprise-member-name">{member.name || 'Unnamed Member'}</div>
+                                  {member.roles && Array.isArray(member.roles) && (
+                                    <div className="enterprise-member-roles">
+                                      {member.roles.map((role, roleIndex) => (
+                                        <span key={roleIndex} className="enterprise-member-role">
+                                          {role}
+                                        </span>
+                                      ))}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        );
+                      } else {
+                        return <p className="enterprise-no-members">No team members assigned</p>; // Keep or change?
                       }
+                    } catch (e) {
+                      console.error("Error parsing project members:", e);
+                      return <p className="enterprise-no-members">Error loading team members</p>; // Keep or change?
+                    }
                   })()}
                 </div>
-               )}
-             </div>
-           )}
-         </Modal.Body>
-         <Modal.Footer className="project-modal-footer"> {/* UPDATED CLASS */}
-           <Button
-             variant="outline-secondary"
-             onClick={() => setSelectedProject(null)}
-             className="enterprise-btn enterprise-btn-outline" // Keep general button style?
-           >
-             Close
-           </Button>
-           {selectedProject && (
-             <Button
-               variant="primary"
-               onClick={() => {
-                 const id = selectedProject.project_id; // Capture id before clearing state
-                 setSelectedProject(null);
-                 navigate(`/UpdateProject/${id}`);
-               }}
-               className="enterprise-btn enterprise-btn-primary" // Keep general button style?
-             >
-               Edit Project
-             </Button>
-           )}
-         </Modal.Footer>
-       </Modal>
+              )}
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer className="project-modal-footer"> {/* UPDATED CLASS */}
+          <Button
+            variant="outline-secondary"
+            onClick={() => setSelectedProject(null)}
+            className="enterprise-btn enterprise-btn-outline" // Keep general button style?
+          >
+            Close
+          </Button>
+          {selectedProject && (
+            <Button
+              variant="primary"
+              onClick={() => {
+                const id = selectedProject.project_id; // Capture id before clearing state
+                setSelectedProject(null);
+                navigate(`/UpdateProject/${id}`);
+              }}
+              className="enterprise-btn enterprise-btn-primary" // Keep general button style?
+            >
+              Edit Project
+            </Button>
+          )}
+        </Modal.Footer>
+      </Modal>
 
-       {/* Removed the duplicate Delete Confirmation Modal structure */}
+      {/* Removed the duplicate Delete Confirmation Modal structure */}
 
     </div>
   );

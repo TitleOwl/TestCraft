@@ -5,12 +5,12 @@ import logo from '../image/tracecraft-logo.png';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faChevronDown, 
-  faSignOutAlt, 
-  faUser, 
-  faCog, 
-  faClipboardList, 
+import {
+    faChevronDown,
+    faSignOutAlt,
+    faUser,
+    faCog,
+    faClipboardList,
 } from '@fortawesome/free-solid-svg-icons';
 
 function Navbar() {
@@ -24,14 +24,14 @@ function Navbar() {
     useEffect(() => {
         const storedUsername = localStorage.getItem('username');
         setUsername(storedUsername);
-        
+
         // เพิ่ม event listener เพื่อปิด dropdown เมื่อคลิกที่อื่น
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setIsDropdownOpen(false);
             }
         };
-        
+
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
@@ -48,17 +48,17 @@ function Navbar() {
     const handleLoginRedirect = () => {
         navigate('/'); // ไปที่หน้า login
     };
-    
+
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
     };
-    
+
     // สำหรับแสดงตัวอักษรแรกของชื่อผู้ใช้เป็นอวตาร์
     const getInitials = (name) => {
         if (!name) return '?';
         return name.charAt(0).toUpperCase();
     };
-    
+
     // ตรวจสอบว่าลิงก์ไหนกำลังถูกเลือกอยู่
     const isActive = (path) => {
         return location.pathname.startsWith(path);
@@ -68,25 +68,25 @@ function Navbar() {
         <>
             <nav className="enterprise-navbar">
                 <div className="enterprise-navbar-brand">
-                    <Link>
+                    <Link to="/Project" >
                         <img src={logo} alt="TestCraft Logo" className="enterprise-logo" />
                     </Link>
-                    
+
                     {/* Main Navigation */}
                     {username && (
                         <div className="enterprise-navbar-nav">
-                            <Link 
-                                to="/Project" 
+                            <Link
+                                to="/Project"
                                 className={`enterprise-nav-item ${isActive('/Project') ? 'active' : ''}`}
                             >
                                 <FontAwesomeIcon icon={faClipboardList} style={{ marginRight: '8px' }} />
                                 Project Dashboard
                             </Link>
-                          
+
                         </div>
                     )}
                 </div>
-                
+
                 <div className="enterprise-navbar-actions">
                     {/* แจ้งเตือน */}
                     {username && (
@@ -94,7 +94,7 @@ function Navbar() {
                             <div className="enterprise-navbar-divider"></div>
                         </>
                     )}
-                    
+
                     {/* User Profile */}
                     {username ? (
                         <div className="enterprise-dropdown" ref={dropdownRef}>
@@ -105,21 +105,21 @@ function Navbar() {
                                 <div className="enterprise-user-info">
                                     <span className="enterprise-username">{username}</span>
                                 </div>
-                                <FontAwesomeIcon 
-                                    icon={faChevronDown} 
-                                    className={`enterprise-dropdown-arrow ${isDropdownOpen ? 'open' : ''}`} 
-                                    style={{ 
-                                        fontSize: '12px', 
+                                <FontAwesomeIcon
+                                    icon={faChevronDown}
+                                    className={`enterprise-dropdown-arrow ${isDropdownOpen ? 'open' : ''}`}
+                                    style={{
+                                        fontSize: '12px',
                                         marginLeft: '4px',
                                         transition: 'transform 0.2s',
                                         transform: isDropdownOpen ? 'rotate(180deg)' : 'rotate(0)'
                                     }}
                                 />
                             </div>
-                            
+
                             {isDropdownOpen && (
                                 <div className="enterprise-dropdown-menu">
-                                    <div 
+                                    <div
                                         className="enterprise-dropdown-item danger"
                                         onClick={handleLogout}
                                     >
@@ -130,8 +130,8 @@ function Navbar() {
                             )}
                         </div>
                     ) : (
-                        <button 
-                            onClick={handleLoginRedirect} 
+                        <button
+                            onClick={handleLoginRedirect}
                             className="enterprise-login-button"
                         >
                             Login
