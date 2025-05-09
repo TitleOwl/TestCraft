@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Make sure Bootstrap CSS is imported
 
@@ -110,17 +110,25 @@ import 'react-toastify/dist/ReactToastify.css';
 const App = () => {
   const [username, setUsername] = useState(null); // State เก็บชื่อผู้ใช้ที่ล็อกอิน
   const location = useLocation();
+  const [lastToast, setLastToast] = useState('');
 
-  // ตรวจสอบเส้นทางปัจจุบัน
+  useEffect(() => {
+    if (location.pathname !== lastToast) {
+      toast.dismiss();
+      setLastToast(location.pathname); // บันทึกเส้นทางล่าสุดที่แสดง Toast
+    }
+  }, [location.pathname, lastToast]);
+
   const shouldShowNavbar = !['/', '/Signup'].includes(location.pathname);
 
   return (
     <>
-      {/* แสดง Navbar และส่ง username ไปแสดง */}
+      {/* แสดง Navbar */}
       {shouldShowNavbar && <Navbar username={username} />}
 
+      {/* แสดง ToastContainer */}
       <ToastContainer
-        position="top-right" // หรือตำแหน่งอื่นที่ต้องการ
+        position="top-right" // ตำแหน่งของ Toast
         autoClose={1500}     // เวลาปิดอัตโนมัติ
         hideProgressBar={false}
         newestOnTop={false}
@@ -131,7 +139,6 @@ const App = () => {
         pauseOnHover
         theme="light"        // หรือ dark, colored
       />
-
       <Routes>
         {/* Route สำหรับหน้า Home */}
         <Route path="/Home" element={<Home />} />
@@ -168,8 +175,8 @@ const App = () => {
         <Route path="/ViewFile" element={<ViewFile />} />
         <Route path="/VeriVaView" element={<VeriVaView />} />
         <Route path="/VericriReqDetails" element={<VericriReqDetails />} />
-        <Route path="/HistoryValidationReq/:requirementId" element={<HistoryValidationReq/>} />
-        <Route path="/VerificationHistory" element={<VerificationHistory/>} />
+        <Route path="/HistoryValidationReq/:requirementId" element={<HistoryValidationReq />} />
+        <Route path="/VerificationHistory" element={<VerificationHistory />} />
 
         {/* Routes สำหรับ Login */}
         <Route path="/" element={<Login setUsername={setUsername} />} />
@@ -205,7 +212,7 @@ const App = () => {
         <Route path="/VersionDesign" element={<VersionDesign />} />
         <Route path="/VericriDesignDetails" element={<VericriDesignDetails />} />
         <Route path="/VeriDesignHis" element={<VeriDesignHis />} />
-        
+
 
         {/* ทำ Testcase */}
         <Route path="/CreateTestcase" element={<CreateTestcase />} />
