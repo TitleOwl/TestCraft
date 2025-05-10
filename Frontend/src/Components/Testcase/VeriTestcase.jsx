@@ -93,8 +93,8 @@ const VeriTestcase = () => {
                             });
                         }
                         // Update other fields if necessary (e.g., if later entries have more complete data, though unlikely here)
-                         // acc[round].create_by = acc[round].create_by || tc.create_by; // Example if needed
-                         // acc[round].veritestcase_at = acc[round].veritestcase_at || tc.veritestcase_at; // Example if needed
+                        // acc[round].create_by = acc[round].create_by || tc.create_by; // Example if needed
+                        // acc[round].veritestcase_at = acc[round].veritestcase_at || tc.veritestcase_at; // Example if needed
                     }
                     // --- End Grouping ---
                     return acc;
@@ -103,8 +103,8 @@ const VeriTestcase = () => {
 
                 const processedTestcases = Object.values(groupedTestcase)
                     .filter((tc) => tc.testcase_status === "WAITING FOR VERIFICATION")
-                     // Optional: Sort the rounds if needed
-                     .sort((a, b) => (a.veritestcase_round || 0) - (b.veritestcase_round || 0));
+                    // Optional: Sort the rounds if needed
+                    .sort((a, b) => (a.veritestcase_round || 0) - (b.veritestcase_round || 0));
 
 
                 console.log("Processed Testcases:", processedTestcases);
@@ -116,8 +116,8 @@ const VeriTestcase = () => {
                 toast.error("Error fetching test cases.");
             })
             .finally(() => {
-                 setLoading(false);
-                 setIsRefreshing(false);
+                setLoading(false);
+                setIsRefreshing(false);
             });
     }, [projectId]);
 
@@ -142,8 +142,8 @@ const VeriTestcase = () => {
 
     // Renamed handler for clarity
     const handleViewDetails = (testcaseRoundData) => {
-         console.log("Details passed to modal:", testcaseRoundData); // Log what's being sent
-         // Pass the entire grouped object for the round to the modal
+        console.log("Details passed to modal:", testcaseRoundData); // Log what's being sent
+        // Pass the entire grouped object for the round to the modal
         setSelectedDetailsForModal({
             verif_round: testcaseRoundData.veritestcase_round,
             created_by: testcaseRoundData.create_by,
@@ -155,27 +155,37 @@ const VeriTestcase = () => {
     };
 
     const handleVerifyClick = (tc) => {
-        if (!projectId || !tc?.veritestcase_id) { // Check for veritestcase_id specifically
-             toast.error("Invalid project ID or verification round data.");
-             return;
-        }
-        const testcaseIds = Array.isArray(tc.testcase_id) ? tc.testcase_id.filter(id => id != null) : [];
-         if (testcaseIds.length === 0) {
-             toast.error("No valid Test Case IDs found for this verification round.");
-             return;
-         }
-        const testcaseIdString = testcaseIds.join(",");
-        const veritestcaseId = tc.veritestcase_id; // ID of the verification round entry
+        const currentUser = localStorage.getItem("username"); // หรือดึงจาก context ที่คุณใช้
 
-        console.log("Navigating to Verify:", { projectId, testcaseIdString, veritestcaseId });
+        const assignedReviewerNames = (tc.veritestcase_by || []).map(r => r.name);
+        if (!assignedReviewerNames.includes(currentUser)) {
+            toast.warning("You are not assigned as a reviewer for this verification.");
+            return;
+        }
+
+        if (!projectId || !tc?.veritestcase_id) {
+            toast.error("Invalid project ID or verification round data.");
+            return;
+        }
+
+        const testcaseIds = Array.isArray(tc.testcase_id) ? tc.testcase_id.filter(id => id != null) : [];
+        if (testcaseIds.length === 0) {
+            toast.error("No valid Test Case IDs found for this verification round.");
+            return;
+        }
+
+        const testcaseIdString = testcaseIds.join(",");
+        const veritestcaseId = tc.veritestcase_id;
+
         navigate(`/TestcaseVerifed?project_id=${projectId}&testcase_id=${testcaseIdString}&veritestcase_id=${veritestcaseId}`, {
             state: {
                 selectedTestcaseIds: testcaseIds,
                 project_id: projectId,
-                veritestcase_id: veritestcaseId // Pass the verification round ID
-             }
+                veritestcase_id: veritestcaseId
+            }
         });
     };
+
 
     const handleBackToDashboard = () => {
         navigate(`/Dashboard?project_id=${projectId}`, { state: { selectedSection: "Testcase" } });
@@ -186,14 +196,14 @@ const VeriTestcase = () => {
 
     // --- Render Logic ---
     if (loading && !isRefreshing) {
-         return (
-             <div className="container-veritestcase">
-                 <div className="loading-state-veritestcase">
-                     <div className="loading-spinner-veritestcase"></div>
-                     <p>Loading test case verifications...</p>
-                 </div>
-             </div>
-         );
+        return (
+            <div className="container-veritestcase">
+                <div className="loading-state-veritestcase">
+                    <div className="loading-spinner-veritestcase"></div>
+                    <p>Loading test case verifications...</p>
+                </div>
+            </div>
+        );
     }
 
     const handleGoToHistory = () => {
@@ -248,22 +258,22 @@ const VeriTestcase = () => {
                                     </button>
                                 )}
                             </div>
-                                                        {/* History Button */}
-                                                        <button
-                                                            className="veritestcase-history-btn"
-                                                            onClick={handleGoToHistory}
-                                                            title="View Verification History"
-                                                            // Style moved to CSS
-                                                        >
-                                                            <FontAwesomeIcon icon={faHistory} /> History
-                                                        </button>
+                            {/* History Button */}
+                            <button
+                                className="veritestcase-history-btn"
+                                onClick={handleGoToHistory}
+                                title="View Verification History"
+                            // Style moved to CSS
+                            >
+                                <FontAwesomeIcon icon={faHistory} /> History
+                            </button>
                         </div>
                     </div>
 
                     {/* Table Area */}
                     <div className="table-container-veritestcase">
                         {loading && isRefreshing ? (
-                             <div className="loading-state-veritestcase"><div className="loading-spinner-veritestcase"></div></div>
+                            <div className="loading-state-veritestcase"><div className="loading-spinner-veritestcase"></div></div>
                         ) : filteredTestcases.length === 0 ? (
                             <div className="empty-state-veritestcase">
                                 <FontAwesomeIcon icon={faClipboardList} className="empty-icon-veritestcase" />
@@ -308,20 +318,20 @@ const VeriTestcase = () => {
                                                 <button
                                                     // Changed class name for clarity
                                                     className="view-details-btn-veritestcase"
-                                                     // Updated title
+                                                    // Updated title
                                                     title="View Linked Test Cases & Reviewers"
                                                     onClick={() => handleViewDetails(tc)} // Pass the whole grouped tc object
                                                 >
-                                                    <FontAwesomeIcon icon={faEye}  className="cell-iconeye-veritestcase"/>
+                                                    <FontAwesomeIcon icon={faEye} className="cell-iconeye-veritestcase" />
                                                 </button>
                                             </td>
                                             <td className="cell-actions-veritestcase">
                                                 <button
                                                     className='verify-button-veritestcase'
                                                     onClick={() => handleVerifyClick(tc)}
-                                                    // disabled={tc.testcase_status !== "WAITING FOR VERIFICATION"}
+                                                // disabled={tc.testcase_status !== "WAITING FOR VERIFICATION"}
                                                 >
-                                                    <FontAwesomeIcon icon={faCheck} className="button-icon-veritestcase"/>
+                                                    <FontAwesomeIcon icon={faCheck} className="button-icon-veritestcase" />
                                                     View
                                                 </button>
                                             </td>

@@ -100,7 +100,7 @@ const CreateTestcase = () => {
          // Consider navigating to a list page instead: navigate(`/TestcaseList?project_id=${projectId}`);
          navigate(`/CreateTestcase?project_id=${projectId}`); // Original redirect behavior
       }
-    }, 2500); // Increased timeout slightly
+    }, 1500); // Increased timeout slightly
   };
 
   const handleCreateTestCase = async () => {
