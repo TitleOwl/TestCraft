@@ -58,6 +58,11 @@ const flattenNestedDataForTable = (data) => {
     return flatRows;
 };
 
+const formatIdWithPrefix = (prefix, id) => {
+    if (id === null || id === undefined || id === '-') return '-';
+    return `${prefix}-${String(id).padStart(3, '0')}`;
+};
+
 // --- Main Component ---
 const ViewBaselineRound = () => {
     const [nestedData, setNestedData] = useState([]);
@@ -175,7 +180,7 @@ const ViewBaselineRound = () => {
                                         {/* Requirement Cell */}
                                         {row.isFirstReqRow && (
                                             <td rowSpan={row.reqRowSpan}>
-                                                <div className="vbr-req-id">{`REQ-${row.reqId}`}</div>
+                                                <div>{formatIdWithPrefix('REQ', row.reqId)}</div>
                                                 {row.reqName && row.reqName !== `Requirement ${row.reqId}` && (
                                                     <div className="vbr-item-detail">{row.reqName}</div>
                                                 )}
@@ -184,7 +189,7 @@ const ViewBaselineRound = () => {
                                         {/* Design Cell */}
                                         {row.isFirstDesignRow && (
                                             <td rowSpan={row.designRowSpan}>
-                                                {row.designId !== "-" ? `DE-${row.designId}` : "-"}
+                                                {row.designId !== "-" ? formatIdWithPrefix('SD', row.designId) : "-"}
                                                 {row.designName && row.designName !== "-" && row.designName !== `Design ${row.designId}` && (
                                                     <div className="vbr-item-detail">{row.designName}</div>
                                                 )}
@@ -195,7 +200,7 @@ const ViewBaselineRound = () => {
                                             <td rowSpan={row.implRowSpan}>
                                                 {row.implId !== null && row.implId !== "-" ? (
                                                     <>
-                                                        {`IMP-${row.implId}`}
+                                                        {formatIdWithPrefix('SC', row.implId)}
                                                         {row.implFile && row.implFile !== 'N/A' && (
                                                             <div className="vbr-item-detail">{row.implFile}</div>
                                                         )}
@@ -205,7 +210,7 @@ const ViewBaselineRound = () => {
                                         )}
                                         {/* Test Case Cell */}
                                         <td>
-                                            {row.testCaseId !== "-" ? `TC-${row.testCaseId}` : "-"}
+                                            {row.testCaseId !== "-" ? formatIdWithPrefix('TC', row.testCaseId) : "-"}
                                             {row.testCaseName && row.testCaseName !== "-" && row.testCaseName !== `Test Case ${row.testCaseId}` && (
                                                 <div className="vbr-item-detail">{row.testCaseName}</div>
                                             )}
