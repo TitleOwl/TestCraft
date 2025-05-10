@@ -326,7 +326,7 @@ app.get('/project/:id', (req, res) => {
 
 // Add a new project
 app.post('/project', (req, res) => {
-    console.log('Request Body:', req.body); // ดูข้อมูลที่ส่งมา
+    console.log('Request Body:', req.body);
     const sql = `
             INSERT INTO project 
             (project_name, project_description, project_member, start_date, end_date, project_status) 
@@ -2630,6 +2630,122 @@ app.get('/getHistoryByRequirementId', (req, res) => {
     });
 });
 
+// Assuming your database connection is named 'db'
+// Assuming 'db' is your database connection object (e.g., from mysql or mysql2 library)
+
+app.put("/historyReqWorking/timestamp/:requirementId", (req, res) => {
+    const { requirementId } = req.params;
+
+    // --- การตรวจสอบข้อมูลเบื้องต้น ---
+    if (!requirementId) {
+        console.error("Validation Error: Missing requirementId for history timestamp update.");
+        return res.status(400).json({ message: "Missing requirementId in URL path" });
+    }
+
+    console.log(`Received PUT request for history timestamp update for Requirement ID: ${requirementId}`);
+
+    // --- เริ่ม Transaction ---
+    // การใช้ Transaction ช่วยให้มั่นใจได้ว่าการดำเนินการทั้งหมดสำเร็จหรือล้มเหลวพร้อมกัน
+    db.beginTransaction(err => {
+        if (err) {
+            console.error(`Error beginning transaction for history timestamp update (Req ID: ${requirementId}):`, err);
+            // ในกรณีที่ db เป็น connection เดียว ไม่ต้อง db.release()
+            return res.status(500).json({ message: "Error starting database transaction" });
+        }
+        console.log(`Transaction started for history timestamp update (Req ID: ${requirementId}).`);
+
+        // --- 1. ค้นหา historyreq_id ล่าสุดสำหรับ requirement_id นี้ ---
+        // เราต้องการแค่ ID ของแถวประวัติที่ใหม่ที่สุด
+        const findLatestHistorySql = `
+            SELECT historyreq_id
+            FROM historyreq -- หรือชื่อตารางประวัติ Requirement ของคุณ
+            WHERE requirement_id = ?
+            ORDER BY historyreq_at DESC -- เรียงจากเวลาสร้างล่าสุดไปเก่าสุด
+            LIMIT 1; -- เอามาแค่แถวเดียวคือแถวล่าสุด
+        `;
+        console.log("Executing SQL (Find Latest History):", findLatestHistorySql, [requirementId]);
+
+        db.query(findLatestHistorySql, [requirementId], (err, results) => {
+            if (err) {
+                console.error(`Error finding latest history entry for Req ID: ${requirementId}`, err);
+                // หากเกิด error ในการค้นหา ให้ทำการ Rollback Transaction
+                return db.rollback(() => {
+                    console.error(`Transaction rolled back due to find latest history error for Req ID: ${requirementId}`);
+                    res.status(500).json({ message: "Error finding latest history entry" });
+                });
+            }
+
+            // --- 2. ตรวจสอบว่าเจอแถวประวัติล่าสุดหรือไม่ ---
+            if (results.length === 0) {
+                // หากไม่พบประวัติใดๆ เลยสำหรับ requirement ID นี้
+                console.warn(`No history entry found for Req ID: ${requirementId}. Cannot update timestamp.`);
+                // ในกรณีนี้ ถือว่าไม่ได้เกิดข้อผิดพลาดร้ายแรง แต่ก็ไม่มีอะไรให้อัปเดต
+                // เราสามารถ Commit Transaction ว่างๆ ไป และส่ง response บอกว่าไม่พบ
+                 return db.commit(commitErr => {
+                      if (commitErr) {
+                           console.error(`Error committing transaction after no history found for Req ID: ${requirementId}`, commitErr);
+                           // Rollback ถ้า Commit ว่างๆ ล้มเหลว (ไม่น่าจะเกิดขึ้นบ่อย)
+                           return db.rollback(() => {
+                                console.error(`Transaction rolled back due to commit error after no history found for Req ID: ${requirementId}`);
+                                res.status(500).json({ message: "Error finalizing update" });
+                           });
+                      }
+                      // ส่ง status 200 แต่มีข้อความบอกว่าไม่พบรายการ
+                      res.status(200).json({ message: "No history entry found to update timestamp." });
+                 });
+            }
+
+            const latestHistoryId = results[0].historyreq_id;
+            console.log(`Found latest history ID: ${latestHistoryId} for Req ID: ${requirementId}`);
+
+            // --- 3. อัปเดต timestamp ของแถวประวัติล่าสุดที่พบ ---
+            // ใช้ NOW() เพื่อให้ได้เวลาปัจจุบันจากฐานข้อมูล ซึ่งแม่นยำกว่าเวลาจาก client
+            const updateTimestampSql = `
+                UPDATE historyreq -- หรือชื่อตารางประวัติ Requirement ของคุณ
+                SET historyreq_at = NOW() -- อัปเดตฟิลด์เวลาที่ใช้บันทึกประวัติ
+                -- , update_at = NOW() -- ถ้าคุณมีฟิลด์ update_at ในตาราง historyreq ก็ควรอัปเดตด้วย
+                WHERE historyreq_id = ?;
+            `;
+            console.log("Executing SQL (Update History Timestamp):", updateTimestampSql, [latestHistoryId]);
+
+            db.query(updateTimestampSql, [latestHistoryId], (err, updateResult) => {
+                if (err) {
+                    console.error(`Error updating history timestamp for history ID: ${latestHistoryId} (Req ID: ${requirementId})`, err);
+                    // หากเกิด error ในการอัปเดต ให้ทำการ Rollback Transaction
+                    return db.rollback(() => {
+                         console.error(`Transaction rolled back due to update timestamp error for history ID: ${latestHistoryId} (Req ID: ${requirementId})`);
+                         res.status(500).json({ message: "Error updating history timestamp" });
+                    });
+                }
+
+                // ตรวจสอบว่ามีแถวที่ถูกอัปเดตจริงหรือไม่ (ควรจะเป็น 1 ถ้า find ล่าสุดเจอ)
+                 if (updateResult.affectedRows === 0) {
+                      console.warn(`History timestamp update affected 0 rows for history ID ${latestHistoryId} (Req ID: ${requirementId}). This is unexpected.`);
+                      // อาจจะยัง Commit ได้ แต่ log warning ไว้
+                 } else {
+                      console.log(`History timestamp updated successfully for history ID: ${latestHistoryId} (Req ID: ${requirementId}). Affected Rows: ${updateResult.affectedRows}`);
+                 }
+
+
+                // --- 4. Commit Transaction เมื่อทุกอย่างสำเร็จ ---
+                db.commit((commitErr) => {
+                    if (commitErr) {
+                        console.error(`Error committing transaction after history timestamp update for Req ID: ${requirementId}`, commitErr);
+                        // หาก Commit ล้มเหลว ให้ Rollback
+                        return db.rollback(() => {
+                            console.error(`Transaction rolled back due to commit error after history timestamp update for Req ID: ${requirementId}`);
+                            res.status(500).json({ message: "Error finalizing update (commit failed)" });
+                        });
+                    }
+                    console.log(`Transaction committed successfully for Req ID: ${requirementId} (history timestamp updated).`);
+                    // ส่ง response ว่าสำเร็จ
+                    res.status(200).json({ message: "History timestamp updated successfully." });
+                });
+            }); // End Update History Timestamp Query
+        }); // End Find Latest History Query
+    }); // End Begin Transaction
+});
+
 // ----------------------------- DESIGN ------------------------------
 // Create Design
 app.post("/design", (req, res) => {
@@ -4555,7 +4671,6 @@ app.delete('/implementrelation', async (req, res) => {
     // if (isNaN(relationDate.getTime())) {
     //     return res.status(400).json({ message: 'Invalid relation_at format.' });
     // }
-
     // Log เพื่อ Debug
     console.log(`Received request to delete relation: file='${implement_filename}', time='${relation_at}', project=${projectIdInt}`);
 
