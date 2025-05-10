@@ -373,7 +373,7 @@ const CreateVerifyTrace = () => {
                                         <label htmlFor={`member-${index}`} className="traceveri-reviewer-label">
                                             <span className="traceveri-reviewer-name">{member.name}</span>
                                             <span className="traceveri-reviewer-role">
-                                                ({member.roles?.join(", ") || 'No Roles Assigned'})
+                                                {member.roles?.join(", ") || 'No Roles Assigned'}
                                             </span>
                                         </label>
                                     </div>

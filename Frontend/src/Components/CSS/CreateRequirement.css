@@ -126,6 +126,10 @@
   font-size: 0.75rem;
 }
 
+.create-requirement-form-groups label::after {
+  font-size: 0.75rem;
+}
+
 
 /* Input elements with consistent styling and high-quality interactions */
 .create-requirement-input,

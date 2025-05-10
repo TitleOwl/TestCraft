@@ -383,7 +383,6 @@ const TestcasePage = () => {
                                     <th>ID</th>
                                     <th>Name</th>
                                     <th>Priority</th>
-                                    <th>Test Completion Date</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -436,8 +435,6 @@ const TestcasePage = () => {
                                             </span>
                                         </td>
 
-                                        {/* --- Date Cell (เหมือนเดิม) --- */}
-                                        <td className="testcase-date-cell">{formatDate(test.testcase_at)}</td>
 
                                         {/* --- Status Cell (เหมือนเดิม) --- */}
                                         <td className="testcase-status-cell">
