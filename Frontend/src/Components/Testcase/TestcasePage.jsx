@@ -256,15 +256,15 @@ const TestcasePage = () => {
                         <div className="testcase-breadcrumb">
                             <FontAwesomeIcon icon={faHome} />
                             <span className="testcase-breadcrumb-divider">/</span>
-                             Projects
+                            Projects
                             <span className="testcase-breadcrumb-divider">/</span>
                             {projectName}
                         </div>
                         <div className="testcase-project-title">
                             <h1 className="testcase-project-name">{projectName || "Project"}</h1>
-                            <span className="testcase-badge">TEST CASE MANAGEMENT</span>
-                             {/* --- Tutorial Button ใช้ Tippy --- */}
-                             <Tippy content="Show Tutorial" placement="bottom">
+                            <span className="testcase-badge">TEST CASE</span>
+                            {/* --- Tutorial Button ใช้ Tippy --- */}
+                            <Tippy content="Show Tutorial" placement="bottom">
                                 <button
                                     onClick={handleRestartTutorial}
                                     className="tutorial-help-button tutorial-help-button-corner"
@@ -279,15 +279,15 @@ const TestcasePage = () => {
                                 >
                                     <FontAwesomeIcon icon={faQuestionCircle} />
                                 </button>
-                             </Tippy>
+                            </Tippy>
                         </div>
                     </div>
                     <div className="testcase-actions">
                         {/* --- Test Execution Button ใช้ Tippy --- */}
-                            <button className="testcase-execution-button" onClick={handleTestExecution}>
-                                <FontAwesomeIcon icon={faPlayCircle} style={{ marginRight: '8px' }} />
-                                 Test Execution
-                            </button>
+                        <button className="testcase-execution-button" onClick={handleTestExecution}>
+                            <FontAwesomeIcon icon={faPlayCircle} style={{ marginRight: '8px' }} />
+                            Test Execution
+                        </button>
                     </div>
                 </div>
                 {/* Tab bar */}
@@ -295,20 +295,20 @@ const TestcasePage = () => {
                     <div className={`testcase-tab ${activeTab === 'testcases' ? 'active' : ''}`} onClick={() => setActiveTab('testcases')}>
                         <FontAwesomeIcon icon={faTable} className="testcase-tab-icon" /> Test Cases
                     </div>
-                    
-                         <div className={`testcase-tab ${activeTab === 'createVeri' ? 'active' : ''}`} onClick={handleCreateVeri}>
-                             <FontAwesomeIcon icon={faPlus} className="testcase-tab-icon" /> Create Verification
-                         </div>
 
-                     
-                         <div className={`testcase-tab ${activeTab === 'viewVeri' ? 'active' : ''}`} onClick={handleVerilist}>
-                             <FontAwesomeIcon icon={faCheckCircle} className="testcase-tab-icon" /> View Verification
-                         </div>
+                    <div className={`testcase-tab ${activeTab === 'createVeri' ? 'active' : ''}`} onClick={handleCreateVeri}>
+                        <FontAwesomeIcon icon={faPlus} className="testcase-tab-icon" /> Create Verification
+                    </div>
 
- 
-                         <div className={`testcase-tab ${activeTab === 'baseline' ? 'active' : ''}`} onClick={handleBaselineTest}>
-                             <FontAwesomeIcon icon={faHistory} className="testcase-tab-icon" /> Baseline
-                         </div>
+
+                    <div className={`testcase-tab ${activeTab === 'viewVeri' ? 'active' : ''}`} onClick={handleVerilist}>
+                        <FontAwesomeIcon icon={faCheckCircle} className="testcase-tab-icon" /> View Verification
+                    </div>
+
+
+                    <div className={`testcase-tab ${activeTab === 'baseline' ? 'active' : ''}`} onClick={handleBaselineTest}>
+                        <FontAwesomeIcon icon={faHistory} className="testcase-tab-icon" /> Baseline
+                    </div>
                 </div>
             </div>
 
@@ -321,14 +321,14 @@ const TestcasePage = () => {
                             placeholder="Search test cases by ID or name..."
                             value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
                         />
-                         {searchQuery && (
+                        {searchQuery && (
                             // --- Clear Search Button ใช้ Tippy ---
                             <Tippy content="Clear search" placement="top">
                                 <button className="testcase-clear-search-btn" onClick={() => setSearchQuery('')} >
                                     <FontAwesomeIcon icon={faTimes} />
                                 </button>
                             </Tippy>
-                         )}
+                        )}
                     </div>
                     {/* --- Filters (Dropdowns ไม่ต้องใช้ Tippy) --- */}
                     <select className="testcase-filter-select" value={priorityFilter} onChange={(e) => setPriorityFilter(e.target.value)}>
@@ -407,7 +407,7 @@ const TestcasePage = () => {
                                             {test.testcase_name || 'N/A'}
                                             {/* --- Warning Icon ใช้ Tippy --- */}
                                             {procedureStatus[test.testcase_id] === false && (
-                                                 <Tippy content="No test step found for this test case. Click View or ID to add." placement="top">
+                                                <Tippy content="No test step found for this test case. Click View or ID to add." placement="top">
                                                     <span> {/* Tippy ต้องการ Child ที่เป็น Element */}
                                                         <FontAwesomeIcon
                                                             icon={faExclamationTriangle}
@@ -415,16 +415,16 @@ const TestcasePage = () => {
                                                             style={{
                                                                 marginLeft: '8px', color: '#ffcc00', fontSize: '0.9em', verticalAlign: 'middle'
                                                             }}
-                                                            // title ถูกลบออก
+                                                        // title ถูกลบออก
                                                         />
-                                                     </span>
-                                                 </Tippy>
+                                                    </span>
+                                                </Tippy>
                                             )}
                                             {/* --- Spinner ใช้ Tippy --- */}
                                             {checkingProcedures && procedureStatus[test.testcase_id] === undefined && (
                                                 <Tippy content="Checking procedures..." placement="top">
-                                                     <span className="small-spinner" style={{ marginLeft: '8px' }}></span>
-                                                 </Tippy>
+                                                    <span className="small-spinner" style={{ marginLeft: '8px' }}></span>
+                                                </Tippy>
                                             )}
                                         </td>
 
@@ -447,7 +447,7 @@ const TestcasePage = () => {
                                         {/* --- Actions Cell ใช้ Tippy --- */}
                                         <td className="testcase-actions-cell">
                                             <div className="testcase-actions">
-                                                 <Tippy content="View Details / Add Procedures" placement="top">
+                                                <Tippy content="View Details / Add Procedures" placement="top">
                                                     <button
                                                         className="testcase-view"
                                                         onClick={() =>
@@ -455,27 +455,27 @@ const TestcasePage = () => {
                                                                 state: { testcase: test },
                                                             })
                                                         }
-                                                        // title ถูกลบออก
+                                                    // title ถูกลบออก
                                                     >
                                                         <FontAwesomeIcon icon={faEye} className="testcase-icon" />
                                                     </button>
-                                                 </Tippy>
-                                                 <Tippy content="Edit Test Case" placement="top">
+                                                </Tippy>
+                                                <Tippy content="Edit Test Case" placement="top">
                                                     <button
                                                         className="testcase-edit"
                                                         onClick={() =>
                                                             navigate(`/UpdateTestcase?testcase_id=${test.testcase_id}&project_id=${projectId}`)
                                                         }
-                                                        // title ถูกลบออก
+                                                    // title ถูกลบออก
                                                     >
                                                         <FontAwesomeIcon icon={faPen} className="testcase-icon" />
                                                     </button>
                                                 </Tippy>
-                                                 <Tippy content="Delete Test Case" placement="top">
+                                                <Tippy content="Delete Test Case" placement="top">
                                                     <button
                                                         className="testcase-delete"
                                                         onClick={() => handleDeleteTestcase(test.testcase_id)}
-                                                        // title ถูกลบออก
+                                                    // title ถูกลบออก
                                                     >
                                                         <FontAwesomeIcon icon={faTrash} className="testcase-icon" />
                                                     </button>
