@@ -193,13 +193,17 @@ const CreateDesign = () => {
                     <form className="create-design-form" onSubmit={handleSubmit}>
                         {/* Diagram Name */}
                         <div className="create-design-form-group">
-                            <label htmlFor="designStatement">Diagram Name</label>
+                            <label htmlFor="designStatement">
+                                Diagram Name <span style={{ color: 'red' }}>*</span>
+                            </label>
                             <input type="text" id="designStatement" value={designStatement} onChange={(e) => setDesignStatement(e.target.value)} placeholder="Enter Diagram Name" required className="create-design-input"/>
                         </div>
 
                         {/* Requirement ID Selection */}
                         <div className="create-design-form-groups">
-                            <label htmlFor="requirementId">Select Requirement Specification</label>
+                            <label htmlFor="requirementId">
+                                Select Requirement Specification <span style={{ color: 'red' }}>*</span>
+                            </label>
                             <Select
                                 isMulti
                                 options={baselineRequirements.map((req) => ({ value: req.requirement_id, label: `REQ-${String(req.requirement_id).padStart(3, '0')}: ${req.requirement_name}` }))}
@@ -214,7 +218,9 @@ const CreateDesign = () => {
                         </div>
                         {/* Design Type */}
                         <div className="create-design-form-group">
-                            <label htmlFor="designType">Design Type</label>
+                            <label htmlFor="designType">
+                                Design Type <span style={{ color: 'red' }}>*</span>
+                            </label>
                             <select id="designType" value={designType} onChange={(e) => setDesignType(e.target.value)} required className="create-design-select">
                                 <option value="" disabled>Select Design Type</option>
                                 <option value="High-Level Design">High-Level Design</option>
@@ -224,7 +230,9 @@ const CreateDesign = () => {
 
                         {/* Diagram Type */}
                         <div className="create-design-form-group">
-                            <label htmlFor="diagramType">Diagram Type</label>
+                            <label htmlFor="diagramType">
+                                Diagram Type <span style={{ color: 'red' }}>*</span>
+                            </label>
                             <select id="diagramType" value={diagramType} onChange={(e) => setDiagramType(e.target.value)} required className="create-design-select">
                                 <option value="" disabled>Select Diagram Type</option>
                                 <option value="Prototype">Prototype</option>
@@ -237,6 +245,7 @@ const CreateDesign = () => {
 
                         {/* Add or Draw Diagram Section */}
                         <div className="create-design-form-group">
+                            {/* Add or Draw Diagram is not strictly required if one of the methods is used, so no asterisk */}
                             <label>Add or Draw Diagram</label>
                             <input
                                 type="file"
@@ -277,7 +286,9 @@ const CreateDesign = () => {
 
                         {/* Description */}
                         <div className="create-design-form-group">
-                            <label htmlFor="description">Description</label>
+                            <label htmlFor="description">
+                                Description <span style={{ color: 'red' }}>*</span>
+                            </label>
                             <textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Enter description" rows="4" required className="create-design-textarea"></textarea>
                         </div>
 
@@ -296,6 +307,7 @@ const CreateDesign = () => {
                 {/* Diagram Editor Container */}
                 {showDiagram && (
                     <div className="create-design-diagram-container" ref={diagramSectionRef}>
+                         {/* Section title, not a required input label */}
                          <h2>Diagram Editor</h2>
                          <div className="diagram-editor-content">
                              <CreateDiagram

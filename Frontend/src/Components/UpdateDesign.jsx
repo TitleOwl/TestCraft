@@ -639,9 +639,6 @@ if (hasAnyChange && newStatus === "WORKING") {
                                         <option value="Flow Chart">Flow Chart</option>
                                         <option value="ER Diagram">ER Diagram</option>
                                         <option value="Pseudo Code">Pseudo Code</option>
-                                        <option value="Use Case Diagram">Use Case Diagram</option>
-                                        <option value="Sequence Diagram">Sequence Diagram</option>
-                                        <option value="Other">Other</option>
                                     </select>
                                 </span>
                             </label>
