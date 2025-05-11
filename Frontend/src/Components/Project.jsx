@@ -579,7 +579,7 @@ const Project = () => {
                             {/* Make name clickable to navigate */}
                             <button
                               className="enterprise-project-link-button"
-                              onClick={() => navigate(`/Dashboard?project_id=${project.project_id}`)}
+                              onClick={() => navigate(`/Dashboard?project_id=${project.project_id}`,{state : {selectedSection: "Overview"}})}
                               title={`Go to dashboard for ${project.project_name}`}
                             >
                               {project.project_name}

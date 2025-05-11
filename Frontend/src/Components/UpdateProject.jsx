@@ -3,15 +3,15 @@ import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faArrowLeft, 
-  faClipboardList, 
-  faUsers, 
-  faCalendarAlt, 
-  faFileAlt, 
-  faTags, 
-  faPlus, 
-  faTrash, 
+import {
+  faArrowLeft,
+  faClipboardList,
+  faUsers,
+  faCalendarAlt,
+  faFileAlt,
+  faTags,
+  faPlus,
+  faTrash,
   faExclamationTriangle,
   faUserPlus,
   faUsersCog,
@@ -52,11 +52,11 @@ const UpdateProject = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
-  
+
   const [members, setMembers] = useState([]);
   const [selectedMember, setSelectedMember] = useState(null);
   const [selectedRoles, setSelectedRoles] = useState([]);
-  
+
   const [formProject, setFormProject] = useState({
     project_name: '',
     project_description: '',
@@ -65,14 +65,14 @@ const UpdateProject = () => {
     project_member: [],
     project_status: '',
   });
-  
+
   // Popup states
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState('');
   const [popupTitle, setPopupTitle] = useState('');
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [confirmAction, setConfirmAction] = useState(null);
-  
+
   // Validation errors
   const [errors, setErrors] = useState({});
 
@@ -81,23 +81,23 @@ const UpdateProject = () => {
     const fetchProjectData = async () => {
       try {
         setLoading(true);
-        
+
         // Fetch project details
         const projectResponse = await axios.get(`http://localhost:3001/project/${id}`);
         const project = projectResponse.data;
-        
+
         // Format dates and parse project members
         const formattedProject = {
           ...project,
           start_date: formatDateForInput(project.start_date),
           end_date: formatDateForInput(project.end_date),
-          project_member: Array.isArray(project.project_member) 
-            ? project.project_member 
+          project_member: Array.isArray(project.project_member)
+            ? project.project_member
             : JSON.parse(project.project_member || '[]')
         };
-        
+
         setFormProject(formattedProject);
-        
+
         // Fetch members list
         const membersResponse = await axios.get('http://localhost:3001/loginname');
         const memberOptions = membersResponse.data.map((member) => ({
@@ -105,7 +105,7 @@ const UpdateProject = () => {
           label: member.user_name,
         }));
         setMembers(memberOptions);
-        
+
         setLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -140,7 +140,7 @@ const UpdateProject = () => {
     if (!date) return '';
     const parsedDate = new Date(date);
     if (isNaN(parsedDate.getTime())) return '';
-    
+
     const year = parsedDate.getFullYear();
     const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
     const day = String(parsedDate.getDate()).padStart(2, '0');
@@ -167,23 +167,23 @@ const UpdateProject = () => {
   // Handle adding team member
   const handleAddMember = (e) => {
     e.preventDefault();
-    
+
     // Validate input
     const validationErrors = {};
-    
+
     if (!selectedMember) {
       validationErrors.memberName = 'Please select a team member';
     }
-    
+
     if (!selectedRoles || selectedRoles.length === 0) {
       validationErrors.memberRole = 'Please select at least one role';
     }
-    
+
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
-    
+
     // Check if member already exists
     const existingMember = formProject.project_member.find(
       (member) => member.name === selectedMember.value
@@ -193,13 +193,13 @@ const UpdateProject = () => {
       // Update existing member's roles
       const newRoles = selectedRoles.map((role) => role.value);
       existingMember.roles = [...new Set([...existingMember.roles, ...newRoles])];
-      
+
       // Create a new array to trigger state update
       setFormProject({
         ...formProject,
         project_member: [...formProject.project_member]
       });
-      
+
       showNotification('Member Updated', `Roles updated for ${selectedMember.value}.`);
     } else {
       // Add new member
@@ -207,7 +207,7 @@ const UpdateProject = () => {
         name: selectedMember.value,
         roles: selectedRoles.map((role) => role.value),
       };
-      
+
       setFormProject({
         ...formProject,
         project_member: [...formProject.project_member, newMember],
@@ -243,7 +243,7 @@ const UpdateProject = () => {
       ...formProject,
       [name]: value
     });
-    
+
     // Clear any error for this field
     if (errors[name]) {
       setErrors({
@@ -256,35 +256,35 @@ const UpdateProject = () => {
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     // Validate form data
     const validationErrors = {};
-    
+
     if (!formProject.project_name.trim()) {
       validationErrors.project_name = 'Project name is required';
     }
-    
+
     if (!formProject.project_description.trim()) {
       validationErrors.project_description = 'Project description is required';
     }
-    
+
     if (!formProject.start_date) {
       validationErrors.start_date = 'Start date is required';
     }
-    
+
     if (!formProject.end_date) {
       validationErrors.end_date = 'End date is required';
     } else if (formProject.start_date && new Date(formProject.end_date) < new Date(formProject.start_date)) {
       validationErrors.end_date = 'End date must be after start date';
     }
-    
+
     if (formProject.project_member.length === 0) {
       validationErrors.project_member = 'At least one team member is required';
     }
-    
+
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      
+
       // Show popup for validation errors
       showNotification(
         'Validation Error',
@@ -292,7 +292,7 @@ const UpdateProject = () => {
       );
       return;
     }
-    
+
     // Determine project status based on dates if not explicitly set
     const today = new Date();
     const startDate = new Date(formProject.start_date);
@@ -309,14 +309,14 @@ const UpdateProject = () => {
         updatedStatus = 'PENDING';
       }
     }
-    
+
     // Prepare data for submission
     const projectData = {
       ...formProject,
       project_status: updatedStatus,
       project_member: JSON.stringify(formProject.project_member),
     };
-    
+
     // Submit data to API
     axios.put(`http://localhost:3001/project/${id}`, projectData)
       .then(() => {
@@ -349,12 +349,12 @@ const UpdateProject = () => {
 
   // Define role options
   const roleOptions = [
-    { value: 'Product Owner', label: 'Product Owner' },
-    { value: 'Designer', label: 'Designer' },
-    { value: 'Tester', label: 'Tester' },
-    { value: 'Developer', label: 'Developer' },
+    { value: 'Project Manager', label: 'Project Manager' },
     { value: 'Technical Leader', label: 'Technical Leader' },
-    { value: 'Work Team', label: 'Work Team' }
+    { value: 'Analyst', label: 'Analyst' },
+    { value: 'Designer', label: 'Designer' },
+    { value: 'Programmer', label: 'Programmer' },
+    { value: 'Tester', label: 'Tester' },
   ];
 
   // Get role class for styling
@@ -398,13 +398,13 @@ const UpdateProject = () => {
             Update Project
           </h2>
         </div>
-        
+
         <div className="create-card-body">
           <button onClick={() => navigate('/Project')} className="create-back-button">
             <FontAwesomeIcon icon={faArrowLeft} />
             Back to Projects
           </button>
-          
+
           <form onSubmit={handleSubmit}>
             <div className="create-form-group">
               <label className="create-form-label create-form-required">
@@ -422,7 +422,7 @@ const UpdateProject = () => {
                 <span className="create-form-hint">{errors.project_name}</span>
               )}
             </div>
-            
+
             <div className="create-form-group">
               <label className="create-form-label create-form-required">
                 Project Description
@@ -443,7 +443,7 @@ const UpdateProject = () => {
                 <strong>Tip:</strong> A comprehensive description helps all team members understand the project's purpose.
               </div>
             </div>
-            
+
             <div className="create-form-row">
               <div className="create-form-group">
                 <label className="create-form-label create-form-required">
@@ -461,7 +461,7 @@ const UpdateProject = () => {
                   <span className="create-form-hint">{errors.start_date}</span>
                 )}
               </div>
-              
+
               <div className="create-form-group">
                 <label className="create-form-label create-form-required">
                   <FontAwesomeIcon icon={faCalendarAlt} style={{ marginRight: '8px' }} />
@@ -479,9 +479,9 @@ const UpdateProject = () => {
                 )}
               </div>
             </div>
-            
+
             <div className="create-section-divider"></div>
-            
+
             <div className="create-invite-section">
               <div className="create-invite-header">
                 <h3 className="create-invite-title">
@@ -492,7 +492,7 @@ const UpdateProject = () => {
                   Add or modify team members and their roles in the project
                 </p>
               </div>
-              
+
               <div className="create-form-row">
                 <div className="create-form-group" style={{ flex: 3 }}>
                   <label className="create-form-label">Team Member</label>
@@ -535,7 +535,7 @@ const UpdateProject = () => {
                     <span className="create-form-hint">{errors.memberName}</span>
                   )}
                 </div>
-                
+
                 <div className="create-form-group" style={{ flex: 3 }}>
                   <label className="create-form-label">Project Roles</label>
                   <div className={`create-select-container ${errors.memberRole ? 'create-form-error' : ''}`}>
@@ -591,7 +591,7 @@ const UpdateProject = () => {
                     <span className="create-form-hint">{errors.memberRole}</span>
                   )}
                 </div>
-                
+
                 <div style={{ alignSelf: 'flex-end' }}>
                   <button
                     type="button"
@@ -610,7 +610,7 @@ const UpdateProject = () => {
                 </span>
               )}
             </div>
-            
+
             <div className="create-card-footer">
               <button
                 type="button"
@@ -630,7 +630,7 @@ const UpdateProject = () => {
           </form>
         </div>
       </div>
-      
+
       {/* Team Members Section */}
       <div className="create-team-members create-card">
         <div className="create-card-header">
@@ -640,7 +640,7 @@ const UpdateProject = () => {
           </h2>
           <span className="create-members-count">{formProject.project_member.length}</span>
         </div>
-        
+
         <div className="create-card-body">
           {formProject.project_member.length > 0 ? (
             <table className="create-members-table">
@@ -705,7 +705,7 @@ const UpdateProject = () => {
           )}
         </div>
       </div>
-      
+
       {/* Popup Notifications */}
       {showPopup && !showConfirmation && (
         <Popup
@@ -714,7 +714,7 @@ const UpdateProject = () => {
           onClose={() => setShowPopup(false)}
         />
       )}
-      
+
       {/* Confirmation Popup */}
       {showPopup && showConfirmation && (
         <Popup
