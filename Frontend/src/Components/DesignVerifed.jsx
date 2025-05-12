@@ -4,7 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import "./CSS/DesignVerifed.css"; // Keep DesignVerifed CSS
 import trash_comment from "../image/trash_comment.png";
-// --- Import FontAwesome ---
+import Swal from 'sweetalert2';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowLeft,
