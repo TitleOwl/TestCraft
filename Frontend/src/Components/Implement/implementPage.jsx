@@ -540,7 +540,6 @@ const ImplementPage = () => {
                       <th>Filename</th>
                       <th>Design IDs</th>
                       <th>Link Created At</th>
-                      <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -577,16 +576,6 @@ const ImplementPage = () => {
                             ))}
                           </td>
                           <td data-label="Latest Update" className="imp-date-cell">{formattedDate}</td>
-                          <td data-label="Action" className="imp-action-cell">
-                            {/* This delete button targets the LATEST timestamp instance for this file group */}
-                            <button
-                              className="imp-delete-btn"
-                              onClick={() => handleDeleteRelation(relation.implement_filename, relation.relation_at)}
-                              title={`Delete instance for ${relation.implement_filename} from ${formattedDate}`}>
-                              <FontAwesomeIcon icon={faTrash} className='icon-delete-mapping' />
-                            </button>
-                            {/* TODO: Consider if a "Delete All for this File" or "View Instances" button is needed */}
-                          </td>
                         </tr>
                       );
                     })}
