@@ -300,16 +300,6 @@ const CreateVerifyTrace = () => {
                                                     {row.reqName && row.reqName !== `Requirement ${row.reqId}` && (
                                                         <div className="traceveri-item-detail">{row.reqName}</div>
                                                     )}
-                                                    <a
-                                                        href={`/viewReqTrace?requirement_id=${row.reqId}`}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        title="View Requirement Details"
-                                                        className="traceveri-view-button"
-                                                        onClick={() => console.log("Viewing req:", row.reqId)}
-                                                    >
-                                                        <FontAwesomeIcon icon={faEye} /> View
-                                                    </a>
                                                 </td>
                                             )}
                                             {row.isFirstDesignRow && (
