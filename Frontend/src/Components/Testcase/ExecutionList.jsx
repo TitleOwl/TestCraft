@@ -103,6 +103,7 @@ const ExecutionList = () => {
                         <th>Name</th>
                         <th>Execute Status</th>
                         <th>Recent Test Date</th>
+                        <th>Recent Execution By</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -127,6 +128,7 @@ const ExecutionList = () => {
                                             : "No execution date" // ถ้าไม่มีวันที่ ให้แสดงข้อความนี้
                                         }
                                     </td>
+                                    <td>{execution.execute_by || "No execution by"}</td>
                                     <td>
                                         <button
                                             className="execute-btn-execution-list"

@@ -4857,11 +4857,12 @@ app.get("/api/testcase_executions", (req, res) => {
     const query = `
         SELECT 
             t.testcase_id, 
-            p.project_id, 
+            p.project_id,
             t.testcase_name,
-            t.testcase_status, -- เพิ่มตรงนี้
+            t.testcase_status,
             te.test_execution_status,
-            te.recent_date
+            te.recent_date,
+            te.execute_by
         FROM testcase t
         LEFT JOIN test_execution te ON t.testcase_id = te.testcase_id
         LEFT JOIN project p ON te.project_id = p.project_id
@@ -4922,7 +4923,8 @@ app.get("/api/test_procedures/:testcase_id", (req, res) => {
 
 // --- API Endpoint: Update Test Execution Status ---
 app.post("/api/update_test_execution", async (req, res) => {
-    const { testSteps, testcase_id } = req.body;
+    // --- Destructure execute_by from req.body ---
+    const { testSteps, testcase_id, execute_by } = req.body; // Added execute_by
 
     // --- Basic Input Validation ---
     if (!testSteps || !Array.isArray(testSteps)) {
@@ -4939,6 +4941,13 @@ app.post("/api/update_test_execution", async (req, res) => {
     if (isNaN(parsedTestcaseId)) {
         return res.status(400).json({ error: "Invalid 'testcase_id'. Must be a number." });
     }
+    // --- Optional: Validate execute_by ---
+    if (!execute_by || typeof execute_by !== 'string' || execute_by.trim() === "") {
+        // Decide if this is a hard requirement or if a default/null is acceptable
+        // For now, let's make it required for this example
+        return res.status(400).json({ error: "Missing or invalid 'execute_by'. Must be a non-empty string." });
+    }
+
 
     // --- Define Status Values (Strings) ---
     const STATUS_PASSED_STRING = "PASSED";
@@ -4953,9 +4962,10 @@ app.post("/api/update_test_execution", async (req, res) => {
         WHERE test_procedures_id = ?
     `;
 
+    // --- Modified SQL Query ---
     const updateExecutionStatusQuery = `
         UPDATE test_execution
-        SET test_execution_status = ?, recent_date = NOW()
+        SET test_execution_status = ?, recent_date = NOW(), execute_by = ?
         WHERE testcase_id = ?
     `;
 
@@ -5009,56 +5019,53 @@ app.post("/api/update_test_execution", async (req, res) => {
         console.log(`Successfully updated individual steps for testcase_id: ${parsedTestcaseId}`);
 
         // --- Determine Final Execution Status ---
-        // 2. Analyze statuses of the steps *just processed*
         const getUpperCaseStatus = (status) => typeof status === 'string' ? status.toUpperCase() : status;
 
         const hasFailed = testSteps.some(step => getUpperCaseStatus(step.test_status) === STATUS_FAILED_STRING);
         const hasPassed = testSteps.some(step => getUpperCaseStatus(step.test_status) === STATUS_PASSED_STRING);
         const allStepsConsideredPassed = testSteps.every(step => getUpperCaseStatus(step.test_status) === STATUS_PASSED_STRING);
-        // *** เพิ่มการตรวจสอบ: ทุกขั้นตอนเป็น IN PROGRESS หรือไม่ ***
         const allStepsInProgress = testSteps.every(step => getUpperCaseStatus(step.test_status) === STATUS_IN_PROGRESS_STRING);
 
 
-        // 3. Set the final execution status based on the updated logic
         let finalExecutionStatus;
 
-        if (hasFailed) { // Priority 1: มี FAILED
+        if (hasFailed) {
             if (hasPassed) {
-                finalExecutionStatus = STATUS_IN_PROGRESS_STRING; // Mix FAILED/PASSED -> IN PROGRESS
+                finalExecutionStatus = STATUS_IN_PROGRESS_STRING;
                 console.log(`Condition met for testcase_id ${parsedTestcaseId}: Has FAILED and Has PASSED -> ${STATUS_IN_PROGRESS_STRING}`);
             } else {
-                finalExecutionStatus = STATUS_FAILED_STRING; // มี FAILED แต่ไม่มี PASSED -> FAILED
+                finalExecutionStatus = STATUS_FAILED_STRING;
                 console.log(`Condition met for testcase_id ${parsedTestcaseId}: Has FAILED but no PASSED -> ${STATUS_FAILED_STRING}`);
             }
-        } else { // Priority 2: ไม่มี FAILED
+        } else {
             if (allStepsConsideredPassed) {
-                finalExecutionStatus = STATUS_PASSED_STRING; // ทุกอัน PASSED -> PASSED
+                finalExecutionStatus = STATUS_PASSED_STRING;
                 console.log(`Condition met for testcase_id ${parsedTestcaseId}: No FAILED and All PASSED -> ${STATUS_PASSED_STRING}`);
-            } else if (allStepsInProgress) { // *** เพิ่มเงื่อนไขตรวจสอบ: ทุกอันเป็น IN PROGRESS หรือไม่? ***
-                finalExecutionStatus = STATUS_IN_PROGRESS_STRING; // ทุกอัน IN PROGRESS -> IN PROGRESS
+            } else if (allStepsInProgress) {
+                finalExecutionStatus = STATUS_IN_PROGRESS_STRING;
                 console.log(`Condition met for testcase_id ${parsedTestcaseId}: No FAILED, Not All PASSED, All IN PROGRESS -> ${STATUS_IN_PROGRESS_STRING}`);
             } else {
-                // กรณีอื่นๆ ที่ไม่มี FAILED (เช่น มี PASSED ปนกับ IN PROGRESS หรือ มีแต่ READY TO TEST)
-                finalExecutionStatus = STATUS_READY_TO_TEST_STRING; // -> READY TO TEST
+                finalExecutionStatus = STATUS_READY_TO_TEST_STRING;
                 console.log(`Condition met for testcase_id ${parsedTestcaseId}: No FAILED, Not All PASSED, Not All IN PROGRESS (Mix) -> ${STATUS_READY_TO_TEST_STRING}`);
             }
         }
 
-        // 4. Update the test_execution table status AND recent_date
-        console.log(`Updating execution status for testcase_id: ${parsedTestcaseId} to '${finalExecutionStatus}' and setting recent_date.`);
+        // 4. Update the test_execution table status, recent_date, AND execute_by
+        console.log(`Updating execution status for testcase_id: ${parsedTestcaseId} to '${finalExecutionStatus}', setting recent_date, and execute_by to '${execute_by}'.`);
         await new Promise((resolve, reject) => {
+            // --- Pass execute_by to the query parameters ---
             db.query(updateExecutionStatusQuery,
-                [finalExecutionStatus, parsedTestcaseId],
+                [finalExecutionStatus, execute_by, parsedTestcaseId], // Added execute_by here
                 (err, result) => {
                     if (err) {
-                        console.error(`Error updating test execution status/date for testcase_id ${parsedTestcaseId}:`, err);
-                        reject(new Error("Database error updating execution status and date."));
+                        console.error(`Error updating test execution status/date/executor for testcase_id ${parsedTestcaseId}:`, err);
+                        reject(new Error("Database error updating execution status, date, and executor."));
                     } else {
                         if (result.affectedRows === 0) {
                             console.error(`CRITICAL: No test_execution record found or updated for testcase_id: ${parsedTestcaseId}. Verify this ID exists in the test_execution table.`);
                             reject(new Error(`Test execution record not found for testcase_id: ${parsedTestcaseId}`));
                         } else {
-                            console.log(`Successfully updated test_execution status to '${finalExecutionStatus}' and recent_date for testcase_id: ${parsedTestcaseId}`);
+                            console.log(`Successfully updated test_execution status to '${finalExecutionStatus}', recent_date, and execute_by for testcase_id: ${parsedTestcaseId}`);
                             resolve();
                         }
                     }
@@ -5067,8 +5074,9 @@ app.post("/api/update_test_execution", async (req, res) => {
 
         // --- Success Response ---
         res.status(200).json({
-            message: `Test execution for testcase_id ${parsedTestcaseId} updated successfully to ${finalExecutionStatus}.`,
-            finalStatus: finalExecutionStatus
+            message: `Test execution for testcase_id ${parsedTestcaseId} updated successfully to ${finalExecutionStatus}. Executed by ${execute_by}.`,
+            finalStatus: finalExecutionStatus,
+            executedBy: execute_by // Optionally return execute_by in response
         });
 
     } catch (error) {
@@ -5078,6 +5086,7 @@ app.post("/api/update_test_execution", async (req, res) => {
             error.message.startsWith("Invalid 'testcase_id'") ||
             error.message.startsWith("Invalid 'test_procedures_id'") ||
             error.message.startsWith("Invalid test_status") ||
+            error.message.startsWith("Missing or invalid 'execute_by'") || // Added execute_by error check
             error.message.includes("not found")) {
             statusCode = 400;
         } else if (error.message.startsWith("Database error")) {

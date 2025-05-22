@@ -1,90 +1,83 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./testcase_css/TestExecution.css"; // ตรวจสอบว่า import CSS ถูกต้อง
-import { useNavigate } from "react-router-dom";
+import "./testcase_css/TestExecution.css";
+import Swal from "sweetalert2";
 
 const TestExecution = () => {
   const { testcaseId } = useParams();
-  const [testProcedures, setTestProcedures] = useState([]); // อาจจะไม่จำเป็นต้องใช้ ถ้า testSteps พอ
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [testSteps, setTestSteps] = useState([]); // State หลักสำหรับข้อมูล steps
-  const [testCase, setTestCase] = useState({}); // State สำหรับข้อมูล Test Case ทั่วไป
-  const [testFiles, setTestFiles] = useState({}); // State สำหรับเก็บไฟล์ของแต่ละ step (key: test_procedures_id)
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedStep, setSelectedStep] = useState(null); // State สำหรับ step ที่ถูกเลือกเพื่อเปิด modal
+  const location = useLocation();
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(window.location.search);
   const projectId = queryParams.get("project_id");
-  const statusOptions = ["Passed", "Failed", "In Progress"];
 
-  // useEffect สำหรับดึงข้อมูลเมื่อ component โหลด หรือ testcaseId เปลี่ยน
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [testSteps, setTestSteps] = useState([]);
+  const [testCase, setTestCase] = useState({});
+  const [testFiles, setTestFiles] = useState({});
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedStep, setSelectedStep] = useState(null);
+  const statusOptions = ["PASSED", "FAILED", "IN PROGRESS"];
+
   useEffect(() => {
     const fetchTestProceduresAndFiles = async () => {
-      if (!testcaseId) return; // ถ้าไม่มี testcaseId ไม่ต้องทำอะไร
-
-      setLoading(true); // เริ่มโหลด
+      if (!testcaseId) return;
+      setLoading(true);
       try {
-        // 1. ดึงข้อมูล Test Procedures (หรือ Test Steps)
-        const response = await axios.get(`http://localhost:3001/api/test_procedures/${testcaseId}`);
+        const response = await axios.get(
+          `http://localhost:3001/api/test_procedures/${testcaseId}`
+        );
         console.log("Fetched test steps data:", response.data);
 
         if (response.data && response.data.length > 0) {
-          // ตั้งค่า state testSteps และ testCase
-          setTestSteps(response.data);
+          const initializedTestSteps = response.data.map(step => ({
+            ...step,
+            test_status: step.test_status || "",
+            actual_result: step.actual_result || ""
+          }));
+
+          setTestSteps(initializedTestSteps);
           setTestCase({
             testcase_id: response.data[0].testcase_id,
             testcase_at: response.data[0].testcase_at,
             testcase_name: response.data[0].testcase_name || "No Name",
           });
 
-          // 2. ดึงข้อมูลไฟล์ของแต่ละ Test Step ที่ได้มา
-          const filesMap = {}; // สร้าง object ว่างเพื่อเก็บไฟล์
-          await Promise.all( // รอให้การดึงไฟล์ทั้งหมดเสร็จสิ้น
+          const filesMap = {};
+          await Promise.all(
             response.data.map(async (step) => {
               try {
-                // เรียก API เพื่อดึงไฟล์ของ step ปัจจุบัน
                 const fileResponse = await axios.get(
                   `http://localhost:3001/api/get_test_files/${step.test_procedures_id}`
                 );
-                // เก็บข้อมูลไฟล์ไว้ใน filesMap โดยใช้ test_procedures_id เป็น key
-                filesMap[step.test_procedures_id] = fileResponse.data || []; // ถ้าไม่มีข้อมูลไฟล์ ให้เป็น array ว่าง
+                filesMap[step.test_procedures_id] = fileResponse.data || [];
               } catch (fileError) {
-                // ถ้า API คืนค่า error (เช่น 404 Not Found)
-                console.warn(`No files found or error fetching files for step ${step.test_procedures_id}. Setting empty array.`);
-                filesMap[step.test_procedures_id] = []; // กำหนดเป็น array ว่าง
+                console.warn(
+                  `No files found or error fetching files for step ${step.test_procedures_id}. Setting empty array.`
+                );
+                filesMap[step.test_procedures_id] = [];
               }
             })
           );
-          // ตั้งค่า state testFiles ด้วยข้อมูลไฟล์ที่ดึงมาได้ทั้งหมด
           setTestFiles(filesMap);
           console.log("Fetched files map:", filesMap);
-
         } else {
-          // กรณีไม่พบข้อมูล test steps
           setTestSteps([]);
           setTestFiles({});
           console.warn("No test procedures found for testcaseId:", testcaseId);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        setError("Failed to load test data. Please try again."); // แสดงข้อความผิดพลาดที่ชัดเจนขึ้น
+        setError("Failed to load test data. Please try again.");
       } finally {
-        setLoading(false); // สิ้นสุดการโหลด ไม่ว่าจะสำเร็จหรือล้มเหลว
+        setLoading(false);
       }
     };
 
-    fetchTestProceduresAndFiles(); // เรียกฟังก์ชันดึงข้อมูล
-  }, [testcaseId]); // Dependency array: ให้ re-run effect นี้เมื่อ testcaseId เปลี่ยน
+    fetchTestProceduresAndFiles();
+  }, [testcaseId]);
 
-  // แสดงสถานะ Loading หรือ Error
-  if (loading) return <p>Loading test procedures...</p>;
-  if (error) return <p>{error}</p>;
-
-  // --- Handler Functions ---
-
-  // อัปเดตสถานะ Test Status ของ step
   const handleStatusChange = (index, event) => {
     const newStatus = event.target.value;
     setTestSteps((prevSteps) =>
@@ -94,7 +87,6 @@ const TestExecution = () => {
     );
   };
 
-  // อัปเดต Actual Result ของ step
   const handleActualResultChange = (index, event) => {
     const newActualResult = event.target.value;
     setTestSteps((prevSteps) =>
@@ -104,52 +96,104 @@ const TestExecution = () => {
     );
   };
 
-
-    const handleSave = async () => {
-      // Add a check to ensure we have a testcase_id before proceeding
-      if (!testCase?.testcase_id) {
-          console.error("Test Case ID is missing. Cannot save.");
-          alert("Cannot save execution data: Test Case ID is missing.");
-          return; // Stop the function if ID is missing
-      }
-  
-      try {
-        // Send both testSteps and the testcase_id from the testCase state
-        const payload = {
-          testSteps: testSteps,
-          testcase_id: testCase.testcase_id // <--- Send testcase_id
-        };
-        console.log("Saving test execution data:", payload); // Log payload for debugging
-  
-        await axios.post("http://localhost:3001/api/update_test_execution", payload);
-        alert("Test Execution saved successfully!");
-  
-        // Optional: You might want to navigate back or refresh data after saving
-        // navigate(`/ExecutionList?project_id=${projectId}`);
-  
-      } catch (error) {
-        console.error("Error saving test execution:", error.response?.data || error.message);
-        // Display a more specific error from the backend if available
-        alert(`Failed to save test execution: ${error.response?.data?.error || error.message}`);
-      }
-    };
-
-  // จัดการเมื่อมีการเลือกไฟล์ใน Modal
-  const handleFileChange = async (index, event) => { // index อาจจะไม่จำเป็นแล้วถ้าใช้ selectedStep
-    const file = event.target.files[0];
-    if (!file || !selectedStep) {
-      console.warn("No file selected or no step selected.");
-      return; // ไม่มีไฟล์ หรือ ไม่มี selectedStep
+  // --- Function to get the logged-in username ---
+  const getExecutorName = () => {
+    const nameFromState = location.state?.executorName;
+    if (nameFromState && nameFromState !== "Unknown User") {
+      console.log("Executor name from location state:", nameFromState);
+      return nameFromState;
     }
 
-    const currentProcedureId = selectedStep.test_procedures_id; // ใช้ ID จาก selectedStep โดยตรง
+    // --- เปลี่ยน key จาก "loggedInUsername" เป็น "username" ---
+    const storedUsername = localStorage.getItem("username");
+    // --- สิ้นสุดการเปลี่ยนแปลง ---
 
+    if (storedUsername) {
+      console.log("Executor name from localStorage (key 'username'):", storedUsername);
+      return storedUsername;
+    }
+
+    console.warn(
+      "Executor name not found in location state or localStorage (key 'username'). Using 'Unknown User'."
+    );
+    return "Unknown User";
+  };
+  // --- End of function to get username ---
+
+  const handleSave = async () => {
+    if (!testCase?.testcase_id) {
+      console.error("Test Case ID is missing. Cannot save.");
+      Swal.fire({
+        icon: "error",
+        title: "Save Error",
+        text: "Cannot save execution data: Test Case ID is missing.",
+      });
+      return;
+    }
+
+    const executorName = getExecutorName();
+
+    if (executorName === "Unknown User") {
+      const confirmSave = await Swal.fire({
+        title: 'Confirm Save',
+        text: "Executor name could not be determined (localStorage key 'username' not found or empty). Save as 'Unknown User' or cancel?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Save as Unknown',
+        cancelButtonText: 'Cancel'
+      });
+      if (!confirmSave.isConfirmed) {
+        return;
+      }
+    }
+
+    const formattedTestSteps = testSteps.map(step => ({
+      test_procedures_id: step.test_procedures_id,
+      test_status: step.test_status || "READY TO TEST",
+      actual_result: step.actual_result || ""
+    }));
+
+    try {
+      const payload = {
+        testSteps: formattedTestSteps,
+        testcase_id: testCase.testcase_id,
+        execute_by: executorName,
+      };
+      console.log("Saving test execution data:", payload);
+
+      const response = await axios.post(
+        "http://localhost:3001/api/update_test_execution",
+        payload
+      );
+
+      Swal.fire({
+        icon: "success",
+        title: "Saved!",
+        text: `Test Execution saved successfully by ${executorName}. Final status: ${response.data.finalStatus}`,
+      });
+    } catch (error) {
+      console.error(
+        "Error saving test execution:",
+        error.response?.data || error.message
+      );
+      Swal.fire({
+        icon: "error",
+        title: "Save Failed",
+        text: `Failed to save test execution: ${
+          error.response?.data?.error || error.message
+        }`,
+      });
+    }
+  };
+
+  const handleFileChange = async (index, event) => {
+    const file = event.target.files[0];
+    if (!file || !selectedStep) return;
+    const currentProcedureId = selectedStep.test_procedures_id;
     const formData = new FormData();
     formData.append("file", file);
     formData.append("test_procedures_id", currentProcedureId);
     formData.append("testcase_id", testCase.testcase_id);
-
-    console.log("Uploading file for procedure:", currentProcedureId);
 
     try {
       const response = await axios.post(
@@ -157,101 +201,94 @@ const TestExecution = () => {
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
-
-      console.log("File upload response:", response.data);
-
-      // สมมติว่า response.data คือ object ข้อมูลไฟล์ใหม่ที่ถูกต้อง
       const newFileInfo = response.data;
-
-      // --- อัปเดต State testFiles เพื่อให้ UI อัปเดตทันที ---
       setTestFiles((prevFiles) => {
         const currentFiles = prevFiles[currentProcedureId] || [];
         const updatedFileList = [...currentFiles, newFileInfo];
-        return {
-          ...prevFiles,
-          [currentProcedureId]: updatedFileList,
-        };
+        return { ...prevFiles, [currentProcedureId]: updatedFileList };
       });
-      // ---------------------------------------------------
-
-      alert("File uploaded successfully!");
-      event.target.value = null; // เคลียร์ค่า input file
-
-      // ไม่ต้องปิด Modal เพื่อให้เห็นการเปลี่ยนแปลง
-      // closeModal();
-
+      Swal.fire("Success", "File uploaded successfully!", "success");
+      event.target.value = null;
     } catch (error) {
-      console.error("Error uploading file:", error.response?.data || error.message);
-      alert(`File upload failed: ${error.response?.data?.message || error.message}`);
+      Swal.fire(
+        "Upload Failed",
+        `File upload failed: ${error.response?.data?.message || error.message}`,
+        "error"
+      );
     }
   };
 
-  // จัดการการลบไฟล์
   const handleDeleteFile = async (test_procedures_id, fileIndex) => {
-    // ตรวจสอบว่ามีข้อมูลไฟล์ใน state ก่อนดำเนินการ
-    if (!testFiles[test_procedures_id] || !testFiles[test_procedures_id][fileIndex]) {
-      console.error("File data not found for deletion.");
-      return;
-    }
-
+    if (!testFiles[test_procedures_id]?.[fileIndex]) return;
     const fileName = testFiles[test_procedures_id][fileIndex].file_testcase_name;
     const encodedFileName = encodeURIComponent(fileName);
 
-    if (!window.confirm(`Are you sure you want to delete ${fileName}?`)) return;
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: `Do you want to delete ${fileName}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, cancel",
+    });
 
-    console.log(`Attempting to delete file: ${fileName} for procedure: ${test_procedures_id}`);
+    if (!result.isConfirmed) return;
 
     try {
-      // ใช้ Axios หรือ Fetch ก็ได้ (ตัวอย่างก่อนหน้าใช้ Fetch)
-      const response = await axios.delete(`/api/delete_test_file/${test_procedures_id}/${encodedFileName}`);
-
-      console.log("File delete response:", response.data);
-
-      // --- อัปเดต State testFiles หลังลบสำเร็จ ---
+      await axios.delete(
+        `/api/delete_test_file/${test_procedures_id}/${encodedFileName}`
+      );
       setTestFiles((prevFiles) => {
         const updatedFiles = { ...prevFiles };
-        // Filter เอาไฟล์ที่ถูกลบออก (เทียบ index)
         updatedFiles[test_procedures_id] = updatedFiles[test_procedures_id].filter((_, i) => i !== fileIndex);
         return updatedFiles;
       });
-      // ---------------------------------------
-
-      alert("File deleted successfully");
+      Swal.fire("Deleted!", "File has been deleted.", "success");
     } catch (error) {
-      console.error("Error deleting file:", error.response?.data || error.message);
-      alert(`An error occurred while deleting the file: ${error.response?.data?.message || error.message}`);
+      Swal.fire(
+        "Delete Failed",
+        `An error occurred while deleting the file: ${error.response?.data?.message || error.message}`,
+        "error"
+      );
     }
   };
 
-  // เปิด Modal และตั้งค่า step ที่ถูกเลือก
   const openModal = (step) => {
-    console.log("Opening modal for step:", step);
-    setSelectedStep(step); // เก็บ object step ทั้งหมดไว้
+    setSelectedStep(step);
     setModalOpen(true);
   };
 
-  // ปิด Modal และล้างค่า step ที่ถูกเลือก
   const closeModal = () => {
     setModalOpen(false);
     setSelectedStep(null);
   };
+
   const handleBackClick = () => {
     navigate(`/ExecutionList?project_id=${projectId}`);
   };
+
+  if (loading) return <div className="loading-spinner-container"><div className="loading-spinner"></div><p>Loading Test Execution Details...</p></div>;
+  if (error) return <p className="error-message">{error}</p>;
 
   return (
     <div className="TestExecution">
       <button className="back-test-execution" onClick={handleBackClick}>
         ← Back
       </button>
-      <button className="save-button-testexec" onClick={handleSave}>Save</button>
+      <button className="save-button-testexec" onClick={handleSave}>
+        Save Execution
+      </button>
       <h3 className="test-exec">
-        Test Execution : TC-0{testCase?.testcase_id || "-"} {testCase?.testcase_name || "Unknown"}
+        Test Execution : TC-
+        {(testCase?.testcase_id || "-").toString().padStart(2, "0")}{" "}
+        {testCase?.testcase_name || "Unknown"}
       </h3>
       <p className="completion-exec">
-        <strong>Completion Date:</strong> {testCase?.testcase_at ? new Date(testCase.testcase_at).toLocaleDateString("th-TH") : "-"}
+        <strong>Original Creation Date:</strong>{" "}
+        {testCase?.testcase_at
+          ? new Date(testCase.testcase_at).toLocaleDateString("en-GB")
+          : "-"}
       </p>
-
 
       <table className="test-execution-table">
         <thead>
@@ -268,122 +305,148 @@ const TestExecution = () => {
         <tbody>
           {testSteps.length > 0 ? (
             testSteps.map((step, index) => (
-              <tr key={step.test_procedures_id} data-status={step.test_status || "default"}>
+              <tr
+                key={step.test_procedures_id}
+                data-status={step.test_status || "default"}
+              >
                 <td>{index + 1}</td>
-                {/* --- การเปลี่ยนแปลงเริ่มต้นที่นี่ --- */}
-                {/* ใช้ dangerouslySetInnerHTML สำหรับ Required Action */}
                 <td>
-                  <div dangerouslySetInnerHTML={{ __html: step.required_action || '' }} />
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: step.required_action || "",
+                    }}
+                  />
                 </td>
-                {/* ใช้ dangerouslySetInnerHTML สำหรับ Expected Result */}
                 <td>
-                  <div dangerouslySetInnerHTML={{ __html: step.expected_result || '' }} />
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: step.expected_result || "",
+                    }}
+                  />
                 </td>
-                {/* ใช้ dangerouslySetInnerHTML สำหรับ Prerequisite */}
                 <td>
-                  {/* แสดง '-' ถ้าไม่มีข้อมูล, หรือ render HTML ถ้ามี */}
                   {step.prerequisite ? (
-                    <div dangerouslySetInnerHTML={{ __html: step.prerequisite }} />
+                    <div
+                      dangerouslySetInnerHTML={{ __html: step.prerequisite }}
+                    />
                   ) : (
-                    '-'
+                    "-"
                   )}
-                  {/* หรือถ้าต้องการให้ช่องว่างเมื่อไม่มี prerequisite: */}
-                  {/* <div dangerouslySetInnerHTML={{ __html: step.prerequisite || '' }} /> */}
                 </td>
-                {/* --- การเปลี่ยนแปลงสิ้นสุดที่นี่ --- */}
-
-                {/* คอลัมน์ที่เหลือเหมือนเดิม */}
-                <td className={`status-cell ${step.test_status?.toLowerCase().replace(/\s+/g, "-") || ""}`}>
+                <td
+                  className={`status-cell ${
+                    step.test_status?.toLowerCase().replace(/\s+/g, "-") || ""
+                  }`}
+                >
                   <select
                     value={step.test_status || ""}
                     onChange={(event) => handleStatusChange(index, event)}
                   >
                     <option value="">Select Status</option>
                     {statusOptions.map((status, idx) => (
-                      <option key={idx} value={status}>{status}</option>
+                      <option key={idx} value={status}>
+                        {status}
+                      </option>
                     ))}
                   </select>
                 </td>
                 <td>
                   <input
                     type="text"
+                    className="actual-result-input"
                     value={step.actual_result || ""}
-                    onChange={(event) => handleActualResultChange(index, event)}
+                    onChange={(event) =>
+                      handleActualResultChange(index, event)
+                    }
+                    placeholder="Enter actual result"
                   />
                 </td>
                 <td>
-                  <button onClick={() => openModal(step)}>View Files</button>
+                  <button className="view-files-btn" onClick={() => openModal(step)}>View/Add Files</button>
                 </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="7" className="no-data">No Test Procedures Found</td>
+              <td colSpan="7" className="no-data">
+                No Test Procedures Found
+              </td>
             </tr>
           )}
         </tbody>
       </table>
 
-      {/* --- Modal Rendering Logic --- */}
       {modalOpen && selectedStep && (
         <div className="modal-overlay">
           <div className="modal-content">
-
-            <h3>File Details</h3>
-            {/* แสดง Step No. */}
-            <p><strong>Step No:</strong> {testSteps.indexOf(selectedStep) !== -1 ? testSteps.indexOf(selectedStep) + 1 : '-'}</p>
-
-            {/* Input สำหรับเลือกไฟล์ */}
+            <h3>
+              Files for Step:{" "}
+              {testSteps.indexOf(selectedStep) !== -1
+                ? testSteps.indexOf(selectedStep) + 1
+                : "-"}
+            </h3>
             <input
               className="inputfile-testexec"
               type="file"
-              // ส่ง index ไป handleFileChange (อาจจะไม่จำเป็นแล้วถ้าใช้ selectedStep)
-              onChange={(event) => handleFileChange(testSteps.indexOf(selectedStep), event)}
-              style={{ marginBottom: '15px' }} // เพิ่มระยะห่างด้านล่างเล็กน้อย
+              onChange={(event) =>
+                handleFileChange(testSteps.indexOf(selectedStep), event)
+              }
+              style={{ marginBottom: "15px" }}
             />
-
-            {/* ส่วนแสดงรายการไฟล์ */}
-            {/* ใช้ optional chaining (?.) เพื่อป้องกัน error ถ้า selectedStep.test_procedures_id ไม่มีใน testFiles */}
             {testFiles[selectedStep.test_procedures_id]?.length > 0 ? (
               <div className="file-list">
-                {testFiles[selectedStep.test_procedures_id].map((file, fileIndex) => (
-                  <div key={fileIndex} className="file-item">
-                    <p><strong>File:</strong> {file.file_testcase_name}</p>
-                    {/* แสดงรูปภาพ */}
-                    {file.file_url && /\.(jpg|jpeg|png|gif)$/i.test(file.file_testcase_name) ? ( // เพิ่ม .gif
-                      <div className="image-container">
-                        <img
-                          src={file.file_url}
-                          alt={file.file_testcase_name}
-                          className="preview-image"
-                        />
+                {testFiles[selectedStep.test_procedures_id].map(
+                  (file, fileIndex) => (
+                    <div key={fileIndex} className="file-item">
+                      {file.file_url &&
+                      /\.(jpg|jpeg|png|gif)$/i.test(
+                        file.file_testcase_name
+                      ) ? (
+                        <div className="image-container">
+                          <img
+                            src={file.file_url}
+                            alt={file.file_testcase_name}
+                            className="preview-image"
+                          />
+                        </div>
+                      ) : (
+                        <p>📄 {file.file_testcase_name}</p>
+                      )}
+                      <div className="file-actions">
+                        <a
+                          href={file.file_url}
+                          download={file.file_testcase_name}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <button className="download-btn">⬇ Download</button>
+                        </a>
+                        <button
+                          className="delete-btn"
+                          onClick={() =>
+                            handleDeleteFile(
+                              selectedStep.test_procedures_id,
+                              fileIndex
+                            )
+                          }
+                        >
+                          ❌ Delete
+                        </button>
                       </div>
-                    ) : (
-                      <p>📄 {file.file_testcase_name}</p> // แสดงไอคอนเอกสารสำหรับไฟล์อื่น
-                    )}
-                    {/* ปุ่มดาวน์โหลดและลบ */}
-                    <div className="file-actions">
-                      <a href={file.file_url} download={file.file_testcase_name} target="_blank" rel="noopener noreferrer">
-                        <button className="download-btn">⬇ Download</button>
-                      </a>
-                      <button className="delete-btn" onClick={() => handleDeleteFile(selectedStep.test_procedures_id, fileIndex)}>
-                        ❌ Delete
-                      </button>
                     </div>
-                  </div>
-                ))}
+                  )
+                )}
               </div>
             ) : (
-              <p>No file uploaded.</p> // แสดงเมื่อไม่มีไฟล์
+              <p>No files uploaded for this step.</p>
             )}
-
-            <button className="close-btn" onClick={closeModal}>Close</button>
-
+            <button className="close-btn" onClick={closeModal}>
+              Close
+            </button>
           </div>
         </div>
       )}
-
-    </div> // ปิด .TestExecution
+    </div>
   );
 };
 
