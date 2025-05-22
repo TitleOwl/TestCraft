@@ -326,7 +326,7 @@ app.get('/project/:id', (req, res) => {
 
 // Add a new project
 app.post('/project', (req, res) => {
-    console.log('Request Body:', req.body);
+    console.log('Request Body:', req.body); // ดูข้อมูลที่ส่งมา
     const sql = `
             INSERT INTO project 
             (project_name, project_description, project_member, start_date, end_date, project_status) 
@@ -341,7 +341,7 @@ app.post('/project', (req, res) => {
         req.body.project_status
     ];
 
-    
+
     db.query(sql, values, (err, data) => {
         if (err) {
             console.error('Database Error:', err); // แสดง Error ใน Console
@@ -436,7 +436,7 @@ app.get('/project/:project_id/requirement', (req, res) => {
 // ดึงข้อมูลจาก requirement มา update
 app.get('/requirement/:id', (req, res) => {
     const requirementId = req.params.id;
-  
+
     // Query ข้อมูล requirement + ความสัมพันธ์กับไฟล์
     const requirementQuery = `
       SELECT r.*, GROUP_CONCAT(frr.filereq_id) AS filereq_ids
@@ -447,166 +447,166 @@ app.get('/requirement/:id', (req, res) => {
     `;
 
     db.query(requirementQuery, [requirementId], (err, result) => {
-      if (err) {
-        console.error("Error fetching requirement:", err);
-        return res.status(500).json({ error: 'Database query failed' });
-      }
-  
-      if (result.length === 0) {
-        return res.status(404).json({ error: 'Requirement not found' });
-      }
-  
-      // แปลง comma-separated string เป็น array
-      const requirement = result[0];
-      requirement.filereq_ids = requirement.filereq_ids
-        ? requirement.filereq_ids.split(',').map(id => parseInt(id))
-        : [];
-  
-      res.json(requirement);
-    });
-  });
-  
+        if (err) {
+            console.error("Error fetching requirement:", err);
+            return res.status(500).json({ error: 'Database query failed' });
+        }
 
-  
-  app.put("/requirement/:id", (req, res) => {
-      const { id } = req.params;
-      // รับ requirement_status จาก body ด้วย
-      const { requirement_name, requirement_description, requirement_type, filereq_ids, requirement_status } = req.body;
-  
-      // --- การตรวจสอบข้อมูลเบื้องต้น ---
-      if (!requirement_name || !requirement_description || !requirement_type || !Array.isArray(filereq_ids)) {
-          console.error("Validation Error: Missing required fields or filereq_ids is not an array", req.body);
-          return res.status(400).json({ message: "Missing required fields or filereq_ids is not an array" });
-      }
-  
-      // --- เริ่ม Transaction (บน Single Connection 'db' - !!! ควรเปลี่ยนเป็น Pool !!!) ---
-      console.log(`Starting transaction for Requirement ID: ${id}`);
-      db.beginTransaction((err) => {
-          if (err) {
-              console.error("Error beginning transaction for Requirement ID:", id, err);
-              // ไม่ต้อง release() ถ้า db คือ connection เดี่ยว
-              return res.status(500).json({ message: "Error starting database transaction" });
-          }
-          console.log("Transaction started for Requirement ID:", id);
-  
-          // --- 1. เตรียม SQL และ Parameters สำหรับอัปเดต requirement (จัดการ status แบบมีเงื่อนไข) ---
-          let updateRequirementSql = `
+        if (result.length === 0) {
+            return res.status(404).json({ error: 'Requirement not found' });
+        }
+
+        // แปลง comma-separated string เป็น array
+        const requirement = result[0];
+        requirement.filereq_ids = requirement.filereq_ids
+            ? requirement.filereq_ids.split(',').map(id => parseInt(id))
+            : [];
+
+        res.json(requirement);
+    });
+});
+
+
+
+app.put("/requirement/:id", (req, res) => {
+    const { id } = req.params;
+    // รับ requirement_status จาก body ด้วย
+    const { requirement_name, requirement_description, requirement_type, filereq_ids, requirement_status } = req.body;
+
+    // --- การตรวจสอบข้อมูลเบื้องต้น ---
+    if (!requirement_name || !requirement_description || !requirement_type || !Array.isArray(filereq_ids)) {
+        console.error("Validation Error: Missing required fields or filereq_ids is not an array", req.body);
+        return res.status(400).json({ message: "Missing required fields or filereq_ids is not an array" });
+    }
+
+    // --- เริ่ม Transaction (บน Single Connection 'db' - !!! ควรเปลี่ยนเป็น Pool !!!) ---
+    console.log(`Starting transaction for Requirement ID: ${id}`);
+    db.beginTransaction((err) => {
+        if (err) {
+            console.error("Error beginning transaction for Requirement ID:", id, err);
+            // ไม่ต้อง release() ถ้า db คือ connection เดี่ยว
+            return res.status(500).json({ message: "Error starting database transaction" });
+        }
+        console.log("Transaction started for Requirement ID:", id);
+
+        // --- 1. เตรียม SQL และ Parameters สำหรับอัปเดต requirement (จัดการ status แบบมีเงื่อนไข) ---
+        let updateRequirementSql = `
               UPDATE requirement
               SET requirement_name = ?, requirement_description = ?, requirement_type = ?`;
-          const updateParams = [requirement_name, requirement_description, requirement_type];
-  
-          // ตรวจสอบว่า frontend ส่ง requirement_status มาหรือไม่
-          if (requirement_status) {
-              updateRequirementSql += `, requirement_status = ?`;
-              updateParams.push(requirement_status);
-               console.log(`Requirement ID: ${id} - Updating status to: ${requirement_status}`);
-          } else {
-              // กรณี Frontend ไม่ส่ง status มา (อาจจะไม่เกิดขึ้นตาม logic ปัจจุบัน)
-              // อาจจะ default เป็น 'WORKING' หรือ ไม่ต้องอัปเดต status เลย
-              // ปัจจุบัน: ไม่ update status ถ้าไม่ส่งมา
-              console.log(`Requirement ID: ${id} - Status not provided in request, status field will not be updated.`);
-               // หรือถ้าต้องการให้เป็น WORKING เสมอเมื่อแก้ไข ก็ใส่:
-               // updateRequirementSql += `, requirement_status = 'WORKING'`;
-               // updateParams.push('WORKING');
-          }
-  
-          updateRequirementSql += ` WHERE requirement_id = ?`;
-          updateParams.push(id);
-  
-          console.log("Executing SQL (Update Requirement):", updateRequirementSql, updateParams);
-  
-          // --- 2. อัปเดต requirement ---
-          db.query(updateRequirementSql, updateParams, (err, updateResult) => {
-              if (err) {
-                  console.error("Error updating requirement:", id, err);
-                  return db.rollback(() => {
-                      console.error("Transaction rolled back due to update requirement error for Requirement ID:", id);
-                      res.status(500).json({ message: "Error updating requirement data" });
-                  });
-              }
-              // ตรวจสอบว่ามีการอัปเดตแถวจริงหรือไม่ (ป้องกันกรณีใส่ ID ผิด)
-              if (updateResult.affectedRows === 0) {
-                  console.error("Requirement update failed for ID:", id, "- ID not found?");
-                   return db.rollback(() => {
-                      console.error("Transaction rolled back because Requirement ID not found:", id);
-                      res.status(404).json({ message: `Requirement with ID ${id} not found.` });
-                  });
-              }
-              console.log("Requirement update successful for ID:", id, "AffectedRows:", updateResult.affectedRows);
-  
-  
-              // --- 3. ลบความสัมพันธ์ไฟล์เก่า *ทั้งหมด* สำหรับ requirement นี้ ---
-              const deleteRelationsSql = "DELETE FROM file_requirement_relation WHERE requirement_id = ?";
-              console.log("Executing SQL (Delete Relations):", deleteRelationsSql, [id]);
-              db.query(deleteRelationsSql, [id], (err, deleteResult) => {
-                  if (err) {
-                      console.error("Error deleting old file relationships for Requirement ID:", id, err);
-                      return db.rollback(() => {
-                          console.error("Transaction rolled back due to delete relations error for Requirement ID:", id);
-                          res.status(500).json({ message: "Error clearing old file relationships" });
-                      });
-                  }
-                  console.log("Delete old relations result for ID:", id, "AffectedRows:", deleteResult.affectedRows);
-  
-                  // --- 4. เพิ่มความสัมพันธ์ใหม่ *ถ้า* มี filereq_ids ส่งมา ---
-                  if (filereq_ids.length > 0) {
-                      const insertRelationSql = "INSERT INTO file_requirement_relation (filereq_id, requirement_id, create_at, update_at) VALUES ?";
-                      // สร้างข้อมูลสำหรับ bulk insert พร้อม timestamp ปัจจุบัน
-                      const relationValues = filereq_ids.map(filereq_id => [filereq_id, id, new Date(), new Date()]);
-                      console.log("Executing SQL (Insert Relations):", insertRelationSql, "for", relationValues.length, "files, Req ID:", id);
-  
-                      db.query(insertRelationSql, [relationValues], (err, insertResult) => {
-                          if (err) {
-                              console.error("Error inserting new file relationships for Requirement ID:", id, err);
-                              // ตรวจสอบ error code สำหรับ duplicate entry (ถ้ามี unique key และไม่ใช้ INSERT IGNORE)
-                               if (err.code === 'ER_DUP_ENTRY') {
-                                  console.error("Duplicate entry detected during insert for Requirement ID:", id);
-                                  // อาจจะ rollback หรือจะแจ้งเตือนแบบอื่น ขึ้นอยู่กับ business logic
-                              }
-                              return db.rollback(() => {
-                                  console.error("Transaction rolled back due to insert relation error for Requirement ID:", id);
-                                  res.status(500).json({ message: "Error inserting new file relationships" });
-                              });
-                          }
-                          console.log("Insert new relations result for ID:", id, "AffectedRows:", insertResult.affectedRows);
-  
-                          // --- 5. Commit Transaction (หลังจาก Insert สำเร็จ) ---
-                          db.commit((err) => {
-                              if (err) {
-                                  console.error("Error committing transaction (after insert) for Requirement ID:", id, err);
-                                  return db.rollback(() => {
-                                      console.error("Transaction rolled back due to commit error (after insert) for Requirement ID:", id);
-                                      res.status(500).json({ message: "Error finalizing update (commit failed)" });
-                                  });
-                              }
-                              console.log("Transaction committed successfully for Requirement ID:", id, "(files relationships updated).");
-                              res.status(200).json({
-                                  message: "Requirement updated and file relationships set successfully."
-                              });
-                          });
-                      }); // End Insert Query
-                  } else {
-                      // --- กรณีไม่มี filereq_ids ส่งมา (ผู้ใช้ลบไฟล์แนบออกหมด) ---
-                      console.log("No new file relationships to insert for Requirement ID:", id, "(All attachments removed or none selected).");
-                      // --- 5. Commit Transaction (เมื่อไม่มีอะไรต้อง Insert) ---
-                      db.commit((err) => {
-                          if (err) {
-                              console.error("Error committing transaction (no files) for Requirement ID:", id, err);
-                              return db.rollback(() => {
-                                  console.error("Transaction rolled back due to commit error (no files) for Requirement ID:", id);
-                                  res.status(500).json({ message: "Error finalizing update (commit failed)" });
-                              });
-                          }
-                          console.log("Transaction committed successfully for Requirement ID:", id, "(no files attached).");
-                          res.status(200).json({
-                              message: "Requirement updated successfully (no files attached)."
-                          });
-                      }); // End Commit (no files)
-                  } // End else (no filereq_ids)
-              }); // End Delete Query
-          }); // End Update Requirement Query
-      }); // End Begin Transaction
-  });
+        const updateParams = [requirement_name, requirement_description, requirement_type];
+
+        // ตรวจสอบว่า frontend ส่ง requirement_status มาหรือไม่
+        if (requirement_status) {
+            updateRequirementSql += `, requirement_status = ?`;
+            updateParams.push(requirement_status);
+            console.log(`Requirement ID: ${id} - Updating status to: ${requirement_status}`);
+        } else {
+            // กรณี Frontend ไม่ส่ง status มา (อาจจะไม่เกิดขึ้นตาม logic ปัจจุบัน)
+            // อาจจะ default เป็น 'WORKING' หรือ ไม่ต้องอัปเดต status เลย
+            // ปัจจุบัน: ไม่ update status ถ้าไม่ส่งมา
+            console.log(`Requirement ID: ${id} - Status not provided in request, status field will not be updated.`);
+            // หรือถ้าต้องการให้เป็น WORKING เสมอเมื่อแก้ไข ก็ใส่:
+            // updateRequirementSql += `, requirement_status = 'WORKING'`;
+            // updateParams.push('WORKING');
+        }
+
+        updateRequirementSql += ` WHERE requirement_id = ?`;
+        updateParams.push(id);
+
+        console.log("Executing SQL (Update Requirement):", updateRequirementSql, updateParams);
+
+        // --- 2. อัปเดต requirement ---
+        db.query(updateRequirementSql, updateParams, (err, updateResult) => {
+            if (err) {
+                console.error("Error updating requirement:", id, err);
+                return db.rollback(() => {
+                    console.error("Transaction rolled back due to update requirement error for Requirement ID:", id);
+                    res.status(500).json({ message: "Error updating requirement data" });
+                });
+            }
+            // ตรวจสอบว่ามีการอัปเดตแถวจริงหรือไม่ (ป้องกันกรณีใส่ ID ผิด)
+            if (updateResult.affectedRows === 0) {
+                console.error("Requirement update failed for ID:", id, "- ID not found?");
+                return db.rollback(() => {
+                    console.error("Transaction rolled back because Requirement ID not found:", id);
+                    res.status(404).json({ message: `Requirement with ID ${id} not found.` });
+                });
+            }
+            console.log("Requirement update successful for ID:", id, "AffectedRows:", updateResult.affectedRows);
+
+
+            // --- 3. ลบความสัมพันธ์ไฟล์เก่า *ทั้งหมด* สำหรับ requirement นี้ ---
+            const deleteRelationsSql = "DELETE FROM file_requirement_relation WHERE requirement_id = ?";
+            console.log("Executing SQL (Delete Relations):", deleteRelationsSql, [id]);
+            db.query(deleteRelationsSql, [id], (err, deleteResult) => {
+                if (err) {
+                    console.error("Error deleting old file relationships for Requirement ID:", id, err);
+                    return db.rollback(() => {
+                        console.error("Transaction rolled back due to delete relations error for Requirement ID:", id);
+                        res.status(500).json({ message: "Error clearing old file relationships" });
+                    });
+                }
+                console.log("Delete old relations result for ID:", id, "AffectedRows:", deleteResult.affectedRows);
+
+                // --- 4. เพิ่มความสัมพันธ์ใหม่ *ถ้า* มี filereq_ids ส่งมา ---
+                if (filereq_ids.length > 0) {
+                    const insertRelationSql = "INSERT INTO file_requirement_relation (filereq_id, requirement_id, create_at, update_at) VALUES ?";
+                    // สร้างข้อมูลสำหรับ bulk insert พร้อม timestamp ปัจจุบัน
+                    const relationValues = filereq_ids.map(filereq_id => [filereq_id, id, new Date(), new Date()]);
+                    console.log("Executing SQL (Insert Relations):", insertRelationSql, "for", relationValues.length, "files, Req ID:", id);
+
+                    db.query(insertRelationSql, [relationValues], (err, insertResult) => {
+                        if (err) {
+                            console.error("Error inserting new file relationships for Requirement ID:", id, err);
+                            // ตรวจสอบ error code สำหรับ duplicate entry (ถ้ามี unique key และไม่ใช้ INSERT IGNORE)
+                            if (err.code === 'ER_DUP_ENTRY') {
+                                console.error("Duplicate entry detected during insert for Requirement ID:", id);
+                                // อาจจะ rollback หรือจะแจ้งเตือนแบบอื่น ขึ้นอยู่กับ business logic
+                            }
+                            return db.rollback(() => {
+                                console.error("Transaction rolled back due to insert relation error for Requirement ID:", id);
+                                res.status(500).json({ message: "Error inserting new file relationships" });
+                            });
+                        }
+                        console.log("Insert new relations result for ID:", id, "AffectedRows:", insertResult.affectedRows);
+
+                        // --- 5. Commit Transaction (หลังจาก Insert สำเร็จ) ---
+                        db.commit((err) => {
+                            if (err) {
+                                console.error("Error committing transaction (after insert) for Requirement ID:", id, err);
+                                return db.rollback(() => {
+                                    console.error("Transaction rolled back due to commit error (after insert) for Requirement ID:", id);
+                                    res.status(500).json({ message: "Error finalizing update (commit failed)" });
+                                });
+                            }
+                            console.log("Transaction committed successfully for Requirement ID:", id, "(files relationships updated).");
+                            res.status(200).json({
+                                message: "Requirement updated and file relationships set successfully."
+                            });
+                        });
+                    }); // End Insert Query
+                } else {
+                    // --- กรณีไม่มี filereq_ids ส่งมา (ผู้ใช้ลบไฟล์แนบออกหมด) ---
+                    console.log("No new file relationships to insert for Requirement ID:", id, "(All attachments removed or none selected).");
+                    // --- 5. Commit Transaction (เมื่อไม่มีอะไรต้อง Insert) ---
+                    db.commit((err) => {
+                        if (err) {
+                            console.error("Error committing transaction (no files) for Requirement ID:", id, err);
+                            return db.rollback(() => {
+                                console.error("Transaction rolled back due to commit error (no files) for Requirement ID:", id);
+                                res.status(500).json({ message: "Error finalizing update (commit failed)" });
+                            });
+                        }
+                        console.log("Transaction committed successfully for Requirement ID:", id, "(no files attached).");
+                        res.status(200).json({
+                            message: "Requirement updated successfully (no files attached)."
+                        });
+                    }); // End Commit (no files)
+                } // End else (no filereq_ids)
+            }); // End Delete Query
+        }); // End Update Requirement Query
+    }); // End Begin Transaction
+});
 
 app.post('/requirement', (req, res) => {
     const { requirement_name, requirement_type, requirement_description, requirement_status, project_id, filereq_ids } = req.body;
@@ -782,17 +782,17 @@ app.put('/requirement/:requirementId/status', (req, res) => {
 // filter status VERIFIED AND VALIDATED
 app.get("/api/requirements/", (req, res) => {
     const sqlQuery = "SELECT * FROM historyreq WHERE requirement_status IN ('VERIFIED', 'VALIDATED');";
-  
+
     // ตัวอย่างการใช้งานแบบ Callback (เช่น ไลบรารี mysql)
     db.query(sqlQuery, (err, results) => {
-      if (err) {
-        console.error("Error querying database:", err);
-        return res.status(500).json({ error: "Database query error" });
-      }
-      res.status(200).json(results); // ส่งผลลัพธ์กลับไปเป็น JSON
+        if (err) {
+            console.error("Error querying database:", err);
+            return res.status(500).json({ error: "Database query error" });
+        }
+        res.status(200).json(results); // ส่งผลลัพธ์กลับไปเป็น JSON
     });
-  
-  });
+
+});
 // ------------------------- File Requirement ---------------------------------
 
 // API to fetch file data along with all requirement_ids
@@ -841,7 +841,10 @@ app.get("/api/file/content/:filereq_id", (req, res) => {
 // Fetch all criteria
 app.get('/reqcriteria', (req, res) => {
     const { project_id } = req.query;
-    let sql = "SELECT * FROM requirementcriteria";
+    let sql = `
+        SELECT reqcri_id, reqcri_name, project_id, created_by, created_at 
+        FROM requirementcriteria
+    `;
     let params = [];
 
     if (project_id) {
@@ -858,9 +861,8 @@ app.get('/reqcriteria', (req, res) => {
     });
 });
 
-
 app.post('/reqcriteria', (req, res) => {
-    const { reqcri_name, project_id } = req.body;
+    const { reqcri_name, project_id, created_by } = req.body;
 
     if (!reqcri_name || reqcri_name.trim() === "") {
         return res.status(400).json({ message: "Criteria name is required" });
@@ -868,9 +870,13 @@ app.post('/reqcriteria', (req, res) => {
     if (!project_id) {
         return res.status(400).json({ message: "Project ID is required" });
     }
+    if (!created_by || created_by.trim() === "") {
+        return res.status(400).json({ message: "Created by username is required" });
+    }
 
-    const sql = "INSERT INTO requirementcriteria (reqcri_name, project_id) VALUES (?, ?)";
-    db.query(sql, [reqcri_name, project_id], (err, result) => {
+    // สมมติว่าตารางมี column created_by และ created_at (timestamp)
+    const sql = "INSERT INTO requirementcriteria (reqcri_name, project_id, created_by, created_at) VALUES (?, ?, ?, NOW())";
+    db.query(sql, [reqcri_name, project_id, created_by], (err, result) => {
         if (err) {
             console.error('Error creating criteria:', err);
             return res.status(500).json({ message: "Error creating criteria" });
@@ -907,34 +913,67 @@ app.put('/reqcriteria/:id', (req, res) => {
 
 app.delete('/reqcriteria/:id', (req, res) => {
     const { id } = req.params;
-    const { project_id } = req.body; // หรือใช้ req.query ก็ได้
+    const { project_id, deleted_by } = req.body;
+    const username = deleted_by || 'Unknown';
 
     if (!project_id) {
         return res.status(400).json({ message: "Project ID is required" });
     }
 
-    const checkSql = "SELECT * FROM requirementcriteria WHERE reqcri_id = ? AND project_id = ?";
+    const checkSql = "SELECT reqcri_name FROM requirementcriteria WHERE reqcri_id = ? AND project_id = ?";
     const deleteSql = "DELETE FROM requirementcriteria WHERE reqcri_id = ? AND project_id = ?";
+    const insertLogSql = "INSERT INTO deletion_log (table_name, record_id, deleted_by, old_data) VALUES (?, ?, ?, ?)";
 
-    db.query(checkSql, [id, project_id], (err, result) => {
+    db.query(checkSql, [id, project_id], (err, results) => {
         if (err) {
             console.error('Error checking criteria:', err);
             return res.status(500).json({ message: "Error checking criteria" });
         }
-
-        if (result.length === 0) {
+        if (results.length === 0) {
             return res.status(404).json({ message: "Criteria not found or project mismatch" });
         }
 
-        db.query(deleteSql, [id, project_id], (err, result) => {
-            if (err) {
-                console.error('Error deleting criteria:', err);
-                return res.status(500).json({ message: "Error deleting criteria" });
+        const oldData = JSON.stringify({ reqcri_name: results[0].reqcri_name }); // 🔥 keep only reqcri_name
+
+        db.query(insertLogSql, ['requirementcriteria', id, username, oldData], (logErr) => {
+            if (logErr) {
+                console.error('Error logging deletion:', logErr);
             }
-            res.status(200).json({ message: "Criteria deleted successfully" });
+
+            db.query(deleteSql, [id, project_id], (delErr) => {
+                if (delErr) {
+                    console.error('Error deleting criteria:', delErr);
+                    return res.status(500).json({ message: "Error deleting criteria" });
+                }
+                res.status(200).json({ message: "Criteria deleted successfully" });
+            });
         });
     });
 });
+
+app.get('/deletionlogs', (req, res) => {
+    const { table_name } = req.query;
+
+    if (!table_name) {
+        return res.status(400).json({ message: "table_name is required" });
+    }
+
+    const sql = `
+        SELECT * FROM deletion_log 
+        WHERE table_name = ?
+        ORDER BY deleted_at DESC
+        LIMIT 50
+    `;
+
+    db.query(sql, [table_name], (err, results) => {
+        if (err) {
+            console.error("Error fetching deletion logs:", err);
+            return res.status(500).json({ message: "Error fetching deletion logs" });
+        }
+        res.json({ data: results });
+    });
+});
+
 
 // ------------------------- Requirement Verified -------------------------
 app.get('/project/:project_id/reqverified', (req, res) => {
@@ -1286,8 +1325,8 @@ app.get('/verification-history/:project_id', (req, res) => { // เปลี่�
             // 4. จัดการ Error ที่อาจเกิดตอน Process ผลลัพธ์ (เช่น JSON.parse ผิดพลาด)
             console.error('Error processing database results:', processingError);
             res.status(500).json({
-                 message: 'Error processing database results.',
-                 error_details: processingError.message
+                message: 'Error processing database results.',
+                error_details: processingError.message
             });
         }
     }); // End of db.query callback
@@ -1508,34 +1547,34 @@ app.get('/api/requirements/:requirementId/files', (req, res) => {
 
 // Endpoint: /vericri_req
 app.post("/vericri_req", (req, res) => {
-  // 1. เอา verification_id ออกจาก destructuring
-  const { project_id, reqcri_name, requirement_id, requirement_name, requirement_description, requirement_type } = req.body;
+    // 1. เอา verification_id ออกจาก destructuring
+    const { project_id, reqcri_name, requirement_id, requirement_name, requirement_description, requirement_type } = req.body;
 
-  // 2. เอา !verification_id ออกจากการตรวจสอบ (ถ้ายังต้องการเช็คค่าอื่น ก็คงไว้)
-  if (!project_id || !reqcri_name || !requirement_id || !requirement_name || !requirement_description || !requirement_type) {
-    // ถ้า reqcri_names อาจเป็นค่าว่างได้ ก็อาจจะต้องเอา !reqcri_names ออกด้วย
-    return res.status(400).json({ error: "Missing required data for vericri_req" }); 
-  }
-
-  // 3. เอา verification_id ออกจาก SQL INSERT (ทั้งชื่อคอลัมน์ และ ?)
-  const sql = `INSERT INTO vericri_req (project_id, reqcri_name, requirement_id, requirement_name, requirement_description, requirement_type) VALUES (?, ?, ?, ?, ?, ?)`;
-  
-  // 4. เอา verification_id ออกจาก array ของ values
-  const values = [project_id, reqcri_name, requirement_id, requirement_name, requirement_description, requirement_type];
-
-  // ส่วน db.query ยังคงเดิม
-  db.query(sql, values, (err, result) => {
-    if (err) {
-      // ถ้า Error ตรงนี้ อาจจะเป็นเพราะ Database Schema ไม่ตรงกับ SQL ใหม่
-      console.error("Database error inserting vericri_req:", err); 
-      return res.status(500).json({ error: "Database error processing vericri_req" });
+    // 2. เอา !verification_id ออกจากการตรวจสอบ (ถ้ายังต้องการเช็คค่าอื่น ก็คงไว้)
+    if (!project_id || !reqcri_name || !requirement_id || !requirement_name || !requirement_description || !requirement_type) {
+        // ถ้า reqcri_names อาจเป็นค่าว่างได้ ก็อาจจะต้องเอา !reqcri_names ออกด้วย
+        return res.status(400).json({ error: "Missing required data for vericri_req" });
     }
-    res.json({ success: true, message: "vericri_req data saved." }); // ส่ง response ที่สื่อความหมายมากขึ้น (optional)
-  });
-});
-    
 
-  app.get('/vericri_req', (req, res) => {
+    // 3. เอา verification_id ออกจาก SQL INSERT (ทั้งชื่อคอลัมน์ และ ?)
+    const sql = `INSERT INTO vericri_req (project_id, reqcri_name, requirement_id, requirement_name, requirement_description, requirement_type) VALUES (?, ?, ?, ?, ?, ?)`;
+
+    // 4. เอา verification_id ออกจาก array ของ values
+    const values = [project_id, reqcri_name, requirement_id, requirement_name, requirement_description, requirement_type];
+
+    // ส่วน db.query ยังคงเดิม
+    db.query(sql, values, (err, result) => {
+        if (err) {
+            // ถ้า Error ตรงนี้ อาจจะเป็นเพราะ Database Schema ไม่ตรงกับ SQL ใหม่
+            console.error("Database error inserting vericri_req:", err);
+            return res.status(500).json({ error: "Database error processing vericri_req" });
+        }
+        res.json({ success: true, message: "vericri_req data saved." }); // ส่ง response ที่สื่อความหมายมากขึ้น (optional)
+    });
+});
+
+
+app.get('/vericri_req', (req, res) => {
     const { project_id, requirement_id } = req.query;
 
     // ตรวจสอบว่ามีค่า project_id และ requirement_id หรือไม่
@@ -1797,7 +1836,7 @@ app.get("/files/:id", (req, res) => {
         }
 
         const fileName = encodeURIComponent(file.filereq_name || "download.pdf");
-        
+
         res.setHeader("Content-Type", "application/pdf");
         res.setHeader("Content-Disposition", `attachment; filename="${fileName}"`);
 
@@ -2247,7 +2286,7 @@ app.put('/var_comment/:commentId', (req, res) => { // 1. เพิ่ม :commen
             console.error('Error updating comment:', err);
             res.status(500).send('Error updating comment');
         } else if (result.affectedRows === 0) {
-             // เพิ่มการตรวจสอบว่ามีการ update เกิดขึ้นจริงหรือไม่ (commentId นั้นมีอยู่จริงหรือไม่)
+            // เพิ่มการตรวจสอบว่ามีการ update เกิดขึ้นจริงหรือไม่ (commentId นั้นมีอยู่จริงหรือไม่)
             res.status(404).send('Comment not found or no change made');
         } else {
             res.status(200).send('Comment updated successfully'); // ใช้ status 200 OK
@@ -2262,42 +2301,42 @@ app.put('/var_comment/:commentId', (req, res) => { // 1. เพิ่ม :commen
 app.delete('/deletecomments/:commentId', (req, res) => {
     // 1. ดึง commentId จาก URL parameter ที่ส่งมาจาก frontend
     const commentId = req.params.commentId;
-  
+
     // 2. ตรวจสอบเบื้องต้นว่า commentId มีค่าหรือไม่
     if (!commentId) {
-      // ถ้าไม่มี ID ส่งมา ให้ตอบกลับเป็น Bad Request (400)
-      return res.status(400).json({ success: false, message: 'Comment ID is required.' });
+        // ถ้าไม่มี ID ส่งมา ให้ตอบกลับเป็น Bad Request (400)
+        return res.status(400).json({ success: false, message: 'Comment ID is required.' });
     }
-  
+
     // 3. สร้าง SQL query สำหรับลบข้อมูล
     // *** ใช้ชื่อตาราง `comment_var` และชื่อคอลัมน์ `comment_var_id` ตามรูป ***
     const sql = "DELETE FROM comment_var WHERE comment_var_id = ?";
-  
+
     // 4. สั่งให้ database ทำงาน (execute query)
     // ส่ง commentId เข้าไปเป็น parameter เพื่อป้องกัน SQL Injection
     db.query(sql, [commentId], (err, result) => {
-      // 5. จัดการกับ Error ที่อาจเกิดขึ้นจาก Database
-      if (err) {
-        console.error("Error deleting comment from database:", err);
-        // ตอบกลับเป็น Internal Server Error (500) ถ้ามีปัญหาที่ database
-        return res.status(500).json({ success: false, message: 'Database error occurred while deleting comment.' });
-      }
-  
-      // 6. ตรวจสอบว่ามีการลบข้อมูลเกิดขึ้นจริงหรือไม่
-      // result.affectedRows จะบอกจำนวนแถวที่ได้รับผลกระทบ (ถูกลบ)
-      if (result.affectedRows === 0) {
-        // ถ้า affectedRows เป็น 0 แสดงว่าไม่พบคอมเมนต์ ID นั้นในตาราง
-        return res.status(404).json({ success: false, message: 'Comment not found.' });
-      }
-  
-      // 7. ถ้าทุกอย่างสำเร็จ
-      console.log(`Successfully deleted comment with ID: ${commentId}`);
-      // ตอบกลับด้วย status 200 OK และข้อความยืนยัน
-      res.status(200).json({ success: true, message: 'Comment deleted successfully.' });
+        // 5. จัดการกับ Error ที่อาจเกิดขึ้นจาก Database
+        if (err) {
+            console.error("Error deleting comment from database:", err);
+            // ตอบกลับเป็น Internal Server Error (500) ถ้ามีปัญหาที่ database
+            return res.status(500).json({ success: false, message: 'Database error occurred while deleting comment.' });
+        }
+
+        // 6. ตรวจสอบว่ามีการลบข้อมูลเกิดขึ้นจริงหรือไม่
+        // result.affectedRows จะบอกจำนวนแถวที่ได้รับผลกระทบ (ถูกลบ)
+        if (result.affectedRows === 0) {
+            // ถ้า affectedRows เป็น 0 แสดงว่าไม่พบคอมเมนต์ ID นั้นในตาราง
+            return res.status(404).json({ success: false, message: 'Comment not found.' });
+        }
+
+        // 7. ถ้าทุกอย่างสำเร็จ
+        console.log(`Successfully deleted comment with ID: ${commentId}`);
+        // ตอบกลับด้วย status 200 OK และข้อความยืนยัน
+        res.status(200).json({ success: true, message: 'Comment deleted successfully.' });
     });
-  });
-  
-  // --- อย่าลืม export app หรือ start server ของคุณ ---
+});
+
+// --- อย่าลืม export app หรือ start server ของคุณ ---
 
 app.post('/comments', (req, res) => {
     const { member_name, comment_var_text } = req.body;
@@ -2569,8 +2608,8 @@ app.post('/historyReqWorking', (req, res) => {
     const {
         requirement_id,
         requirement_name,
-        requirement_description, 
-        requirement_type,        
+        requirement_description,
+        requirement_type,
         requirement_status
     } = req.body;
 
@@ -2628,122 +2667,6 @@ app.get('/getHistoryByRequirementId', (req, res) => {
         console.log('Fetched History:', data);  // ตรวจสอบว่าได้รับข้อมูลจากฐานข้อมูล
         return res.status(200).json({ message: "History fetched successfully", data });
     });
-});
-
-// Assuming your database connection is named 'db'
-// Assuming 'db' is your database connection object (e.g., from mysql or mysql2 library)
-
-app.put("/historyReqWorking/timestamp/:requirementId", (req, res) => {
-    const { requirementId } = req.params;
-
-    // --- การตรวจสอบข้อมูลเบื้องต้น ---
-    if (!requirementId) {
-        console.error("Validation Error: Missing requirementId for history timestamp update.");
-        return res.status(400).json({ message: "Missing requirementId in URL path" });
-    }
-
-    console.log(`Received PUT request for history timestamp update for Requirement ID: ${requirementId}`);
-
-    // --- เริ่ม Transaction ---
-    // การใช้ Transaction ช่วยให้มั่นใจได้ว่าการดำเนินการทั้งหมดสำเร็จหรือล้มเหลวพร้อมกัน
-    db.beginTransaction(err => {
-        if (err) {
-            console.error(`Error beginning transaction for history timestamp update (Req ID: ${requirementId}):`, err);
-            // ในกรณีที่ db เป็น connection เดียว ไม่ต้อง db.release()
-            return res.status(500).json({ message: "Error starting database transaction" });
-        }
-        console.log(`Transaction started for history timestamp update (Req ID: ${requirementId}).`);
-
-        // --- 1. ค้นหา historyreq_id ล่าสุดสำหรับ requirement_id นี้ ---
-        // เราต้องการแค่ ID ของแถวประวัติที่ใหม่ที่สุด
-        const findLatestHistorySql = `
-            SELECT historyreq_id
-            FROM historyreq -- หรือชื่อตารางประวัติ Requirement ของคุณ
-            WHERE requirement_id = ?
-            ORDER BY historyreq_at DESC -- เรียงจากเวลาสร้างล่าสุดไปเก่าสุด
-            LIMIT 1; -- เอามาแค่แถวเดียวคือแถวล่าสุด
-        `;
-        console.log("Executing SQL (Find Latest History):", findLatestHistorySql, [requirementId]);
-
-        db.query(findLatestHistorySql, [requirementId], (err, results) => {
-            if (err) {
-                console.error(`Error finding latest history entry for Req ID: ${requirementId}`, err);
-                // หากเกิด error ในการค้นหา ให้ทำการ Rollback Transaction
-                return db.rollback(() => {
-                    console.error(`Transaction rolled back due to find latest history error for Req ID: ${requirementId}`);
-                    res.status(500).json({ message: "Error finding latest history entry" });
-                });
-            }
-
-            // --- 2. ตรวจสอบว่าเจอแถวประวัติล่าสุดหรือไม่ ---
-            if (results.length === 0) {
-                // หากไม่พบประวัติใดๆ เลยสำหรับ requirement ID นี้
-                console.warn(`No history entry found for Req ID: ${requirementId}. Cannot update timestamp.`);
-                // ในกรณีนี้ ถือว่าไม่ได้เกิดข้อผิดพลาดร้ายแรง แต่ก็ไม่มีอะไรให้อัปเดต
-                // เราสามารถ Commit Transaction ว่างๆ ไป และส่ง response บอกว่าไม่พบ
-                 return db.commit(commitErr => {
-                      if (commitErr) {
-                           console.error(`Error committing transaction after no history found for Req ID: ${requirementId}`, commitErr);
-                           // Rollback ถ้า Commit ว่างๆ ล้มเหลว (ไม่น่าจะเกิดขึ้นบ่อย)
-                           return db.rollback(() => {
-                                console.error(`Transaction rolled back due to commit error after no history found for Req ID: ${requirementId}`);
-                                res.status(500).json({ message: "Error finalizing update" });
-                           });
-                      }
-                      // ส่ง status 200 แต่มีข้อความบอกว่าไม่พบรายการ
-                      res.status(200).json({ message: "No history entry found to update timestamp." });
-                 });
-            }
-
-            const latestHistoryId = results[0].historyreq_id;
-            console.log(`Found latest history ID: ${latestHistoryId} for Req ID: ${requirementId}`);
-
-            // --- 3. อัปเดต timestamp ของแถวประวัติล่าสุดที่พบ ---
-            // ใช้ NOW() เพื่อให้ได้เวลาปัจจุบันจากฐานข้อมูล ซึ่งแม่นยำกว่าเวลาจาก client
-            const updateTimestampSql = `
-                UPDATE historyreq -- หรือชื่อตารางประวัติ Requirement ของคุณ
-                SET historyreq_at = NOW() -- อัปเดตฟิลด์เวลาที่ใช้บันทึกประวัติ
-                -- , update_at = NOW() -- ถ้าคุณมีฟิลด์ update_at ในตาราง historyreq ก็ควรอัปเดตด้วย
-                WHERE historyreq_id = ?;
-            `;
-            console.log("Executing SQL (Update History Timestamp):", updateTimestampSql, [latestHistoryId]);
-
-            db.query(updateTimestampSql, [latestHistoryId], (err, updateResult) => {
-                if (err) {
-                    console.error(`Error updating history timestamp for history ID: ${latestHistoryId} (Req ID: ${requirementId})`, err);
-                    // หากเกิด error ในการอัปเดต ให้ทำการ Rollback Transaction
-                    return db.rollback(() => {
-                         console.error(`Transaction rolled back due to update timestamp error for history ID: ${latestHistoryId} (Req ID: ${requirementId})`);
-                         res.status(500).json({ message: "Error updating history timestamp" });
-                    });
-                }
-
-                // ตรวจสอบว่ามีแถวที่ถูกอัปเดตจริงหรือไม่ (ควรจะเป็น 1 ถ้า find ล่าสุดเจอ)
-                 if (updateResult.affectedRows === 0) {
-                      console.warn(`History timestamp update affected 0 rows for history ID ${latestHistoryId} (Req ID: ${requirementId}). This is unexpected.`);
-                      // อาจจะยัง Commit ได้ แต่ log warning ไว้
-                 } else {
-                      console.log(`History timestamp updated successfully for history ID: ${latestHistoryId} (Req ID: ${requirementId}). Affected Rows: ${updateResult.affectedRows}`);
-                 }
-
-
-                // --- 4. Commit Transaction เมื่อทุกอย่างสำเร็จ ---
-                db.commit((commitErr) => {
-                    if (commitErr) {
-                        console.error(`Error committing transaction after history timestamp update for Req ID: ${requirementId}`, commitErr);
-                        // หาก Commit ล้มเหลว ให้ Rollback
-                        return db.rollback(() => {
-                            console.error(`Transaction rolled back due to commit error after history timestamp update for Req ID: ${requirementId}`);
-                            res.status(500).json({ message: "Error finalizing update (commit failed)" });
-                        });
-                    }
-                    console.log(`Transaction committed successfully for Req ID: ${requirementId} (history timestamp updated).`);
-                    // ส่ง response ว่าสำเร็จ
-                    res.status(200).json({ message: "History timestamp updated successfully." });
-                });
-            }); // End Update History Timestamp Query
-        }); // End Find Latest History Query
-    }); // End Begin Transaction
 });
 
 // ----------------------------- DESIGN ------------------------------
@@ -2904,7 +2827,7 @@ app.get("/design", (req, res) => {
 app.get("/designedit", (req, res) => {
     const { project_id, design_id } = req.query;
     if (!project_id) return res.status(400).json({ error: "Project ID is required." });
-  
+
     let query = `
         SELECT 
             d.design_id, 
@@ -2925,14 +2848,14 @@ app.get("/designedit", (req, res) => {
         LEFT JOIN file_design fd ON fdr.file_design_id = fd.file_design_id
         WHERE d.project_id = ?
     `;
-  
+
     const params = [project_id];
-  
+
     if (design_id) {
         query += " AND d.design_id = ?";
         params.push(design_id);
     }
-  
+
     db.query(query, params, (err, results) => {
         if (err) {
             console.error("Error fetching designs:", err);
@@ -2942,7 +2865,7 @@ app.get("/designedit", (req, res) => {
             res.status(200).json(results);
         }
     });
-  });
+});
 
 app.put("/design/:designId", (req, res) => { // Removed async
     const { designId } = req.params;
@@ -2966,7 +2889,7 @@ app.put("/design/:designId", (req, res) => { // Removed async
 
     if (!diagram_name || !design_type || !diagram_type || !design_description || !design_status) {
         const missingFields = ['diagram_name', 'design_type', 'diagram_type', 'design_description', 'design_status']
-                              .filter(field => !req.body[field]);
+            .filter(field => !req.body[field]);
         return res.status(400).json({ message: `Missing required fields: ${missingFields.join(', ')}.` });
     }
 
@@ -2994,9 +2917,9 @@ app.put("/design/:designId", (req, res) => { // Removed async
     let projectIdNum = null;
     if (project_id !== undefined && project_id !== null) {
         if (isNaN(parseInt(project_id, 10))) {
-             return res.status(400).json({ message: "Invalid project_id format. Must be an integer." });
+            return res.status(400).json({ message: "Invalid project_id format. Must be an integer." });
         }
-         projectIdNum = parseInt(project_id, 10);
+        projectIdNum = parseInt(project_id, 10);
     }
     // --- End Validation ---
 
@@ -3018,7 +2941,7 @@ app.put("/design/:designId", (req, res) => { // Removed async
     // --- SQL Parameters --- (No changes needed here)
     const designParams = [];
     if (projectIdNum !== null) {
-         designParams.push(projectIdNum);
+        designParams.push(projectIdNum);
     }
     designParams.push(
         diagram_name,
@@ -3038,7 +2961,7 @@ app.put("/design/:designId", (req, res) => { // Removed async
         // Error Handling
         if (err) {
             console.error("❌ Error updating design metadata:", err);
-             // Optional: Check for specific DB errors like foreign key violations if needed
+            // Optional: Check for specific DB errors like foreign key violations if needed
             if (projectIdNum !== null && err.code === 'ER_NO_REFERENCED_ROW_2' && err.sqlMessage.includes("project_id")) {
                 return res.status(400).json({ message: `Update failed: Project ID ${projectIdNum} does not exist.` });
             }
@@ -3190,8 +3113,8 @@ app.get('/getHistoryByDesignId', (req, res) => {
         }
 
         if (data.length === 0) {
-             console.log(`No history found for design_id: ${designId}`);
-             return res.status(200).json({ message: "No history found for this design ID", data: [] });
+            console.log(`No history found for design_id: ${designId}`);
+            return res.status(200).json({ message: "No history found for this design ID", data: [] });
         }
 
         console.log(`Workspaceed Design History (with name) for design_id: ${designId}`, data);
@@ -3224,8 +3147,8 @@ app.post("/uploadDesignFiles", upload.array("files"), (req, res) => {
     const numericProjectId = parseInt(project_id, 10);
     const numericDesignId = parseInt(design_id, 10);
     if (isNaN(numericProjectId) || isNaN(numericDesignId)) {
-         console.error("Validation Error: project_id or design_id is not a valid number.");
-         return res.status(400).json({ message: "project_id and design_id must be numbers" });
+        console.error("Validation Error: project_id or design_id is not a valid number.");
+        return res.status(400).json({ message: "project_id and design_id must be numbers" });
     }
 
 
@@ -3242,11 +3165,11 @@ app.post("/uploadDesignFiles", upload.array("files"), (req, res) => {
                     (file_design_data, create_at, update_at, project_id)
                 VALUES (?, NOW(), NOW(), ?)
             `; // Removed file_design_name
-    
+
             console.log(`Executing SQL: ${sqlFile.trim().replace(/\s+/g, ' ')}`);
             // Params WITHOUT file.originalname
             console.log(`Params: [Buffer length: ${file.buffer.length}, ${numericProjectId}]`);
-    
+
             // Execute query WITHOUT file.originalname
             db.query(sqlFile, [file.buffer, numericProjectId], (err, result) => {
                 if (err) {
@@ -3274,31 +3197,31 @@ app.post("/uploadDesignFiles", upload.array("files"), (req, res) => {
                 return new Promise((resolve, reject) => {
                     // --- คำนวณ Unix timestamp (Integer) ---
                     const currentTimestamp = Math.floor(Date.now() / 1000);
-            
+
                     // --- แก้ไข SQL Query ---
                     const sqlRelation = `
                         INSERT INTO file_design_relation
                             (file_design_id, design_id, uploaded_at)
                         VALUES (?, ?, ?)  -- <<< เปลี่ยน NOW() เป็น ?
                     `; // Using NOW() directly assuming 'uploaded_at' is TIMESTAMP/DATETIME
-            
+
                     console.log(`Executing SQL (relation insert): Params: [${fileDesignId}, ${numericDesignId}, ${currentTimestamp}]`); // <<< เพิ่ม currentTimestamp ใน log
-            
+
                     // --- แก้ไข Parameters ที่ส่งให้ Query ---
                     db.query(sqlRelation, [fileDesignId, numericDesignId, currentTimestamp], (err, result) => { // <<< เพิ่ม currentTimestamp เป็น parameter ที่ 3
                         if (err) {
                             console.error(`SQL Error inserting relation for file_id ${fileDesignId}, design_id ${numericDesignId}:`, err);
                             if (err.code === 'ER_NO_REFERENCED_ROW_2' || err.errno === 1452) {
-                                 reject({ step: 'relation_insert', message: `Database error: Invalid reference key (file_id: ${fileDesignId} or design_id: ${numericDesignId}).`, details: err, status: 400 });
+                                reject({ step: 'relation_insert', message: `Database error: Invalid reference key (file_id: ${fileDesignId} or design_id: ${numericDesignId}).`, details: err, status: 400 });
                             } else {
-                                 reject({ step: 'relation_insert', message: "Database error creating file relation", details: err });
+                                reject({ step: 'relation_insert', message: "Database error creating file relation", details: err });
                             }
                         } else {
                             resolve({ file_design_id: fileDesignId, success: true });
                         }
                     });
                 });
-            });            
+            });
 
             // Wait for all relations to be inserted
             return Promise.all(relationInsertPromises);
@@ -3432,12 +3355,12 @@ app.post("/addHistoryDesign", (req, res) => {
     if (design_id === undefined || requirement_id === undefined || design_type === undefined || diagram_name === undefined || diagram_type === undefined || design_description === undefined || design_status === undefined) {
         // สร้างข้อความ error ที่ชัดเจนขึ้น (ถ้าต้องการ)
         const missingFields = Object.entries({ design_id, requirement_id, design_type, diagram_name, diagram_type, design_description, design_status })
-                                   .filter(([key, value]) => value === undefined)
-                                   .map(([key]) => key);
+            .filter(([key, value]) => value === undefined)
+            .map(([key]) => key);
         return res.status(400).json({
             message: "ข้อมูลไม่ครบถ้วน กรุณาระบุฟิลด์: " + missingFields.join(', '),
             missingFields: missingFields
-         });
+        });
     }
 
     // 3. อัปเดต SQL query ให้รวมคอลัมน์ใหม่
@@ -3476,10 +3399,10 @@ app.post("/addHistoryDesign", (req, res) => {
 
         console.log(`📜 Design History added: ID ${result.insertId}, Design ID: ${design_id}, Status: ${design_status}`);
         return res.status(201).json({ // เปลี่ยนเป็น 201 Created เพื่อความถูกต้องตาม RESTful
-             message: "บันทึกประวัติการออกแบบสำเร็จ!",
-             history_id: result.insertId, // ส่ง ID ของ record ที่เพิ่งสร้างกลับไป
-             insertedData: req.body // อาจจะส่งข้อมูลที่รับมากลับไปด้วย
-         });
+            message: "บันทึกประวัติการออกแบบสำเร็จ!",
+            history_id: result.insertId, // ส่ง ID ของ record ที่เพิ่งสร้างกลับไป
+            insertedData: req.body // อาจจะส่งข้อมูลที่รับมากลับไปด้วย
+        });
     });
 });
 
@@ -3567,11 +3490,11 @@ app.get('/veridesign-history/:project_id', (req, res) => {
                             console.warn(`Parsed veridesign_by for log ${item.veridesign_id} is NOT a valid object:`, veriDesignByParsed);
                             veriDesignByParsed = {}; // Reset to empty object if not a valid object structure
                         } else {
-                             console.log(`Successfully parsed veridesign_by for log ${item.veridesign_id} into object:`, veriDesignByParsed);
+                            console.log(`Successfully parsed veridesign_by for log ${item.veridesign_id} into object:`, veriDesignByParsed);
                         }
                     } else {
                         // If the DB column is NULL or empty string, keep it as an empty object
-                         console.log(`veridesign_by for log ${item.veridesign_id} is null or empty in DB. Defaulting to {}.`);
+                        console.log(`veridesign_by for log ${item.veridesign_id} is null or empty in DB. Defaulting to {}.`);
                         veriDesignByParsed = {};
                     }
                 } catch (e) {
@@ -3597,15 +3520,15 @@ app.get('/veridesign-history/:project_id', (req, res) => {
             }); // End of map
 
             // 3. Send the processed results
-             console.log("Sending processed history data to frontend."); // Log before sending
+            console.log("Sending processed history data to frontend."); // Log before sending
             res.status(200).json(processedResults);
 
         } catch (processingError) {
             // 4. Handle unexpected errors during the .map() processing phase
             console.error('Error processing design history results after query:', processingError);
             res.status(500).json({
-                 message: 'Server error processing design history results.',
-                 error_details: processingError.message
+                message: 'Server error processing design history results.',
+                error_details: processingError.message
             });
         }
     }); // End of db.query callback
@@ -3613,8 +3536,8 @@ app.get('/veridesign-history/:project_id', (req, res) => {
 //----------------------------------------- DESIGN CRITERIA -----------------------------------------------------
 // Fetch all criteria
 app.get('/designcriteria/:projectId', (req, res) => {
-    const { projectId } = req.params;  // ดึง projectId จาก URL params
-    const sql = "SELECT * FROM designcriteria WHERE project_id = ?";
+    const { projectId } = req.params;
+    const sql = "SELECT design_cri_id, design_cri_name, project_id, last_updated_by, last_updated_at FROM designcriteria WHERE project_id = ?";
 
     db.query(sql, [projectId], (err, result) => {
         if (err) {
@@ -3626,13 +3549,13 @@ app.get('/designcriteria/:projectId', (req, res) => {
             return res.status(404).json({ message: 'ไม่พบข้อมูล Design Criteria' });
         }
 
-        res.status(200).json(result);  // ส่งข้อมูลไปยัง frontend
+        res.status(200).json(result);
     });
 });
 
 // Add new criteria
 app.post('/designcriteria', (req, res) => {
-    const { design_cri_name, project_id } = req.body;
+    const { design_cri_name, project_id, last_updated_by } = req.body;
 
     if (!design_cri_name || design_cri_name.trim() === "") {
         return res.status(400).json({ message: "Criteria name is required" });
@@ -3642,8 +3565,12 @@ app.post('/designcriteria', (req, res) => {
         return res.status(400).json({ message: "Project ID is required" });
     }
 
-    const sql = "INSERT INTO designcriteria (design_cri_name, project_id) VALUES (?, ?)";
-    db.query(sql, [design_cri_name, project_id], (err, result) => {
+    if (!last_updated_by || last_updated_by.trim() === "") {
+        return res.status(400).json({ message: "Last updated by (username) is required" });
+    }
+
+    const sql = "INSERT INTO designcriteria (design_cri_name, project_id, last_updated_by) VALUES (?, ?, ?)";
+    db.query(sql, [design_cri_name, project_id, last_updated_by], (err, result) => {
         if (err) {
             console.error('Error creating criteria:', err);
             return res.status(500).json({ message: "Error creating criteria" });
@@ -3651,6 +3578,7 @@ app.post('/designcriteria', (req, res) => {
         res.status(201).json({ message: "Criteria created successfully", data: result });
     });
 });
+
 
 // Update criteria
 app.put('/updatedesigncriteria', (req, res) => {
@@ -3792,7 +3720,7 @@ app.get("/veridesign", (req, res) => {
             console.log(`🟡 No designs found with status 'WORKING' for project ID: ${project_id}`);
             // ส่ง Array ว่างกลับไป พร้อม status 200 OK ก็ได้ เพื่อให้ Frontend จัดการได้ง่าย
             // return res.status(404).json({ message: "No designs found for this project with status 'WORKING'" });
-             return res.status(200).json([]); // ส่ง Array ว่างกลับไป
+            return res.status(200).json([]); // ส่ง Array ว่างกลับไป
         }
 
         // --- START: Modification to parse requirement_id ---
@@ -3821,9 +3749,9 @@ app.get("/veridesign", (req, res) => {
                     // กำหนดให้เป็น Array ว่าง หรือค่าอื่นตามที่ต้องการ
                 }
             } else if (Array.isArray(design.requirement_id)) {
-                 // กรณีที่ Database Driver คืนค่าเป็น Array มาให้โดยตรง (อาจเกิดขึ้นได้กับ DB บางประเภท/Driver)
-                 parsedRequirementId = design.requirement_id;
-                 console.log(`[INFO] requirement_id for design ${design.design_id} is already an array.`);
+                // กรณีที่ Database Driver คืนค่าเป็น Array มาให้โดยตรง (อาจเกิดขึ้นได้กับ DB บางประเภท/Driver)
+                parsedRequirementId = design.requirement_id;
+                console.log(`[INFO] requirement_id for design ${design.design_id} is already an array.`);
             } else if (design.requirement_id !== null && design.requirement_id !== undefined) {
                 // กรณีมีค่า แต่ไม่ใช่ String และไม่ใช่ Array (เช่น เป็นตัวเลขเดี่ยวๆ)
                 console.warn(`[WARN] Unexpected data type for requirement_id for design ${design.design_id}. Type: ${typeof design.requirement_id}, Value:`, design.requirement_id);
@@ -3970,8 +3898,8 @@ app.get("/verifydesign", (req, res) => {
     // แปลง string เป็น array ของ IDs (เผื่อมีหลาย ID ส่งมาคั่นด้วย comma)
     // และทำความสะอาดข้อมูล (trim, filter ค่าว่าง)
     const designIdsArray = design_id.split(",")
-                                   .map(id => id.trim()) // เอาช่องว่างหน้า/หลังออก
-                                   .filter(id => id);    // กรองค่าว่างออก
+        .map(id => id.trim()) // เอาช่องว่างหน้า/หลังออก
+        .filter(id => id);    // กรองค่าว่างออก
 
     // ตรวจสอบว่าหลังแปลงแล้วมี ID เหลือหรือไม่
     if (designIdsArray.length === 0) {
@@ -4005,7 +3933,7 @@ app.get("/verifydesign", (req, res) => {
             res.status(500).json({ error: "Failed to fetch design details" });
         } else {
             // หาก query สำเร็จ ส่งผลลัพธ์กลับไป
-             console.log(`Workspaceed ${results.length} design details for IDs: ${designIdsArray.join(', ')}`);
+            console.log(`Workspaceed ${results.length} design details for IDs: ${designIdsArray.join(', ')}`);
             res.status(200).json(results); // ส่ง Array ของ design objects กลับไป
         }
     });
@@ -4016,9 +3944,9 @@ app.get('/designveri', (req, res) => {
     const { project_id, veridesign_id, design_id } = req.query;
 
     // --- Basic Input Validation ---
-     if (!project_id) { // veridesign_id and design_id are optional based on usage
-         return res.status(400).json({ message: "Project ID is required." });
-     }
+    if (!project_id) { // veridesign_id and design_id are optional based on usage
+        return res.status(400).json({ message: "Project ID is required." });
+    }
 
     let sql = `
       SELECT DISTINCT
@@ -4045,26 +3973,26 @@ app.get('/designveri', (req, res) => {
     if (veridesign_id) {
         sql += ` AND vd.veridesign_id = ?`;
         // Ensure veridesign_id is treated as a number if needed by DB
-         params.push(parseInt(veridesign_id, 10) || 0); // Or handle potential NaN better
+        params.push(parseInt(veridesign_id, 10) || 0); // Or handle potential NaN better
     }
 
     if (design_id) {
         const designIds = design_id.split(',')
-                                 .map(item => parseInt(item.trim(), 10)) // Parse to numbers
-                                 .filter(id => !isNaN(id)); // Filter out invalid numbers
+            .map(item => parseInt(item.trim(), 10)) // Parse to numbers
+            .filter(id => !isNaN(id)); // Filter out invalid numbers
         if (designIds.length > 0) {
             sql += ` AND d.design_id IN (${designIds.map(() => '?').join(',')})`;
             params.push(...designIds);
         } else {
-             // Handle case where design_id string had no valid numbers?
-             console.warn("Received design_id query param but found no valid numeric IDs:", design_id);
-             // Maybe return empty result or specific error if needed?
-             // return res.status(400).json({ message: "Invalid design IDs provided." });
-         }
+            // Handle case where design_id string had no valid numbers?
+            console.warn("Received design_id query param but found no valid numeric IDs:", design_id);
+            // Maybe return empty result or specific error if needed?
+            // return res.status(400).json({ message: "Invalid design IDs provided." });
+        }
     }
 
     console.log("[DEBUG /designveri] SQL:", sql); // Log SQL
-     console.log("[DEBUG /designveri] Params:", params); // Log Params
+    console.log("[DEBUG /designveri] Params:", params); // Log Params
 
 
     db.query(sql, params, (err, results) => { // Changed 'result' to 'results' for consistency
@@ -4074,10 +4002,10 @@ app.get('/designveri', (req, res) => {
         }
 
         if (results.length === 0) {
-             console.log("No data found for /designveri query with params:", req.query);
-             // Return 200 with empty array, more friendly for frontend find()
+            console.log("No data found for /designveri query with params:", req.query);
+            // Return 200 with empty array, more friendly for frontend find()
             return res.status(200).json([]);
-           // return res.status(404).json({ message: "No design verification data found matching criteria." });
+            // return res.status(404).json({ message: "No design verification data found matching criteria." });
         }
 
         // --- Process results with robust parsing ---
@@ -4092,16 +4020,16 @@ app.get('/designveri', (req, res) => {
                     try {
                         parsedBy = JSON.parse(row.veridesign_by);
                         if (typeof parsedBy !== 'object' || parsedBy === null) {
-                             console.warn(`Parsed veridesign_by for id ${currentVeridesignId} is not an object:`, parsedBy);
-                             parsedBy = {}; // Fallback
-                         }
+                            console.warn(`Parsed veridesign_by for id ${currentVeridesignId} is not an object:`, parsedBy);
+                            parsedBy = {}; // Fallback
+                        }
                     } catch (e) {
                         console.error(`Failed to parse veridesign_by for id <span class="math-inline">\{currentVeridesignId\}\: "</span>{row.veridesign_by}"`, e);
-                         parsedBy = {}; // Fallback
+                        parsedBy = {}; // Fallback
                     }
                 } else if (typeof row.veridesign_by === 'object' && row.veridesign_by !== null) {
-                     parsedBy = row.veridesign_by; // Already an object
-                 }
+                    parsedBy = row.veridesign_by; // Already an object
+                }
                 // -----------------------------------------
 
                 grouped[currentVeridesignId] = {
@@ -4115,26 +4043,26 @@ app.get('/designveri', (req, res) => {
 
             // --- Add Design Details (including parsed requirement_id) ---
             if (row.design_id) {
-                 // --- Parse requirement_id (Optional but Recommended) ---
-                 let parsedRequirementId = [];
-                 if (row.requirement_id && typeof row.requirement_id === 'string') {
-                     try {
-                         const parsed = JSON.parse(row.requirement_id);
-                         if (Array.isArray(parsed)) {
-                             parsedRequirementId = parsed;
-                         } else {
-                             console.warn(`Parsed requirement_id for design <span class="math-inline">\{row\.design\_id\} is not an array\. Original\: "</span>{row.requirement_id}"`);
-                         }
-                     } catch (e) {
-                         console.error(`Failed to parse requirement_id for design <span class="math-inline">\{row\.design\_id\}\. Original\: "</span>{row.requirement_id}"`, e);
-                     }
-                 } else if (Array.isArray(row.requirement_id)) {
-                     parsedRequirementId = row.requirement_id;
-                 }
-                 // -----------------------------------------------------
+                // --- Parse requirement_id (Optional but Recommended) ---
+                let parsedRequirementId = [];
+                if (row.requirement_id && typeof row.requirement_id === 'string') {
+                    try {
+                        const parsed = JSON.parse(row.requirement_id);
+                        if (Array.isArray(parsed)) {
+                            parsedRequirementId = parsed;
+                        } else {
+                            console.warn(`Parsed requirement_id for design <span class="math-inline">\{row\.design\_id\} is not an array\. Original\: "</span>{row.requirement_id}"`);
+                        }
+                    } catch (e) {
+                        console.error(`Failed to parse requirement_id for design <span class="math-inline">\{row\.design\_id\}\. Original\: "</span>{row.requirement_id}"`, e);
+                    }
+                } else if (Array.isArray(row.requirement_id)) {
+                    parsedRequirementId = row.requirement_id;
+                }
+                // -----------------------------------------------------
 
                 // Avoid duplicating design details if JOIN returns multiple rows for same design somehow
-                 if (!grouped[currentVeridesignId].design_details.some(d => d.design_id === row.design_id)) {
+                if (!grouped[currentVeridesignId].design_details.some(d => d.design_id === row.design_id)) {
                     grouped[currentVeridesignId].design_details.push({
                         design_id: row.design_id,
                         design_type: row.design_type,
@@ -4144,9 +4072,9 @@ app.get('/designveri', (req, res) => {
                         design_status: row.design_status,
                         requirement_id: parsedRequirementId // Include parsed requirement_id
                     });
-                 }
+                }
             }
-             // -------------------------------------------------------
+            // -------------------------------------------------------
         });
 
         const designVerifications = Object.values(grouped);
@@ -4671,6 +4599,7 @@ app.delete('/implementrelation', async (req, res) => {
     // if (isNaN(relationDate.getTime())) {
     //     return res.status(400).json({ message: 'Invalid relation_at format.' });
     // }
+
     // Log เพื่อ Debug
     console.log(`Received request to delete relation: file='${implement_filename}', time='${relation_at}', project=${projectIdInt}`);
 
@@ -5041,10 +4970,10 @@ app.post("/api/update_test_execution", async (req, res) => {
                     throw new Error(`Invalid data for step ID ${step.test_procedures_id || 'UNKNOWN'}. Status or actual result might be missing.`);
                 }
 
-                 const parsedStepId = parseInt(step.test_procedures_id, 10);
-                 if (isNaN(parsedStepId)) {
-                      throw new Error(`Invalid 'test_procedures_id' (${step.test_procedures_id}). Must be a number.`);
-                 }
+                const parsedStepId = parseInt(step.test_procedures_id, 10);
+                if (isNaN(parsedStepId)) {
+                    throw new Error(`Invalid 'test_procedures_id' (${step.test_procedures_id}). Must be a number.`);
+                }
 
                 const knownStatuses = [
                     STATUS_PASSED_STRING,
@@ -5106,12 +5035,12 @@ app.post("/api/update_test_execution", async (req, res) => {
                 finalExecutionStatus = STATUS_PASSED_STRING; // ทุกอัน PASSED -> PASSED
                 console.log(`Condition met for testcase_id ${parsedTestcaseId}: No FAILED and All PASSED -> ${STATUS_PASSED_STRING}`);
             } else if (allStepsInProgress) { // *** เพิ่มเงื่อนไขตรวจสอบ: ทุกอันเป็น IN PROGRESS หรือไม่? ***
-                 finalExecutionStatus = STATUS_IN_PROGRESS_STRING; // ทุกอัน IN PROGRESS -> IN PROGRESS
-                 console.log(`Condition met for testcase_id ${parsedTestcaseId}: No FAILED, Not All PASSED, All IN PROGRESS -> ${STATUS_IN_PROGRESS_STRING}`);
+                finalExecutionStatus = STATUS_IN_PROGRESS_STRING; // ทุกอัน IN PROGRESS -> IN PROGRESS
+                console.log(`Condition met for testcase_id ${parsedTestcaseId}: No FAILED, Not All PASSED, All IN PROGRESS -> ${STATUS_IN_PROGRESS_STRING}`);
             } else {
                 // กรณีอื่นๆ ที่ไม่มี FAILED (เช่น มี PASSED ปนกับ IN PROGRESS หรือ มีแต่ READY TO TEST)
                 finalExecutionStatus = STATUS_READY_TO_TEST_STRING; // -> READY TO TEST
-                 console.log(`Condition met for testcase_id ${parsedTestcaseId}: No FAILED, Not All PASSED, Not All IN PROGRESS (Mix) -> ${STATUS_READY_TO_TEST_STRING}`);
+                console.log(`Condition met for testcase_id ${parsedTestcaseId}: No FAILED, Not All PASSED, Not All IN PROGRESS (Mix) -> ${STATUS_READY_TO_TEST_STRING}`);
             }
         }
 
@@ -5138,8 +5067,8 @@ app.post("/api/update_test_execution", async (req, res) => {
 
         // --- Success Response ---
         res.status(200).json({
-             message: `Test execution for testcase_id ${parsedTestcaseId} updated successfully to ${finalExecutionStatus}.`,
-             finalStatus: finalExecutionStatus
+            message: `Test execution for testcase_id ${parsedTestcaseId} updated successfully to ${finalExecutionStatus}.`,
+            finalStatus: finalExecutionStatus
         });
 
     } catch (error) {
@@ -5150,9 +5079,9 @@ app.post("/api/update_test_execution", async (req, res) => {
             error.message.startsWith("Invalid 'test_procedures_id'") ||
             error.message.startsWith("Invalid test_status") ||
             error.message.includes("not found")) {
-             statusCode = 400;
+            statusCode = 400;
         } else if (error.message.startsWith("Database error")) {
-             statusCode = 500;
+            statusCode = 500;
         }
         res.status(statusCode).json({ error: error.message || "An internal server error occurred." });
     }
@@ -5928,7 +5857,7 @@ app.get('/veritestcase-history/:project_id', (req, res) => { // <-- Route สำ
                             console.warn(`TESTCASE_HIS WARNING: Parsed veritestcase_by for ID ${item.veritestcase_id} is NOT a valid object:`, verificationByParsed);
                             verificationByParsed = {}; // Reset to empty object
                         } else {
-                             console.log(`TESTCASE_HIS: Successfully parsed veritestcase_by for ID ${item.veritestcase_id} into object:`, verificationByParsed);
+                            console.log(`TESTCASE_HIS: Successfully parsed veritestcase_by for ID ${item.veritestcase_id} into object:`, verificationByParsed);
                         }
                     } else {
                         console.log(`TESTCASE_HIS: veritestcase_by for ID ${item.veritestcase_id} is null/empty in DB. Defaulting to {}.`);
@@ -6052,9 +5981,11 @@ app.delete("/delete-commentveritestcase/:comvertestcase_id", (req, res) => {
 
 
 // ------------------------- Testcase Criteria -------------------------
+// ดึงข้อมูล testcase criteria ตาม projectId
 app.get('/testcasecriteria/:projectId', (req, res) => {
-    const { projectId } = req.params; // รับ project_id จาก URL
-    const sql = "SELECT * FROM testcasecriteria WHERE project_id = ?";
+    const { projectId } = req.params;
+    const sql = `SELECT testcasecri_id, testcasecri_name, project_id, created_by, created_at, last_updated_by, last_updated_at
+                 FROM testcasecriteria WHERE project_id = ?`;
 
     db.query(sql, [projectId], (err, result) => {
         if (err) {
@@ -6071,14 +6002,17 @@ app.get('/testcasecriteria/:projectId', (req, res) => {
 });
 
 app.post('/testcasecriteria', (req, res) => {
-    const { testcasecri_name, project_id } = req.body; // รับ project_id มาจาก frontend
+    const { testcasecri_name, project_id, last_updated_by } = req.body;
 
     if (!testcasecri_name || testcasecri_name.trim() === "" || !project_id) {
         return res.status(400).json({ message: "Criteria name และ project_id เป็นค่าที่จำเป็น" });
     }
 
-    const sql = "INSERT INTO testcasecriteria (testcasecri_name, project_id) VALUES (?, ?)";
-    db.query(sql, [testcasecri_name, project_id], (err, result) => {
+    // กำหนดค่า default ถ้า last_updated_by ไม่ส่งมา
+    const updatedBy = last_updated_by || "Unknown";
+
+    const sql = "INSERT INTO testcasecriteria (testcasecri_name, project_id, last_updated_by) VALUES (?, ?, ?)";
+    db.query(sql, [testcasecri_name, project_id, updatedBy], (err, result) => {
         if (err) {
             console.error('Error adding Testcase Criteria:', err);
             return res.status(500).json({ message: "Error adding Testcase Criteria" });
@@ -6086,6 +6020,7 @@ app.post('/testcasecriteria', (req, res) => {
         res.status(201).json({ message: "Testcase Criteria added successfully", data: result });
     });
 });
+
 
 // Update Testcase Verification Criteria
 app.put('/testcasecriteria/:id', (req, res) => {
@@ -6325,7 +6260,7 @@ app.get("/overviewcount", (req, res) => {
 });
 // ------------------------- Traceability Criteria --------------------------------
 app.post('/tracecriteria', (req, res) => {
-    const { tracecriteria_name, project_id } = req.body;
+    const { tracecriteria_name, project_id, last_updated_by } = req.body;
 
     if (!tracecriteria_name || tracecriteria_name.trim() === "") {
         return res.status(400).json({ message: "Criteria name is required" });
@@ -6335,8 +6270,11 @@ app.post('/tracecriteria', (req, res) => {
         return res.status(400).json({ message: "Project ID is required" });
     }
 
-    const sql = "INSERT INTO tracecriteria (tracecriteria_name, project_id) VALUES (?, ?)";
-    db.query(sql, [tracecriteria_name, project_id], (err, result) => {
+    // กำหนดค่า default ถ้า last_updated_by ไม่ถูกส่งมา
+    const updatedBy = last_updated_by || "Unknown";
+
+    const sql = "INSERT INTO tracecriteria (tracecriteria_name, project_id, last_updated_by) VALUES (?, ?, ?)";
+    db.query(sql, [tracecriteria_name, project_id, updatedBy], (err, result) => {
         if (err) {
             console.error('Error creating tracecriteria:', err);
             return res.status(500).json({ message: "Error creating tracecriteria" });
@@ -6344,6 +6282,7 @@ app.post('/tracecriteria', (req, res) => {
         res.status(201).json({ message: "Tracecriteria created successfully", data: result });
     });
 });
+
 
 // GET request to retrieve tracecriteria by project_id
 app.get('/tracecriteria/:projectId', (req, res) => {
@@ -7368,9 +7307,9 @@ app.get('/veritrace-history/:project_id', (req, res) => {
                             console.warn(`VERITRACE_HIS API WARNING: Parsed verification_by for trace ID ${item.veritrace_id} is NOT a valid object:`, verificationByParsed);
                             verificationByParsed = {}; // Reset to empty object if not a valid object
                         }
-                         // else {
-                         //    console.log(`VERITRACE_HIS API: Successfully parsed verification_by for trace ID ${item.veritrace_id} into object:`, verificationByParsed);
-                         // }
+                        // else {
+                        //    console.log(`VERITRACE_HIS API: Successfully parsed verification_by for trace ID ${item.veritrace_id} into object:`, verificationByParsed);
+                        // }
                     } else {
                         // If the DB column is NULL or empty, keep it as an empty object
                         // console.log(`VERITRACE_HIS API: verification_by for trace ID ${item.veritrace_id} is null/empty in DB. Defaulting to {}.`);
@@ -7398,8 +7337,8 @@ app.get('/veritrace-history/:project_id', (req, res) => {
             // 4. Handle unexpected errors during the .map() processing phase
             console.error('VERITRACE_HIS API Error processing results after query:', processingError);
             res.status(500).json({
-                 message: 'Server error processing traceability history results.',
-                 error_details: processingError.message
+                message: 'Server error processing traceability history results.',
+                error_details: processingError.message
             });
         }
     }); // End of db.query callback
